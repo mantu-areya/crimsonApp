@@ -20,12 +20,10 @@ import {InspectionDetailScreen} from "./src/features/gcs/screens/InspectionDetai
 import * as ScreenOrientation from 'expo-screen-orientation'
 
 
-
 export default function App() {
 
 useEffect(()=>{
    ScreenOrientation.getOrientationAsync().then(data=>{
-     console.log(data);
    }
    );
 

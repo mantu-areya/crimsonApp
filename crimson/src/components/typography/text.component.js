@@ -84,6 +84,22 @@ color:${theme.colors.text.header1}
 font-family: ${theme.fonts.body};
 `;
 
+const DetailcardValue = (theme) => `
+font-size: ${theme.fontSizes.caption};
+color:${theme.colors.text.CardKeyValue}
+font-family: ${theme.fonts.heading};
+`;
+
+
+const formHeader = (theme,align) => `
+    font-family: ${theme.fonts.heading};
+    font-size: ${theme.fontSizes.body};
+    font-weight: ${theme.fontWeights.medium};
+    color:${theme.colors.text.header1};
+    ${align&&`textAlign: center`};
+    
+`;
+
 const variants = {
   body,
   label,
@@ -97,12 +113,15 @@ const variants = {
   HeaderName,
   CarContentHeader,
   CarContentList,
-  InspectionHeaderName
+  InspectionHeaderName,
+  DetailcardValue,
+  formHeader
 };
 
 export const Text = styled.Text`
   ${({ theme }) => defaultTextStyles(theme)}
   ${({ variant, theme }) => variants[variant](theme)}
+  ${({ variant, theme, align }) => variants[variant](theme,align)}
 `;
 
 Text.defaultProps = {

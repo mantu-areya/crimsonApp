@@ -6,8 +6,9 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import { Text } from "../../../components/typography/text.component";
 import { Col, Row } from "react-native-responsive-grid-system";
 import { Spacer } from "../../../components/spacer/spacer.component";
-import { TotalContainer } from "./VendorFormPageStyles";
+import { TotalContainer, NumberInput, TextArea} from "./VendorFormPageStyles";
 import ContentLoader, { Rect }from 'react-content-loader/native'
+import { Platform } from 'react-native';
 
 
 export const OtherCategoryForms = ({ catName, dataList }) => {
@@ -15,25 +16,29 @@ export const OtherCategoryForms = ({ catName, dataList }) => {
   const handlePress = (setIsCollapsed, isCollapsed) => setIsCollapsed(!isCollapsed);
 
   const MyLoader = () => {
-    return(
-    <ContentLoader interval="0.01" backgroundColor="#D3D3D3"  style={{height:100}} viewBox="0 14 490 60">
-    {/* <Rect x="0" y="0" rx="5" ry="5" width="70" height="70" /> */}
-    <Rect x="0" y="8" rx="3" ry="3" width="80" height="13" />
-    <Rect x="110" y="8" rx="4" ry="4" width="70" height="13" />
-    <Rect x="190" y="8" rx="3" ry="3" width="70" height="13" />
-    <Rect x="280" y="8" rx="3" ry="3" width="70" height="13" />
-    <Rect x="380" y="8" rx="3" ry="3" width="70" height="13" />
-    <Rect x="0" y="35" rx="3" ry="3" width="80" height="13" />
-    <Rect x="110" y="35" rx="4" ry="4" width="70" height="13" />
-    <Rect x="190" y="35" rx="3" ry="3" width="70" height="13" />
-    <Rect x="280" y="35" rx="3" ry="3" width="70" height="13" />
-    <Rect x="380" y="35" rx="3" ry="3" width="70" height="13" />
-    <Rect x="0" y="65" rx="3" ry="3" width="80" height="13" />
-    <Rect x="110" y="65" rx="4" ry="4" width="70" height="13" />
-    <Rect x="190" y="65" rx="3" ry="3" width="70" height="13" />
-    <Rect x="280" y="65" rx="3" ry="3" width="70" height="13" />
-    <Rect x="380" y="65" rx="3" ry="3" width="70" height="13" />
-    </ContentLoader>)
+    let height = Platform.isPad?30:15
+    const getRowLoader = (y) => {
+      return (<>
+        <ContentLoader interval="0.01" backgroundColor="#D3D3D3" style={{ height: height,flex:1 }} viewBox="0 0 600 1">
+        <Rect x="1" y="0" rx="3" ry="3" width="80" height="10" />
+        <Rect x="100" y={y} rx="4" ry="4" width="80" height="10" />
+        <Rect x="200" y={y} rx="3" ry="3" width="60" height="10" />
+        <Rect x="300" y={y} rx="3" ry="3" width="60" height="10" />
+        <Rect x="400" y={y} rx="3" ry="3" width="60" height="10" />
+        <Rect x="500" y={y} rx="3" ry="3" width="60" height="10" />
+
+        </ContentLoader>
+
+        </>
+      )
+    }
+    return <>
+    {getRowLoader()}
+    {getRowLoader()}
+    {getRowLoader()}
+    </>
+
+
   }
 
   const GetToal=()=>{
@@ -69,8 +74,8 @@ export const OtherCategoryForms = ({ catName, dataList }) => {
             </Col>
             <Col xs="3" md="2">
               <TotalContainer>
-                {/* <Text>TOTAL :${GetToal().toLocaleString("en-US")}</Text> */}
-                <Text>TOTAL :$2,225</Text>
+                <Text>TOTAL :${GetToal().toLocaleString("en-US")}</Text>
+                {/* <Text>TOTAL :$2,225</Text> */}
               </TotalContainer>
             </Col>
           </Row>
@@ -83,49 +88,49 @@ export const OtherCategoryForms = ({ catName, dataList }) => {
             <CardHeader>
               <Row >
                 <Col xs="2" md="2">
-                  <Text variant="label">MATRIX PRICE</Text>
+                  <Text variant="formHeader">MATRIX PRICE</Text>
                 </Col>
                 <Col xs="2" md="2">
-                  <Text variant="label">SCOPE NOTES</Text>
+                  <Text variant="formHeader">SCOPE NOTES</Text>
                 </Col>
                 <Col xs="2" md="2">
-                  <Text variant="label">QTY.</Text>
+                  <Text variant="formHeader">QTY.</Text>
                 </Col>
                 <Col xs="2" md="2">
-                  <Text variant="label">U/M</Text>
+                  <Text variant="formHeader">U/M</Text>
                 </Col>
                 <Col xs="2" md="2">
-                  <Text variant="label">RATE</Text>
+                  <Text variant="formHeader">RATE</Text>
                 </Col>
                 <Col xs="2" md="2">
-                  <Text variant="label">TOTAL</Text>
+                  <Text variant="formHeader">TOTAL</Text>
                 </Col>
               </Row>
             </CardHeader>
 
             <CardBody>
             {dataList.MATRIX_PRICE.length==0?
-            MyLoader()
+            MyLoader() 
             :
               Object.keys(dataList.MATRIX_PRICE).map((item, i) => {
                 return (
 
-                  <Row key={i}>
+                  <Row key={dataList.MATRIX_PRICE[i].concat(i)}>
 
                     <Col xs="2" md="2">
                       <Text variant="body">{dataList.MATRIX_PRICE[i]}</Text>
                     </Col>
                     <Col xs="2" md="2">
-                      <Text variant="body">{dataList.SCOPE_NOTES[i]}</Text>
+                    <TextArea Value={dataList.SCOPE_NOTES[i]}/>
                     </Col>
                     <Col xs="2" md="2">
-                      <Text variant="body">{dataList.QTY[i]}</Text>
+                    <NumberInput value={dataList.QTY[i]} onChange={()=>{}} />
                     </Col>
                     <Col xs="2" md="2">
-                      <Text variant="body">{dataList.U_M[i]}</Text>
+                    <TextArea Value={dataList.U_M[i]}/>
                     </Col>
                     <Col xs="2" md="2">
-                      <Text variant="body">{dataList.RATE[i]}</Text>
+                    <NumberInput value={dataList.RATE[i]} onChange={()=>{}} />
                     </Col>
                     <Col xs="2" md="2">
                       <Text variant="body">{dataList.TOTAL[i]}</Text>

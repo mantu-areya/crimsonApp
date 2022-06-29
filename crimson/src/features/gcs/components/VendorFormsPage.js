@@ -1,7 +1,7 @@
 
 import React, { useEffect, useState } from "react";
 // import { Row } from "../components/ProcessRecordsInfoCardStyle";
-import { StatusBar, Image, View, ScrollView } from "react-native";
+import { StatusBar, Image, View, ScrollView, TouchableOpacity } from "react-native";
 import { SafeArea } from "../../../components/utility/safe-area.component";
 import styled from "styled-components/native";
 import { Text } from "../../../components/typography/text.component";
@@ -12,8 +12,9 @@ import { InspectionDetailTile } from "./InspectionDetailTile";
 import { getVendorFormDetails } from "../../../services/inspections/inspections.service"
 import { RoomForm } from "./RoomForm";
 import { OtherCategoryForms } from "./OtherCategoryForms";
-import { TotalContainer,InfoTextArea } from "./VendorFormPageStyles";
+import { TotalContainer,InfoTextArea,ActionContainer } from "./VendorFormPageStyles";
 import { ActivityIndicator, Colors } from "react-native-paper";
+import { InspectionDetailsCard } from "./InspectionDetailsCard"
 
 const windowWidth = Dimensions.get('window').width;
 const IconWidth = .30 * windowWidth;
@@ -107,7 +108,6 @@ export const VendorFormsPage = ({ inspectionData }) => {
         category5.SEQUENCE.push(inspData[item].Sequence__c)
       } 
       if (inspData[item].Category__c !== "Room Measurements") {
-        // console.log(grandTtl,inspData[item].Total__c);
         grandTtl=grandTtl+(inspData[item].Total__c)
       }
 
@@ -119,9 +119,6 @@ export const VendorFormsPage = ({ inspectionData }) => {
     setInterior(category4);
     setMech_Elec_Plumb(category5);
     setGrandTotal(grandTtl)
-    // console.log(grandTtl.toFixed(2));
-
-    // getGrandTotal([setRoom_Measurement,setGeneral_Rental,setPools,setExterior,setInterior,setMech_Elec_Plumb])
 
   }
 
@@ -187,12 +184,17 @@ export const VendorFormsPage = ({ inspectionData }) => {
               <Loading size={50} animating={true} color={Colors.blue300} />
             </LoadingContainer>
               :<> */}
-          <InspectionDetailTile inspectionData={inspectionData} />
-          {showMsg?renderNoVFText():<><TotalContainer>
-            {/* <Text>GRAND TOTAL BID SUBMITTED : ${grandTotal.toLocaleString("en-US")}</Text> */}
-            <Text>GRAND TOTAL BID SUBMITTED : $2,265.81</Text>
+          <InspectionDetailsCard inspectionData={inspectionData} />
+          {/* <InspectionDetailTile inspectionData={inspectionData} /> */}
+          {showMsg?renderNoVFText():<>
+          <Spacer position="top" size="medium"/>
+          <ActionContainer>
+          <TotalContainer>
+            <Text>GRAND TOTAL BID SUBMITTED : ${grandTotal.toLocaleString("en-US")}</Text>
+            {/* <Text>GRAND TOTAL BID SUBMITTED : $2,265.81</Text> */}
             <Spacer position="right" size="large" />
           </TotalContainer>
+          </ActionContainer>
           <Spacer position="top" size="large" />
           <RoomForm room_Measurement={room_Measurement}  />
           <Spacer position="top" size="medium" />
@@ -203,8 +205,8 @@ export const VendorFormsPage = ({ inspectionData }) => {
           <OtherCategoryForms catName={"Mechanical, Electrical and Plumbing Systems"} dataList={mech_Elec_Plumb} />
           <Spacer position="top" size="large" />
           <TotalContainer>
-          {/* <Text>GRAND TOTAL BID SUBMITTED : ${grandTotal.toLocaleString("en-US")}</Text> */}
-            <Text>GRAND TOTAL BID SUBMITTED : $2,265.81</Text>
+          <Text>GRAND TOTAL BID SUBMITTED : ${grandTotal.toLocaleString("en-US")}</Text>
+            {/* <Text>GRAND TOTAL BID SUBMITTED : $2,265.81</Text> */}
             <Spacer position="right" size="large" />
           </TotalContainer>
           </>}

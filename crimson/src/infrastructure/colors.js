@@ -29,6 +29,7 @@ export const colors = {
     error: "#D0421B",
     success: "#138000",
     value:"#808080",
-    header1:"#757575"
+    header1:"#757575",
+    CardKeyValue:"#484848"
   },
 };

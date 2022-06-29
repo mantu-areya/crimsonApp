@@ -1,60 +1,50 @@
 import React, { useEffect } from "react";
-import { View, Pressable, ScrollView,TextInput } from "react-native";
+import { View, Pressable, ScrollView, TextInput, Platform } from "react-native";
 import { CollapseSectionHeader, SectionHeaderEnd, SectionContainer, FormCard, CardHeader, CardBody } from "./VendorFormPageStyles"
 import Collapsible from 'react-native-collapsible';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { Text } from "../../../components/typography/text.component";
 import { Col, Row } from "react-native-responsive-grid-system";
-import { Spacer, SpacerView } from "../../../components/spacer/spacer.component";
-import { TotalContainer } from "./VendorFormPageStyles";
+import { TotalContainer,TextArea, NumberInput } from "./VendorFormPageStyles";
 import ContentLoader, { Rect } from 'react-content-loader/native'
-import NumericInput from 'react-native-numeric-input'
 import styled from "styled-components/native";
 
 
-const NumberInput = styled(NumericInput).attrs({
-  // type:'up-down' ,
-  totalWidth:55,
-  totalHeight:25,
-  rounded:true,
-  rightButtonBackgroundColor:"#a3dfa0",
-  leftButtonBackgroundColor	:"#a3dfa0"
-})`
-`;
+
+
 
 export const RoomForm = ({ room_Measurement }) => {
+  console.log(room_Measurement);
   const [isCollapsed, setIsCollapsed] = React.useState(false);
   const handlePress = (setIsCollapsed, isCollapsed) => setIsCollapsed(!isCollapsed);
 
 
-  const changeAmount = (value)=>{
-      console.log(value);
-  }
+  // const changeAmount = (value)=>{
+  //     console.log(value);
+  // }
 
   const MyLoader = () => {
-    return (
-      <ContentLoader interval="0.01" backgroundColor="#D3D3D3" style={{ height: 100 }} viewBox="0 14 490 60">
-        {/* <Rect x="0" y="0" rx="5" ry="5" width="70" height="70" /> */}
-        <Rect x="0" y="8" rx="3" ry="3" width="80" height="13" />
-        <Rect x="110" y="8" rx="4" ry="4" width="70" height="13" />
-        <Rect x="190" y="8" rx="3" ry="3" width="70" height="13" />
-        <Rect x="280" y="8" rx="3" ry="3" width="70" height="13" />
-        <Rect x="380" y="8" rx="3" ry="3" width="70" height="13" />
-        <Rect x="0" y="35" rx="3" ry="3" width="80" height="13" />
-        <Rect x="110" y="35" rx="4" ry="4" width="70" height="13" />
-        <Rect x="190" y="35" rx="3" ry="3" width="70" height="13" />
-        <Rect x="280" y="35" rx="3" ry="3" width="70" height="13" />
-        <Rect x="380" y="35" rx="3" ry="3" width="70" height="13" />
-        <Rect x="0" y="65" rx="3" ry="3" width="80" height="13" />
-        <Rect x="110" y="65" rx="4" ry="4" width="70" height="13" />
-        <Rect x="190" y="65" rx="3" ry="3" width="70" height="13" />
-        <Rect x="280" y="65" rx="3" ry="3" width="70" height="13" />
-        <Rect x="380" y="65" rx="3" ry="3" width="70" height="13" />
+    const getRowLoader = (y) => {
+      let height = Platform.isPad?30:15
+      return (<>
+        <ContentLoader interval="0.01" backgroundColor="#D3D3D3" style={{ height: height,flex:1 }} viewBox="0 0 600 1">
+        <Rect x="1" y="0" rx="3" ry="3" width="180" height="10" />
+        <Rect x="200" y="0" rx="4" ry="4" width="60" height="10" />
+        <Rect x="300" y="0" rx="3" ry="3" width="60" height="10" />
+        <Rect x="400" y="0" rx="3" ry="3" width="60" height="10" />
+        <Rect x="500" y="0" rx="3" ry="3" width="60" height="10" />
+        </ContentLoader>
+
+        </>
+      )
+    }
+    return <>
+    {getRowLoader()}
+    {getRowLoader()}
+    {getRowLoader()}
+    </>
 
 
-
-
-      </ContentLoader>)
   }
 
   const GetToalSqFt = () => {
@@ -88,20 +78,20 @@ export const RoomForm = ({ room_Measurement }) => {
           <FormCard>
             <CardHeader>
               <Row >
-                <Col xs="3" md="4">
-                  <Text variant="label">ROOM</Text>
+                <Col style={{ flex:1,flexDirection:'row', alignItems:'center',justifyContent:'center'}}xs="4" md="4">
+                  <Text  variant="formHeader">ROOM</Text>
                 </Col>
                 <Col xs="2" md="2">
-                  <Text variant="label">LENGTH</Text>
+                  <Text variant="formHeader" >LENGTH</Text>
                 </Col>
                 <Col xs="2" md="2">
-                  <Text variant="label">WIDTH</Text>
+                  <Text variant="formHeader" >WIDTH</Text>
                 </Col>
                 <Col xs="2" md="2">
-                  <Text variant="label">MISC SF</Text>
+                  <Text variant="formHeader" >MISC SF</Text>
                 </Col>
                 <Col xs="2" md="2">
-                  <Text variant="label">TOTAL</Text>
+                  <Text variant="formHeader">TOTAL</Text>
                 </Col>
               </Row>
             </CardHeader>
@@ -111,27 +101,25 @@ export const RoomForm = ({ room_Measurement }) => {
                 :
                 Object.keys(room_Measurement.ROOM).map((item, i) => {
                   return (
-                    <Row key={i}>
-
-                      <Col xs="3" md="4">
+                    <Row key={room_Measurement.ROOM[item].concat(i)}>
+                      <Col xs="4" md="4">
                         <Text variant="body">{room_Measurement.ROOM[item]}</Text>
                       </Col>
                       <Col xs="2" md="2">
-                      <NumberInput  value={room_Measurement.LENGTH[item]} onChange={value => changeAmount(value)} />
-                        <Text variant="body">{room_Measurement.LENGTH[item]}</Text>
+                        <NumberInput value={room_Measurement.LENGTH[item]} onChange={value => ()=>{}} />
+                        {/* <Text variant="body">{room_Measurement.LENGTH[item]}</Text> */}
                       </Col>
                       <Col xs="2" md="2">
-                      <NumberInput  value={room_Measurement.WIDTH[item]} onChange={value => console.log(value)} />
+                        <NumberInput value={room_Measurement.WIDTH[item]} onChange={value => ()=>{}} />
                         {/* <Text variant="body">{room_Measurement.WIDTH[item]}</Text> */}
                       </Col>
                       <Col xs="2" md="2">
                         {/* <Text variant="body">{room_Measurement.MISC_SF[item]}</Text> */}
-                        <NumberInput  value={room_Measurement.MISC_SF[item]} onChange={value => changeAmount(value)} />
-
+                        <TextArea Value={room_Measurement.MISC_SF[item]}/>
                       </Col>
                       <Col xs="2" md="2">
                         <Text variant="body">{room_Measurement.TOTAL[item]}</Text>
- 
+
                       </Col>
                     </Row>
                   )

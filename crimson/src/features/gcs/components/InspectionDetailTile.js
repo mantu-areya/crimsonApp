@@ -56,7 +56,7 @@ export const InspectionDetailTile = ({ inspectionData }) => {
           <SectionContainer>
             {Object.keys(dataList).map((item, i) => {
               return (
-                <Row key={item}>
+                <Row key={inspectionData[item].concat(i)}>
                   <Col xs={4}>
                     <Text variant="CarContentList">{dataList[item]} : </Text>
                   </Col>
