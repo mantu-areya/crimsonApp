@@ -88,7 +88,8 @@ export const TextArea = styled(TextInput).attrs({
 border:.2px;
 border-radius:5px;
 backgroundColor:#E8E8E8;
-height:30px;
+${Platform.isPad?`height:40px`:`height:30px`}
+
 margin-bottom:5px;
 
 `;

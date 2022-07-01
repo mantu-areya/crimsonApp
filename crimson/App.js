@@ -18,6 +18,7 @@ import { InspectionsScreen } from "./src/features/gcs/screens/InspectionsScreen"
 import { InspectionsContextProvider } from "./src/services/inspections/inspections.contex";
 import {InspectionDetailScreen} from "./src/features/gcs/screens/InspectionDetailScreen";
 import * as ScreenOrientation from 'expo-screen-orientation'
+import { VendorFormContextProvider } from "./src/services/context/VendorForm/vendorForm.contex";
 
 
 export default function App() {
@@ -102,6 +103,7 @@ useEffect(()=>{
     <>
       <ThemeProvider theme={theme}>
         <InspectionsContextProvider>
+          <VendorFormContextProvider>
         <NavigationContainer>
           <Tab.Navigator screenOptions={screenOptions}>
             <Tab.Screen
@@ -121,6 +123,7 @@ useEffect(()=>{
             />
           </Tab.Navigator>
         </NavigationContainer>
+        </VendorFormContextProvider>
         </InspectionsContextProvider>
       </ThemeProvider>
       <ExpoStatusBar style={"auto"} />

@@ -11,9 +11,11 @@ import ContentLoader, { Rect }from 'react-content-loader/native'
 import { Platform } from 'react-native';
 
 
-export const OtherCategoryForms = ({ catName, dataList }) => {
+export const OtherCategoryForms = ({ catName, formData }) => {
   const [isCollapsed, setIsCollapsed] = React.useState(false);
   const handlePress = (setIsCollapsed, isCollapsed) => setIsCollapsed(!isCollapsed);
+  let [dataList, setDatalist] = React.useState([])
+
 
   const MyLoader = () => {
     let height = Platform.isPad?30:15
@@ -43,12 +45,16 @@ export const OtherCategoryForms = ({ catName, dataList }) => {
 
   const GetToal=()=>{
     let toatalSF=0;
-    Object.keys(dataList.TOTAL).map(ele=>{
-      toatalSF=toatalSF+dataList.TOTAL[ele]
+    dataList.map(ele=>{
+      toatalSF=toatalSF+ele.Total__c
       return toatalSF
     })
    return  toatalSF
   }
+
+  useEffect(()=>{
+    setDatalist(formData);
+  },[formData])
 
   return (
     <>
@@ -74,7 +80,7 @@ export const OtherCategoryForms = ({ catName, dataList }) => {
             </Col>
             <Col xs="3" md="2">
               <TotalContainer>
-                <Text>TOTAL :${GetToal().toLocaleString("en-US")}</Text>
+                {/* <Text>TOTAL :${GetToal().toLocaleString("en-US")}</Text> */}
                 {/* <Text>TOTAL :$2,225</Text> */}
               </TotalContainer>
             </Col>
@@ -109,31 +115,31 @@ export const OtherCategoryForms = ({ catName, dataList }) => {
             </CardHeader>
 
             <CardBody>
-            {dataList.MATRIX_PRICE.length==0?
+            {dataList.length==0?
             MyLoader() 
             :
-              Object.keys(dataList.MATRIX_PRICE).map((item, i) => {
+              dataList.map((item, i) => {
                 return (
 
-                  <Row key={dataList.MATRIX_PRICE[i].concat(i)}>
+                  <Row key={item.UniqueKey__c}>
 
                     <Col xs="2" md="2">
-                      <Text variant="body">{dataList.MATRIX_PRICE[i]}</Text>
+                      <Text variant="body">{item.Sub_Category__c}</Text>
                     </Col>
                     <Col xs="2" md="2">
-                    <TextArea Value={dataList.SCOPE_NOTES[i]}/>
+                    <TextArea Value={item.Scope_Notes__c}/>
                     </Col>
                     <Col xs="2" md="2">
-                    <NumberInput value={dataList.QTY[i]} onChange={()=>{}} />
+                    <NumberInput value={item.Quantity__c} onChange={()=>{}} />
                     </Col>
                     <Col xs="2" md="2">
-                    <TextArea Value={dataList.U_M[i]}/>
+                    <TextArea Value={item.U_M__c}/>
                     </Col>
                     <Col xs="2" md="2">
-                    <NumberInput value={dataList.RATE[i]} onChange={()=>{}} />
+                    <NumberInput value={item.Rate__c} onChange={()=>{}} />
                     </Col>
                     <Col xs="2" md="2">
-                      <Text variant="body">{dataList.TOTAL[i]}</Text>
+                      <Text variant="body">{item.Total__c}</Text>
                     </Col>
                   </Row>
                 )
