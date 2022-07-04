@@ -3,7 +3,8 @@
 import { Card } from "react-native-paper";
 import styled from "styled-components/native";
 import NumericInput from 'react-native-numeric-input'
-import { Platform,TextInput } from 'react-native';
+import { Platform,TextInput, ImageBackground, Pressable } from 'react-native';
+import { Row } from "react-native-responsive-grid-system";
 
 
 export const CollapseSectionHeader = styled.View`
@@ -68,18 +69,21 @@ flex-direction: row;
 
 
 export const NumberInput = styled(NumericInput).attrs({
-  totalWidth: Platform.isPad ? 95 : 60,
+  totalWidth: Platform.isPad ? 115 : 60,
   totalHeight:Platform.isPad ? 40 : 30,
   rounded: true,
   rightButtonBackgroundColor: "#a3dfa0",
   leftButtonBackgroundColor: "#a3dfa0",
   // type:"up-down",
   extraTextInputProps: {
-    multiline: true, 
+    multiline: true,
+    
   },
-  containerStyle: {
-    marginBottom: 5
+  inputStyle:{
+    textAlign:'center'
+
   }
+
 })``;
 
 export const TextArea = styled(TextInput).attrs({
@@ -88,7 +92,64 @@ export const TextArea = styled(TextInput).attrs({
 border:.2px;
 border-radius:5px;
 backgroundColor:#E8E8E8;
-height:30px;
+${Platform.isPad?`height:40px`:`height:30px`}
 margin-bottom:5px;
+`;
 
+
+export const OtherFormTextArea = styled(TextInput).attrs({
+  multiline: true,
+})`
+border:.2px;
+border-radius:5px;
+backgroundColor:#E8E8E8;
+${Platform.isPad?`height:130px`:`height:90px`}
+margin-bottom:5px;
+margin-top:5px;
+`;
+
+
+export const HeaderCardCover = styled.View`
+flex:1
+background-color:"black"
+`;
+
+export const HeaderCardBody = styled.View`
+  margin:${(props) => props.theme.space[2]};
+`;
+export const InfoCardBody = styled.View`
+  margin:${(props) => props.theme.space[2]};
+`;
+
+export const HeaderCard = styled.View`
+background-color:black;
+padding-left:${(props) => props.theme.space[2]};
+`;
+
+export const InfoCard = styled.View`
+height:400px;
+background-color:red;
+`;
+export const Heading = styled.View
+`
+margin-left:${(props) => props.theme.space[1]};
+`;
+
+export const Body = styled.View`
+`;
+
+export const CardRow = styled(Row)`
+margin-top:${(props) => props.theme.space[4]};
+`;
+
+
+export const ExpandSection =styled.View`
+padding:5px;
+`;
+
+export const PressableIcon = styled(Pressable)`
+flex:1;
+${Platform.isPad ? `width: ${50}px`:`width: ${25}px`};
+justifyContent:center;
+alignItems:center;
 `;

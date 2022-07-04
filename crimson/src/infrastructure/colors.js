@@ -30,6 +30,9 @@ export const colors = {
     success: "#138000",
     value:"#808080",
     header1:"#757575",
-    CardKeyValue:"#484848"
+    CardKeyValue:"#484848",
+    yellow:"#FFFF00",
+    grey1:"#A9A9A9",
+    lightgrey:"#D3D3D3"
   },
 };

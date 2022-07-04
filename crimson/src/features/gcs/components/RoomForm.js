@@ -69,7 +69,8 @@ export const RoomForm = ({ room_Measurement }) => {
                   : <Icon name="keyboard-arrow-up" size={30} color="black" />}
               </Row>
             </Col>
-            <Col><Text>TOTAL SQ.FT. :{GetToalSqFt().toLocaleString("en-US")}</Text>
+            <Col>
+            <Text>TOTAL SQ.FT. :{GetToalSqFt().toLocaleString("en-US")}</Text>
             </Col></Row>
         </CollapseSectionHeader>
       </Pressable>
@@ -78,17 +79,17 @@ export const RoomForm = ({ room_Measurement }) => {
           <FormCard>
             <CardHeader>
               <Row >
-                <Col style={{ flex:1,flexDirection:'row', alignItems:'center',justifyContent:'center'}}xs="4" md="4">
+                <Col xs="4" md="3">
                   <Text  variant="formHeader">ROOM</Text>
                 </Col>
                 <Col xs="2" md="2">
-                  <Text variant="formHeader" >LENGTH</Text>
+                  <Text variant="formHeader"  style={{textAlign:"center"}}>LENGTH</Text>
                 </Col>
                 <Col xs="2" md="2">
-                  <Text variant="formHeader" >WIDTH</Text>
+                  <Text variant="formHeader" style={{textAlign:"center"}}>WIDTH</Text>
                 </Col>
-                <Col xs="2" md="2">
-                  <Text variant="formHeader" >MISC SF</Text>
+                <Col xs="2" md="3">
+                  <Text variant="formHeader" style={{textAlign:"center"}}>MISC SF</Text>
                 </Col>
                 <Col xs="2" md="2">
                   <Text variant="formHeader">TOTAL</Text>
@@ -101,9 +102,9 @@ export const RoomForm = ({ room_Measurement }) => {
                 :
                 Object.keys(room_Measurement.ROOM).map((item, i) => {
                   return (
-                    <Row key={room_Measurement.ROOM[item].concat(i)}>
-                      <Col xs="4" md="4">
-                        <Text variant="body">{room_Measurement.ROOM[item]}</Text>
+                    <Row key={item.UniqueKey__c}>
+                      <Col xs="4" md="3" style={{textAlign:"center"}}>
+                        <Text variant="body">{item.Sub_Category__c}</Text>
                       </Col>
                       <Col xs="2" md="2">
                         <NumberInput value={room_Measurement.LENGTH[item]} onChange={value => ()=>{}} />
@@ -113,7 +114,7 @@ export const RoomForm = ({ room_Measurement }) => {
                         <NumberInput value={room_Measurement.WIDTH[item]} onChange={value => ()=>{}} />
                         {/* <Text variant="body">{room_Measurement.WIDTH[item]}</Text> */}
                       </Col>
-                      <Col xs="2" md="2">
+                      <Col xs="2" md="3">
                         {/* <Text variant="body">{room_Measurement.MISC_SF[item]}</Text> */}
                         <TextArea Value={room_Measurement.MISC_SF[item]}/>
                       </Col>
