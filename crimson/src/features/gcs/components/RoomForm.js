@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useContext } from "react";
 import { View, Pressable, ScrollView, TextInput, Platform } from "react-native";
 import { CollapseSectionHeader, SectionHeaderEnd, SectionContainer, FormCard, CardHeader, CardBody } from "./VendorFormPageStyles"
 import Collapsible from 'react-native-collapsible';
@@ -8,20 +8,30 @@ import { Col, Row } from "react-native-responsive-grid-system";
 import { TotalContainer,TextArea, NumberInput } from "./VendorFormPageStyles";
 import ContentLoader, { Rect } from 'react-content-loader/native'
 import styled from "styled-components/native";
+import { VendorFormContext } from "../../../services/context/VendorForm/vendorForm.contex";
 
 
 
 
 
-export const RoomForm = ({ room_Measurement }) => {
-  console.log(room_Measurement);
+export const RoomForm = ({ room_Measurement,updateLocalData }) => {
   const [isCollapsed, setIsCollapsed] = React.useState(false);
   const handlePress = (setIsCollapsed, isCollapsed) => setIsCollapsed(!isCollapsed);
+  const [length, setLength] = React.useState(false);
+  const [room_measurementData,setRoom_measurementData] = React.useState([]);
+  const { vendorFormDetails, addToVfContex } = useContext(VendorFormContext);
+
+  const onValueChange = async (value,field,key)=>{
+    const newState = room_measurementData.map(obj => {
+      if (obj.UniqueKey__c===key) {
+        return {...obj, [field]: value};
+      }
+      return obj;
+    });
+    setRoom_measurementData(newState)
 
 
-  // const changeAmount = (value)=>{
-  //     console.log(value);
-  // }
+  }
 
   const MyLoader = () => {
     const getRowLoader = (y) => {
@@ -49,12 +59,27 @@ export const RoomForm = ({ room_Measurement }) => {
 
   const GetToalSqFt = () => {
     let toatalSF = 0;
-    Object.keys(room_Measurement.TOTAL).map(ele => {
-      toatalSF = toatalSF + room_Measurement.TOTAL[ele]
+    room_measurementData.map(ele => {
+      toatalSF = toatalSF + ele.Room_Total__c
       return toatalSF
     })
     return toatalSF
   }
+
+  useEffect(() => {
+    // componentDidMount events
+    return () => {
+      console.log("unmounting from Room mes");
+      updateLocalData(room_measurementData,"RM");
+      // componentWillUnmount events
+    }
+  }, []);
+
+
+useEffect(()=>{
+  setRoom_measurementData(room_Measurement);
+},[room_Measurement])
+
 
 
   return (
@@ -97,29 +122,29 @@ export const RoomForm = ({ room_Measurement }) => {
               </Row>
             </CardHeader>
             <CardBody>
-              {room_Measurement.ROOM.length == 0 ?
+              {room_measurementData.length <1 ?
                 MyLoader()
                 :
-                Object.keys(room_Measurement.ROOM).map((item, i) => {
+                room_measurementData.map((item, i) => {
                   return (
                     <Row key={item.UniqueKey__c}>
                       <Col xs="4" md="3" style={{textAlign:"center"}}>
                         <Text variant="body">{item.Sub_Category__c}</Text>
                       </Col>
                       <Col xs="2" md="2">
-                        <NumberInput value={room_Measurement.LENGTH[item]} onChange={value => ()=>{}} />
+                        <NumberInput  value={item.Room_Length__c} id="3" onChange={(value) =>{onValueChange(value,"Room_Length__c",item.UniqueKey__c)}} />
                         {/* <Text variant="body">{room_Measurement.LENGTH[item]}</Text> */}
                       </Col>
                       <Col xs="2" md="2">
-                        <NumberInput value={room_Measurement.WIDTH[item]} onChange={value => ()=>{}} />
+                        <NumberInput value={item.Room_Width__c} onChange={(value) =>{onValueChange(value,"Room_Width__c",item.UniqueKey__c)}} />
                         {/* <Text variant="body">{room_Measurement.WIDTH[item]}</Text> */}
                       </Col>
                       <Col xs="2" md="3">
                         {/* <Text variant="body">{room_Measurement.MISC_SF[item]}</Text> */}
-                        <TextArea Value={room_Measurement.MISC_SF[item]}/>
+                        <TextArea Value={item.Room_Misc_SF__c}  onChangeText={(value) =>{onValueChange(value,"Room_Misc_SF__c",item.UniqueKey__c)}}/>
                       </Col>
                       <Col xs="2" md="2">
-                        <Text variant="body">{room_Measurement.TOTAL[item]}</Text>
+                        <Text variant="body">{item.Room_Total__c}</Text>
 
                       </Col>
                     </Row>

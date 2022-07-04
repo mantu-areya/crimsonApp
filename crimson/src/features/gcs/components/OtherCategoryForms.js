@@ -12,7 +12,7 @@ import ContentLoader, { Rect } from 'react-content-loader/native'
 import { Platform } from 'react-native';
 
 
-export const OtherCategoryForms = ({ catName, dataList }) => {
+export const OtherCategoryForms = ({ catName, formData }) => {
   const [isCollapsed, setIsCollapsed] = React.useState(false);
   const [isNotesCollapsed, setIsNotesCollapsed] = React.useState(false);
   const [key, setKey] = React.useState('');
@@ -83,7 +83,7 @@ export const OtherCategoryForms = ({ catName, dataList }) => {
             </Col>
             <Col xs="4" md="2">
               <TotalContainer>
-                <Text>TOTAL :${GetToal().toLocaleString("en-US")}</Text>
+                {/* <Text>TOTAL :${GetToal().toLocaleString("en-US")}</Text> */}
                 {/* <Text>TOTAL :$2,225</Text> */}
               </TotalContainer>
             </Col>
