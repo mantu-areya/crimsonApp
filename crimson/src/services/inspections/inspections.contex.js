@@ -8,6 +8,7 @@ export const InspectionsContext = createContext();
 export const InspectionsContextProvider = ({ children }) =>{
 
   const [inspections, setInspections] = useState(null);
+  const [vendorFormData,setVendorFormData] = useState(null);
 const [pendingInspection, setpendingInspection] = useState(null);
 const [isLoading, setIsLoading] = useState(false);
 const [error, setError] = useState(null);
@@ -53,8 +54,9 @@ return (
       isLoading,
       error,
       inspections,
-      pendingInspection
-    }}
+      pendingInspection,
+      setVendorFormData
+        }}
   >
     {children}
   </InspectionsContext.Provider>

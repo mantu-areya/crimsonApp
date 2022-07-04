@@ -95,7 +95,7 @@ useEffect(()=>{
               </Row>
             </Col>
             <Col>
-            {/* <Text>TOTAL SQ.FT. :{GetToalSqFt().toLocaleString("en-US")}</Text> */}
+            <Text>TOTAL SQ.FT. :{GetToalSqFt().toLocaleString("en-US")}</Text>
             </Col></Row>
         </CollapseSectionHeader>
       </Pressable>
@@ -104,18 +104,17 @@ useEffect(()=>{
           <FormCard>
             <CardHeader>
               <Row >
-                {console.log(vendorFormDetails)}
-                <Col style={{ flex:1,flexDirection:'row', alignItems:'center',justifyContent:'center'}}xs="4" md="4">
+                <Col xs="4" md="3">
                   <Text  variant="formHeader">ROOM</Text>
                 </Col>
                 <Col xs="2" md="2">
-                  <Text variant="formHeader" >LENGTH</Text>
+                  <Text variant="formHeader"  style={{textAlign:"center"}}>LENGTH</Text>
                 </Col>
                 <Col xs="2" md="2">
-                  <Text variant="formHeader" >WIDTH</Text>
+                  <Text variant="formHeader" style={{textAlign:"center"}}>WIDTH</Text>
                 </Col>
-                <Col xs="2" md="2">
-                  <Text variant="formHeader" >MISC SF</Text>
+                <Col xs="2" md="3">
+                  <Text variant="formHeader" style={{textAlign:"center"}}>MISC SF</Text>
                 </Col>
                 <Col xs="2" md="2">
                   <Text variant="formHeader">TOTAL</Text>
@@ -129,7 +128,7 @@ useEffect(()=>{
                 room_measurementData.map((item, i) => {
                   return (
                     <Row key={item.UniqueKey__c}>
-                      <Col xs="4" md="4">
+                      <Col xs="4" md="3" style={{textAlign:"center"}}>
                         <Text variant="body">{item.Sub_Category__c}</Text>
                       </Col>
                       <Col xs="2" md="2">
@@ -140,7 +139,7 @@ useEffect(()=>{
                         <NumberInput value={item.Room_Width__c} onChange={(value) =>{onValueChange(value,"Room_Width__c",item.UniqueKey__c)}} />
                         {/* <Text variant="body">{room_Measurement.WIDTH[item]}</Text> */}
                       </Col>
-                      <Col xs="2" md="2">
+                      <Col xs="2" md="3">
                         {/* <Text variant="body">{room_Measurement.MISC_SF[item]}</Text> */}
                         <TextArea Value={item.Room_Misc_SF__c}  onChangeText={(value) =>{onValueChange(value,"Room_Misc_SF__c",item.UniqueKey__c)}}/>
                       </Col>

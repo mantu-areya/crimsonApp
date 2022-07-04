@@ -15,7 +15,6 @@ export const getToken = (username, password, apiKeyAuthInfo) => {
   return apiPost('https://test.salesforce.com/services/oauth2/token', data
   )
     .then(response => {
-      AsyncStorage.setItem('Token', response.data.access_token);
       return response.data.access_token;
     })
     .catch(err => {
@@ -24,6 +23,30 @@ export const getToken = (username, password, apiKeyAuthInfo) => {
     });
 }
 
+
+
+let setToken = async() =>{
+
+  const token = await getToken();
+  // const token = await getStoredToken();
+  return AsyncStorage.removeItem('Token').then(
+  AsyncStorage.setItem('Token', token).then(data=>{
+    return 
+    // console.log(data,"settingtk");
+  })
+  .catch(err=>{
+    console.log(err);
+  })
+  ).catch(err=>{
+    console.log(err);
+  })
+}
+
+const interval =()=> setInterval(function() {
+  return setToken();
+ }, 50000);
+
+ interval();
 
 let getStoredToken = () => {
   return AsyncStorage.getItem('Token').then(
@@ -37,7 +60,8 @@ let getStoredToken = () => {
 
 export const getInspectionsData = async () => {
 
-  const token = await getToken();
+  const token = await getStoredToken();
+  console.log(token);
   return apiGet(
     `https://hudsonhomesmgmt--uat.my.salesforce.com/services/data/v54.0/query/?q=SELECT+FIELDS(ALL)+from+inspection__c+where+Quip_Template_Version__c='v1.1'+and+Inspection_Stage__c!='Ordered'+LIMIT 40`,
     {
@@ -58,7 +82,7 @@ export const getInspectionsData = async () => {
 
 export const getPendingInspections = async () => {
 
-  const token = await getToken();
+  const token = await getStoredToken();
   return apiGet(
     `https://hudsonhomesmgmt--uat.my.salesforce.com/services/data/v54.0/query/?q=SELECT+FIELDS(ALL)+from+inspection__c+where+Quip_Template_Version__c='v1.1'+and+Inspection_Stage__c!='Ordered'+LIMIT 3`,
     {
@@ -78,7 +102,7 @@ export const getPendingInspections = async () => {
 }
 
 export const getVendorFormDetails = async (inspId) => {
-  const token = await getToken();
+  const token = await getStoredToken();
   console.log("start");
   return apiGet(
     `https://hudsonhomesmgmt--uat.my.salesforce.com/services/data/v54.0/query/?q=SELECT+FIELDS(ALL)+from+Dynamic_Vendor_Template__c+where+Lookup_To_Parent__c='${inspId}'+LIMIT 200`,
