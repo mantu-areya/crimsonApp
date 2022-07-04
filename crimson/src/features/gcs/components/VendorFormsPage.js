@@ -1,7 +1,7 @@
 
 import React, { useEffect, useState } from "react";
 // import { Row } from "../components/ProcessRecordsInfoCardStyle";
-import { StatusBar, Image, View, ScrollView, TouchableOpacity } from "react-native";
+import {  Image, View, ScrollView, TouchableOpacity } from "react-native";
 import { SafeArea } from "../../../components/utility/safe-area.component";
 import styled from "styled-components/native";
 import { Text } from "../../../components/typography/text.component";
@@ -12,9 +12,19 @@ import { InspectionDetailTile } from "./InspectionDetailTile";
 import { getVendorFormDetails } from "../../../services/inspections/inspections.service"
 import { RoomForm } from "./RoomForm";
 import { OtherCategoryForms } from "./OtherCategoryForms";
-import { TotalContainer,InfoTextArea,ActionContainer } from "./VendorFormPageStyles";
+import { TotalContainer, InfoTextArea, ActionContainer,HeaderCardCover, HeaderCardBody, HeaderCard,Body } from "./VendorFormPageStyles";
 import { ActivityIndicator, Colors } from "react-native-paper";
 import { InspectionDetailsCard } from "./InspectionDetailsCard"
+import { VendorFormContext } from "../../../services/context/VendorForm/vendorForm.contex";
+import { StatusBar } from 'expo-status-bar';
+
+
+
+
+
+
+
+
 
 const windowWidth = Dimensions.get('window').width;
 const IconWidth = .30 * windowWidth;
@@ -122,10 +132,6 @@ export const VendorFormsPage = ({ inspectionData }) => {
 
   }
 
-
-
-
-
   const setVendorFormDetails = () => {
     getVendorFormDetails(inspectionData.Id).then(data => {
       if (data.totalSize == 0) {
@@ -141,7 +147,38 @@ export const VendorFormsPage = ({ inspectionData }) => {
     setVendorFormDetails();
   }, []);
 
-  const renderNoVFText = () =>{
+  // useEffect(()=>{
+  //   setVendorFormData(data.records)
+
+  // },[])
+
+  let updateLocalDataSet = (modifiedDataset, formType) => {
+    vendorFormData.map(ele => {
+      if (formType === "RM") {
+        // console.log(modifiedDataset[0]);
+        modifiedDataset.map(obj => {
+          if (obj.UniqueKey__c === ele.UniqueKey__c) {
+            // console.log(obj.UniqueKey__c, ele.UniqueKey__c);
+          }
+          return obj
+        });
+      }
+
+      return ele
+    })
+
+
+  }
+
+  useEffect(() => {
+    // componentDidMount events
+    return () => {
+      console.log("unmounting");
+      // componentWillUnmount events
+    }
+  }, []);
+
+  const renderNoVFText = () => {
     return <InfoTextArea>
      <Text variant="InspectionHeaderName" > VENDOR FORM IS NOT AVAILABLE</Text>
     </InfoTextArea>
@@ -150,67 +187,72 @@ export const VendorFormsPage = ({ inspectionData }) => {
   return (
 
     <>
-      <StatusBar
-        animated={true}
-        backgroundColor="#61dafb"
-      />
+      <StatusBar backgroundColor="red" translucent/>
+
+      {/* <HeaderCard  >
+
+          <SafeArea>
+            <HeaderCardBody>
+
+                        <Row>
+            <Spacer position="left" size="small" />
+              <View>
+                <Row>
+                  <Text variant="HeaderName">{inspectionData.Name} | </Text>
+                  <Text variant="HeaderName">VENDOR ESTIMATE FORM</Text>
+                </Row>
+                <Text variant="HeaderName">{inspectionData.Property_Address__c} </Text>
+              </View>
+          </Row>
+            </HeaderCardBody>
+          </SafeArea>
+      </HeaderCard> */}
       <SafeArea>
         <ScrollView >
-          <Spacer position="top" size="large" />
-
-          <Row>
-            <Spacer position="left" size="medium" />
-            <Col  >
-
-              <BrandIcon
-                source={require("../../../assets/images/HHMLogo.png")}
-                style={{ width: IconWidth, height: 50 }}
-              />
-            </Col>
-            <Spacer position="left" size="small" />
-            <Col >
+          <HeaderCard  >
+            <Spacer position="top" size="medium" />
+            {/* <Spacer position="left" size="small" /> */}
               <View>
                 <Row>
                   <Text variant="InspectionHeaderName">{inspectionData.Name} | </Text>
                   <Text variant="InspectionHeaderName">VENDOR ESTIMATE FORM</Text>
                 </Row>
-                <Text variant="InspectionHeaderName">{inspectionData.Property_Address__c} </Text>
+                <Text variant="HeaderName">{inspectionData.Property_Address__c} </Text>
               </View>
-            </Col>
-          </Row>
-          <Spacer position="top" size="medium" />
-          {/* 
-          {loader? < LoadingContainer >
-              <Loading size={50} animating={true} color={Colors.blue300} />
-            </LoadingContainer>
-              :<> */}
-          <InspectionDetailsCard inspectionData={inspectionData} />
-          {/* <InspectionDetailTile inspectionData={inspectionData} /> */}
-          {showMsg?renderNoVFText():<>
-          <Spacer position="top" size="medium"/>
-          <ActionContainer>
-          <TotalContainer>
-            <Text>GRAND TOTAL BID SUBMITTED : ${grandTotal.toLocaleString("en-US")}</Text>
-            {/* <Text>GRAND TOTAL BID SUBMITTED : $2,265.81</Text> */}
-            <Spacer position="right" size="large" />
-          </TotalContainer>
-          </ActionContainer>
-          <Spacer position="top" size="large" />
-          <RoomForm room_Measurement={room_Measurement}  />
-          <Spacer position="top" size="medium" />
-          <OtherCategoryForms catName={"GENERAL RENTAL OPERATIONS SCOPE"} dataList={general_Rental} />
-          <OtherCategoryForms catName={"Pools"} dataList={pools} />
-          <OtherCategoryForms catName={"Exterior"} dataList={exterior} />
-          <OtherCategoryForms catName={"Interior"} dataList={interior} />
-          <OtherCategoryForms catName={"Mechanical, Electrical and Plumbing Systems"} dataList={mech_Elec_Plumb} />
-          <Spacer position="top" size="large" />
-          <TotalContainer>
-          <Text>GRAND TOTAL BID SUBMITTED : ${grandTotal.toLocaleString("en-US")}</Text>
-            {/* <Text>GRAND TOTAL BID SUBMITTED : $2,265.81</Text> */}
-            <Spacer position="right" size="large" />
-          </TotalContainer>
-          </>}
+              <Spacer position="top" size="large" />
+            <InspectionDetailsCard inspectionData={inspectionData} />
+            <Spacer position="bottom" size="medium" />
 
+          </HeaderCard  >
+          <Body>
+          <Spacer position="top" size="medium" />
+
+
+          {showMsg ? renderNoVFText() : <>
+            <Spacer position="top" size="medium" />
+            <ActionContainer>
+              <TotalContainer>
+                <Text>GRAND TOTAL BID SUBMITTED : ${grandTotal.toLocaleString("en-US")}</Text>
+                {/* <Text>GRAND TOTAL BID SUBMITTED : $2,265.81</Text> */}
+                <Spacer position="right" size="large" />
+              </TotalContainer>
+            </ActionContainer>
+            <Spacer position="top" size="large" />
+              <RoomForm room_Measurement={room_MeasurementData} updateLocalData={updateLocalDataSet} />
+              <Spacer position="top" size="large" />
+              <OtherCategoryForms catName={"GENERAL RENTAL OPERATIONS SCOPE"} formData={general_Rental} />
+              <OtherCategoryForms catName={"Pools"} formData={pools} />
+              <OtherCategoryForms catName={"Exterior"} formData={exterior} />
+              <OtherCategoryForms catName={"Interior"} formData={interior} />
+              <OtherCategoryForms catName={"Mechanical, Electrical and Plumbing Systems"} formData={mech_Elec_Plumb} />
+              <Spacer position="top" size="large" />
+            <TotalContainer>
+              <Text>GRAND TOTAL BID SUBMITTED : ${grandTotal.toLocaleString("en-US")}</Text>
+              {/* <Text>GRAND TOTAL BID SUBMITTED : $2,265.81</Text> */}
+              <Spacer position="right" size="large" />
+            </TotalContainer>
+          </>}
+          </Body>
         </ScrollView>
       </SafeArea>
     </>

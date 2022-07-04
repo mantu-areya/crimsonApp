@@ -8,18 +8,13 @@ import { Spacer } from '../../../components/spacer/spacer.component';
 import { Text } from '../../../components/typography/text.component';
 
 
-const DetailCard = styled(ImageBackground).attrs({
-  borderRadius: 10
-})`
 
-// height: 100px;
-padding:5px
 
-`;
+
+
+
 
 const CardConatainer = styled.View`
-padding-left:10px;
-padding-right:10px;
 
 `;
 
@@ -53,9 +48,10 @@ export const InspectionDetailsCard = ({ inspectionData }) => {
       <>
 
         <Row >
-          <Icon name={icon} size={30} color="black" />
+          <Icon name={icon} size={30} color="white" />
+          <Spacer position="right" size="small"/>
           <Col xs="10">
-            <Text>{headerName}</Text>
+          <Text variant="DetailcardHeader" >{headerName}</Text>
             <Spacer position="bottom" size="small"/>
 
             <Row >
@@ -63,8 +59,8 @@ export const InspectionDetailsCard = ({ inspectionData }) => {
               return (
               <View key={dataList[item].concat(i)}>
               <Spacer  position="right" size="large">
-                    <Text variant="CarContentList" >{dataList[item]} : </Text>
-                    <Text variant="DetailcardValue">{inspectionData[item]?inspectionData[item]:'NA'}</Text>
+                    <Text variant="VfDetailsKey" >{dataList[item]} : </Text>
+                    <Text variant="VfDetailsValue">{inspectionData[item]?inspectionData[item]:'NA'}</Text>
                     <Spacer position="bottom" size="small"/>
 
                     </Spacer>
@@ -92,18 +88,10 @@ export const InspectionDetailsCard = ({ inspectionData }) => {
 
   return <>
     <CardConatainer >
-      <DetailCard source={require("../../../assets/images/DetailsCardBg.jpeg")} >
         {getDetailDrawer("PROPERTY DETAILS", propertyDetails,"office-building-marker")}
         <Spacer position="top" size="medium" />
         {getDetailDrawer("KEY CONTACTS AND ACCESS INFORMATION", Key_Contact_Access_Info,"folder-key")}
         {getDetailDrawer("KEY DATE",Key_Date,"calendar-month")}
-
-
-
-
-
-      </DetailCard>
-
 
 
     </CardConatainer>

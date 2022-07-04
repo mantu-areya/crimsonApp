@@ -56,8 +56,8 @@ font-family: ${theme.fonts.bold};
 `;
 
 const InspectionHeaderName =  (theme) => `
-font-size:${theme.fontSizes.body};
-color:${theme.colors.text.primary};
+font-size:${theme.fontSizes.title};
+color:${theme.colors.text.yellow};
 font-weight:${theme.fontWeights.large};
 `;
 
@@ -100,6 +100,24 @@ const formHeader = (theme,align) => `
     
 `;
 
+const DetailcardHeader = (theme) => `
+font-size: ${theme.fontSizes.medium};
+color:${theme.colors.text.inverse}
+font-family: ${theme.fonts.body};
+`;
+
+const VfDetailsKey = (theme) => `
+font-size: ${theme.fontSizes.medium};
+color:${theme.colors.text.grey1}
+font-family: ${theme.fonts.body};
+`;
+
+const VfDetailsValue = (theme) => `
+font-size: ${theme.fontSizes.medium};
+color:${theme.colors.text.lightgrey}
+font-family: ${theme.fonts.body};
+`;
+
 const variants = {
   body,
   label,
@@ -115,7 +133,10 @@ const variants = {
   CarContentList,
   InspectionHeaderName,
   DetailcardValue,
-  formHeader
+  formHeader,
+  DetailcardHeader,
+  VfDetailsKey,
+  VfDetailsValue
 };
 
 export const Text = styled.Text`

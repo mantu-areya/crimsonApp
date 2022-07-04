@@ -8,10 +8,12 @@ export const InspectionDetailScreen = ({ route }) => {
   const { inspectionData } = route.params;
 
 
+
+  
+
   return (
     <>
- 
-<VendorFormsPage inspectionData={inspectionData} /> 
+      <VendorFormsPage inspectionData={inspectionData} />
     </>
   )
 
