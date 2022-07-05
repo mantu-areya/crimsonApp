@@ -1,7 +1,7 @@
 
 import React, { useEffect, useState, useContext } from "react";
 // import { Row } from "../components/ProcessRecordsInfoCardStyle";
-import {  Image, View, ScrollView, TouchableOpacity } from "react-native";
+import { Image, View, ScrollView, TouchableOpacity } from "react-native";
 import { SafeArea } from "../../../components/utility/safe-area.component";
 import styled from "styled-components/native";
 import { Text } from "../../../components/typography/text.component";
@@ -9,14 +9,12 @@ import { Spacer } from "../../../components/spacer/spacer.component";
 import { Row, Col } from 'react-native-responsive-grid-system';
 import { Dimensions } from 'react-native';
 import { InspectionDetailTile } from "./InspectionDetailTile";
-import { getVendorFormDetails } from "../../../services/inspections/inspections.service"
 import { RoomForm } from "./RoomForm";
 import { OtherCategoryForms } from "./OtherCategoryForms";
-import { TotalContainer, InfoTextArea, ActionContainer,HeaderCardCover, HeaderCardBody, HeaderCard,Body } from "./VendorFormPageStyles";
+import { TotalContainer, InfoTextArea, ActionContainer, HeaderCardCover, HeaderCardBody, HeaderCard, Body } from "./VendorFormPageStyles";
 import { ActivityIndicator, Colors } from "react-native-paper";
 import { InspectionDetailsCard } from "./InspectionDetailsCard"
 import { VendorFormContext } from "../../../services/context/VendorForm/vendorForm.contex";
-import { StatusBar } from 'expo-status-bar';
 
 
 
@@ -95,37 +93,30 @@ export const VendorFormsPage = ({ inspectionData }) => {
     setMech_Elec_Plumb(category5);
     setGrandTotal(grandTtl)
     setVendorFormData(inspData)
-    addToVfContex(inspData)
+    // addToVfContex(inspData)
 
 
-  }
-
-  const setVendorFormDetails = () => {
-    getVendorFormDetails(inspectionData.Id).then(data => {
-      if (data.totalSize == 0) {
-        setShowMsg(true)
-      } else {
-        GetDataByCategory(data.records);
-      }
-    }
-    );
   }
 
 
 
   useEffect(() => {
-    setVendorFormDetails();
-  }, []);
+    if (vendorFormDetails[inspectionData.Id]){
+      if( vendorFormDetails[inspectionData.Id].totalSize == 0) {
+      setShowMsg(true)
+    } else {
+      console.log(vendorFormDetails,"trc");
 
-  // useEffect(()=>{
-  //   setVendorFormData(data.records)
+      const records = vendorFormDetails[inspectionData.Id].records;
 
-  // },[])
+      GetDataByCategory(records);
+    }
+  }
+  }, [vendorFormDetails]);
 
   let updateLocalDataSet = (modifiedDataset, formType) => {
     vendorFormData.map(ele => {
       if (formType === "RM") {
-        // console.log(modifiedDataset[0]);
         modifiedDataset.map(obj => {
           if (obj.UniqueKey__c === ele.UniqueKey__c) {
             // console.log(obj.UniqueKey__c, ele.UniqueKey__c);
@@ -140,13 +131,13 @@ export const VendorFormsPage = ({ inspectionData }) => {
 
   }
 
-  useEffect(() => {
-    // componentDidMount events
-    return () => {
-      console.log("unmounting");
-      // componentWillUnmount events
-    }
-  }, []);
+  // useEffect(() => {
+  //   // componentDidMount events
+  //   return () => {
+  //     console.log("unmounting");
+  //     // componentWillUnmount events
+  //   }
+  // }, []);
 
   const renderNoVFText = () => {
     return <InfoTextArea>
@@ -157,7 +148,6 @@ export const VendorFormsPage = ({ inspectionData }) => {
   return (
 
     <>
-      <StatusBar backgroundColor="red" translucent/>
 
       {/* <HeaderCard  >
 
@@ -182,14 +172,14 @@ export const VendorFormsPage = ({ inspectionData }) => {
           <HeaderCard  >
             <Spacer position="top" size="medium" />
             {/* <Spacer position="left" size="small" /> */}
-              <View>
-                <Row>
-                  <Text variant="InspectionHeaderName">{inspectionData.Name} | </Text>
-                  <Text variant="InspectionHeaderName">VENDOR ESTIMATE FORM</Text>
-                </Row>
-                <Text variant="HeaderName">{inspectionData.Property_Address__c} </Text>
-              </View>
-              <Spacer position="top" size="large" />
+            <View>
+              <Row>
+                <Text variant="InspectionHeaderName">{inspectionData.Name} | </Text>
+                <Text variant="InspectionHeaderName">VENDOR ESTIMATE FORM</Text>
+              </Row>
+              <Text variant="HeaderName">{inspectionData.Property_Address__c} </Text>
+            </View>
+            <Spacer position="top" size="large" />
             <InspectionDetailsCard inspectionData={inspectionData} />
             <Spacer position="bottom" size="medium" />
 

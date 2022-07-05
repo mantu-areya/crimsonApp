@@ -66,14 +66,14 @@ export const RoomForm = ({ room_Measurement,updateLocalData }) => {
     return toatalSF
   }
 
-  useEffect(() => {
-    // componentDidMount events
-    return () => {
-      console.log("unmounting from Room mes");
-      updateLocalData(room_measurementData,"RM");
-      // componentWillUnmount events
-    }
-  }, []);
+  // useEffect(() => {
+  //   // componentDidMount events
+  //   return () => {
+  //     console.log("unmounting from Room mes");
+  //     updateLocalData(room_measurementData,"RM");
+  //     // componentWillUnmount events
+  //   }
+  // }, []);
 
 
 useEffect(()=>{

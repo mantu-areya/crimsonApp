@@ -83,7 +83,7 @@ export const OtherCategoryForms = ({ catName, formData }) => {
             </Col>
             <Col xs="4" md="2">
               <TotalContainer>
-                {/* <Text>TOTAL :${GetToal().toLocaleString("en-US")}</Text> */}
+                <Text>TOTAL : ${GetToal().toLocaleString("en-US")}</Text>
                 {/* <Text>TOTAL :$2,225</Text> */}
               </TotalContainer>
             </Col>

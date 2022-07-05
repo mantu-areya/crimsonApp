@@ -1,5 +1,5 @@
-import React, { useContext, useEffect } from "react";
-import { Searchbar } from "react-native-paper";
+import React, { useContext, useEffect, useState } from "react";
+import { Button, Searchbar, Alert } from "react-native-paper";
 import { SafeArea } from "../../../components/utility/safe-area.component";
 import styled from "styled-components";
 import { StyleSheet, FlatList, View, StatusBar, Image, ScrollView, ImageBackground } from 'react-native';
@@ -15,6 +15,8 @@ import ProfilePicture from "react-native-profile-picture"
 import { QuickActionsList } from "../components/QuickActionsList"
 import {InspectionsContext} from "../../../services/inspections/inspections.contex"
 import {getInspectionsData} from "../../../services/inspections/inspections.service";
+import NetInfo from "@react-native-community/netinfo";
+
 
 const SearchContainer = styled(Searchbar)`
   margin-top:${(props) => props.theme.space[4]};
@@ -92,13 +94,37 @@ const AppBody = styled.View`
 
 
 export const HomeScreen = ({ navigation }) => {
-  const { isLoading,pendingInspection } = useContext(InspectionsContext);
-  
+  const { isLoading,pendingInspection,isOnline,changeState } = useContext(InspectionsContext);
+  const [newState,setNewState]= useState(null)
+  const [online,setonline] = useState(isOnline)
   // useEffect(()=>{
 
   //   getInspectionsData();
 
   // },[])
+
+
+
+
+
+
+const recheckStatus=()=>{
+  changeState()
+  setNewState(!newState);
+  console.log("chking");
+  setonline(isOnline.isConnected)
+}
+
+useEffect(()=>{
+ navigation.addListener('focus', () => 
+ NetInfo.fetch().then(networkState => {
+  return setonline(networkState.isConnected)
+  
+})
+ )
+},[navigation])
+
+
 
   return (
     <>
@@ -138,9 +164,10 @@ export const HomeScreen = ({ navigation }) => {
                   <SearchContainer style={{ borderRadius: 15 }} placeholder="Search" />
                 </HeaderCardBody>
 
+
               </SafeArea>
             </HeaderCardCover>
-
+                {(isOnline==false||online==false)&&<Button onPress={()=>recheckStatus()}>click</Button>}
           </HeaderCard>
           <QuickActionsList  navigation = { navigation }/>
           <Spacer position="top" size="medium">
@@ -148,10 +175,10 @@ export const HomeScreen = ({ navigation }) => {
               <Text> Pending Inspections </Text>
             </SectionLabel>
           </Spacer>
-          <Row>
+          <Row>            
             <CardList
               horizontal
-              data={ pendingInspection !== null && pendingInspection.records}
+              data={ pendingInspection && pendingInspection.records}
               ListFooterComponent={showMoreIcon}
               keyExtractor={(item) => item.Name}
               renderItem={(item,i) => (
