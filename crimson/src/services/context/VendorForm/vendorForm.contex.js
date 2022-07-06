@@ -3,18 +3,13 @@ import React, { createContext, useState } from "react";
 export const VendorFormContext = createContext();
 
 export const VendorFormContextProvider = ({ children }) => {
-  const [vendorFormDetails, setVendorFormDetails] = useState([]);
+  const [vendorFormDetails, setVendorFormDetails] = useState({});
 
-  const add = (dataset) => {
-    console.log(dataset);
-    setVendorFormDetails(dataset)
-    // setFavourites([...favourites, dataset]);
-  };
-
-
-  const update = (modifiedData) => {
-
-  };
+  const add = (dataset,inspData) => setVendorFormDetails({...vendorFormDetails,[inspData.Id] : dataset})
+  
+  
+  
+  const update = (modifiedData) => {};
 
   const remove = (dataset) => {
     setVendorFormDetails([]);
@@ -29,6 +24,7 @@ export const VendorFormContextProvider = ({ children }) => {
         updateVfContect:update,
       }}
     >
+      {/* {console.log(vendorFormDetails['a028C00000MigX6QAJ'],"rndr")} */}
       {children}
     </VendorFormContext.Provider>
   );

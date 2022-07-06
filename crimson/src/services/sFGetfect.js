@@ -22,7 +22,6 @@ conn.login(SF_LOGIN_USERNAME,SF_PASSWORD+SF_TOKEN, async (err, userInfo)=>{
       return records
     }
   });
-  console.log(records);
   return records
   }
 })

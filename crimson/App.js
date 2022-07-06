@@ -32,6 +32,8 @@ useEffect(()=>{
 )
 
 
+
+
   let [oswaldLoaded] = useOswald({
     Oswald_400Regular,
     Oswald_700Bold,Oswald_600SemiBold,
@@ -78,6 +80,7 @@ useEffect(()=>{
       <Text>Home</Text>
     </SafeArea>
   );
+
 
 
 

@@ -66,19 +66,49 @@ export const RoomForm = ({ room_Measurement,updateLocalData }) => {
     return toatalSF
   }
 
-  useEffect(() => {
-    // componentDidMount events
-    return () => {
-      console.log("unmounting from Room mes");
-      updateLocalData(room_measurementData,"RM");
-      // componentWillUnmount events
-    }
-  }, []);
+  // useEffect(() => {
+  //   // componentDidMount events
+  //   return () => {
+  //     console.log("unmounting from Room mes");
+  //     updateLocalData(room_measurementData,"RM");
+  //     // componentWillUnmount events
+  //   }
+  // }, []);
 
 
 useEffect(()=>{
   setRoom_measurementData(room_Measurement);
 },[room_Measurement])
+
+
+const displayRows=()=>{
+ return room_measurementData.map((item, i) => {
+    return (
+      <Row key={item.UniqueKey__c}>
+        <Col xs="4" md="3" style={{textAlign:"center"}}>
+          <Text variant="body">{item.Sub_Category__c}</Text>
+        </Col>
+        <Col xs="2" md="2">
+          <NumberInput  value={item.Room_Length__c} id="3" onChange={(value) =>{onValueChange(value,"Room_Length__c",item.UniqueKey__c)}} />
+          {/* <Text variant="body">{room_Measurement.LENGTH[item]}</Text> */}
+        </Col>
+        <Col xs="2" md="2">
+          <NumberInput value={item.Room_Width__c} onChange={(value) =>{onValueChange(value,"Room_Width__c",item.UniqueKey__c)}} />
+          {/* <Text variant="body">{room_Measurement.WIDTH[item]}</Text> */}
+        </Col>
+        <Col xs="2" md="3">
+          {/* <Text variant="body">{room_Measurement.MISC_SF[item]}</Text> */}
+          <TextArea Value={item.Room_Misc_SF__c}  onChangeText={(value) =>{onValueChange(value,"Room_Misc_SF__c",item.UniqueKey__c)}}/>
+        </Col>
+        <Col xs="2" md="2">
+          <Text variant="body">{item.Room_Total__c}</Text>
+
+        </Col>
+      </Row>
+    )
+  })
+
+}
 
 
 
@@ -125,31 +155,7 @@ useEffect(()=>{
               {room_measurementData.length <1 ?
                 MyLoader()
                 :
-                room_measurementData.map((item, i) => {
-                  return (
-                    <Row key={item.UniqueKey__c}>
-                      <Col xs="4" md="3" style={{textAlign:"center"}}>
-                        <Text variant="body">{item.Sub_Category__c}</Text>
-                      </Col>
-                      <Col xs="2" md="2">
-                        <NumberInput  value={item.Room_Length__c} id="3" onChange={(value) =>{onValueChange(value,"Room_Length__c",item.UniqueKey__c)}} />
-                        {/* <Text variant="body">{room_Measurement.LENGTH[item]}</Text> */}
-                      </Col>
-                      <Col xs="2" md="2">
-                        <NumberInput value={item.Room_Width__c} onChange={(value) =>{onValueChange(value,"Room_Width__c",item.UniqueKey__c)}} />
-                        {/* <Text variant="body">{room_Measurement.WIDTH[item]}</Text> */}
-                      </Col>
-                      <Col xs="2" md="3">
-                        {/* <Text variant="body">{room_Measurement.MISC_SF[item]}</Text> */}
-                        <TextArea Value={item.Room_Misc_SF__c}  onChangeText={(value) =>{onValueChange(value,"Room_Misc_SF__c",item.UniqueKey__c)}}/>
-                      </Col>
-                      <Col xs="2" md="2">
-                        <Text variant="body">{item.Room_Total__c}</Text>
-
-                      </Col>
-                    </Row>
-                  )
-                })
+                displayRows(room_measurementData)
               }
               <Row>
                 <Col xs="9" md="10">

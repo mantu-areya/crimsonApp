@@ -1,6 +1,7 @@
 import { apiPost, apiPut, apiGet } from '../api/api';
 var qs = require('qs');
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import NetInfo, { useNetInfo } from "@react-native-community/netinfo";
 
 
 export const getToken = (username, password, apiKeyAuthInfo) => {
@@ -19,34 +20,40 @@ export const getToken = (username, password, apiKeyAuthInfo) => {
     })
     .catch(err => {
       console.error(err);
-      throw err;
+      // throw err;
     });
 }
 
 
 
-let setToken = async() =>{
+export let setToken = async () => {
 
   const token = await getToken();
   // const token = await getStoredToken();
   return AsyncStorage.removeItem('Token').then(
-  AsyncStorage.setItem('Token', token).then(data=>{
-    return 
-    // console.log(data,"settingtk");
-  })
-  .catch(err=>{
-    console.log(err);
-  })
-  ).catch(err=>{
+    AsyncStorage.setItem('Token', token).then(data => {
+      return
+      // console.log(data,"settingtk");
+    })
+      .catch(err => {
+        console.log(err);
+      })
+  ).catch(err => {
     console.log(err);
   })
 }
 
-const interval =()=> setInterval(function() {
-  return setToken();
- }, 50000);
+const setTokenoninterval = () => setInterval(() => {
+  return NetInfo.fetch().then(networkState => {
+    // console.log("Is connected? - in settoken", networkState.isConnected);
+    if (networkState.isConnected) {
+      setToken()
+      return
+    }
+  })
+}, 500000);
 
- interval();
+setTokenoninterval();
 
 let getStoredToken = () => {
   return AsyncStorage.getItem('Token').then(
@@ -61,7 +68,7 @@ let getStoredToken = () => {
 export const getInspectionsData = async () => {
 
   const token = await getStoredToken();
-  console.log(token);
+
   return apiGet(
     `https://hudsonhomesmgmt--uat.my.salesforce.com/services/data/v54.0/query/?q=SELECT+FIELDS(ALL)+from+inspection__c+where+Quip_Template_Version__c='v1.1'+and+Inspection_Stage__c!='Ordered'+LIMIT 40`,
     {
@@ -75,7 +82,7 @@ export const getInspectionsData = async () => {
     })
     .catch(err => {
       console.error(err);
-      throw err;
+      // throw err;
     });
 
 }
@@ -95,8 +102,7 @@ export const getPendingInspections = async () => {
       return response.data;
     })
     .catch(err => {
-      console.error(err);
-      throw err;
+      // throw err;
     });
 
 }
@@ -112,13 +118,11 @@ export const getVendorFormDetails = async (inspId) => {
       }
     },
   )
-    .then(response => {
-      console.log("end");
-      return response.data;
-    })
+    .then(response => response.data)
     .catch(err => {
+      console.log(err);
       console.error(err);
-      throw err;
+      // throw err;
     });
 
 }

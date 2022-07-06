@@ -60,6 +60,50 @@ export const OtherCategoryForms = ({ catName, formData }) => {
     return toatalSF
   }
 
+  const displayRows=(dataList)=>{
+    console.log("loop");
+    return dataList.map((item, i) => {
+      return (
+        <View key={item.UniqueKey__c}>
+          <Row >
+
+            <Col xs="3" md="3">
+              <Text variant="body">{item.Sub_Category__c}</Text>
+            </Col>
+
+            <Col xs="3" md="3">
+              <NumberInput value={item.Quantity__c} onChange={() => { }} />
+            </Col>
+            {/* <Col xs="2" md="2">
+        <TextArea Value={item.U_M__c}/>
+        </Col> */}
+            <Col xs="3" md="3">
+              <NumberInput value={item.Rate__c} onChange={() => { }} />
+            </Col>
+            <Col xs="2" md="2">
+              <Text variant="body">{item.Total__c}</Text>
+            </Col>
+            <Col>
+                <PressableIcon onPress={() => handleNotes(isNotesCollapsed, setIsNotesCollapsed, item.UniqueKey__c)}>
+              {(isNotesCollapsed && item.UniqueKey__c === key) ? <Icon name="close" size={25} color="black"  />
+                : <NoteIcon name="note" size={20} color="black" />}
+           </PressableIcon>
+            </Col>
+          </Row>
+          <Collapsible collapsed={!(isNotesCollapsed && item.UniqueKey__c === key)} >
+            <ExpandSection>
+            <Text variant="formHeader">SCOPE NOTES :</Text>
+              <OtherFormTextArea Value={item.Scope_Notes__c} />
+              <Text variant="formHeader">U/M :</Text>
+              <OtherFormTextArea Value={item.U_M__c}/>
+            </ExpandSection>
+          </Collapsible>
+          <Spacer position="top" size="medium" />
+
+        </View>
+      )
+    })
+  }
   useEffect(() => {
     setDatalist(formData);
   }, [formData])
@@ -83,7 +127,7 @@ export const OtherCategoryForms = ({ catName, formData }) => {
             </Col>
             <Col xs="4" md="2">
               <TotalContainer>
-                {/* <Text>TOTAL :${GetToal().toLocaleString("en-US")}</Text> */}
+                <Text>TOTAL : ${GetToal().toLocaleString("en-US")}</Text>
                 {/* <Text>TOTAL :$2,225</Text> */}
               </TotalContainer>
             </Col>
@@ -122,48 +166,8 @@ export const OtherCategoryForms = ({ catName, formData }) => {
             <CardBody>
               {dataList.length == 0 ?
                 MyLoader()
-                :
-                dataList.map((item, i) => {
-                  return (
-                    <View key={item.UniqueKey__c}>
-                      <Row >
-
-                        <Col xs="3" md="3">
-                          <Text variant="body">{item.Sub_Category__c}</Text>
-                        </Col>
-
-                        <Col xs="3" md="3">
-                          <NumberInput value={item.Quantity__c} onChange={() => { }} />
-                        </Col>
-                        {/* <Col xs="2" md="2">
-                    <TextArea Value={item.U_M__c}/>
-                    </Col> */}
-                        <Col xs="3" md="3">
-                          <NumberInput value={item.Rate__c} onChange={() => { }} />
-                        </Col>
-                        <Col xs="2" md="2">
-                          <Text variant="body">{item.Total__c}</Text>
-                        </Col>
-                        <Col>
-                            <PressableIcon onPress={() => handleNotes(isNotesCollapsed, setIsNotesCollapsed, item.UniqueKey__c)}>
-                          {(isNotesCollapsed && item.UniqueKey__c === key) ? <Icon name="close" size={25} color="black"  />
-                            : <NoteIcon name="note" size={20} color="black" />}
-                       </PressableIcon>
-                        </Col>
-                      </Row>
-                      <Collapsible collapsed={!(isNotesCollapsed && item.UniqueKey__c === key)} >
-                        <ExpandSection>
-                        <Text variant="formHeader">SCOPE NOTES :</Text>
-                          <OtherFormTextArea Value={item.Scope_Notes__c} />
-                          <Text variant="formHeader">U/M :</Text>
-                          <OtherFormTextArea Value={item.U_M__c}/>
-                        </ExpandSection>
-                      </Collapsible>
-                      <Spacer position="top" size="medium" />
-
-                    </View>
-                  )
-                })}
+                :displayRows(dataList)
+                }
             </CardBody>
           </FormCard>
         </SectionContainer>
