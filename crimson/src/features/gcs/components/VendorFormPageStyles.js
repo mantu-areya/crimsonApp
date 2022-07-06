@@ -153,3 +153,9 @@ ${Platform.isPad ? `width: ${50}px`:`width: ${25}px`};
 justifyContent:center;
 alignItems:center;
 `;
+
+export const BackNavigator = styled(Pressable)`
+width:100px;
+height:30px;
+margin-left:-7px;
+`;

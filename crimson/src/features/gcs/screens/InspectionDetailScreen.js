@@ -6,7 +6,7 @@ import { getVendorFormDetails } from "../../../services/inspections/inspections.
 import NetInfo from "@react-native-community/netinfo";
 
 
-export const InspectionDetailScreen = ({ route }) => {
+export const InspectionDetailScreen = ({ route,navigation }) => {
   const { inspectionData } = route.params;
   const { vendorFormDetails, addToVfContex } = useContext(VendorFormContext);
 
@@ -31,7 +31,7 @@ export const InspectionDetailScreen = ({ route }) => {
   return (
     <>
     
-      <VendorFormsPage inspectionData={inspectionData} />
+      <VendorFormsPage inspectionData={inspectionData} navigation={navigation}/>
     </>
   )
 

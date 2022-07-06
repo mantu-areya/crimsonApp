@@ -11,10 +11,11 @@ import { Dimensions } from 'react-native';
 import { InspectionDetailTile } from "./InspectionDetailTile";
 import { RoomForm } from "./RoomForm";
 import { OtherCategoryForms } from "./OtherCategoryForms";
-import { TotalContainer, InfoTextArea, ActionContainer, HeaderCardCover, HeaderCardBody, HeaderCard, Body } from "./VendorFormPageStyles";
-import { ActivityIndicator, Colors } from "react-native-paper";
+import { TotalContainer, InfoTextArea, ActionContainer, HeaderCardCover, BackNavigator, HeaderCard, Body } from "./VendorFormPageStyles";
+import { ActivityIndicator } from "react-native-paper";
 import { InspectionDetailsCard } from "./InspectionDetailsCard"
 import { VendorFormContext } from "../../../services/context/VendorForm/vendorForm.contex";
+import Icon from 'react-native-vector-icons/SimpleLineIcons';
 
 
 
@@ -37,7 +38,7 @@ margin-top:50%;
 `;
 
 
-export const VendorFormsPage = ({ inspectionData }) => {
+export const VendorFormsPage = ({ inspectionData, navigation }) => {
   // let [room_Measurement, setRoom_Measurement] = React.useState({ ROOM: [], LENGTH: [], WIDTH: [], MISC_SF: [], TOTAL: [] })
   let [general_Rental, setGeneral_Rental] = React.useState([])
   let [pools, setPools] = React.useState([])
@@ -49,6 +50,7 @@ export const VendorFormsPage = ({ inspectionData }) => {
   let [room_MeasurementData, setRoom_MeasurementData] = React.useState([])
   let [vendorFormData, setVendorFormData] = React.useState([])
   const { vendorFormDetails, addToVfContex } = useContext(VendorFormContext);
+  let [showMoreForm, setShowMoreForm] = React.useState(false)
 
 
 
@@ -102,14 +104,14 @@ export const VendorFormsPage = ({ inspectionData }) => {
 
   useEffect(() => {
     let contexRecord = vendorFormDetails[inspectionData.Id]
-    if (contexRecord){
-      if( contexRecord.totalSize == 0) {
-      setShowMsg(true)
+    if (contexRecord) {
+      if (contexRecord.totalSize == 0) {
+        setShowMsg(true)
+      }
+      else {
+        GetDataByCategory(contexRecord.records)
+      }
     }
-   else {
-    GetDataByCategory(contexRecord.records)
-    }
-  }
   }, [vendorFormDetails]);
 
   let updateLocalDataSet = (modifiedDataset, formType) => {
@@ -129,13 +131,7 @@ export const VendorFormsPage = ({ inspectionData }) => {
 
   }
 
-  // useEffect(() => {
-  //   // componentDidMount events
-  //   return () => {
-  //     console.log("unmounting");
-  //     // componentWillUnmount events
-  //   }
-  // }, []);
+
 
   const renderNoVFText = () => {
     return <InfoTextArea>
@@ -143,10 +139,21 @@ export const VendorFormsPage = ({ inspectionData }) => {
     </InfoTextArea>
   }
 
-  return (
+  const showForms = () => {
+    return <>
+      <Spacer position="top" size="large" />
+      <OtherCategoryForms catName={"Exterior"} formData={exterior} />
+      <OtherCategoryForms catName={"Interior"} formData={interior} />
+      <OtherCategoryForms catName={"Mechanical, Electrical and Plumbing Systems"} formData={mech_Elec_Plumb} />
+      <Spacer position="top" size="large" />
+      <TotalContainer>
+        <Text>GRAND TOTAL BID SUBMITTED : ${grandTotal.toLocaleString("en-US")}</Text>
+        <Spacer position="right" size="large" />
+      </TotalContainer>
+    </>
+  }
 
-    <>
-
+  return ( <>
       {/* <HeaderCard  >
 
           <SafeArea>
@@ -166,9 +173,9 @@ export const VendorFormsPage = ({ inspectionData }) => {
           </SafeArea>
       </HeaderCard> */}
       <SafeArea>
-        <ScrollView >
+        <ScrollView keyboardDismissMode={'on-drag'} onMomentumScrollBegin={() => (setShowMoreForm(true))}>
           <HeaderCard  >
-            <Spacer position="top" size="medium" />
+            <BackNavigator onPress={() => { navigation.goBack() }}><Row><Icon name="arrow-left" size={20} color="white" style={{ marginTop: 4 }} /><Text variant="NavigationText">Back</Text></Row></BackNavigator>
             {/* <Spacer position="left" size="small" /> */}
             <View>
               <Row>
@@ -183,33 +190,25 @@ export const VendorFormsPage = ({ inspectionData }) => {
 
           </HeaderCard  >
           <Body>
-          <Spacer position="top" size="medium" />
-
-
-          {showMsg ? renderNoVFText() : <>
             <Spacer position="top" size="medium" />
-            <ActionContainer>
-              <TotalContainer>
-                <Text>GRAND TOTAL BID SUBMITTED : ${grandTotal.toLocaleString("en-US")}</Text>
-                {/* <Text>GRAND TOTAL BID SUBMITTED : $2,265.81</Text> */}
-                <Spacer position="right" size="large" />
-              </TotalContainer>
-            </ActionContainer>
-            <Spacer position="top" size="large" />
-              <RoomForm room_Measurement={room_MeasurementData} updateLocalData={updateLocalDataSet} />
+
+
+            {showMsg ? renderNoVFText() : <>
+              <Spacer position="top" size="medium" />
+              <ActionContainer>
+                <TotalContainer>
+                  <Text>GRAND TOTAL BID SUBMITTED : ${grandTotal.toLocaleString("en-US")}</Text>
+                  {/* <Text>GRAND TOTAL BID SUBMITTED : $2,265.81</Text> */}
+                  <Spacer position="right" size="large" />
+                </TotalContainer>
+              </ActionContainer>
               <Spacer position="top" size="large" />
+              <RoomForm room_Measurement={room_MeasurementData} updateLocalData={updateLocalDataSet} />
               <OtherCategoryForms catName={"GENERAL RENTAL OPERATIONS SCOPE"} formData={general_Rental} />
               <OtherCategoryForms catName={"Pools"} formData={pools} />
-              <OtherCategoryForms catName={"Exterior"} formData={exterior} />
-              <OtherCategoryForms catName={"Interior"} formData={interior} />
-              <OtherCategoryForms catName={"Mechanical, Electrical and Plumbing Systems"} formData={mech_Elec_Plumb} />
-              <Spacer position="top" size="large" />
-            <TotalContainer>
-              <Text>GRAND TOTAL BID SUBMITTED : ${grandTotal.toLocaleString("en-US")}</Text>
-              {/* <Text>GRAND TOTAL BID SUBMITTED : $2,265.81</Text> */}
-              <Spacer position="right" size="large" />
-            </TotalContainer>
-          </>}
+              {showMoreForm && showForms()}
+
+            </>}
           </Body>
         </ScrollView>
       </SafeArea>
