@@ -17,18 +17,14 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true,
-      "entitlements": {
-        "com.apple.developer.networking.wifi-info": true
-      }
-
+      "supportsTablet": true
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"
-        
-      }
+      },
+      "package": "com.mahanteshareya.crimson"
     },
     "web": {
       "favicon": "./assets/favicon.png"
