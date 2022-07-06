@@ -21,7 +21,6 @@ export const InspectionDetailScreen = ({ route }) => {
     NetInfo.fetch().then(networkState => {
       if(networkState.isConnected){
         setVendorFormData();
-        console.log("ddd");
       }
       return
     })
@@ -31,6 +30,7 @@ export const InspectionDetailScreen = ({ route }) => {
 
   return (
     <>
+    
       <VendorFormsPage inspectionData={inspectionData} />
     </>
   )

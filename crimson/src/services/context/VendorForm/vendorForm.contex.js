@@ -3,12 +3,13 @@ import React, { createContext, useState } from "react";
 export const VendorFormContext = createContext();
 
 export const VendorFormContextProvider = ({ children }) => {
-  const [vendorFormDetails, setVendorFormDetails] = useState([]);
+  const [vendorFormDetails, setVendorFormDetails] = useState({});
 
-  const add = (dataset,inspData) => dataset!==undefined && setVendorFormDetails({...vendorFormDetails,[inspData.Id] : dataset} )
-  const update = (modifiedData) => {
-
-  };
+  const add = (dataset,inspData) => setVendorFormDetails({...vendorFormDetails,[inspData.Id] : dataset})
+  
+  
+  
+  const update = (modifiedData) => {};
 
   const remove = (dataset) => {
     setVendorFormDetails([]);

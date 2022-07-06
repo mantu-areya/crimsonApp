@@ -101,15 +101,13 @@ export const VendorFormsPage = ({ inspectionData }) => {
 
 
   useEffect(() => {
-    if (vendorFormDetails[inspectionData.Id]){
-      if( vendorFormDetails[inspectionData.Id].totalSize == 0) {
+    let contexRecord = vendorFormDetails[inspectionData.Id]
+    if (contexRecord){
+      if( contexRecord.totalSize == 0) {
       setShowMsg(true)
-    } else {
-      console.log(vendorFormDetails,"trc");
-
-      const records = vendorFormDetails[inspectionData.Id].records;
-
-      GetDataByCategory(records);
+    }
+   else {
+    GetDataByCategory(contexRecord.records)
     }
   }
   }, [vendorFormDetails]);
