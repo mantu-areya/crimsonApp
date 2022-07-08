@@ -16,6 +16,7 @@ import { QuickActionsList } from "../components/QuickActionsList"
 import {InspectionsContext} from "../../../services/inspections/inspections.contex"
 import {getInspectionsData} from "../../../services/inspections/inspections.service";
 import NetInfo from "@react-native-community/netinfo";
+import InternetConnectionAlert from "react-native-internet-connection-alert";
 
 
 const SearchContainer = styled(Searchbar)`
@@ -129,6 +130,7 @@ useEffect(()=>{
   return (
     <>
       <AppBody >
+
         <ScrolableView
           verticle
         >
@@ -166,8 +168,9 @@ useEffect(()=>{
 
 
               </SafeArea>
+              {(isOnline==false||online==false)&&<Button style={{backgroundColor:"red"}}onPress={()=>recheckStatus()}><Text>App is running in Offline Mode click here to Retry</Text></Button>}
+
             </HeaderCardCover>
-                {(isOnline==false||online==false)&&<Button onPress={()=>recheckStatus()}>click</Button>}
           </HeaderCard>
           <QuickActionsList  navigation = { navigation }/>
           <Spacer position="top" size="medium">
@@ -192,6 +195,12 @@ useEffect(()=>{
             />
           </Row>
         </ScrolableView>
+        <InternetConnectionAlert
+  onChange={(connectionState) => {
+    setonline(connectionState.isConnected)
+  }}
+>
+</InternetConnectionAlert>
       </AppBody>
 
     </>
