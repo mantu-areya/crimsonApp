@@ -12,6 +12,7 @@ import {
 import { Row, Col } from 'react-native-responsive-grid-system';
 import Icon from 'react-native-vector-icons/SimpleLineIcons';
 import styled from "styled-components";
+import { Spacer } from "../../components/spacer/spacer.component";
 
 let scrollYPos = 0;
 
@@ -20,8 +21,7 @@ height: 25px;
 width: 25px;
 background-color: #bbb;
 border:1px #bbb;
-border-radius: 50%;
-display: inline-block;
+border-radius: 50px;
 margin-right:5px;
 `;
 
@@ -29,8 +29,7 @@ const ActiveCircle = styled(TouchableOpacity)`
 height: 25px;
 width: 25px;
 border:1px #bbb;
-border-radius: 50%;
-display: inline-block;
+border-radius: 50px;
 margin-right:5px;
 `;
 
@@ -43,9 +42,23 @@ const PageIndicators = styled(Pressable)`
   alignItems:center;
 `;
 
+const CategoryCard = styled(Pressable)`
+background-color:#bbb;
+padding:10px;
+border-radius:10px;
+margin:2%;
+`;
 
+const CategoryButton =styled(Pressable)`
+background-color:#D3D3D3;
+margin:2px;
+margin-right:5px;
+border-radius:5px;
+padding:1%;
+margin-bottom:2%;
+`
 
-export const ViewCarousal = ({ children,setModelView, localState1 }) => {
+export const ViewCarousal = ({ children, setFormNum }) => {
 
   const screnWidth = Dimensions.get('window').width
 
@@ -56,13 +69,15 @@ export const ViewCarousal = ({ children,setModelView, localState1 }) => {
   const page = useRef(0);
   const indicatorRef = useRef(0);
   const [scrollViewWidth, setScrollViewWidth] = React.useState(0);
+  const [showFormCategories,setShowFormCategories] = React.useState(false);
 
 
 
   const getPagerIndicator = () => {
-    let pageCount = scrollViewWidth / screnWidth;
+    let pageCount =Math.round( scrollViewWidth / screnWidth);
+    
     return [...Array(pageCount)].map((elementInArray, index) => {
-      return activePage && (index + 1) == activePage ? <ActiveCircle key={index}  onLongPress={()=>{setModelView(true)}} onPress={() => { onIndicatorPress(index) }} /> : <DotCirle key={index} onPress={() => { onIndicatorPress(index) }} onLongPress={()=>{setModelView(true)}} />
+      return activePage && (index + 1) == activePage ? <ActiveCircle key={index}  onLongPress={()=>{setShowFormCategories(true)}} onPress={() => { onIndicatorPress(index) }}  /> : <DotCirle key={index} onPress={() => { onIndicatorPress(index) }} onLongPress={()=>{setShowFormCategories(true)}} />
 
     })
   }
@@ -70,6 +85,7 @@ export const ViewCarousal = ({ children,setModelView, localState1 }) => {
   const onIndicatorPress = (index) => {
     setActivePage(index + 1)
     scrollToPage(index)
+    setFormNum(index)
   }
 
 
@@ -79,6 +95,7 @@ export const ViewCarousal = ({ children,setModelView, localState1 }) => {
       scrollYPos = width * page.current;
       scroller.current.scrollTo({ x: scrollYPos, y: 0 });
       setActivePage(page.current + 1)
+      setFormNum(page.current)
     }
     return
   }
@@ -89,6 +106,7 @@ export const ViewCarousal = ({ children,setModelView, localState1 }) => {
       scroller.current.scrollTo({ x: scrollYPos, y: 0 });
       page.current = page.current - 1;
       setActivePage(page.current + 1)
+      setFormNum(page.current)
     }
     return
   }
@@ -103,6 +121,12 @@ export const ViewCarousal = ({ children,setModelView, localState1 }) => {
 
   }
 
+const setSelectedCategory= (pageNum) =>{
+  scrollToPage(pageNum);
+  setShowFormCategories(false);
+  setFormNum(pageNum)
+
+}
 
 
 // onIndicatorsLongPress = () =>{
@@ -110,31 +134,44 @@ export const ViewCarousal = ({ children,setModelView, localState1 }) => {
 // }
 
 
-  useEffect(() => {
-    setModelView(false)
-    scrollToPage(localState1)
-    console.log("state");
-  }, [localState1])
+const onCatogryCardPress = (pNum)=>{
+  setSelectedCategory(pNum);
+  setActivePage(pNum+1)
+}
+
+const showCategoryCard = () =>{
+  return<>
+              <CategoryCard>
+              <Row>
+              <CategoryButton onPress={()=>{onCatogryCardPress(0)}}><Text>Rooms</Text></CategoryButton>
+              <CategoryButton onPress={()=>{onCatogryCardPress(1)}}><Text>General Rental</Text></CategoryButton>
+              <CategoryButton onPress={()=>{onCatogryCardPress(2)}}><Text>Pools</Text></CategoryButton>
+              <CategoryButton onPress={()=>{onCatogryCardPress(3)}}><Text>Exterior</Text></CategoryButton>
+              <CategoryButton onPress={()=>{onCatogryCardPress(4)}}><Text>Interior</Text></CategoryButton>
+              <CategoryButton onPress={()=>{onCatogryCardPress(5)}}><Text>Mechanical, Electrical and Plumbing Systems</Text></CategoryButton>
+              </Row>
+            </CategoryCard>
+  </>
+}
 
 
   return (<>
-
-
     <View >
+    { showFormCategories && showCategoryCard()}
       <Row>
-        <Col xs="2" >
+        <Col xs="2" md="2">
           <ArrowContainer  >
             <Icon onPress={(page) => { scrollLeft() }} name="arrow-left" size={20} color="black" />
           </ArrowContainer>
         </Col>
-        <Col xs="8"  >
-          <PageIndicators onLongPress={()=>{setModelView(true)}}>
+        <Col xs="8" md="8" >
+          <PageIndicators onLongPress={()=>{setShowFormCategories(true)}} delayLongPress={100}>
             <Row>
               {getPagerIndicator()}
             </Row>
           </PageIndicators>
         </Col>
-        <Col xs="2" >
+        <Col xs="2" md="2">
           <ArrowContainer >
             <Icon onPress={() => { scrollRight() }} name="arrow-right" size={20} color="black" />
           </ArrowContainer>
@@ -144,7 +181,7 @@ export const ViewCarousal = ({ children,setModelView, localState1 }) => {
 
 
     <Row>
-      <ScrollView style={styles.container} ref={scroller} horizontal={true}
+      <ScrollView style={styles.container} ref={scroller} horizontal={true} 
         onContentSizeChange={width =>setScrollViewWidth(width)}>
 
         {children}

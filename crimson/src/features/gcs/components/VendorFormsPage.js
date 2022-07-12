@@ -1,7 +1,7 @@
 
-import React, { useEffect, useState, useContext, Component } from "react";
+import React, { useEffect, useState, useContext, Component, useRef } from "react";
 // import { Row } from "../components/ProcessRecordsInfoCardStyle";
-import { Image, View, ScrollView, TouchableOpacity, StyleSheet,Pressable } from "react-native";
+import { Image, View, ScrollView, TouchableOpacity, StyleSheet, Pressable } from "react-native";
 import { SafeArea } from "../../../components/utility/safe-area.component";
 import styled from "styled-components/native";
 import { Text } from "../../../components/typography/text.component";
@@ -41,9 +41,7 @@ const LoadingContainer = styled.View`
 margin-top:50%;
 `;
 
-const CategoryCard = styled(Pressable)`
-background-color:red;
-`;
+
 
 
 
@@ -60,9 +58,9 @@ export const VendorFormsPage = ({ inspectionData, navigation }) => {
   let [vendorFormData, setVendorFormData] = React.useState([])
   const { vendorFormDetails, addToVfContex } = useContext(VendorFormContext);
   let [showMoreForm, setShowMoreForm] = React.useState(false)
-  const [showFormCategories,setShowFormCategories] = React.useState(false);
-  const [selectedCategory,setSelectedCategory] = React.useState('')
-
+  const [selectedCategory, setSelectedCategory] = React.useState('')
+  const [formNum, setFormNum] = React.useState('')
+  const catselected = useRef('')
 
   const GetDataByCategory = (inspData) => {
     let room_msrmnt = []
@@ -111,6 +109,8 @@ export const VendorFormsPage = ({ inspectionData, navigation }) => {
   }
 
 
+useEffect(()=>{
+},[formNum])
 
   useEffect(() => {
     let contexRecord = vendorFormDetails[inspectionData.Id]
@@ -149,25 +149,6 @@ export const VendorFormsPage = ({ inspectionData, navigation }) => {
     </InfoTextArea>
   }
 
-const showCategoryCard = () =>{
-  return<>
-              <CategoryCard>
-              <Row>
-              <Text onPress={()=>{setSelectedCategory(0)}}>Rooms</Text>
-              <Spacer position="right" size="large"/>
-              <Text onPress={()=>{setSelectedCategory(1)}}>general_Rental</Text>
-              <Spacer position="right" size="large"/>
-              <Text onPress={()=>{setSelectedCategory(2)}}>Pools</Text>
-              <Spacer position="right" size="large"/>
-              <Text onPress={()=>{setSelectedCategory(3)}}>Exterior</Text>
-              <Spacer position="right" size="large"/>
-              <Text onPress={()=>{setSelectedCategory(4)}}>Interior</Text>
-              <Spacer position="right" size="large"/>
-              <Text onPress={()=>{setSelectedCategory(5)}}>Mechanicl</Text>
-              </Row>
-            </CategoryCard>
-  </>
-}
 
   return (<>
     {/* <HeaderCard  >
@@ -245,25 +226,24 @@ const showCategoryCard = () =>{
 
 
             </View>
-            { showFormCategories && showCategoryCard()}
-            <ViewCarousal  setModelView={setShowFormCategories} localState1 = {selectedCategory}>
+            <ViewCarousal setFormNum={setFormNum} >
               <CarousalScrren >
                 <RoomForm room_Measurement={room_MeasurementData} updateLocalData={updateLocalDataSet} />
               </CarousalScrren>
               <CarousalScrren >
-                <OtherCategoryForms catName={"GENERAL RENTAL OPERATIONS SCOPE"} formData={general_Rental} />
+               {formNum==1 && <OtherCategoryForms catName={"GENERAL RENTAL OPERATIONS SCOPE"} formData={general_Rental} />}
               </CarousalScrren >
               <CarousalScrren >
-                <OtherCategoryForms catName={"Pools"} formData={pools} />
+              {formNum==2 &&<OtherCategoryForms catName={"Pools"} formData={pools} />}
               </CarousalScrren >
               <CarousalScrren >
-                <OtherCategoryForms catName={"Exterior"} formData={exterior} />
+              {formNum==3 && <OtherCategoryForms catName={"Exterior"} formData={exterior} />}
               </CarousalScrren>
               <CarousalScrren >
-                <OtherCategoryForms catName={"Interior"} formData={interior} />
+              {formNum==4 && <OtherCategoryForms catName={"Interior"} formData={interior} />}
               </CarousalScrren>
               <CarousalScrren >
-                <OtherCategoryForms catName={"Mechanical, Electrical and Plumbing Systems"} formData={mech_Elec_Plumb} />
+              {formNum==5 && <OtherCategoryForms catName={"Mechanical, Electrical and Plumbing Systems"} formData={mech_Elec_Plumb} />}
               </CarousalScrren>
             </ViewCarousal>
 
