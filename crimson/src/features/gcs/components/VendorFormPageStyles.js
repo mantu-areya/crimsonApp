@@ -3,7 +3,7 @@
 import { Card } from "react-native-paper";
 import styled from "styled-components/native";
 import NumericInput from 'react-native-numeric-input'
-import { Platform,TextInput, ImageBackground, Pressable } from 'react-native';
+import { Platform,TextInput, ImageBackground, Pressable,Dimensions } from 'react-native';
 import { Row } from "react-native-responsive-grid-system";
 
 
@@ -152,4 +152,14 @@ flex:1;
 ${Platform.isPad ? `width: ${50}px`:`width: ${25}px`};
 justifyContent:center;
 alignItems:center;
+`;
+
+export const BackNavigator = styled(Pressable)`
+width:100px;
+height:30px;
+margin-left:-7px;
+`;
+
+export const CarousalScrren = styled.View`
+width : ${Dimensions.get('window').width}px;
 `;

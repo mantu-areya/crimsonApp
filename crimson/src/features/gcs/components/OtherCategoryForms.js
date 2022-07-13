@@ -61,7 +61,6 @@ export const OtherCategoryForms = ({ catName, formData }) => {
   }
 
   const displayRows=(dataList)=>{
-    console.log("loop");
     return dataList.map((item, i) => {
       return (
         <View key={item.UniqueKey__c}>

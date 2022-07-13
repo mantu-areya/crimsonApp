@@ -17,22 +17,10 @@ import { createStackNavigator } from '@react-navigation/stack';
 import { InspectionsScreen } from "./src/features/gcs/screens/InspectionsScreen";
 import { InspectionsContextProvider } from "./src/services/inspections/inspections.contex";
 import {InspectionDetailScreen} from "./src/features/gcs/screens/InspectionDetailScreen";
-import * as ScreenOrientation from 'expo-screen-orientation'
 import { VendorFormContextProvider } from "./src/services/context/VendorForm/vendorForm.contex";
 
 
 export default function App() {
-
-useEffect(()=>{
-   ScreenOrientation.getOrientationAsync().then(data=>{
-   }
-   );
-
-},[]
-)
-
-
-
 
   let [oswaldLoaded] = useOswald({
     Oswald_400Regular,

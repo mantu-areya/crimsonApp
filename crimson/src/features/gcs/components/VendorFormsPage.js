@@ -1,7 +1,7 @@
 
-import React, { useEffect, useState, useContext } from "react";
+import React, { useEffect, useState, useContext, Component, useRef } from "react";
 // import { Row } from "../components/ProcessRecordsInfoCardStyle";
-import { Image, View, ScrollView, TouchableOpacity } from "react-native";
+import { Image, View, ScrollView, TouchableOpacity, StyleSheet, Pressable } from "react-native";
 import { SafeArea } from "../../../components/utility/safe-area.component";
 import styled from "styled-components/native";
 import { Text } from "../../../components/typography/text.component";
@@ -11,11 +11,16 @@ import { Dimensions } from 'react-native';
 import { InspectionDetailTile } from "./InspectionDetailTile";
 import { RoomForm } from "./RoomForm";
 import { OtherCategoryForms } from "./OtherCategoryForms";
-import { TotalContainer, InfoTextArea, ActionContainer, HeaderCardCover, HeaderCardBody, HeaderCard, Body } from "./VendorFormPageStyles";
-import { ActivityIndicator, Colors } from "react-native-paper";
+import { TotalContainer, InfoTextArea, ActionContainer, HeaderCardCover, BackNavigator, HeaderCard, Body, CarousalScrren } from "./VendorFormPageStyles";
+import { ActivityIndicator } from "react-native-paper";
 import { InspectionDetailsCard } from "./InspectionDetailsCard"
 import { VendorFormContext } from "../../../services/context/VendorForm/vendorForm.contex";
+import Icon from 'react-native-vector-icons/SimpleLineIcons';
+import { ViewCarousal } from "../../../utilities/ViewCarousalComponent/ViewCarousal";
 
+
+
+const { width, height } = Dimensions.get('window');
 
 
 
@@ -37,7 +42,10 @@ margin-top:50%;
 `;
 
 
-export const VendorFormsPage = ({ inspectionData }) => {
+
+
+
+export const VendorFormsPage = ({ inspectionData, navigation }) => {
   // let [room_Measurement, setRoom_Measurement] = React.useState({ ROOM: [], LENGTH: [], WIDTH: [], MISC_SF: [], TOTAL: [] })
   let [general_Rental, setGeneral_Rental] = React.useState([])
   let [pools, setPools] = React.useState([])
@@ -49,8 +57,10 @@ export const VendorFormsPage = ({ inspectionData }) => {
   let [room_MeasurementData, setRoom_MeasurementData] = React.useState([])
   let [vendorFormData, setVendorFormData] = React.useState([])
   const { vendorFormDetails, addToVfContex } = useContext(VendorFormContext);
-
-
+  let [showMoreForm, setShowMoreForm] = React.useState(false)
+  const [selectedCategory, setSelectedCategory] = React.useState('')
+  const [formNum, setFormNum] = React.useState('')
+  const catselected = useRef('')
 
   const GetDataByCategory = (inspData) => {
     let room_msrmnt = []
@@ -99,17 +109,19 @@ export const VendorFormsPage = ({ inspectionData }) => {
   }
 
 
+useEffect(()=>{
+},[formNum])
 
   useEffect(() => {
     let contexRecord = vendorFormDetails[inspectionData.Id]
-    if (contexRecord){
-      if( contexRecord.totalSize == 0) {
-      setShowMsg(true)
+    if (contexRecord) {
+      if (contexRecord.totalSize == 0) {
+        setShowMsg(true)
+      }
+      else {
+        GetDataByCategory(contexRecord.records)
+      }
     }
-   else {
-    GetDataByCategory(contexRecord.records)
-    }
-  }
   }, [vendorFormDetails]);
 
   let updateLocalDataSet = (modifiedDataset, formType) => {
@@ -129,13 +141,7 @@ export const VendorFormsPage = ({ inspectionData }) => {
 
   }
 
-  // useEffect(() => {
-  //   // componentDidMount events
-  //   return () => {
-  //     console.log("unmounting");
-  //     // componentWillUnmount events
-  //   }
-  // }, []);
+
 
   const renderNoVFText = () => {
     return <InfoTextArea>
@@ -143,11 +149,9 @@ export const VendorFormsPage = ({ inspectionData }) => {
     </InfoTextArea>
   }
 
-  return (
 
-    <>
-
-      {/* <HeaderCard  >
+  return (<>
+    {/* <HeaderCard  >
 
           <SafeArea>
             <HeaderCardBody>
@@ -165,24 +169,24 @@ export const VendorFormsPage = ({ inspectionData }) => {
             </HeaderCardBody>
           </SafeArea>
       </HeaderCard> */}
-      <SafeArea>
-        <ScrollView >
-          <HeaderCard  >
-            <Spacer position="top" size="medium" />
-            {/* <Spacer position="left" size="small" /> */}
-            <View>
-              <Row>
-                <Text variant="InspectionHeaderName">{inspectionData.Name} | </Text>
-                <Text variant="InspectionHeaderName">VENDOR ESTIMATE FORM</Text>
-              </Row>
-              <Text variant="HeaderName">{inspectionData.Property_Address__c} </Text>
-            </View>
-            <Spacer position="top" size="large" />
-            <InspectionDetailsCard inspectionData={inspectionData} />
-            <Spacer position="bottom" size="medium" />
+    <SafeArea>
+      <ScrollView keyboardDismissMode={'on-drag'} onMomentumScrollBegin={() => (setShowMoreForm(true))}>
+        <HeaderCard  >
+          <BackNavigator onPress={() => { navigation.goBack() }}><Row><Icon name="arrow-left" size={20} color="white" style={{ marginTop: 4 }} /><Text variant="NavigationText">Back</Text></Row></BackNavigator>
+          {/* <Spacer position="left" size="small" /> */}
+          <View>
+            <Row>
+              <Text variant="InspectionHeaderName">{inspectionData.Name} | </Text>
+              <Text variant="InspectionHeaderName">VENDOR ESTIMATE FORM</Text>
+            </Row>
+            <Text variant="HeaderName">{inspectionData.Property_Address__c} </Text>
+          </View>
+          <Spacer position="top" size="large" />
+          <InspectionDetailsCard inspectionData={inspectionData} />
+          <Spacer position="bottom" size="medium" />
 
-          </HeaderCard  >
-          <Body>
+        </HeaderCard  >
+        <Body>
           <Spacer position="top" size="medium" />
 
 
@@ -196,23 +200,84 @@ export const VendorFormsPage = ({ inspectionData }) => {
               </TotalContainer>
             </ActionContainer>
             <Spacer position="top" size="large" />
-              <RoomForm room_Measurement={room_MeasurementData} updateLocalData={updateLocalDataSet} />
-              <Spacer position="top" size="large" />
+            {/* <RoomForm room_Measurement={room_MeasurementData} updateLocalData={updateLocalDataSet} />
               <OtherCategoryForms catName={"GENERAL RENTAL OPERATIONS SCOPE"} formData={general_Rental} />
-              <OtherCategoryForms catName={"Pools"} formData={pools} />
-              <OtherCategoryForms catName={"Exterior"} formData={exterior} />
-              <OtherCategoryForms catName={"Interior"} formData={interior} />
-              <OtherCategoryForms catName={"Mechanical, Electrical and Plumbing Systems"} formData={mech_Elec_Plumb} />
-              <Spacer position="top" size="large" />
-            <TotalContainer>
-              <Text>GRAND TOTAL BID SUBMITTED : ${grandTotal.toLocaleString("en-US")}</Text>
-              {/* <Text>GRAND TOTAL BID SUBMITTED : $2,265.81</Text> */}
-              <Spacer position="right" size="large" />
-            </TotalContainer>
+              <OtherCategoryForms catName={"Pools"} formData={pools} /> */}
+            {/* {showMoreForm && showForms()} */}
+
+            <View style={{
+              flex: 1,
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}>
+
+              {/* <ScrollView 
+      contentContainerStyle={this.props.contentContainerStyle}
+      automaticallyAdjustContentInsets={false}
+      horizontal={true}
+      pagingEnabled={true}
+      showsHorizontalScrollIndicator={false}
+      bounces={false}
+      onScrollBeginDrag={this.props.onBegin}
+      onMomentumScrollEnd={this._onMomentumScrollEnd}
+      scrollsToTop={false}
+    >
+      </ScrollView>; */}
+
+
+            </View>
+            <ViewCarousal setFormNum={setFormNum} >
+              <CarousalScrren >
+                <RoomForm room_Measurement={room_MeasurementData} updateLocalData={updateLocalDataSet} />
+              </CarousalScrren>
+              <CarousalScrren >
+               {formNum==1 && <OtherCategoryForms catName={"GENERAL RENTAL OPERATIONS SCOPE"} formData={general_Rental} />}
+              </CarousalScrren >
+              <CarousalScrren >
+              {formNum==2 &&<OtherCategoryForms catName={"Pools"} formData={pools} />}
+              </CarousalScrren >
+              <CarousalScrren >
+              {formNum==3 && <OtherCategoryForms catName={"Exterior"} formData={exterior} />}
+              </CarousalScrren>
+              <CarousalScrren >
+              {formNum==4 && <OtherCategoryForms catName={"Interior"} formData={interior} />}
+              </CarousalScrren>
+              <CarousalScrren >
+              {formNum==5 && <OtherCategoryForms catName={"Mechanical, Electrical and Plumbing Systems"} formData={mech_Elec_Plumb} />}
+              </CarousalScrren>
+            </ViewCarousal>
+
           </>}
-          </Body>
-        </ScrollView>
-      </SafeArea>
-    </>
+        </Body>
+      </ScrollView>
+    </SafeArea>
+  </>
   )
 }
+
+
+
+var styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  screen: {
+    backgroundColor: 'yellow',
+    flexDirection: 'column',
+    width: Dimensions.get('window').width,
+  },
+
+  formsView: {
+    width: Dimensions.get('window').width,
+    // justifyContent: 'center',
+  },
+  scrollButton: {
+    backgroundColor: 'white',
+    height: 40,
+    marginTop: 50,
+    width: Dimensions.get('window').width,
+  },
+  scrollButtonText: {
+    padding: 20,
+  },
+});

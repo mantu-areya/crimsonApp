@@ -118,6 +118,12 @@ color:${theme.colors.text.lightgrey}
 font-family: ${theme.fonts.body};
 `;
 
+const NavigationText = (theme) =>`
+font-size: ${theme.fontSizes.title};
+color:${theme.colors.text.lightgrey}
+font-family: ${theme.fonts.body};
+`
+
 const variants = {
   body,
   label,
@@ -136,7 +142,8 @@ const variants = {
   formHeader,
   DetailcardHeader,
   VfDetailsKey,
-  VfDetailsValue
+  VfDetailsValue,
+  NavigationText
 };
 
 export const Text = styled.Text`

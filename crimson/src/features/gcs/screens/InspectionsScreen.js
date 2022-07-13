@@ -2,7 +2,7 @@ import React, { useContext } from "react";
 import { Searchbar } from "react-native-paper";
 import { SafeArea } from "../../../components/utility/safe-area.component";
 import styled from "styled-components";
-import { FlatList, View, ImageBackground } from 'react-native';
+import { FlatList, View, ImageBackground, Pressable } from 'react-native';
 import { Spacer } from "../../../components/spacer/spacer.component";
 import { Row, SectionEnd } from "../components/ProcessRecordsInfoCardStyle";
 import { Text } from "../../../components/typography/text.component"
@@ -12,6 +12,7 @@ import FilterSvg from "../../../assets/svg/Filter.js";
 import { InspectionsInfoCard } from "../components/InspectionsInfoCard"
 import { InspectionsContext } from "../../../services/inspections/inspections.contex"
 import { ActivityIndicator, Colors } from "react-native-paper";
+import Icon from 'react-native-vector-icons/SimpleLineIcons';
 
 const SearchContainer = styled(Searchbar)`
   margin-top:${(props) => props.theme.space[3]};
@@ -24,6 +25,12 @@ const CardList = styled(FlatList).attrs({
     alignItems: "center",
   },
 })``;
+
+export const BackNavigator = styled(Pressable)`
+width:100px;
+height:30px;
+margin-left:1px;
+`;
 
 const HeaderCard = styled(View)`
 height:250px;
@@ -78,6 +85,12 @@ export const InspectionsScreen = ({ navigation }) => {
             source={require("../../../assets/images/Background.png")}
           >
             <SafeArea>
+              <BackNavigator onPress={() => { navigation.goBack() }}>
+                <Row>
+                  <Icon name="arrow-left" size={20} color="white" style={{ marginTop: 4 }} />
+                  <Text variant="NavigationText">Back</Text>
+                </Row>
+              </BackNavigator>
               <HeaderCardBody>
                 <Text variant="HeaderName">
                   Inspections
