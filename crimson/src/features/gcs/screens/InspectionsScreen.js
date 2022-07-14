@@ -23,6 +23,7 @@ import {
     HeaderCardBody,
     HeaderCardCover
 } from './InspectionScreenStyles'
+import { Colors } from "react-native-paper";
 
 
 export const InspectionsScreen = ({ navigation }) => {
