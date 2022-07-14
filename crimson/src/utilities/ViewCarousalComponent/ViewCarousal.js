@@ -181,7 +181,7 @@ const showCategoryCard = () =>{
 
 
     <Row>
-      <ScrollView style={styles.container} ref={scroller} horizontal={true} 
+      <ScrollView  scrollEnabled={false} style={styles.container} ref={scroller} horizontal={true} 
         onContentSizeChange={width =>setScrollViewWidth(width)}>
 
         {children}
