@@ -24,6 +24,7 @@ import {
     HeaderCardCover
 } from './InspectionScreenStyles'
 
+import { Colors } from "react-native-paper";
 
 export const InspectionsScreen = ({ navigation }) => {
   const { isLoading, inspections } = useContext(InspectionsContext);
