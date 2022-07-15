@@ -60,6 +60,15 @@ export const OtherCategoryForms = ({ catName, formData }) => {
     return toatalSF
   }
 
+  const onValueChange = async (value,field,key)=>{
+    const newState = dataList.map(obj => {
+      if (obj.UniqueKey__c===key) {
+        return {...obj, [field]: value};
+      }
+      return obj;
+    });
+    setDatalist(newState)
+  }
   const displayRows=(dataList)=>{
     return dataList.map((item, i) => {
       return (
@@ -71,13 +80,13 @@ export const OtherCategoryForms = ({ catName, formData }) => {
             </Col>
 
             <Col xs="3" md="3">
-              <NumberInput value={item.Quantity__c} onChange={() => { }} />
+              <NumberInput value={item.Quantity__c} onChange={(value) =>{onValueChange(value,"Quantity__c",item.UniqueKey__c)}} />
             </Col>
             {/* <Col xs="2" md="2">
         <TextArea Value={item.U_M__c}/>
         </Col> */}
             <Col xs="3" md="3">
-              <NumberInput value={item.Rate__c} onChange={() => { }} />
+              <NumberInput value={item.Rate__c} onChange={(value) =>{onValueChange(value,"Rate__c",item.UniqueKey__c)}} />
             </Col>
             <Col xs="2" md="2">
               <Text variant="body">{item.Total__c}</Text>
