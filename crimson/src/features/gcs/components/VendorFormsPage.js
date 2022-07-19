@@ -114,12 +114,12 @@ useEffect(()=>{
 
   useEffect(() => {
     let contexRecord = vendorFormDetails[inspectionData.Id]
-    if (contexRecord) {
-      if (contexRecord.totalSize == 0) {
+    if (contexRecord ) {
+      if (contexRecord == "NA") {
         setShowMsg(true)
       }
       else {
-        GetDataByCategory(contexRecord.records)
+        GetDataByCategory(contexRecord)
       }
     }
   }, [vendorFormDetails]);

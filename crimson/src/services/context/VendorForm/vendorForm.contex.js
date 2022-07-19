@@ -5,7 +5,7 @@ export const VendorFormContext = createContext();
 export const VendorFormContextProvider = ({ children }) => {
   const [vendorFormDetails, setVendorFormDetails] = useState({});
 
-  const add = (dataset,inspData) => setVendorFormDetails({...vendorFormDetails,[inspData.Id] : dataset})
+  const add = (dataset,inspData) => setVendorFormDetails({...vendorFormDetails,[inspData.Id] : dataset.length>0?dataset:"NA"})
   
   
   

@@ -111,14 +111,14 @@ export const getVendorFormDetails = async (inspId) => {
   const token = await getStoredToken();
   console.log("start");
   return apiGet(
-    `https://hudsonhomesmgmt--uat.my.salesforce.com/services/data/v54.0/query/?q=SELECT+FIELDS(ALL)+from+Dynamic_Vendor_Template__c+where+Lookup_To_Parent__c='${inspId}'+LIMIT 200`,
+    `https://hudsonhomesmgmt--uat.my.salesforce.com/services/apexrest/crimson/${inspId}`,
     {
       headers: {
         'Authorization': `Bearer ${token}`,
       }
     },
   )
-    .then(response => response.data)
+    .then(response => response.data )
     .catch(err => {
       console.log(err);
       console.error(err);
