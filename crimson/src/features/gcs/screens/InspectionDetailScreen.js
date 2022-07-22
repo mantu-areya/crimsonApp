@@ -9,13 +9,8 @@ import NetInfo from "@react-native-community/netinfo";
 export const InspectionDetailScreen = ({ route,navigation }) => {
   const { inspectionData } = route.params;
   const { vendorFormDetails, addToVfContex } = useContext(VendorFormContext);
-
-
   const setVendorFormData = async() => getVendorFormDetails(inspectionData.Id)
   .then(data => addToVfContex(data,inspectionData));
-
-
-
 
   useEffect(() => {
     NetInfo.fetch().then(networkState => {
@@ -24,13 +19,11 @@ export const InspectionDetailScreen = ({ route,navigation }) => {
       }
       return
     })
-
   }, []);
   
 
   return (
     <>
-    
       <VendorFormsPage inspectionData={inspectionData} navigation={navigation}/>
     </>
   )
