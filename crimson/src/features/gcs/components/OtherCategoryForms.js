@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect,useContext, useRef } from "react";
 import { View, ScrollView,Pressable } from "react-native";
 import { CollapseSectionHeader, SectionHeaderEnd, SectionContainer, FormCard, CardHeader, CardBody, CardRow } from "./VendorFormPageStyles"
 import Collapsible from 'react-native-collapsible';
@@ -10,20 +10,21 @@ import { Spacer, SpacerView } from "../../../components/spacer/spacer.component"
 import { TotalContainer, NumberInput, TextArea, ExpandSection, OtherFormTextArea,PressableIcon } from "./VendorFormPageStyles";
 import ContentLoader, { Rect } from 'react-content-loader/native'
 import { Platform } from 'react-native';
+import { VendorFormContext } from "../../../services/context/VendorForm/vendorForm.contex";
 
 
-export const OtherCategoryForms = ({ catName, formData }) => {
+export const OtherCategoryForms = ({ catName, formData, inspId }) => {
   const [isCollapsed, setIsCollapsed] = React.useState(false);
   const [isNotesCollapsed, setIsNotesCollapsed] = React.useState(false);
-  const [key, setKey] = React.useState('');
+  const key = useRef('');
   const handlePress = (setIsCollapsed, isCollapsed) => setIsCollapsed(!isCollapsed);
   const handleNotes = (isNotesCollapsed, setIsNotesCollapsed, rowKey) => {
-    setKey(rowKey)
-    if (key == '' || key === rowKey)
+    key.current=rowKey
+    if ( key.current==''||key.current == rowKey)
       return setIsNotesCollapsed(!isNotesCollapsed)
   };
   let [dataList, setDatalist] = React.useState([])
-
+  const {  updateVfContect } = useContext(VendorFormContext);
 
   const MyLoader = () => {
     let height = Platform.isPad ? 30 : 15
@@ -47,8 +48,6 @@ export const OtherCategoryForms = ({ catName, formData }) => {
       {getRowLoader()}
       {getRowLoader()}
     </>
-
-
   }
 
   const GetToal = () => {
@@ -93,17 +92,17 @@ export const OtherCategoryForms = ({ catName, formData }) => {
             </Col>
             <Col>
                 <PressableIcon onPress={() => handleNotes(isNotesCollapsed, setIsNotesCollapsed, item.UniqueKey__c)}>
-              {(isNotesCollapsed && item.UniqueKey__c === key) ? <Icon name="close" size={25} color="black"  />
+              {(isNotesCollapsed && item.UniqueKey__c === key.current)? <Icon name="close" size={25} color="black"  />
                 : <NoteIcon name="note" size={20} color="black" />}
            </PressableIcon>
             </Col>
           </Row>
-          <Collapsible collapsed={!(isNotesCollapsed && item.UniqueKey__c === key)} >
+          <Collapsible collapsed={!(isNotesCollapsed && item.UniqueKey__c === key.current)} >
             <ExpandSection>
             <Text variant="formHeader">SCOPE NOTES :</Text>
-              <OtherFormTextArea Value={item.Scope_Notes__c} />
+              <OtherFormTextArea Value={item.Scope_Notes__c} onChange={(value) =>{onValueChange(value,"Scope_Notes__c",item.UniqueKey__c)}} />
               <Text variant="formHeader">U/M :</Text>
-              <OtherFormTextArea Value={item.U_M__c}/>
+              <OtherFormTextArea Value={item.U_M__c} onChange={(value) =>{onValueChange(value,"U_M__c",item.UniqueKey__c)}}/>
             </ExpandSection>
           </Collapsible>
           <Spacer position="top" size="medium" />
@@ -112,6 +111,11 @@ export const OtherCategoryForms = ({ catName, formData }) => {
       )
     })
   }
+
+  useEffect(() => {
+      updateVfContect(dataList,"OTHRFM",inspId);
+  }, [dataList]);
+
   useEffect(() => {
     setDatalist(formData);
   }, [formData])

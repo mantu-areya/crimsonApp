@@ -70,7 +70,7 @@ export const getInspectionsData = async () => {
   const token = await getStoredToken();
 
   return apiGet(
-    `https://hudsonhomesmgmt--uat.my.salesforce.com/services/data/v54.0/query/?q=SELECT+FIELDS(ALL)+from+inspection__c+where+Quip_Template_Version__c='v1.1'+and+Inspection_Stage__c!='Ordered'+LIMIT 40`,
+    `https://hudsonhomesmgmt--uat.my.salesforce.com/services/apexrest/crimson/inspection`,
     {
       headers: {
         'Authorization': `Bearer ${token}`,
@@ -125,4 +125,23 @@ export const getVendorFormDetails = async (inspId) => {
       // throw err;
     });
 
+}
+
+export const updateSfVendorFormDetails = async (data) => {
+  const token = await getStoredToken();
+  console.log("start");
+  return apiPost(
+    `https://hudsonhomesmgmt--uat.my.salesforce.com/services/apexrest/crimson`,
+    data,
+    {      
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
+    },
+  )
+    .then(response => response.data )
+    .catch(err => {
+      console.error(err);
+      // throw err;
+    });
 }

@@ -13,13 +13,12 @@ import { VendorFormContext } from "../../../services/context/VendorForm/vendorFo
 
 
 
-
-export const RoomForm = ({ room_Measurement,updateLocalData }) => {
+export const RoomForm = ({ room_Measurement,updateLocalData,inspId }) => {
   const [isCollapsed, setIsCollapsed] = React.useState(false);
   const handlePress = (setIsCollapsed, isCollapsed) => setIsCollapsed(!isCollapsed);
   const [length, setLength] = React.useState(false);
   const [room_measurementData,setRoom_measurementData] = React.useState([]);
-  const { vendorFormDetails, addToVfContex } = useContext(VendorFormContext);
+  const {  updateVfContect } = useContext(VendorFormContext);
 
   const onValueChange = async (value,field,key)=>{
     const newState = room_measurementData.map(obj => {
@@ -29,8 +28,6 @@ export const RoomForm = ({ room_Measurement,updateLocalData }) => {
       return obj;
     });
     setRoom_measurementData(newState)
-
-
   }
 
   const MyLoader = () => {
@@ -53,8 +50,6 @@ export const RoomForm = ({ room_Measurement,updateLocalData }) => {
     {getRowLoader()}
     {getRowLoader()}
     </>
-
-
   }
 
   const GetToalSqFt = () => {
@@ -66,14 +61,10 @@ export const RoomForm = ({ room_Measurement,updateLocalData }) => {
     return toatalSF
   }
 
-  // useEffect(() => {
-  //   // componentDidMount events
-  //   return () => {
-  //     console.log("unmounting from Room mes");
-  //     updateLocalData(room_measurementData,"RM");
-  //     // componentWillUnmount events
-  //   }
-  // }, []);
+  useEffect(() => {
+      updateVfContect(room_measurementData,"RM",inspId);
+  }, [room_measurementData]);
+
 
 
 useEffect(()=>{

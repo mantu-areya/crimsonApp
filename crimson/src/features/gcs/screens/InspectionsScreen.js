@@ -74,7 +74,7 @@ export const InspectionsScreen = ({ navigation }) => {
               : <ListContainer>
 
                 <CardList
-                  data={inspections !== null && inspections.records}
+                  data={inspections !== null && inspections}
                   keyExtractor={(item) => item.Name}
                   renderItem={(item) => (
                     <>

@@ -56,7 +56,7 @@ export const VendorFormsPage = ({ inspectionData, navigation }) => {
   let [showMsg, setShowMsg] = React.useState(false)
   let [room_MeasurementData, setRoom_MeasurementData] = React.useState([])
   let [vendorFormData, setVendorFormData] = React.useState([])
-  const { vendorFormDetails, addToVfContex } = useContext(VendorFormContext);
+  const { vendorFormDetails, updateToSf } = useContext(VendorFormContext);
   let [showMoreForm, setShowMoreForm] = React.useState(false)
   const [selectedCategory, setSelectedCategory] = React.useState('')
   const [formNum, setFormNum] = React.useState('')
@@ -110,6 +110,9 @@ export const VendorFormsPage = ({ inspectionData, navigation }) => {
 
 
 useEffect(()=>{
+  return()=>{
+    updateToSf(inspectionData.Id)
+   }
 },[formNum])
 
   useEffect(() => {
@@ -123,6 +126,12 @@ useEffect(()=>{
       }
     }
   }, [vendorFormDetails]);
+
+  useEffect(()=>{
+    return()=>{
+     updateToSf(inspectionData.Id)
+    }
+   })
 
   let updateLocalDataSet = (modifiedDataset, formType) => {
     vendorFormData.map(ele => {
@@ -140,8 +149,6 @@ useEffect(()=>{
 
 
   }
-
-
 
   const renderNoVFText = () => {
     return <InfoTextArea>
@@ -211,39 +218,25 @@ useEffect(()=>{
               alignItems: 'center',
             }}>
 
-              {/* <ScrollView 
-      contentContainerStyle={this.props.contentContainerStyle}
-      automaticallyAdjustContentInsets={false}
-      horizontal={true}
-      pagingEnabled={true}
-      showsHorizontalScrollIndicator={false}
-      bounces={false}
-      onScrollBeginDrag={this.props.onBegin}
-      onMomentumScrollEnd={this._onMomentumScrollEnd}
-      scrollsToTop={false}
-    >
-      </ScrollView>; */}
-
-
             </View>
             <ViewCarousal setFormNum={setFormNum} >
               <CarousalScrren >
-                <RoomForm room_Measurement={room_MeasurementData} updateLocalData={updateLocalDataSet} />
+                <RoomForm room_Measurement={room_MeasurementData} updateLocalData={updateLocalDataSet} inspId={inspectionData.Id} />
               </CarousalScrren>
               <CarousalScrren >
-               {formNum==1 && <OtherCategoryForms catName={"GENERAL RENTAL OPERATIONS SCOPE"} formData={general_Rental} />}
+               {formNum==1 && <OtherCategoryForms catName={"GENERAL RENTAL OPERATIONS SCOPE"} formData={general_Rental} inspId={inspectionData.Id} />}
               </CarousalScrren >
               <CarousalScrren >
-              {formNum==2 &&<OtherCategoryForms catName={"Pools"} formData={pools} />}
+              {formNum==2 &&<OtherCategoryForms catName={"Pools"} formData={pools}  inspId={inspectionData.Id}/>}
               </CarousalScrren >
               <CarousalScrren >
-              {formNum==3 && <OtherCategoryForms catName={"Exterior"} formData={exterior} />}
+              {formNum==3 && <OtherCategoryForms catName={"Exterior"} formData={exterior} inspId={inspectionData.Id}/>}
               </CarousalScrren>
               <CarousalScrren >
-              {formNum==4 && <OtherCategoryForms catName={"Interior"} formData={interior} />}
+              {formNum==4 && <OtherCategoryForms catName={"Interior"} formData={interior} inspId={inspectionData.Id}/>}
               </CarousalScrren>
               <CarousalScrren >
-              {formNum==5 && <OtherCategoryForms catName={"Mechanical, Electrical and Plumbing Systems"} formData={mech_Elec_Plumb} />}
+              {formNum==5 && <OtherCategoryForms catName={"Mechanical, Electrical and Plumbing Systems"} formData={mech_Elec_Plumb} inspId={inspectionData.Id}/>}
               </CarousalScrren>
             </ViewCarousal>
 
