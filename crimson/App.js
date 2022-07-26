@@ -18,7 +18,7 @@ import { InspectionsScreen } from "./src/features/gcs/screens/InspectionsScreen"
 import { InspectionsContextProvider } from "./src/services/inspections/inspections.contex";
 import {InspectionDetailScreen} from "./src/features/gcs/screens/InspectionDetailScreen";
 import { VendorFormContextProvider } from "./src/services/context/VendorForm/vendorForm.contex";
-
+import { UploadOfflineData } from "./src/utilities/UploadOfflineData"
 
 export default function App() {
 
@@ -95,6 +95,7 @@ export default function App() {
       <ThemeProvider theme={theme}>
         <InspectionsContextProvider>
           <VendorFormContextProvider>
+            <UploadOfflineData/>
         <NavigationContainer>
           <Tab.Navigator screenOptions={screenOptions}>
             <Tab.Screen

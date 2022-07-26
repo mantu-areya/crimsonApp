@@ -103,16 +103,11 @@ export const VendorFormsPage = ({ inspectionData, navigation }) => {
     setMech_Elec_Plumb(category5);
     setGrandTotal(grandTtl)
     setVendorFormData(inspData)
-    // addToVfContex(inspData)
-
-
   }
 
 
 useEffect(()=>{
-  return()=>{
     updateToSf(inspectionData.Id)
-   }
 },[formNum])
 
   useEffect(() => {
@@ -127,28 +122,9 @@ useEffect(()=>{
     }
   }, [vendorFormDetails]);
 
-  useEffect(()=>{
-    return()=>{
-     updateToSf(inspectionData.Id)
-    }
-   })
-
-  let updateLocalDataSet = (modifiedDataset, formType) => {
-    vendorFormData.map(ele => {
-      if (formType === "RM") {
-        modifiedDataset.map(obj => {
-          if (obj.UniqueKey__c === ele.UniqueKey__c) {
-            // console.log(obj.UniqueKey__c, ele.UniqueKey__c);
-          }
-          return obj
-        });
-      }
-
-      return ele
-    })
 
 
-  }
+
 
   const renderNoVFText = () => {
     return <InfoTextArea>
@@ -158,24 +134,7 @@ useEffect(()=>{
 
 
   return (<>
-    {/* <HeaderCard  >
-
-          <SafeArea>
-            <HeaderCardBody>
-
-                        <Row>
-            <Spacer position="left" size="small" />
-              <View>
-                <Row>
-                  <Text variant="HeaderName">{inspectionData.Name} | </Text>
-                  <Text variant="HeaderName">VENDOR ESTIMATE FORM</Text>
-                </Row>
-                <Text variant="HeaderName">{inspectionData.Property_Address__c} </Text>
-              </View>
-          </Row>
-            </HeaderCardBody>
-          </SafeArea>
-      </HeaderCard> */}
+   
     <SafeArea>
       <ScrollView keyboardDismissMode={'on-drag'} onMomentumScrollBegin={() => (setShowMoreForm(true))}>
         <HeaderCard  >
@@ -207,10 +166,6 @@ useEffect(()=>{
               </TotalContainer>
             </ActionContainer>
             <Spacer position="top" size="large" />
-            {/* <RoomForm room_Measurement={room_MeasurementData} updateLocalData={updateLocalDataSet} />
-              <OtherCategoryForms catName={"GENERAL RENTAL OPERATIONS SCOPE"} formData={general_Rental} />
-              <OtherCategoryForms catName={"Pools"} formData={pools} /> */}
-            {/* {showMoreForm && showForms()} */}
 
             <View style={{
               flex: 1,
@@ -221,7 +176,7 @@ useEffect(()=>{
             </View>
             <ViewCarousal setFormNum={setFormNum} >
               <CarousalScrren >
-                <RoomForm room_Measurement={room_MeasurementData} updateLocalData={updateLocalDataSet} inspId={inspectionData.Id} />
+                <RoomForm room_Measurement={room_MeasurementData}  inspId={inspectionData.Id} />
               </CarousalScrren>
               <CarousalScrren >
                {formNum==1 && <OtherCategoryForms catName={"GENERAL RENTAL OPERATIONS SCOPE"} formData={general_Rental} inspId={inspectionData.Id} />}
@@ -249,28 +204,3 @@ useEffect(()=>{
 }
 
 
-
-var styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  screen: {
-    backgroundColor: 'yellow',
-    flexDirection: 'column',
-    width: Dimensions.get('window').width,
-  },
-
-  formsView: {
-    width: Dimensions.get('window').width,
-    // justifyContent: 'center',
-  },
-  scrollButton: {
-    backgroundColor: 'white',
-    height: 40,
-    marginTop: 50,
-    width: Dimensions.get('window').width,
-  },
-  scrollButtonText: {
-    padding: 20,
-  },
-});

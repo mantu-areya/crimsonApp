@@ -1,6 +1,7 @@
 import React, { useState, createContext, useEffect, useContext } from "react";
 import { getInspectionsData, getPendingInspections, setToken } from "./inspections.service";
-import NetInfo,{useNetInfo} from "@react-native-community/netinfo";
+import NetInfo from "@react-native-community/netinfo";
+import AsyncStorage from "@react-native-async-storage/async-storage"
 
 
 
@@ -14,7 +15,7 @@ export const InspectionsContextProvider = ({ children }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
   const [stateChnage, setStaeChange] = useState(true);
-  const [isOnline,setIsOnline] = useState(null)
+  const [isOnline, setIsOnline] = useState(null)
 
 
   const retrieveInspections = () => {
@@ -45,24 +46,30 @@ export const InspectionsContextProvider = ({ children }) => {
       });
   };
 
-
-
-  
-
-  // console.log( NetInfo.refresh().then(data=>console.log(data,"dd")));
   useEffect(() => {
-      NetInfo.fetch().then(networkState => {
+    NetInfo.fetch().then(networkState => {
       // console.log("Is connected? - in contex", networkState.isConnected);
       if (networkState.isConnected) {
+        console.log("vsvsv");
         setIsOnline(networkState.isConnected)
-        setToken().then(()=>{
-        retrieveInspections();
-        retrievePendingInspections()
-        return
+        setToken().then(() => {
+          retrieveInspections();
+          retrievePendingInspections()
+          return
         }
         )
-      }else{
+      } else {
         setIsOnline(networkState.isConnected)
+        try {
+          AsyncStorage.getItem('inspection').then(data => {
+            setIsLoading(false);
+            setInspections(JSON.parse(data))
+          });
+        }
+        catch (err) {
+          console.log(err);
+
+        }
       }
       return
     });

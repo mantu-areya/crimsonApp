@@ -139,7 +139,7 @@ export const updateSfVendorFormDetails = async (data) => {
       },
     },
   )
-    .then(response => response.data )
+    .then(response => response.data)
     .catch(err => {
       console.error(err);
       // throw err;

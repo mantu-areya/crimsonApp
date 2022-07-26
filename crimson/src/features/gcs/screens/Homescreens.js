@@ -1,8 +1,8 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useState, useRef } from "react";
 import { Button, Searchbar, Alert } from "react-native-paper";
 import { SafeArea } from "../../../components/utility/safe-area.component";
 import styled from "styled-components";
-import { StyleSheet, FlatList, View, StatusBar, Image, ScrollView, ImageBackground } from 'react-native';
+import { FlatList, View, Image, ScrollView, ImageBackground, AppState } from 'react-native';
 import { ProcessRecordsInfoCard } from "../components/ProcessRecordsInfoCard"
 import { Spacer } from "../../../components/spacer/spacer.component";
 import { SectionLabel } from "./HomeScreenStyles"
@@ -17,7 +17,7 @@ import {InspectionsContext} from "../../../services/inspections/inspections.cont
 import {getInspectionsData} from "../../../services/inspections/inspections.service";
 import NetInfo from "@react-native-community/netinfo";
 import InternetConnectionAlert from "react-native-internet-connection-alert";
-
+import { VendorFormContext } from "../../../services/context/VendorForm/vendorForm.contex";
 
 const SearchContainer = styled(Searchbar)`
   margin-top:${(props) => props.theme.space[4]};
@@ -84,30 +84,17 @@ const SectionStart = styled.View`
 
 `;
 
-
-
-
 const AppBody = styled.View`
     flex:1;
     background-color:${(props) => props.theme.colors.bg.primary};
 `;
 
 
-
 export const HomeScreen = ({ navigation }) => {
   const { isLoading,pendingInspection,isOnline,changeState } = useContext(InspectionsContext);
+  const {vendorFormDetails} = useContext(VendorFormContext)
   const [newState,setNewState]= useState(null)
   const [online,setonline] = useState(isOnline)
-  // useEffect(()=>{
-
-  //   getInspectionsData();
-
-  // },[])
-
-
-
-
-
 
 const recheckStatus=()=>{
   changeState()
