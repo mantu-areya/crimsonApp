@@ -3448,6 +3448,14 @@ expo-asset@~8.5.0:
     path-browserify "^1.0.0"
     url-parse "^1.5.9"
 
+expo-background-fetch@^10.2.0:
+  version "10.2.0"
+  resolved "https://registry.yarnpkg.com/expo-background-fetch/-/expo-background-fetch-10.2.0.tgz#193b5d2c81786f218257fa756b2efa8ff3fa1f21"
+  integrity sha512-UOp+AYrJy77OhbuWBoyBQ6uZDm8gYQ2fjXOJrA3bI+gnx354qUz/+z9iCitDc8tytWP8/yTf62AARGDLKMMANw==
+  dependencies:
+    "@expo/config-plugins" "^4.0.14"
+    expo-task-manager "~10.2.0"
+
 expo-blur@^11.1.0:
   version "11.1.0"
   resolved "https://registry.yarnpkg.com/expo-blur/-/expo-blur-11.1.0.tgz#21f9f0d28da1c326646c459813c9343b6da5e20f"
@@ -3501,6 +3509,13 @@ expo-linear-gradient@~11.3.0:
   resolved "https://registry.npmjs.org/expo-linear-gradient/-/expo-linear-gradient-11.3.0.tgz"
   integrity sha512-gm0cULqE5cTP39HZHi+eCGgQ2qMcwym92DwSzRpA5nA4Ah5oKksV+PwD7zzo6YJt3X3lgqrTYEqts9VQISCTgw==
 
+expo-location@^14.2.2:
+  version "14.2.2"
+  resolved "https://registry.yarnpkg.com/expo-location/-/expo-location-14.2.2.tgz#5797f52be4e990b25e00bf6341be0c573c1393c1"
+  integrity sha512-P1v+huBWhuerV4okRhN0+Htx3Nw8LGWTUF66E5iwuZEWvLTYQEQ+Od0j2CvD4FY6rhncNpoIZcWVlIy5NmG4fg==
+  dependencies:
+    "@expo/config-plugins" "^4.0.14"
+
 expo-manifests@~0.3.0:
   version "0.3.0"
   resolved "https://registry.yarnpkg.com/expo-manifests/-/expo-manifests-0.3.0.tgz#724e85a4e726cb1ef775f9846c9ecb8d243a17d7"
@@ -3551,6 +3566,14 @@ expo-structured-headers@~2.2.0:
   version "2.2.1"
   resolved "https://registry.yarnpkg.com/expo-structured-headers/-/expo-structured-headers-2.2.1.tgz#739f969101de6bead921eee59e5899399ad67715"
   integrity sha512-nY6GuvoS/U5XdhfBNmvXGRoGzIXywXpSZs2wdiP+FbS79P9UWyEqzgARrBTF+6pQxUVMs6/vdffxRpwhjwYPug==
+
+expo-task-manager@^10.2.1, expo-task-manager@~10.2.0:
+  version "10.2.1"
+  resolved "https://registry.yarnpkg.com/expo-task-manager/-/expo-task-manager-10.2.1.tgz#7f57ad7118736d6f8375bd1be36c748605683a2f"
+  integrity sha512-peT1ZG7VjQkdyTLWsPFTU5/W2dZwz2Il/Q6jjLowMPNN9iIq1qHU273+65PRR3zMRt1YfWh8vQSiHEIypKkxgg==
+  dependencies:
+    "@expo/config-plugins" "^4.0.14"
+    unimodules-app-loader "~3.1.0"
 
 expo-updates-interface@~0.6.0:
   version "0.6.0"
@@ -6233,6 +6256,16 @@ react-mixin@^3.0.5:
     object-assign "^4.0.1"
     smart-mixin "^2.0.0"
 
+react-native-background-job@^2.3.1:
+  version "2.3.1"
+  resolved "https://registry.yarnpkg.com/react-native-background-job/-/react-native-background-job-2.3.1.tgz#c9aa299d9ffb40b84a3156dec5fa40a604a9462b"
+  integrity sha512-6R0krrH+zDNolauCyxjotiSK3X2YIJIP9+YX4HVVLFd/coAUnQKn1oy0fCqQzK4zhcggLN6D27wVOkjl5IjPaw==
+
+react-native-background-task@^0.2.1:
+  version "0.2.1"
+  resolved "https://registry.yarnpkg.com/react-native-background-task/-/react-native-background-task-0.2.1.tgz#9d110ed14b245e0d8b9ec8114ce24b33ddda65de"
+  integrity sha512-t5NvHWiqdIRf+KRUbeYH0QYSF3TTTe67g9TuOy/KbfU0KWqK1igLbQB/vw1o8nXZrWWIzSl9mSTG+2V/57TRzw==
+
 react-native-carousel-view@^0.5.1:
   version "0.5.1"
   resolved "https://registry.yarnpkg.com/react-native-carousel-view/-/react-native-carousel-view-0.5.1.tgz#2b0d64d32d71be09ff7555aa8c19b1dac98c5969"
@@ -7543,6 +7576,11 @@ unicode-property-aliases-ecmascript@^2.0.0:
   version "2.0.0"
   resolved "https://registry.npmjs.org/unicode-property-aliases-ecmascript/-/unicode-property-aliases-ecmascript-2.0.0.tgz"
   integrity sha512-5Zfuy9q/DFr4tfO7ZPeVXb1aPoeQSdeFMLpYuFebehDAhbuevLs5yxSZmIFN1tP5F9Wl4IpJrYojg85/zgyZHQ==
+
+unimodules-app-loader@~3.1.0:
+  version "3.1.0"
+  resolved "https://registry.yarnpkg.com/unimodules-app-loader/-/unimodules-app-loader-3.1.0.tgz#1779d9505275e2da2e25812e142198665a14cb2d"
+  integrity sha512-ykDpkZY3ZUckNQN83YP1eY0uxLHK6cLP4WMa4RWsjx5JX38dFvcXpoE/+X2RZSbIgRcCR1fjyd7H1NHjDuXhuQ==
 
 union-value@^1.0.0:
   version "1.0.1"
