@@ -33,6 +33,7 @@ export const colors = {
     CardKeyValue:"#484848",
     yellow:"#FFFF00",
     grey1:"#A9A9A9",
-    lightgrey:"#D3D3D3"
+    lightgrey:"#D3D3D3",
+    linkText:"#3366BB",
   },
 };

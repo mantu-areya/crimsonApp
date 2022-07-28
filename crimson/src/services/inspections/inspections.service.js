@@ -2,6 +2,7 @@ import { apiPost, apiPut, apiGet } from '../api/api';
 var qs = require('qs');
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import NetInfo, { useNetInfo } from "@react-native-community/netinfo";
+// import { mockedVendorFormDetails } from "../../mocks/vendorFormDetails";
 
 
 export const getToken = (username, password, apiKeyAuthInfo) => {
@@ -125,6 +126,7 @@ export const getVendorFormDetails = async (inspId) => {
       // throw err;
     });
 
+  // return mockedVendorFormDetails
 }
 
 export const updateSfVendorFormDetails = async (data) => {

@@ -106,6 +106,11 @@ color:${theme.colors.text.inverse}
 font-family: ${theme.fonts.body};
 `;
 
+const DetailcardHeaderactive = (theme) =>`
+font-size: ${theme.fontSizes.medium};
+color:${theme.colors.text.linkText}
+font-family: ${theme.fonts.body};
+`;
 const VfDetailsKey = (theme) => `
 font-size: ${theme.fontSizes.medium};
 color:${theme.colors.text.grey1}
@@ -143,7 +148,8 @@ const variants = {
   DetailcardHeader,
   VfDetailsKey,
   VfDetailsValue,
-  NavigationText
+  NavigationText,
+  DetailcardHeaderactive
 };
 
 export const Text = styled.Text`

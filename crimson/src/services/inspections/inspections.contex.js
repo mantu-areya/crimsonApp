@@ -3,6 +3,8 @@ import { getInspectionsData, getPendingInspections, setToken } from "./inspectio
 import NetInfo from "@react-native-community/netinfo";
 import AsyncStorage from "@react-native-async-storage/async-storage"
 
+//import for mocking results
+// import { mockedinspections } from "../../mocks/inspections";
 
 
 export const InspectionsContext = createContext();
@@ -30,6 +32,11 @@ export const InspectionsContextProvider = ({ children }) => {
         setError(err);
         console.log(err);
       });
+
+    // mocking local inspection data
+    // setInspections(mockedinspections)
+
+
   };
 
   const retrievePendingInspections = () => {
@@ -44,6 +51,10 @@ export const InspectionsContextProvider = ({ children }) => {
         setError(err);
         console.log(err);
       });
+
+    // mocking local inspection data
+    // return inspections;
+
   };
 
   useEffect(() => {
