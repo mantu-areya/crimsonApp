@@ -51,7 +51,7 @@ export const WorkAuthOtherForms = ({ catName, formData, inspId }) => {
   const GetToal = () => {
     let toatalSF = 0;
     dataList.map(ele => {
-      toatalSF = toatalSF + ele.Total__c
+      toatalSF = toatalSF + ele.Total
       return toatalSF
     })
     return toatalSF
@@ -60,25 +60,25 @@ export const WorkAuthOtherForms = ({ catName, formData, inspId }) => {
   const displayRows = (dataList) => {
     return dataList.map((item, i) => {
       return (
-        <View key={item.UniqueKey__c}>
+        <View key={item.UniqueKey}>
           <Row >
             <Col xs="3" md="3">
-              <Text variant="body">{item.Sub_Category__c}</Text>
+              <Text variant="body">{item.Sub_Category}</Text>
             </Col>
             <Col xs="2" md="3">
-              <Text variant="body"></Text>
+              <Text variant="body">{item.Owner_Clarification}</Text>
             </Col>
             <Col xs="2" md="2">
-              <Text variant="body">{item.Approval_Status__c}</Text>
+              <Text variant="body">{item.Approval_Status}</Text>
             </Col>
             <Col xs="1" md="1">
-              <Text variant="body">{item.Approved_Amount__c}</Text>
+              <Text variant="body">{item.Adj_Quantity}</Text>
             </Col>
             <Col xs="2" md="1">
-              <Text variant="body">{item.Approved_Amount__c}</Text>
+              <Text variant="body">{item.Adj_Rate}</Text>
             </Col>
             <Col xs="2" md="2">
-              <Text variant="body">{item.Approved_Amount__c}</Text>
+              <Text variant="body">{item.Approved_Amount}</Text>
             </Col>
           </Row>
           <Spacer position="top" size="medium" />

@@ -17,23 +17,23 @@ export const VendorFormContextProvider = ({ children }) => {
     Object.keys(vendorFormDetails).length > 0 && vendorFormDetails[inspId]&&vendorFormDetails[inspId].map(ele => {
       if (formType === "RM") {
         modifiedData.map(obj => {
-          if (obj.UniqueKey__c === ele.UniqueKey__c) {
-            ele['Room_Length__c'] = obj.Room_Length__c;
-            ele['Room_Width__c'] = obj.Room_Width__c;
-            ele['Room_Misc_SF__c'] = obj.Room_Misc_SF__c;
-            ele['Room_Total__c'] = obj.Room_Total__c;
+          if (obj.UniqueKey === ele.UniqueKey) {
+            ele['Room_Length'] = obj.Room_Length;
+            ele['Room_Width'] = obj.Room_Width;
+            ele['Room_Misc_SF'] = obj.Room_Misc_SF;
+            ele['Room_Total'] = obj.Room_Total;
           }
           return obj
         });
       }
       if (formType === "OTHRFM") {
         modifiedData.forEach(obj => {
-          if (obj.UniqueKey__c === ele.UniqueKey__c) {
-            ele['Quantity__c'] = obj.Quantity__c;
-            ele['Rate__c'] = obj.Rate__c;
-            ele['Total__c'] = obj.Total__c;
-            ele['Scope_Notes__c'] = obj.Scope_Notes__c;
-            ele['U_M__c'] = obj.U_M__c;
+          if (obj.UniqueKey === ele.UniqueKey) {
+            ele['Quantity'] = obj.Quantity;
+            ele['Rate'] = obj.Rate;
+            ele['Total'] = obj.Total;
+            ele['Scope_Notes'] = obj.Scope_Notes;
+            ele['U_M'] = obj.U_M;
 
           }
           return obj

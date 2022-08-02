@@ -71,26 +71,26 @@ export const VendorFormsPage = ({ inspectionData, navigation }) => {
     let grandTtl = 0.00;
 
     Object.keys(inspData).map(item => {
-      if (inspData[item].Category__c === "Room Measurements") {
+      if (inspData[item].Category === "Room Measurements") {
         room_msrmnt.push(inspData[item])
       }
-      else if (inspData[item].Category__c === "General Rental Operations Scope") {
+      else if (inspData[item].Category === "General Rental Operations Scope") {
         category1.push(inspData[item])
-      } else if (inspData[item].Category__c === "Pools") {
+      } else if (inspData[item].Category === "Pools") {
         category2.push(inspData[item])
 
-      } else if (inspData[item].Category__c === "Exterior") {
+      } else if (inspData[item].Category === "Exterior") {
         category3.push(inspData[item])
 
-      } else if (inspData[item].Category__c === "Interior") {
+      } else if (inspData[item].Category === "Interior") {
         category4.push(inspData[item])
 
-      } else if (inspData[item].Category__c === "Mechanical, Electrical and Plumbing Systems") {
+      } else if (inspData[item].Category === "Mechanical, Electrical and Plumbing Systems") {
         category5.push(inspData[item])
 
       }
-      if (inspData[item].Category__c !== "Room Measurements") {
-        grandTtl = grandTtl + (inspData[item].Total__c)
+      if (inspData[item].Category !== "Room Measurements") {
+        grandTtl = grandTtl + (inspData[item].Total)
       }
 
     })

@@ -3,7 +3,7 @@ import { getInspectionsData, getPendingInspections, setToken } from "./inspectio
 import NetInfo from "@react-native-community/netinfo";
 import AsyncStorage from "@react-native-async-storage/async-storage"
 
-//import for mocking results
+// imports for mocking results
 // import { mockedinspections } from "../../mocks/inspections";
 
 

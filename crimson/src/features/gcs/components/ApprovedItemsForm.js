@@ -45,7 +45,7 @@ export const ApprovedItemsForm = ({ approvedItems,updateLocalData,inspId }) => {
   const GetToalSqFt = () => {
     let toatalSF = 0;
     approvedItemsData.map(ele => {
-      toatalSF = toatalSF + ele.Total__c
+      toatalSF = toatalSF + ele.Total
       return toatalSF
     })
     return toatalSF
@@ -58,30 +58,30 @@ useEffect(()=>{
 const displayRows=()=>{
  return approvedItemsData.map((item, i) => {
     return (
-      <Row key={item.UniqueKey__c}>
+      <Row key={item.UniqueKey}>
         <Col xs="2" md="2" style={{textAlign:"center"}}>
-          <Text variant="body">{item.Category__c}</Text>
+          <Text variant="body">{item.Category}</Text>
         </Col>
         <Col xs="2" md="2">
-          <Text variant="body">{item.Sub_Category__c}</Text>
+          <Text variant="body">{item.Sub_Category}</Text>
         </Col>
         <Col xs="2" md="2">
-           <Text variant="body">{item.Approval_Status__c}</Text> 
+           <Text variant="body">{item.Approval_Status}</Text> 
         </Col>
         <Col xs="2" md="2">
-           <Text variant="body">{item.Owner_Clarification__c  }</Text> 
+           <Text variant="body">{item.Owner_Clarification  }</Text> 
         </Col>
         <Col xs="1" md="1">
-          <Text variant="body">{item.Quantity__c}</Text>
+          <Text variant="body">{item.Quantity}</Text>
         </Col>
         <Col xs="1" md="1">
-          <Text variant="body">{item.U_M__c}</Text>
+          <Text variant="body">{item.U_M}</Text>
         </Col>
         <Col xs="1" md="1">
-          <Text variant="body">{item.Rate__c}</Text>
+          <Text variant="body">{item.Rate}</Text>
         </Col>
         <Col xs="1" md="1">
-          <Text variant="body">{item.Total__c}</Text>
+          <Text variant="body">{item.Total}</Text>
         </Col>
       </Row>
     )

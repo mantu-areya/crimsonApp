@@ -53,7 +53,7 @@ export const OtherCategoryForms = ({ catName, formData, inspId }) => {
   const GetToal = () => {
     let toatalSF = 0;
     dataList.map(ele => {
-      toatalSF = toatalSF + ele.Total__c
+      toatalSF = toatalSF + ele.Total
       return toatalSF
     })
     return toatalSF
@@ -61,7 +61,7 @@ export const OtherCategoryForms = ({ catName, formData, inspId }) => {
 
   const onValueChange = async (value,field,key)=>{
     const newState = dataList.map(obj => {
-      if (obj.UniqueKey__c===key) {
+      if (obj.UniqueKey===key) {
         return {...obj, [field]: value};
       }
       return obj;
@@ -71,38 +71,35 @@ export const OtherCategoryForms = ({ catName, formData, inspId }) => {
   const displayRows=(dataList)=>{
     return dataList.map((item, i) => {
       return (
-        <View key={item.UniqueKey__c}>
+        <View key={item.UniqueKey}>
           <Row >
 
             <Col xs="3" md="3">
-              <Text variant="body">{item.Sub_Category__c}</Text>
+              <Text variant="body">{item.Sub_Category}</Text>
             </Col>
 
             <Col xs="3" md="3">
-              <NumberInput value={item.Quantity__c} onChange={(value) =>{onValueChange(value,"Quantity__c",item.UniqueKey__c)}} />
+              <NumberInput value={item.Quantity} onChange={(value) =>{onValueChange(value,"Quantity",item.UniqueKey)}} />
             </Col>
-            {/* <Col xs="2" md="2">
-        <TextArea Value={item.U_M__c}/>
-        </Col> */}
             <Col xs="3" md="3">
-              <NumberInput value={item.Rate__c} onChange={(value) =>{onValueChange(value,"Rate__c",item.UniqueKey__c)}} />
+              <NumberInput value={item.Rate} onChange={(value) =>{onValueChange(value,"Rate",item.UniqueKey)}} />
             </Col>
             <Col xs="2" md="2">
-              <Text variant="body">{item.Total__c}</Text>
+              <Text variant="body">{item.Total}</Text>
             </Col>
             <Col>
-                <PressableIcon onPress={() => handleNotes(isNotesCollapsed, setIsNotesCollapsed, item.UniqueKey__c)}>
-              {(isNotesCollapsed && item.UniqueKey__c === key.current)? <Icon name="close" size={25} color="black"  />
+                <PressableIcon onPress={() => handleNotes(isNotesCollapsed, setIsNotesCollapsed, item.UniqueKey)}>
+              {(isNotesCollapsed && item.UniqueKey === key.current)? <Icon name="close" size={25} color="black"  />
                 : <NoteIcon name="note" size={20} color="black" />}
            </PressableIcon>
             </Col>
           </Row>
-          <Collapsible collapsed={!(isNotesCollapsed && item.UniqueKey__c === key.current)} >
+          <Collapsible collapsed={!(isNotesCollapsed && item.UniqueKey === key.current)} >
             <ExpandSection>
             <Text variant="formHeader">SCOPE NOTES :</Text>
-              <OtherFormTextArea Value={item.Scope_Notes__c} onChange={(value) =>{onValueChange(value,"Scope_Notes__c",item.UniqueKey__c)}} />
+              <OtherFormTextArea Value={item.Scope_Notes} onChange={(value) =>{onValueChange(value,"Scope_Notes",item.UniqueKey)}} />
               <Text variant="formHeader">U/M :</Text>
-              <OtherFormTextArea Value={item.U_M__c} onChange={(value) =>{onValueChange(value,"U_M__c",item.UniqueKey__c)}}/>
+              <OtherFormTextArea Value={item.U_M} onChange={(value) =>{onValueChange(value,"U_M",item.UniqueKey)}}/>
             </ExpandSection>
           </Collapsible>
           <Spacer position="top" size="medium" />
