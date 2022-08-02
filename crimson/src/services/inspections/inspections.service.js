@@ -3,6 +3,9 @@ var qs = require('qs');
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import NetInfo, { useNetInfo } from "@react-native-community/netinfo";
 
+//imports for mock Data
+// import { mockedVendorFormDetails } from "../../mocks/vendorFormDetails";
+
 
 export const getToken = (username, password, apiKeyAuthInfo) => {
   var qs = require('qs');
@@ -77,9 +80,7 @@ export const getInspectionsData = async () => {
       }
     },
   )
-    .then(response => {
-      return response.data;
-    })
+    .then(response => response.data["Inspections"].Inspection )
     .catch(err => {
       console.error(err);
       // throw err;
@@ -118,13 +119,15 @@ export const getVendorFormDetails = async (inspId) => {
       }
     },
   )
-    .then(response => response.data )
+    .then(response => response.data["DynamicVendorTemplates"].DynamicVendorTemplate )
     .catch(err => {
       console.log(err);
       console.error(err);
       // throw err;
     });
 
+  //using mock Data
+  // return mockedVendorFormDetails
 }
 
 export const updateSfVendorFormDetails = async (data) => {
@@ -139,7 +142,7 @@ export const updateSfVendorFormDetails = async (data) => {
       },
     },
   )
-    .then(response => response.data)
+    .then(response =>response.data["DynamicVendorTemplates"].DynamicVendorTemplate )
     .catch(err => {
       console.error(err);
       // throw err;

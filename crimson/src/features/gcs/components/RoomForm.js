@@ -22,7 +22,7 @@ export const RoomForm = ({ room_Measurement,updateLocalData,inspId }) => {
 
   const onValueChange = async (value,field,key)=>{
     const newState = room_measurementData.map(obj => {
-      if (obj.UniqueKey__c===key) {
+      if (obj.UniqueKey===key) {
         return {...obj, [field]: value};
       }
       return obj;
@@ -55,7 +55,7 @@ export const RoomForm = ({ room_Measurement,updateLocalData,inspId }) => {
   const GetToalSqFt = () => {
     let toatalSF = 0;
     room_measurementData.map(ele => {
-      toatalSF = toatalSF + ele.Room_Total__c
+      toatalSF = toatalSF + ele.Room_Total
       return toatalSF
     })
     return toatalSF
@@ -75,24 +75,24 @@ useEffect(()=>{
 const displayRows=()=>{
  return room_measurementData.map((item, i) => {
     return (
-      <Row key={item.UniqueKey__c}>
+      <Row key={item.UniqueKey}>
         <Col xs="4" md="3" style={{textAlign:"center"}}>
-          <Text variant="body">{item.Sub_Category__c}</Text>
+          <Text variant="body">{item.Sub_Category}</Text>
         </Col>
         <Col xs="2" md="2">
-          <NumberInput  value={item.Room_Length__c} id="3" onChange={(value) =>{onValueChange(value,"Room_Length__c",item.UniqueKey__c)}} />
+          <NumberInput  value={item.Room_Length} id="3" onChange={(value) =>{onValueChange(value,"Room_Length",item.UniqueKey)}} />
           {/* <Text variant="body">{room_Measurement.LENGTH[item]}</Text> */}
         </Col>
         <Col xs="2" md="2">
-          <NumberInput value={item.Room_Width__c} onChange={(value) =>{onValueChange(value,"Room_Width__c",item.UniqueKey__c)}} />
+          <NumberInput value={item.Room_Width} onChange={(value) =>{onValueChange(value,"Room_Width",item.UniqueKey)}} />
           {/* <Text variant="body">{room_Measurement.WIDTH[item]}</Text> */}
         </Col>
         <Col xs="2" md="3">
           {/* <Text variant="body">{room_Measurement.MISC_SF[item]}</Text> */}
-          <TextArea Value={item.Room_Misc_SF__c}  onChangeText={(value) =>{onValueChange(value,"Room_Misc_SF__c",item.UniqueKey__c)}}/>
+          <TextArea Value={item.Room_Misc_SF}  onChangeText={(value) =>{onValueChange(value,"Room_Misc_SF",item.UniqueKey)}}/>
         </Col>
         <Col xs="2" md="2">
-          <Text variant="body">{item.Room_Total__c}</Text>
+          <Text variant="body">{item.Room_Total}</Text>
 
         </Col>
       </Row>
