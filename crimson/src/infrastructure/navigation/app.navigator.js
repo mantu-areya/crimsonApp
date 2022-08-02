@@ -9,7 +9,7 @@ import { HomeScreen } from "../../features/gcs/screens/Homescreens"
 import { createStackNavigator } from '@react-navigation/stack';
 import { InspectionsScreen } from "../../features/gcs/screens/InspectionsScreen";
 import { InspectionDetailScreen } from "../../features/gcs/screens/InspectionDetailScreen";
-
+import { CameraScreen } from "../../utilities/camera/CameraScreen"
 export const AppNavigator = () => {
 
 
@@ -63,6 +63,8 @@ export const AppNavigator = () => {
           name="Inspections" component={InspectionsScreen} />
         <HomeStack.Screen options={{ headerShown: false }}
           name="InspectionsDetail" component={InspectionDetailScreen} />
+        <HomeStack.Screen options={{ headerShown: false }}
+          name="CameraScreen" component={CameraScreen} />
       </HomeStack.Navigator>
 
     );

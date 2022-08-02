@@ -7,13 +7,14 @@ import NoteIcon from 'react-native-vector-icons/SimpleLineIcons';
 import { Text } from "../../../components/typography/text.component";
 import { Col, Row } from "react-native-responsive-grid-system";
 import { Spacer, SpacerView } from "../../../components/spacer/spacer.component";
-import { TotalContainer, NumberInput, TextArea, ExpandSection, OtherFormTextArea,PressableIcon } from "./VendorFormPageStyles";
+import { TotalContainer, NumberInput, TextArea, ExpandSection, OtherFormTextArea,PressableIcon,Camerabutton } from "./VendorFormPageStyles";
 import ContentLoader, { Rect } from 'react-content-loader/native'
 import { Platform } from 'react-native';
 import { VendorFormContext } from "../../../services/context/VendorForm/vendorForm.contex";
+import  CameraIcon from 'react-native-vector-icons/EvilIcons';
 
 
-export const OtherCategoryForms = ({ catName, formData, inspId }) => {
+export const OtherCategoryForms = ({ catName, formData, inspId,navigation }) => {
   const [isCollapsed, setIsCollapsed] = React.useState(false);
   const [isNotesCollapsed, setIsNotesCollapsed] = React.useState(false);
   const key = useRef('');
@@ -100,6 +101,9 @@ export const OtherCategoryForms = ({ catName, formData, inspId }) => {
               <OtherFormTextArea Value={item.Scope_Notes} onChange={(value) =>{onValueChange(value,"Scope_Notes",item.UniqueKey)}} />
               <Text variant="formHeader">U/M :</Text>
               <OtherFormTextArea Value={item.U_M} onChange={(value) =>{onValueChange(value,"U_M",item.UniqueKey)}}/>
+              <Camerabutton>
+                <CameraIcon name="camera" size={40} color="black" onPress={() => navigation.navigate("CameraScreen")}/>
+                </Camerabutton>
             </ExpandSection>
           </Collapsible>
           <Spacer position="top" size="medium" />

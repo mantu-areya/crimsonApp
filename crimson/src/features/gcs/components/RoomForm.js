@@ -93,7 +93,6 @@ const displayRows=()=>{
         </Col>
         <Col xs="2" md="2">
           <Text variant="body">{item.Room_Total}</Text>
-
         </Col>
       </Row>
     )
