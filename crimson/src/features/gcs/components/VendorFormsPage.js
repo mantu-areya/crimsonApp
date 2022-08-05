@@ -113,7 +113,7 @@ useEffect(()=>{
   return()=>{
   updateToSf(inspectionData.Id)
   }
-},[])
+})
 
   useEffect(() => {
     let contexRecord = vendorFormDetails[inspectionData.Id]

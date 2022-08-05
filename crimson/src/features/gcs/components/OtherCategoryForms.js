@@ -98,9 +98,9 @@ export const OtherCategoryForms = ({ catName, formData, inspId,navigation }) => 
           <Collapsible collapsed={!(isNotesCollapsed && item.UniqueKey === key.current)} >
             <ExpandSection>
             <Text variant="formHeader">SCOPE NOTES :</Text>
-              <OtherFormTextArea Value={item.Scope_Notes} onChange={(value) =>{onValueChange(value,"Scope_Notes",item.UniqueKey)}} />
+            <OtherFormTextArea    defaultValue={item.Scope_Notes && (item.Scope_Notes).toString()} Value={item.Scope_Notes && (item.Scope_Notes).toString()} onChangeText={(value) =>{onValueChange(parseFloat(value),"Scope_Notes",item.UniqueKey)}}/>
               <Text variant="formHeader">U/M :</Text>
-              <OtherFormTextArea Value={item.U_M} onChange={(value) =>{onValueChange(value,"U_M",item.UniqueKey)}}/>
+              <OtherFormTextArea   defaultValue={item.U_M && (item.U_M).toString()} Value={item.U_M && (item.U_M).toString()} onChangeText={(value) =>{onValueChange(parseFloat(value),"U_M",item.UniqueKey)}}/>
               <Camerabutton>
                 <CameraIcon name="camera" size={40} color="black" onPress={() => navigation.navigate("CameraScreen")}/>
                 </Camerabutton>

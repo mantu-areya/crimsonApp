@@ -62,7 +62,7 @@ useEffect(()=>{
   const updateToSF = (inspId) => {
     NetInfo.fetch().then(networkState => {
     if(networkState.isConnected){
-      vendorFormDetails[inspId] && updateSfVendorFormDetails(vendorFormDetails[inspId])
+      vendorFormDetails[inspId] && updateSfVendorFormDetails(vendorFormDetails[inspId],inspId)
     }
   })
   }

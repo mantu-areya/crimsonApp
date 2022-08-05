@@ -64,7 +64,7 @@ export const UploadOfflineData = () => {
          return vFData.push(obj)
        })
     })
-    vFData.length>0 && updateSfVendorFormDetails(vFData)
+    vFData.length>0 && updateSfVendorFormDetails(vFData,"BulkDvt")
   }
 
   return <>
