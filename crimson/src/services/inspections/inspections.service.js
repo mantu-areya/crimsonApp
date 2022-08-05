@@ -130,11 +130,14 @@ export const getVendorFormDetails = async (inspId) => {
   // return mockedVendorFormDetails
 }
 
-export const updateSfVendorFormDetails = async (data) => {
+export const updateSfVendorFormDetails = async (data,inspId) => {
   const token = await getStoredToken();
   console.log("start");
+  // data.map(ele=>{
+  //  ele.Sub_Category=="Garage" && console.log(ele);
+  // })
   return apiPost(
-    `https://hudsonhomesmgmt--uat.my.salesforce.com/services/apexrest/crimson`,
+    `https://hudsonhomesmgmt--uat.my.salesforce.com/services/apexrest/crimson?InspectionId=${inspId}`,
     data,
     {      
       headers: {

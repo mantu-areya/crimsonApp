@@ -113,7 +113,7 @@ useEffect(()=>{
   return()=>{
   updateToSf(inspectionData.Id)
   }
-},[])
+})
 
   useEffect(() => {
     let contexRecord = vendorFormDetails[inspectionData.Id]
@@ -170,19 +170,19 @@ useEffect(()=>{
                 <RoomForm room_Measurement={room_MeasurementData}  inspId={inspectionData.Id} />
               </CarousalScrren>
               <CarousalScrren >
-               {formNum==1 && <OtherCategoryForms catName={"GENERAL RENTAL OPERATIONS SCOPE"} formData={general_Rental} inspId={inspectionData.Id} />}
+               {formNum==1 && <OtherCategoryForms navigation={ navigation } catName={"GENERAL RENTAL OPERATIONS SCOPE"} formData={general_Rental} inspId={inspectionData.Id}  />}
               </CarousalScrren >
               <CarousalScrren >
-              {formNum==2 &&<OtherCategoryForms catName={"Pools"} formData={pools}  inspId={inspectionData.Id}/>}
+              {formNum==2 &&<OtherCategoryForms navigation={ navigation } catName={"Pools"} formData={pools}  inspId={inspectionData.Id}/>}
               </CarousalScrren >
               <CarousalScrren >
-              {formNum==3 && <OtherCategoryForms catName={"Exterior"} formData={exterior} inspId={inspectionData.Id}/>}
+              {formNum==3 && <OtherCategoryForms navigation={ navigation } catName={"Exterior"} formData={exterior} inspId={inspectionData.Id}/>}
               </CarousalScrren>
               <CarousalScrren >
-              {formNum==4 && <OtherCategoryForms catName={"Interior"} formData={interior} inspId={inspectionData.Id}/>}
+              {formNum==4 && <OtherCategoryForms navigation={ navigation } catName={"Interior"} formData={interior} inspId={inspectionData.Id}/>}
               </CarousalScrren>
               <CarousalScrren >
-              {formNum==5 && <OtherCategoryForms catName={"Mechanical, Electrical and Plumbing Systems"} formData={mech_Elec_Plumb} inspId={inspectionData.Id}/>}
+              {formNum==5 && <OtherCategoryForms navigation={ navigation } catName={"Mechanical, Electrical and Plumbing Systems"} formData={mech_Elec_Plumb} inspId={inspectionData.Id}/>}
               </CarousalScrren>
             </ViewCarousal>
 
