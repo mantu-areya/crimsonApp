@@ -62,9 +62,12 @@ export const OtherCategoryForms = ({ catName, formData, inspId,navigation }) => 
 
   const onValueChange = async (value,field,key)=>{
     const newState = dataList.map(obj => {
-      if (obj.UniqueKey===key) {
-        return {...obj, [field]: value};
+      if (obj.UniqueKey === key) {
+        let newValues = { ...obj, [field]: value };
+        let newTotal = (newValues.Quantity * newValues.Rate)
+        return { ...obj,[field]:value, ["Total"]: newTotal };
       }
+      obj.UniqueKey === key && console.log("ff");
       return obj;
     });
     setDatalist(newState)

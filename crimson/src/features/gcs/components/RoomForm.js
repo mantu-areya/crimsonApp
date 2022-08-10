@@ -23,8 +23,11 @@ export const RoomForm = ({ room_Measurement, updateLocalData, inspId }) => {
   const onValueChange = async (value, field, key) => {
     const newState = room_measurementData.map(obj => {
       if (obj.UniqueKey === key) {
-        return { ...obj, [field]: value };
+        let newValues = { ...obj, [field]: value };
+        let newTotal = (newValues.Room_Length * newValues.Room_Width) + newValues.Room_Misc_SF
+        return { ...obj,[field]:value, ["Room_Total"]: newTotal };
       }
+      obj.UniqueKey === key && console.log("ff");
       return obj;
     });
     setRoom_measurementData(newState)
@@ -62,7 +65,7 @@ export const RoomForm = ({ room_Measurement, updateLocalData, inspId }) => {
   }
 
   useEffect(() => {
-      updateVfContect(room_measurementData, "RM", inspId);
+    updateVfContect(room_measurementData, "RM", inspId);
   }, [room_measurementData]);
 
 
