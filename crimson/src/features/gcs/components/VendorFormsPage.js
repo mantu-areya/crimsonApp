@@ -17,6 +17,7 @@ import { InspectionDetailsCard } from "./InspectionDetailsCard"
 import { VendorFormContext } from "../../../services/context/VendorForm/vendorForm.contex";
 import Icon from 'react-native-vector-icons/SimpleLineIcons';
 import { ViewCarousal } from "../../../utilities/ViewCarousalComponent/ViewCarousal";
+import { useFocusEffect } from '@react-navigation/native';
 
 
 
@@ -106,14 +107,18 @@ export const VendorFormsPage = ({ inspectionData, navigation }) => {
 
 
 useEffect(()=>{
-    updateToSf(inspectionData.Id)
+  formNum !== '' && updateToSf(inspectionData.Id)
 },[formNum])
 
-useEffect(()=>{
-  return()=>{
-  updateToSf(inspectionData.Id)
-  }
-})
+
+useFocusEffect(
+  React.useCallback(() => {
+    return () => {
+      console.log('Screen was unfocused');
+      updateToSf(inspectionData.Id)
+    };
+  }, [])
+);
 
   useEffect(() => {
     let contexRecord = vendorFormDetails[inspectionData.Id]
@@ -184,6 +189,7 @@ useEffect(()=>{
               <CarousalScrren >
               {formNum==5 && <OtherCategoryForms navigation={ navigation } catName={"Mechanical, Electrical and Plumbing Systems"} formData={mech_Elec_Plumb} inspId={inspectionData.Id}/>}
               </CarousalScrren>
+              {console.log(inspectionData.Id)}
             </ViewCarousal>
 
           </>}
