@@ -10,6 +10,7 @@ export const UploadOfflineData = () => {
 
   const appState = useRef(AppState.currentState);
   const [appStateVisible, setAppStateVisible] = useState(appState.current);
+  const [netStateChange, setNetStateChange] = useState('');
 
   const { addToVfContex, setAscynDataToApp, vendorFormDetails } = useContext(VendorFormContext)
   const { inspections } = useContext(InspectionsContext);
@@ -20,12 +21,18 @@ export const UploadOfflineData = () => {
       addDataToAsync(vendorFormDetails);
     }
     NetInfo.addEventListener(networkState => {
-      console.log(networkState.isConnected);
       if(networkState.isConnected){
-        offlineDataToSalesForce(vendorFormDetails)
+        setNetStateChange(networkState.isConnected )
       }
     });
   })
+  useEffect(() => {
+  NetInfo.addEventListener(networkState => {
+    if(networkState.isConnected){
+      offlineDataToSalesForce(vendorFormDetails)
+    }
+  });
+},[netStateChange])
 
   useEffect(() => {
     addVfData()

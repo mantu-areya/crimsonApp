@@ -17,7 +17,7 @@ import { VendorFormContext } from "../../../services/context/VendorForm/vendorFo
 import Icon from 'react-native-vector-icons/SimpleLineIcons';
 import { ViewCarousal } from "../../../utilities/ViewCarousalComponent/ViewCarousal";
 import { ApprovedItemsForm } from "./ApprovedItemsForm";
-
+import { WorkAuthBidReviewForm } from "../components/WorkAuthBidReviewForm"
 
 const { width, height } = Dimensions.get('window');
 
@@ -51,20 +51,30 @@ export const WorkAuthFormPage = ({ inspectionData, navigation }) => {
   const { vendorFormDetails, updateToSf } = useContext(VendorFormContext);
   const [selectedCategory, setSelectedCategory] = React.useState('')
   const [formNum, setFormNum] = React.useState('')
-  const catselected = useRef('')
+const [bidReviewSummary,BidReviewSummary] = React.useState({totalApproved_Amount:0,approvedItemsCount:0,grandTotal:0,totalBidAmount:0, approvedasNotedAmount:0,approved_as_Noted_Count:0,declinedAmount:0,declined_Count:0,approved_as_Noted_Count:0})
+
 
   const GetDataByCategory = (inspData) => {
-    let approvedItems = []
-    let category1 = []
-    let category2 = []
-    let category3 = []
-    let category4 = []
-    let category5 = []
+    let approvedItems = [];
+    let category1 = [];
+    let category2 = [];
+    let category3 = [];
+    let category4 = [];
+    let category5 = [];
+    let approvedTotal = 0
     let grandTtl = 0.00;
+    let approved_Items_Count=0;
+    let totalBidAmount = 0;
+    let approved_as_Noted_Count=0;
+    let approvedasNotedAmount = 0;
+    let declined_Count=0;
+    let declinedAmount = 0;
 
     Object.keys(inspData).map(item => {
       if (inspData[item].Approval_Status === "Approved") {
         approvedItems.push(inspData[item])
+        approvedTotal+=inspData[item].Approved_Amount
+        approved_Items_Count+=1
       }
       if (inspData[item].Category === "General Rental Operations Scope") {
         category1.push(inspData[item])
@@ -84,6 +94,16 @@ export const WorkAuthFormPage = ({ inspectionData, navigation }) => {
       if (inspData[item].Category !== "Room Measurements") {
         grandTtl = grandTtl + (inspData[item].Total)
       }
+      if (inspData[item].Approval_Status === "Declined") {
+        declinedAmount+=inspData[item].Total
+        declined_Count+=1      }
+      if (inspData[item].Quantity >0) {
+        totalBidAmount += inspData[item].Total
+      }
+      if (inspData[item].Approval_Status === "Approved as Noted") {
+        approvedasNotedAmount += inspData[item].Total
+        approved_as_Noted_Count+=1
+      }
 
     })
     setApprovedItemsData(approvedItems);
@@ -94,23 +114,18 @@ export const WorkAuthFormPage = ({ inspectionData, navigation }) => {
     setMech_Elec_Plumb(category5);
     setGrandTotal(grandTtl)
     setVendorFormData(inspData)
+    BidReviewSummary({...bidReviewSummary,["totalApproved_Amount"]:approvedTotal, ["approvedItemsCount"]: approved_Items_Count,["grandTotal"] : grandTtl, ["totalBidAmount"]:totalBidAmount, ["approvedasNotedAmount"]:approvedasNotedAmount,["approved_as_Noted_Count"]:approved_as_Noted_Count,["declined_Count"]:declined_Count,["declinedAmount"]:declinedAmount})
   }
 
 
-useEffect(()=>{
-    updateToSf(inspectionData.Id)
-},[formNum])
 
-useEffect(()=>{
-  return()=>{
-  updateToSf(inspectionData.Id)
-  }
-},[])
+
+
 
   useEffect(() => {
     let contexRecord = vendorFormDetails[inspectionData.Id]
     if (contexRecord ) {
-      if (contexRecord == "NA") {
+      if (inspectionData.doCreateWAF__c == false) {
         setShowMsg(true)
       }
       else {
@@ -125,7 +140,7 @@ useEffect(()=>{
 
   const renderNoVFText = () => {
     return <InfoTextArea>
-      <Text variant="InspectionHeaderName" > VENDOR FORM IS NOT AVAILABLE</Text>
+      <Text variant="InspectionHeaderName" > WORK AUTH FORM IS NOT AVAILABLE</Text>
     </InfoTextArea>
   }
 
@@ -140,14 +155,7 @@ useEffect(()=>{
 
 
           {showMsg ? renderNoVFText() : <>
-            <Spacer position="top" size="medium" />
-            <ActionContainer>
-              <TotalContainer>
-                <Text>GRAND TOTAL BID SUBMITTED : ${grandTotal.toLocaleString("en-US")}</Text>
-                {/* <Text>GRAND TOTAL BID SUBMITTED : $2,265.81</Text> */}
-                <Spacer position="right" size="large" />
-              </TotalContainer>
-            </ActionContainer>
+            <WorkAuthBidReviewForm  bidReviewSummary={bidReviewSummary}/>
             <Spacer position="top" size="large" />
             <View style={{
               flex: 1,
@@ -174,6 +182,7 @@ useEffect(()=>{
               <CarousalScrren >
               {formNum==5 && <WorkAuthOtherForms catName={"Mechanical, Electrical and Plumbing Systems"} formData={mech_Elec_Plumb} inspId={inspectionData.Id}/>}
               </CarousalScrren>
+              {console.log(inspectionData.Id)}
             </ViewCarousal>
           </>}
         </Body>
