@@ -95,13 +95,13 @@ const [bidReviewSummary,BidReviewSummary] = React.useState({totalApproved_Amount
         grandTtl = grandTtl + (inspData[item].Total)
       }
       if (inspData[item].Approval_Status === "Declined") {
-        declinedAmount+=inspData[item].Total
+        declinedAmount+=inspData[item].Approved_Amount
         declined_Count+=1      }
       if (inspData[item].Quantity >0) {
         totalBidAmount += inspData[item].Total
       }
       if (inspData[item].Approval_Status === "Approved as Noted") {
-        approvedasNotedAmount += inspData[item].Total
+        approvedasNotedAmount += inspData[item].Approved_Amount
         approved_as_Noted_Count+=1
       }
 

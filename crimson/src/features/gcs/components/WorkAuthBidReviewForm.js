@@ -45,7 +45,7 @@ export const WorkAuthBidReviewForm = ({ bidReviewSummary }) => {
   const displayRows = () => {
     let hhm_approved_amount = bidReviewSummary && (bidReviewSummary.totalApproved_Amount + bidReviewSummary.approvedasNotedAmount)
     let variance = (hhm_approved_amount - bidReviewSummary.totalBidAmount)
-    let percentVariance = (variance / bidReviewSummary.totalBidAmount) * 100
+    let percentVariance = variance / bidReviewSummary.totalBidAmount * 100
     let totalcount = bidReviewSummary && bidReviewSummary.approvedItemsCount + bidReviewSummary.approved_as_Noted_Count + bidReviewSummary.declined_Count
     let total$ = bidReviewSummary.totalApproved_Amount + bidReviewSummary.declinedAmount + bidReviewSummary.approvedasNotedAmount
     let approvedAmntPercent = bidReviewSummary && ((bidReviewSummary.totalApproved_Amount / bidReviewSummary.totalBidAmount) * 100)
@@ -111,7 +111,7 @@ export const WorkAuthBidReviewForm = ({ bidReviewSummary }) => {
             <Text variant="body">${bidReviewSummary && bidReviewSummary.declinedAmount.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</Text>
           </Col>
           <Col xs="2" md="2" style={{ textAlign: "center" }}>
-            <Text variant="body">{(declinedAmntPercent>0?declinedAmntPercent:0).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}%</Text>
+            <Text variant="body">{(declinedAmntPercent==0?0:declinedAmntPercent).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}%</Text>
           </Col>
         </Row>
         <Row >
@@ -119,7 +119,7 @@ export const WorkAuthBidReviewForm = ({ bidReviewSummary }) => {
             <Text variant="body">% VARIANCE</Text>
           </Col>
           <Col xs="2" md="2" style={{ textAlign: "center" }}>
-            <Text variant="body">{(percentVariance>0 ? percentVariance:0).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}%</Text>
+            <Text variant="body">{(percentVariance==0 ?0:percentVariance).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}%</Text>
           </Col>
           <Col xs="2" md="2" style={{ textAlign: "center" }}>
             <Text variant="body">TOTAL</Text>
