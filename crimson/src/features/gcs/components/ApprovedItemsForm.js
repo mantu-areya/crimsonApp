@@ -45,7 +45,7 @@ export const ApprovedItemsForm = ({ approvedItems,updateLocalData,inspId }) => {
   const GetToalSqFt = () => {
     let toatalSF = 0;
     approvedItemsData.map(ele => {
-      toatalSF = toatalSF + ele.Total
+      toatalSF = toatalSF + ele.Approved_Amount
       return toatalSF
     })
     return toatalSF
