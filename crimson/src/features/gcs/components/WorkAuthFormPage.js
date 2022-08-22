@@ -72,7 +72,6 @@ const [bidReviewSummary,BidReviewSummary] = React.useState({totalApproved_Amount
 
     Object.keys(inspData).map(item => {
       if (inspData[item].Approval_Status === "Approved") {
-        approvedItems.push(inspData[item])
         approvedTotal+=inspData[item].Approved_Amount
         approved_Items_Count+=1
       }
@@ -105,6 +104,9 @@ const [bidReviewSummary,BidReviewSummary] = React.useState({totalApproved_Amount
         approved_as_Noted_Count+=1
       }
 
+      if (inspData[item].Approval_Status === "Approved" || inspData[item].Approval_Status === "Approved as Noted") {
+        approvedItems.push(inspData[item])
+      }
     })
     setApprovedItemsData(approvedItems);
     setGeneral_Rental(category1);
@@ -168,7 +170,7 @@ const [bidReviewSummary,BidReviewSummary] = React.useState({totalApproved_Amount
                 <ApprovedItemsForm approvedItems={approvedItemsData} />
               </CarousalScrren>
               <CarousalScrren >
-               {formNum==1 && <WorkAuthOtherForms catName={"GENERAL RENTAL OPERATIONS SCOPE"} formData={general_Rental} inspId={inspectionData.Id} />}
+               {formNum==1 && <WorkAuthOtherForms catName={"GENERAL RENTAL OPERATIONS SCOPE"} formData={general_Rental} inspId={inspectionData.Id}  />}
               </CarousalScrren >
               <CarousalScrren >
               {formNum==2 &&<WorkAuthOtherForms catName={"Pools"} formData={pools}  inspId={inspectionData.Id}/>}
