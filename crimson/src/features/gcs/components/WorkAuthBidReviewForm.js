@@ -99,7 +99,7 @@ export const WorkAuthBidReviewForm = ({ bidReviewSummary }) => {
             <Text variant="body">$ VARIANCE</Text>
           </Col>
           <Col xs="2" md="2" style={{ textAlign: "center" }}>
-            <Text variant="body">${variance && variance.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</Text>
+            <Text variant="body">${(variance == 0 ?0: variance).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</Text>
           </Col>
           <Col xs="2" md="2" style={{ textAlign: "center" }}>
             <Text variant="body">DECLINED</Text>
@@ -111,7 +111,7 @@ export const WorkAuthBidReviewForm = ({ bidReviewSummary }) => {
             <Text variant="body">${bidReviewSummary && bidReviewSummary.declinedAmount.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</Text>
           </Col>
           <Col xs="2" md="2" style={{ textAlign: "center" }}>
-            <Text variant="body">{(declinedAmntPercent==0?0:declinedAmntPercent).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}%</Text>
+            <Text variant="body">{((declinedAmntPercent==0|| isNaN(declinedAmntPercent))?0:declinedAmntPercent).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}%</Text>
           </Col>
         </Row>
         <Row >
@@ -119,7 +119,7 @@ export const WorkAuthBidReviewForm = ({ bidReviewSummary }) => {
             <Text variant="body">% VARIANCE</Text>
           </Col>
           <Col xs="2" md="2" style={{ textAlign: "center" }}>
-            <Text variant="body">{(percentVariance==0 ?0:percentVariance).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}%</Text>
+            <Text variant="body">{((percentVariance==0 || isNaN(percentVariance))  ?0:percentVariance).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}%</Text>
           </Col>
           <Col xs="2" md="2" style={{ textAlign: "center" }}>
             <Text variant="body">TOTAL</Text>
