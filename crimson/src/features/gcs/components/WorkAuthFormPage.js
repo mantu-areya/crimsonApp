@@ -95,13 +95,13 @@ const [bidReviewSummary,BidReviewSummary] = React.useState({totalApproved_Amount
         grandTtl = grandTtl + (inspData[item].Total)
       }
       if (inspData[item].Approval_Status === "Declined") {
-        declinedAmount+=inspData[item].Approved_Amount
+        declinedAmount+=inspData[item].Total
         declined_Count+=1      }
       if (inspData[item].Quantity >0) {
         totalBidAmount += inspData[item].Total
       }
       if (inspData[item].Approval_Status === "Approved as Noted") {
-        approvedasNotedAmount += inspData[item].Approved_Amount
+        approvedasNotedAmount += inspData[item].Total
         approved_as_Noted_Count+=1
       }
 
@@ -125,7 +125,7 @@ const [bidReviewSummary,BidReviewSummary] = React.useState({totalApproved_Amount
   useEffect(() => {
     let contexRecord = vendorFormDetails[inspectionData.Id]
     if (contexRecord ) {
-      if (contexRecord == "NA") {
+      if (inspectionData.doCreateWAF__c == false) {
         setShowMsg(true)
       }
       else {
@@ -140,7 +140,7 @@ const [bidReviewSummary,BidReviewSummary] = React.useState({totalApproved_Amount
 
   const renderNoVFText = () => {
     return <InfoTextArea>
-      <Text variant="InspectionHeaderName" > VENDOR FORM IS NOT AVAILABLE</Text>
+      <Text variant="InspectionHeaderName" > WORK AUTH FORM IS NOT AVAILABLE</Text>
     </InfoTextArea>
   }
 
