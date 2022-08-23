@@ -9,7 +9,6 @@ import { Spacer } from "../../../components/spacer/spacer.component";
 import { Row, Col } from 'react-native-responsive-grid-system';
 import { Dimensions } from 'react-native';
 import { InspectionDetailTile } from "./InspectionDetailTile";
-import { WorkAuthOtherForms } from "./WorkAuthOtherForms";
 import { TotalContainer, InfoTextArea, ActionContainer, HeaderCardCover, BackNavigator, HeaderCard, Body, CarousalScrren } from "./VendorFormPageStyles";
 import { ActivityIndicator } from "react-native-paper";
 import { InspectionDetailsCard } from "./InspectionDetailsCard"
@@ -142,7 +141,7 @@ const [bidReviewSummary,BidReviewSummary] = React.useState({totalApproved_Amount
 
   const renderNoVFText = () => {
     return <InfoTextArea>
-      <Text variant="InspectionHeaderName" > WORK AUTH FORM IS NOT AVAILABLE</Text>
+      <Text variant="DataNotFoundTitle" > WORK AUTH FORM IS NOT AVAILABLE</Text>
     </InfoTextArea>
   }
 
@@ -165,27 +164,8 @@ const [bidReviewSummary,BidReviewSummary] = React.useState({totalApproved_Amount
               alignItems: 'center',
             }}>
             </View>
-            <ViewCarousal setFormNum={setFormNum} >
-              <CarousalScrren >
                 <ApprovedItemsForm approvedItems={approvedItemsData} />
-              </CarousalScrren>
-              <CarousalScrren >
-               {formNum==1 && <WorkAuthOtherForms catName={"GENERAL RENTAL OPERATIONS SCOPE"} formData={general_Rental} inspId={inspectionData.Id}  />}
-              </CarousalScrren >
-              <CarousalScrren >
-              {formNum==2 &&<WorkAuthOtherForms catName={"Pools"} formData={pools}  inspId={inspectionData.Id}/>}
-              </CarousalScrren >
-              <CarousalScrren >
-              {formNum==3 && <WorkAuthOtherForms catName={"Exterior"} formData={exterior} inspId={inspectionData.Id}/>}
-              </CarousalScrren>
-              <CarousalScrren >
-              {formNum==4 && <WorkAuthOtherForms catName={"Interior"} formData={interior} inspId={inspectionData.Id}/>}
-              </CarousalScrren>
-              <CarousalScrren >
-              {formNum==5 && <WorkAuthOtherForms catName={"Mechanical, Electrical and Plumbing Systems"} formData={mech_Elec_Plumb} inspId={inspectionData.Id}/>}
-              </CarousalScrren>
               {console.log(inspectionData.Id)}
-            </ViewCarousal>
           </>}
         </Body>
       </ScrollView>

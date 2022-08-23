@@ -61,6 +61,11 @@ color:${theme.colors.text.yellow};
 font-weight:${theme.fontWeights.large};
 `;
 
+const DataNotFoundTitle =  (theme) => `
+font-size:${theme.fontSizes.title};
+color:${theme.colors.text.red};
+font-weight:${theme.fontWeights.large};
+`;
 
 const cardKey = (theme) => `
 font-size: ${theme.fontSizes.caption};
@@ -149,7 +154,8 @@ const variants = {
   VfDetailsKey,
   VfDetailsValue,
   NavigationText,
-  DetailcardHeaderactive
+  DetailcardHeaderactive,
+  DataNotFoundTitle
 };
 
 export const Text = styled.Text`
