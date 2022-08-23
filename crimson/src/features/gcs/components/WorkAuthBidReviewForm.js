@@ -59,7 +59,7 @@ export const WorkAuthBidReviewForm = ({ bidReviewSummary }) => {
             <Text variant="body">CONTRACTOR BID SUBMITTED AMOUNT</Text>
           </Col>
           <Col xs="2" md="2" style={{ textAlign: "center" }}>
-            <Text variant="body">${bidReviewSummary  && bidReviewSummary.totalBidAmount.toLocaleString("en-US")}</Text>
+            <Text variant="body">${bidReviewSummary && (parseFloat(bidReviewSummary.totalBidAmount).toFixed(2)).toLocaleString("en-US")}</Text>
           </Col>
           <Col xs="2" md="2" style={{ textAlign: "center" }}>
             <Text variant="body">APPROVED</Text>
@@ -68,10 +68,10 @@ export const WorkAuthBidReviewForm = ({ bidReviewSummary }) => {
             <Text variant="body">{bidReviewSummary && bidReviewSummary.approvedItemsCount}</Text>
           </Col>
           <Col xs="2" md="2" style={{ textAlign: "center" }}>
-            <Text variant="body">${bidReviewSummary && bidReviewSummary.totalApproved_Amount.toLocaleString("en-US",)}</Text>
+            <Text variant="body">${bidReviewSummary && (parseFloat(bidReviewSummary.totalApproved_Amount)).toLocaleString("en-US",)}</Text>
           </Col>
           <Col xs="2" md="2" style={{ textAlign: "center" }}>
-            <Text variant="body">{(approvedAmntPercent > 0  ? approvedAmntPercent:0).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}% </Text>
+            <Text variant="body">{((approvedAmntPercent == 0 || isNaN(approvedAmntPercent))?parseFloat(0).toFixed(2) : parseFloat(approvedAmntPercent).toFixed(2)  ).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}% </Text>
           </Col>
         </Row>
         <Row >
@@ -79,7 +79,7 @@ export const WorkAuthBidReviewForm = ({ bidReviewSummary }) => {
             <Text variant="body">HHM APPROVED AMOUNT</Text>
           </Col>
           <Col xs="2" md="2" style={{ textAlign: "center" }}>
-            <Text variant="body">${bidReviewSummary && (hhm_approved_amount).toLocaleString("en-US")}</Text>
+            <Text variant="body">${bidReviewSummary && (parseFloat(hhm_approved_amount ).toFixed(2)).toLocaleString("en-US")}</Text>
           </Col>
           <Col xs="2" md="2" style={{ textAlign: "center" }}>
             <Text variant="body">APPROVED AS NOTED</Text>
@@ -88,10 +88,10 @@ export const WorkAuthBidReviewForm = ({ bidReviewSummary }) => {
             <Text variant="body">{bidReviewSummary && bidReviewSummary.approved_as_Noted_Count}</Text>
           </Col>
           <Col xs="2" md="2" style={{ textAlign: "center" }}>
-            <Text variant="body">${bidReviewSummary && bidReviewSummary.approvedasNotedAmount.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</Text>
+            <Text variant="body">${bidReviewSummary && (parseFloat(bidReviewSummary.approvedasNotedAmount).toFixed(2)).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</Text>
           </Col>
           <Col xs="2" md="2" style={{ textAlign: "center" }}>
-            <Text variant="body">{(approvedAsNotedAmntPercent > 0 ? approvedAsNotedAmntPercent:0).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}%</Text>
+            <Text variant="body">{((approvedAsNotedAmntPercent == 0 || isNaN(approvedAsNotedAmntPercent))?parseFloat(0).toFixed(2) : parseFloat(approvedAsNotedAmntPercent ).toFixed(2)).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}%</Text>
           </Col>
         </Row>
         <Row >
@@ -99,7 +99,7 @@ export const WorkAuthBidReviewForm = ({ bidReviewSummary }) => {
             <Text variant="body">$ VARIANCE</Text>
           </Col>
           <Col xs="2" md="2" style={{ textAlign: "center" }}>
-            <Text variant="body">${(variance == 0 ?0: variance).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</Text>
+            <Text variant="body">${(variance == 0 ?  parseFloat(0).toFixed(2) : parseFloat(variance).toFixed(2)).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</Text>
           </Col>
           <Col xs="2" md="2" style={{ textAlign: "center" }}>
             <Text variant="body">DECLINED</Text>
@@ -108,10 +108,10 @@ export const WorkAuthBidReviewForm = ({ bidReviewSummary }) => {
             <Text variant="body">{bidReviewSummary && bidReviewSummary.declined_Count}</Text>
           </Col>
           <Col xs="2" md="2" style={{ textAlign: "center" }}>
-            <Text variant="body">${bidReviewSummary && bidReviewSummary.declinedAmount.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</Text>
+            <Text variant="body">${((bidReviewSummary == 0 || isNaN(bidReviewSummary)) ? parseFloat(0).toFixed(2) : bidReviewSummary).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</Text>
           </Col>
           <Col xs="2" md="2" style={{ textAlign: "center" }}>
-            <Text variant="body">{((declinedAmntPercent==0|| isNaN(declinedAmntPercent))?0:declinedAmntPercent).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}%</Text>
+            <Text variant="body">{((declinedAmntPercent == 0 || isNaN(declinedAmntPercent)) ? parseFloat(0).toFixed(2) : declinedAmntPercent).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}%</Text>
           </Col>
         </Row>
         <Row >
@@ -119,7 +119,7 @@ export const WorkAuthBidReviewForm = ({ bidReviewSummary }) => {
             <Text variant="body">% VARIANCE</Text>
           </Col>
           <Col xs="2" md="2" style={{ textAlign: "center" }}>
-            <Text variant="body">{((percentVariance==0 || isNaN(percentVariance))  ?0:percentVariance).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}%</Text>
+             <Text variant="body">{((percentVariance == 0 || isNaN(percentVariance)) ? parseFloat(0).toFixed(2) : parseFloat(percentVariance).toFixed(2)).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}%</Text>
           </Col>
           <Col xs="2" md="2" style={{ textAlign: "center" }}>
             <Text variant="body">TOTAL</Text>
@@ -128,10 +128,10 @@ export const WorkAuthBidReviewForm = ({ bidReviewSummary }) => {
             <Text variant="body">{totalcount && totalcount}</Text>
           </Col>
           <Col xs="2" md="2" style={{ textAlign: "center" }}>
-            <Text variant="body">${total$ && total$.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</Text>
+            <Text variant="body">${total$ && ( parseFloat(total$).toFixed(2)  ).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</Text>
           </Col>
           <Col xs="2" md="2" style={{ textAlign: "center" }}>
-            <Text variant="body">{(totalPercent > 0 ? totalPercent:0).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}%</Text>
+              <Text variant="body">{((totalPercent == 0 || isNaN(totalPercent))? parseFloat(0).toFixed(2) : parseFloat(totalPercent).toFixed(2) ).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}%</Text>
           </Col>
         </Row>
 
