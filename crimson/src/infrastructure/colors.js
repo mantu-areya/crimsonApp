@@ -35,5 +35,6 @@ export const colors = {
     grey1:"#A9A9A9",
     lightgrey:"#D3D3D3",
     linkText:"#3366BB",
+    red:"#FF0000",
   },
 };
