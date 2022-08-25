@@ -134,6 +134,11 @@ color:${theme.colors.text.lightgrey}
 font-family: ${theme.fonts.body};
 `
 
+const TableHeader = (theme) =>`
+font-size: ${theme.fontSizes.caption};
+color:${theme.colors.text.header1};
+font-family: ${theme.fonts.body};
+`
 const variants = {
   body,
   label,
@@ -155,7 +160,8 @@ const variants = {
   VfDetailsValue,
   NavigationText,
   DetailcardHeaderactive,
-  DataNotFoundTitle
+  DataNotFoundTitle,
+  TableHeader
 };
 
 export const Text = styled.Text`
