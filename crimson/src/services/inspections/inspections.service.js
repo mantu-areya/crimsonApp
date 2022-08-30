@@ -73,7 +73,7 @@ export const getInspectionsData = async () => {
   const token = await getStoredToken();
 
   return apiGet(
-    `https://hudsonhomesmgmt--uat.my.salesforce.com/services/apexrest/crimson/inspection`,
+    `https://hudsonhomesmgmt--uat.sandbox.my.salesforce.com/services/apexrest/crimson/inspection`,
     {
       headers: {
         'Authorization': `Bearer ${token}`,
@@ -92,7 +92,7 @@ export const getPendingInspections = async () => {
 
   const token = await getStoredToken();
   return apiGet(
-    `https://hudsonhomesmgmt--uat.my.salesforce.com/services/data/v54.0/query/?q=SELECT+FIELDS(ALL)+from+inspection__c+where+Quip_Template_Version__c='v1.1'+and+Inspection_Stage__c!='Ordered'+LIMIT 3`,
+    `https://hudsonhomesmgmt--uat.sandbox.my.salesforce.com/services/data/v54.0/query/?q=SELECT+FIELDS(ALL)+from+inspection__c+where+Quip_Template_Version__c='v1.1'+and+Inspection_Stage__c!='Ordered'+LIMIT 3`,
     {
       headers: {
         'Authorization': `Bearer ${token}`,
@@ -112,7 +112,7 @@ export const getVendorFormDetails = async (inspId) => {
   const token = await getStoredToken();
   console.log("start","get VFDetails");
   return apiGet(
-    `https://hudsonhomesmgmt--uat.my.salesforce.com/services/apexrest/crimson/${inspId}`,
+    `https://hudsonhomesmgmt--uat.sandbox.my.salesforce.com/services/apexrest/crimson/${inspId}`,
     {
       headers: {
         'Authorization': `Bearer ${token}`,
@@ -137,7 +137,7 @@ export const updateSfVendorFormDetails = async (data,inspId) => {
   //  ele.Sub_Category=="Garage" && console.log(ele);
   // })
   return apiPost(
-    `https://hudsonhomesmgmt--uat.my.salesforce.com/services/apexrest/crimson?InspectionId=${inspId}`,
+    `https://hudsonhomesmgmt--uat.sandbox.my.salesforce.com/services/apexrest/crimson?InspectionId=${inspId}`,
     data,
     {      
       headers: {
