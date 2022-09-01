@@ -194,7 +194,8 @@ export const WorkAuthFormPage = ({ inspectionData, navigation }) => {
           <Spacer position="top" size="medium" />
 
 
-          {showMsg ? renderNoVFText() : <>
+          {showMsg ? renderNoVFText() :
+           <>
             <WorkAuthBidReviewForm bidReviewSummary={bidReviewSummary} />
             <Spacer position="top" size="large" />
             <View style={{
@@ -267,7 +268,6 @@ export const WorkAuthFormPage = ({ inspectionData, navigation }) => {
                     <Text style={{ fontSize: 12 }}>Date : {new Date().toDateString()}</Text> */}
                   </View>
                 </View>
-              </CarousalScrren>
               <CarousalScrren >
                 {formNum == 1 && <WorkAuthOtherForms catName={"GENERAL RENTAL OPERATIONS SCOPE"} formData={general_Rental} inspId={inspectionData.Id} />}
               </CarousalScrren >
