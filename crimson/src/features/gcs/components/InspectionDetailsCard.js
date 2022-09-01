@@ -31,9 +31,9 @@ export const InspectionDetailsCard = ({ inspectionData }) => {
   }
 
   const Key_Contact_Access_Info = {
-    General_Contractor__c: "GENERAL CONTRACTOR",
-    HHM_Field_PM__c: "HHM FIELD PM",
-    Repair_Estimator__c: "REPAIR ESTIMATOR",
+    General_Contractor__r: "GENERAL CONTRACTOR",
+    HHM_Field_PM__r: "HHM FIELD PM",
+    Repair_Estimator__r: "REPAIR ESTIMATOR",
     Property_Zip_Code__c: "PROPERTY ZIP CODE"
   }
 
@@ -41,6 +41,8 @@ export const InspectionDetailsCard = ({ inspectionData }) => {
     Inspection_Scheduled_Date__c: "INSPECTION SCHEDULED DATE",
     Target_Rehab_Complete_Date__c: "TARGET REHAB COMPLETE DATE"
   };
+
+  const nameKeys = ["General_Contractor__r","HHM_Field_PM__r","Repair_Estimator__r"]
 
 
   const getDetailDrawer = (headerName, dataList, icon) => {
@@ -53,14 +55,16 @@ export const InspectionDetailsCard = ({ inspectionData }) => {
           <Col xs="10">
           <Text variant="DetailcardHeader" >{headerName}</Text>
             <Spacer position="bottom" size="small"/>
-
             <Row >
             {Object.keys(dataList).map((item, i) => {
               return (
               <View key={dataList[item].concat(i)}>
               <Spacer  position="right" size="large">
                     <Text variant="VfDetailsKey" >{dataList[item]} : </Text>
-                    <Text variant="VfDetailsValue">{inspectionData[item]?inspectionData[item]:'NA'}</Text>
+                    <Text variant="VfDetailsValue">{
+                      nameKeys.includes(item)?inspectionData[item].Name
+                      : inspectionData[item]?inspectionData[item]:'NA'
+                    }</Text>
                     <Spacer position="bottom" size="small"/>
 
                     </Spacer>

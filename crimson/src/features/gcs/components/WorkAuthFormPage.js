@@ -9,7 +9,6 @@ import { Spacer } from "../../../components/spacer/spacer.component";
 import { Row, Col } from 'react-native-responsive-grid-system';
 import { Dimensions } from 'react-native';
 import { InspectionDetailTile } from "./InspectionDetailTile";
-import { WorkAuthOtherForms } from "./WorkAuthOtherForms";
 import { TotalContainer, InfoTextArea, ActionContainer, HeaderCardCover, BackNavigator, HeaderCard, Body, CarousalScrren } from "./VendorFormPageStyles";
 import { ActivityIndicator } from "react-native-paper";
 import { InspectionDetailsCard } from "./InspectionDetailsCard"
@@ -147,7 +146,7 @@ export const WorkAuthFormPage = ({ inspectionData, navigation }) => {
 
   const renderNoVFText = () => {
     return <InfoTextArea>
-      <Text variant="InspectionHeaderName" > WORK AUTH FORM IS NOT AVAILABLE</Text>
+      <Text variant="DataNotFoundTitle" > WORK AUTH FORM IS NOT AVAILABLE</Text>
     </InfoTextArea>
   }
 
@@ -204,8 +203,6 @@ export const WorkAuthFormPage = ({ inspectionData, navigation }) => {
               alignItems: 'center',
             }}>
             </View>
-            <ViewCarousal setFormNum={setFormNum} >
-              <CarousalScrren >
                 <ApprovedItemsForm approvedItems={approvedItemsData} />
                 <View style={{ flexDirection: "row" }}>
                   {/* Contractor Signature */}
@@ -287,7 +284,6 @@ export const WorkAuthFormPage = ({ inspectionData, navigation }) => {
                 {formNum == 5 && <WorkAuthOtherForms catName={"Mechanical, Electrical and Plumbing Systems"} formData={mech_Elec_Plumb} inspId={inspectionData.Id} />}
               </CarousalScrren>
               {console.log(inspectionData.Id)}
-            </ViewCarousal>
           </>}
         </Body>
       </ScrollView>
