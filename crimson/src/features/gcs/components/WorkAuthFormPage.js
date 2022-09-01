@@ -171,6 +171,8 @@ export const WorkAuthFormPage = ({ inspectionData, navigation }) => {
         quality: 1,
       });
 
+      console.log({result});
+
       setImg(result.uri);
       setIsLoading(false);
 
