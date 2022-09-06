@@ -51,7 +51,7 @@ export const WorkAuthFormPage = ({ inspectionData, navigation }) => {
   let [showMsg, setShowMsg] = React.useState(false)
   let [approvedItemsData, setApprovedItemsData] = React.useState([])
   let [vendorFormData, setVendorFormData] = React.useState([])
-  const { vendorFormDetails, updateToSf } = useContext(VendorFormContext);
+  const { vendorFormDetails, updateToSf,addSignature } = useContext(VendorFormContext);
   const [selectedCategory, setSelectedCategory] = React.useState('')
   const [formNum, setFormNum] = React.useState('')
   const [bidReviewSummary, BidReviewSummary] = React.useState({ totalApproved_Amount: 0, approvedItemsCount: 0, grandTotal: 0, totalBidAmount: 0, approvedasNotedAmount: 0, approved_as_Noted_Count: 0, declinedAmount: 0, declined_Count: 0, approved_as_Noted_Count: 0 })
@@ -111,6 +111,10 @@ export const WorkAuthFormPage = ({ inspectionData, navigation }) => {
       if (inspData[item].Approval_Status === "Approved" || inspData[item].Approval_Status === "Approved as Noted") {
         approvedItems.push(inspData[item])
       }
+
+      if(inspData[item].signature ){
+        setImg(inspData[item].signature);
+      }
     })
     setApprovedItemsData(approvedItems);
     setGeneral_Rental(category1);
@@ -127,6 +131,11 @@ export const WorkAuthFormPage = ({ inspectionData, navigation }) => {
 
 
 
+
+const updateSignToContext = (image)=>{
+    addSignature(inspectionData.Id,image);
+
+}
 
   useEffect(() => {
     let contexRecord = vendorFormDetails[inspectionData.Id]
@@ -168,11 +177,15 @@ export const WorkAuthFormPage = ({ inspectionData, navigation }) => {
         mediaTypes: "Images",
         aspect: [4, 3],
         quality: 1,
+        base64: true,
       });
 
-      console.log({result});
+      result = "data:image/jpeg;base64,"+result.base64
 
-      setImg(result.uri);
+      console.log(result,"kkk");
+
+      setImg(result);
+      updateSignToContext(result)
       setIsLoading(false);
 
     } catch (error) {
@@ -247,8 +260,10 @@ export const WorkAuthFormPage = ({ inspectionData, navigation }) => {
                       }}>
 
                       <Sign onOK={(e) => {
+                        console.log(e,"vvv");
                         setImg(e);
                         setModalVisible(!modalVisible);
+                        updateSignToContext(e)
                       }} text='Contractor Sign' />
 
 
@@ -328,9 +343,9 @@ const Sign = ({ text, onOK }) => {
         autoClear={false}
         descriptionText={text}
         backgroundColor={"white"}
-        penColor={"rgba(255,117,2,1)"}
+        penColor={"rgba(0,0,0)"}
         imageType="image/jpeg"
-        minWidth={5}
+        minWidth={1}
         overlayHeight="100%"
         showImage={true}
       />

@@ -11,6 +11,17 @@ export const VendorFormContextProvider = ({ children }) => {
 
   const add = (dataset, inspData) => inspData?setVendorFormDetails({ ...vendorFormDetails, [inspData.Id]: dataset.length > 0 ? dataset : "NA" })
   :setVendorFormDetails(dataset)
+
+  const addSignature = (inspId,img) => {
+
+  let vfData = vendorFormDetails[inspId]
+  vfData.push({
+    signature: img
+  })
+  setVendorFormDetails({...vendorFormDetails,[inspId]: vfData.length > 0 ? vfData : "NA"})
+
+// console.log(vendorFormDetails[inspId],"dsdsd");
+}
   
 
   const update = (modifiedData, formType, inspId) => {
@@ -78,6 +89,7 @@ useEffect(()=>{
         updateVfContect: update,
         updateToSf: updateToSF,
         setAscynDataToApp,
+        addSignature:addSignature
         
       }}
     >
