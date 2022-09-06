@@ -1,5 +1,5 @@
 import React, { useEffect, useContext } from "react";
-import { View, Pressable, ScrollView, TextInput, Platform } from "react-native";
+import { View, Pressable, ScrollView, TextInput, Platform, TouchableOpacity } from "react-native";
 import { CollapseSectionHeader, SectionHeaderEnd, SectionContainer, FormCard, CardHeader, CardBody } from "./VendorFormPageStyles"
 import Collapsible from 'react-native-collapsible';
 import Icon from 'react-native-vector-icons/MaterialIcons';
@@ -25,7 +25,7 @@ export const RoomForm = ({ room_Measurement, updateLocalData, inspId }) => {
       if (obj.UniqueKey === key) {
         let newValues = { ...obj, [field]: value };
         let newTotal = (newValues.Room_Length * newValues.Room_Width) + newValues.Room_Misc_SF
-        return { ...obj,[field]:value, ["Room_Total"]: newTotal };
+        return { ...obj, [field]: value, ["Room_Total"]: newTotal };
       }
       obj.UniqueKey === key && console.log("ff");
       return obj;
@@ -75,6 +75,85 @@ export const RoomForm = ({ room_Measurement, updateLocalData, inspId }) => {
   }, [room_Measurement])
 
 
+ const CustomNumberInput = ({ defaultValue = 0, fieldName, uKey }) => {
+    const [val, setVal] = React.useState(defaultValue);
+    const handleNumberChange = (type,text=null) => {
+      if (type === 'input') {
+        return setVal(currVal => {
+          console.log("input",text);
+          if(text === undefined || currVal === null) {
+            text = 0;
+          }
+          onValueChange(text, fieldName, uKey);
+          return text
+        })
+      }
+      if (type === "add") {
+
+        return setVal(currVal => {
+          console.log("Add",currVal);
+          if(currVal === undefined || currVal === null) {
+            currVal = 0;
+          }
+          onValueChange(currVal + 1, fieldName, uKey);
+          return currVal + 1
+        })
+
+      }
+      return setVal(currVal => {
+        console.log("subtract",currVal);
+        if(currVal === 0 || currVal === undefined || currVal === null) {
+          return ;
+        }
+        onValueChange(currVal - 1, fieldName, uKey);
+        return currVal - 1
+      })
+    }
+
+    const wrapperStyle = {
+      flexDirection: 'row',
+      borderWidth: 1,
+      borderColor: '#fff0f0',
+      borderRadius:8,
+      width: Platform.isPad ? 115 : 60,
+      height: Platform.isPad ? 40 : 30,
+    }
+
+    const valStyle = {
+      width: 18,
+      height: 29,
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+      flex:1,
+    }
+
+    const btnStyle = {
+      flex:1,
+      justifyContent: 'center',
+      alignItems: 'center',
+      backgroundColor: "#a3dfa0"
+    }
+
+    return (
+      <View style={wrapperStyle} >
+        <TouchableOpacity style={btnStyle} onPress={() => handleNumberChange("subtract")}>
+          <Text>-</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={valStyle}>
+          {/* <Text style={{ fontSize: 12 }} >
+            {val}
+          </Text> */}
+          <TextInput keyboardType="number-pad" style={{ fontSize: 12 }} value={`${val}`} onChangeText={(text) => handleNumberChange("input",Number(text))} />
+        </TouchableOpacity>
+        <TouchableOpacity style={btnStyle} onPress={() => handleNumberChange("add")}>
+          <Text>+</Text>
+        </TouchableOpacity>
+      </View>
+    )
+  }
+
+
   const displayRows = () => {
     return room_measurementData.map((item, i) => {
       return (
@@ -83,11 +162,13 @@ export const RoomForm = ({ room_Measurement, updateLocalData, inspId }) => {
             <Text variant="body">{item.Sub_Category}</Text>
           </Col>
           <Col xs="2" md="2">
-            <NumberInput value={item.Room_Length} id="3" onChange={(value) => { onValueChange(value, "Room_Length", item.UniqueKey) }} />
+            <CustomNumberInput defaultValue={item.Room_Length} fieldName="Room_Length" uKey={item.UniqueKey} />
+            {/* <NumberInput value={item.Room_Length} id="3" onChange={(value) => { onValueChange(value, "Room_Length", item.UniqueKey) }} /> */}
             {/* <Text variant="body">{room_Measurement.LENGTH[item]}</Text> */}
           </Col>
           <Col xs="2" md="2">
-            <NumberInput value={item.Room_Width} onChange={(value) => { onValueChange(value, "Room_Width", item.UniqueKey) }} />
+          <CustomNumberInput defaultValue={item.Room_Width} fieldName="Room_Width" uKey={item.UniqueKey} />
+            {/* <NumberInput value={item.Room_Width} onChange={(value) => { onValueChange(value, "Room_Width", item.UniqueKey) }} /> */}
             {/* <Text variant="body">{room_Measurement.WIDTH[item]}</Text> */}
           </Col>
           <Col xs="2" md="3">

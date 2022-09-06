@@ -1,5 +1,5 @@
 import React, { useEffect,useContext, useRef } from "react";
-import { View, ScrollView,Pressable } from "react-native";
+import { View, ScrollView,Pressable, TouchableOpacity } from "react-native";
 import { CollapseSectionHeader, SectionHeaderEnd, SectionContainer, FormCard, CardHeader, CardBody, CardRow } from "./VendorFormPageStyles"
 import Collapsible from 'react-native-collapsible';
 import Icon from 'react-native-vector-icons/MaterialIcons';
@@ -72,6 +72,76 @@ export const OtherCategoryForms = ({ catName, formData, inspId,navigation }) => 
     });
     setDatalist(newState)
   }
+
+  const CustomNumberInput = ({ defaultValue = 0, fieldName, uKey }) => {
+    const [val, setVal] = React.useState(defaultValue);
+    const handleNumberChange = (type) => {
+      if (type === "add") {
+
+        return setVal(currVal => {
+          console.log("Add",currVal);
+          if(currVal === undefined || currVal === null) {
+            currVal = 0;
+          }
+          onValueChange(currVal + 1, fieldName, uKey);
+          return currVal + 1
+        })
+
+      }
+      return setVal(currVal => {
+        console.log("subtract",currVal);
+        if(currVal === 0 || currVal === undefined || currVal === null) {
+          return ;
+        }
+        onValueChange(currVal - 1, fieldName, uKey);
+        return currVal - 1
+      })
+    }
+
+    const wrapperStyle = {
+      flexDirection: 'row',
+      borderWidth: 1,
+      borderColor: '#fff0f0',
+      borderRadius:8,
+      width: Platform.isPad ? 115 : 60,
+      height: Platform.isPad ? 40 : 30,
+    }
+
+    const valStyle = {
+      width: 18,
+      height: 29,
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+      flex:1,
+    }
+
+    const btnStyle = {
+      flex:1,
+      justifyContent: 'center',
+      alignItems: 'center',
+      backgroundColor: "#a3dfa0"
+    }
+
+    return (
+      <View style={wrapperStyle} >
+        <TouchableOpacity style={btnStyle} onPress={() => handleNumberChange("subtract")}>
+          <Text>-</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={valStyle}>
+          <Text style={{ fontSize: 12 }} >
+            {val}
+          </Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={btnStyle} onPress={() => handleNumberChange("add")}>
+          <Text>+</Text>
+        </TouchableOpacity>
+      </View>
+    )
+  }
+
+
+
   const displayRows=(dataList)=>{
     return dataList.map((item, i) => {
       return (
@@ -83,10 +153,12 @@ export const OtherCategoryForms = ({ catName, formData, inspId,navigation }) => 
             </Col>
 
             <Col xs="3" md="3">
-              <NumberInput value={item.Quantity} onChange={(value) =>{onValueChange(value,"Quantity",item.UniqueKey)}} />
+              <CustomNumberInput defaultValue={item.Quantity} fieldName="Quantity" uKey={item.UniqueKey} />
+              {/* <NumberInput value={item.Quantity} onChange={(value) =>{onValueChange(value,"Quantity",item.UniqueKey)}} /> */}
             </Col>
             <Col xs="3" md="3">
-              <NumberInput value={item.Rate} onChange={(value) =>{onValueChange(value,"Rate",item.UniqueKey)}} />
+              {/* <NumberInput value={item.Rate} onChange={(value) =>{onValueChange(value,"Rate",item.UniqueKey)}} /> */}
+              <CustomNumberInput defaultValue={item.Rate} fieldName="Rate" uKey={item.UniqueKey} />
             </Col>
             <Col xs="2" md="2">
               <Text variant="body">{item.Total}</Text>
