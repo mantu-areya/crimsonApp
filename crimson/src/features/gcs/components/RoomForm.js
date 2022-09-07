@@ -1,5 +1,5 @@
 import React, { useEffect, useContext } from "react";
-import { View, Pressable, ScrollView, TextInput, Platform } from "react-native";
+import { View, Pressable, ScrollView, TextInput, Platform, TouchableOpacity } from "react-native";
 import { CollapseSectionHeader, SectionHeaderEnd, SectionContainer, FormCard, CardHeader, CardBody } from "./VendorFormPageStyles"
 import Collapsible from 'react-native-collapsible';
 import Icon from 'react-native-vector-icons/MaterialIcons';
@@ -9,6 +9,7 @@ import { TotalContainer, TextArea, NumberInput } from "./VendorFormPageStyles";
 import ContentLoader, { Rect } from 'react-content-loader/native'
 import styled from "styled-components/native";
 import { VendorFormContext } from "../../../services/context/VendorForm/vendorForm.contex";
+import { InputBoxHolder, InputButtonWrapper, InputFieldWrapper } from "./RoomFormStyle";
 
 
 
@@ -25,7 +26,7 @@ export const RoomForm = ({ room_Measurement, updateLocalData, inspId }) => {
       if (obj.UniqueKey === key) {
         let newValues = { ...obj, [field]: value };
         let newTotal = (newValues.Room_Length * newValues.Room_Width) + newValues.Room_Misc_SF
-        return { ...obj,[field]:value, ["Room_Total"]: newTotal };
+        return { ...obj, [field]: value, ["Room_Total"]: newTotal };
       }
       obj.UniqueKey === key && console.log("ff");
       return obj;
@@ -75,6 +76,8 @@ export const RoomForm = ({ room_Measurement, updateLocalData, inspId }) => {
   }, [room_Measurement])
 
 
+
+
   const displayRows = () => {
     return room_measurementData.map((item, i) => {
       return (
@@ -83,15 +86,32 @@ export const RoomForm = ({ room_Measurement, updateLocalData, inspId }) => {
             <Text variant="body">{item.Sub_Category}</Text>
           </Col>
           <Col xs="2" md="2">
-            <NumberInput value={item.Room_Length} id="3" onChange={(value) => { onValueChange(value, "Room_Length", item.UniqueKey) }} />
-            {/* <Text variant="body">{room_Measurement.LENGTH[item]}</Text> */}
+            <InputBoxHolder>
+              <InputButtonWrapper onPress={() => onValueChange(item.Room_Length - 1, "Room_Length", item.UniqueKey)}>
+                <Text>-</Text>
+              </InputButtonWrapper>
+              <InputFieldWrapper >
+                <TextInput keyboardType="number-pad" multiline={true} value={`${item.Room_Length}`} onChangeText={(value) => { onValueChange(Number(value), "Room_Length", item.UniqueKey) }} style={{ fontSize: 12 }} />
+              </InputFieldWrapper>
+              <InputButtonWrapper  onPress={() => onValueChange(item.Room_Length + 1, "Room_Length", item.UniqueKey)}>
+                <Text>+</Text>
+              </InputButtonWrapper>
+            </InputBoxHolder>
           </Col>
           <Col xs="2" md="2">
-            <NumberInput value={item.Room_Width} onChange={(value) => { onValueChange(value, "Room_Width", item.UniqueKey) }} />
-            {/* <Text variant="body">{room_Measurement.WIDTH[item]}</Text> */}
+            <InputBoxHolder>
+              <InputButtonWrapper  onPress={() => onValueChange(item.Room_Width - 1, "Room_Width", item.UniqueKey)}>
+                <Text>-</Text>
+              </InputButtonWrapper>
+              <InputFieldWrapper >
+                <TextInput keyboardType="number-pad" multiline={true} value={`${item.Room_Width}`} onChangeText={(value) => { onValueChange(Number(value), "Room_Width", item.UniqueKey) }} style={{ fontSize: 12 }} />
+              </InputFieldWrapper>
+              <InputButtonWrapper  onPress={() => onValueChange(item.Room_Width + 1, "Room_Width", item.UniqueKey)}>
+                <Text>+</Text>
+              </InputButtonWrapper>
+            </InputBoxHolder>
           </Col>
           <Col xs="2" md="3">
-            {/* <Text variant="body">{item.Room_Misc_SF}</Text> */}
             <TextArea keyboardType='numeric' defaultValue={item.Room_Misc_SF && (item.Room_Misc_SF).toString()} Value={item.Room_Misc_SF && (item.Room_Misc_SF).toString()} onChangeText={(value) => { onValueChange(parseFloat(value), "Room_Misc_SF", item.UniqueKey) }} />
           </Col>
           <Col xs="2" md="2">
