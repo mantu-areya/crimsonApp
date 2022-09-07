@@ -8,7 +8,7 @@ const InputBoxHolder = styled.View`
     flex-direction: row;
     border-width: 1px;
     border-color: #fff0f0;
-    border-radius: 8;
+    border-radius: 8px;
     width:${width}px;
     height:${height}px;
   `
