@@ -9,6 +9,7 @@ import { TotalContainer, TextArea, NumberInput } from "./VendorFormPageStyles";
 import ContentLoader, { Rect } from 'react-content-loader/native'
 import styled from "styled-components/native";
 import { VendorFormContext } from "../../../services/context/VendorForm/vendorForm.contex";
+import { InputBoxHolder, InputButtonWrapper, InputFieldWrapper } from "./RoomFormStyle";
 
 
 
@@ -75,83 +76,6 @@ export const RoomForm = ({ room_Measurement, updateLocalData, inspId }) => {
   }, [room_Measurement])
 
 
- const CustomNumberInput = ({ defaultValue = 0, fieldName, uKey }) => {
-    const [val, setVal] = React.useState(defaultValue);
-    const handleNumberChange = (type,text=null) => {
-      if (type === 'input') {
-        return setVal(currVal => {
-          console.log("input",text);
-          if(text === undefined || currVal === null) {
-            text = 0;
-          }
-          onValueChange(text, fieldName, uKey);
-          return text
-        })
-      }
-      if (type === "add") {
-
-        return setVal(currVal => {
-          console.log("Add",currVal);
-          if(currVal === undefined || currVal === null) {
-            currVal = 0;
-          }
-          onValueChange(currVal + 1, fieldName, uKey);
-          return currVal + 1
-        })
-
-      }
-      return setVal(currVal => {
-        console.log("subtract",currVal);
-        if(currVal === 0 || currVal === undefined || currVal === null) {
-          return ;
-        }
-        onValueChange(currVal - 1, fieldName, uKey);
-        return currVal - 1
-      })
-    }
-
-    const wrapperStyle = {
-      flexDirection: 'row',
-      borderWidth: 1,
-      borderColor: '#fff0f0',
-      borderRadius:8,
-      width: Platform.isPad ? 115 : 60,
-      height: Platform.isPad ? 40 : 30,
-    }
-
-    const valStyle = {
-      width: 18,
-      height: 29,
-      display: 'flex',
-      justifyContent: 'center',
-      alignItems: 'center',
-      flex:1,
-    }
-
-    const btnStyle = {
-      flex:1,
-      justifyContent: 'center',
-      alignItems: 'center',
-      backgroundColor: "#a3dfa0"
-    }
-
-    return (
-      <View style={wrapperStyle} >
-        <TouchableOpacity style={btnStyle} onPress={() => handleNumberChange("subtract")}>
-          <Text>-</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={valStyle}>
-          {/* <Text style={{ fontSize: 12 }} >
-            {val}
-          </Text> */}
-          <TextInput keyboardType="number-pad" style={{ fontSize: 12 }} value={`${val}`} onChangeText={(text) => handleNumberChange("input",Number(text))} />
-        </TouchableOpacity>
-        <TouchableOpacity style={btnStyle} onPress={() => handleNumberChange("add")}>
-          <Text>+</Text>
-        </TouchableOpacity>
-      </View>
-    )
-  }
 
 
   const displayRows = () => {
@@ -162,17 +86,32 @@ export const RoomForm = ({ room_Measurement, updateLocalData, inspId }) => {
             <Text variant="body">{item.Sub_Category}</Text>
           </Col>
           <Col xs="2" md="2">
-            <CustomNumberInput defaultValue={item.Room_Length} fieldName="Room_Length" uKey={item.UniqueKey} />
-            {/* <NumberInput value={item.Room_Length} id="3" onChange={(value) => { onValueChange(value, "Room_Length", item.UniqueKey) }} /> */}
-            {/* <Text variant="body">{room_Measurement.LENGTH[item]}</Text> */}
+            <InputBoxHolder>
+              <InputButtonWrapper onPress={() => onValueChange(item.Room_Length - 1, "Room_Length", item.UniqueKey)}>
+                <Text>-</Text>
+              </InputButtonWrapper>
+              <InputFieldWrapper >
+                <TextInput keyboardType="number-pad" multiline={true} value={`${item.Room_Length}`} onChangeText={(value) => { onValueChange(Number(value), "Room_Length", item.UniqueKey) }} style={{ fontSize: 12 }} />
+              </InputFieldWrapper>
+              <InputButtonWrapper  onPress={() => onValueChange(item.Room_Length + 1, "Room_Length", item.UniqueKey)}>
+                <Text>+</Text>
+              </InputButtonWrapper>
+            </InputBoxHolder>
           </Col>
           <Col xs="2" md="2">
-          <CustomNumberInput defaultValue={item.Room_Width} fieldName="Room_Width" uKey={item.UniqueKey} />
-            {/* <NumberInput value={item.Room_Width} onChange={(value) => { onValueChange(value, "Room_Width", item.UniqueKey) }} /> */}
-            {/* <Text variant="body">{room_Measurement.WIDTH[item]}</Text> */}
+            <InputBoxHolder>
+              <InputButtonWrapper  onPress={() => onValueChange(item.Room_Width - 1, "Room_Width", item.UniqueKey)}>
+                <Text>-</Text>
+              </InputButtonWrapper>
+              <InputFieldWrapper >
+                <TextInput keyboardType="number-pad" multiline={true} value={`${item.Room_Width}`} onChangeText={(value) => { onValueChange(Number(value), "Room_Width", item.UniqueKey) }} style={{ fontSize: 12 }} />
+              </InputFieldWrapper>
+              <InputButtonWrapper  onPress={() => onValueChange(item.Room_Width + 1, "Room_Width", item.UniqueKey)}>
+                <Text>+</Text>
+              </InputButtonWrapper>
+            </InputBoxHolder>
           </Col>
           <Col xs="2" md="3">
-            {/* <Text variant="body">{item.Room_Misc_SF}</Text> */}
             <TextArea keyboardType='numeric' defaultValue={item.Room_Misc_SF && (item.Room_Misc_SF).toString()} Value={item.Room_Misc_SF && (item.Room_Misc_SF).toString()} onChangeText={(value) => { onValueChange(parseFloat(value), "Room_Misc_SF", item.UniqueKey) }} />
           </Col>
           <Col xs="2" md="2">
