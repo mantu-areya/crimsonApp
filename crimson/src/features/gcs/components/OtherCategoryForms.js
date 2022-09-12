@@ -88,11 +88,11 @@ export const OtherCategoryForms = ({ catName, formData, inspId,navigation }) => 
 
             <Col xs="3" md="3">
             <InputBoxHolder>
-              <InputButtonWrapper  onPress={() => onValueChange(item.Quantity - 1, "Quantity", item.UniqueKey)}>
+              <InputButtonWrapper  onPress={() => item.Quantity >=1 && onValueChange(item.Quantity - 1, "Quantity", item.UniqueKey)}>
                 <Text>-</Text>
               </InputButtonWrapper>
               <InputFieldWrapper >
-                <TextInput keyboardType="number-pad" multiline={true} value={`${item.Quantity}`} onChangeText={(value) => { onValueChange(Number(value), "Quantity", item.UniqueKey) }} style={{ fontSize: 12 }} />
+                <TextInput keyboardType="number-pad" multiline={true} value={`${item.Quantity<0?0:item.Quantity==null?0:item.Quantity}`} onChangeText={(value) => {value>=0 && onValueChange(Number(value), "Quantity", item.UniqueKey) }} style={{ fontSize: 12 }} />
               </InputFieldWrapper>
               <InputButtonWrapper  onPress={() => onValueChange(item.Quantity + 1, "Quantity", item.UniqueKey)}>
                 <Text>+</Text>
@@ -101,11 +101,11 @@ export const OtherCategoryForms = ({ catName, formData, inspId,navigation }) => 
             </Col>
             <Col xs="3" md="3">
             <InputBoxHolder>
-              <InputButtonWrapper  onPress={() => onValueChange(item.Rate - 1, "Rate", item.UniqueKey)}>
+              <InputButtonWrapper  onPress={() =>  item.Rate >=1 && onValueChange(item.Rate - 1, "Rate", item.UniqueKey)}>
                 <Text>-</Text>
               </InputButtonWrapper>
               <InputFieldWrapper >
-                <TextInput keyboardType="number-pad" multiline={true} value={`${item.Rate}`} onChangeText={(value) => { onValueChange(Number(value), "Rate", item.UniqueKey) }} style={{ fontSize: 12 }} />
+                <TextInput keyboardType="number-pad" multiline={true} value={`${item.Rate<0?0:item.Rate==null?0:item.Rate}`} onChangeText={(value) => { value>0 && onValueChange(Number(value), "Rate", item.UniqueKey) }} style={{ fontSize: 12 }} />
               </InputFieldWrapper>
               <InputButtonWrapper  onPress={() => onValueChange(item.Rate + 1, "Rate", item.UniqueKey)}>
                 <Text>+</Text>
@@ -125,9 +125,9 @@ export const OtherCategoryForms = ({ catName, formData, inspId,navigation }) => 
           <Collapsible collapsed={!(isNotesCollapsed && item.UniqueKey === key.current)} >
             <ExpandSection>
             <Text variant="formHeader">SCOPE NOTES :</Text>
-            <OtherFormTextArea    defaultValue={item.Scope_Notes && (item.Scope_Notes).toString()} Value={item.Scope_Notes && (item.Scope_Notes).toString()} onChangeText={(value) =>{onValueChange(parseFloat(value),"Scope_Notes",item.UniqueKey)}}/>
+            <OtherFormTextArea    defaultValue={item.Scope_Notes && (item.Scope_Notes).toString()} Value={item.Scope_Notes && (item.Scope_Notes).toString()} onChangeText={(value) =>{onValueChange(value,"Scope_Notes",item.UniqueKey)}}/>
               <Text variant="formHeader">U/M :</Text>
-              <OtherFormTextArea   defaultValue={item.U_M && (item.U_M).toString()} Value={item.U_M && (item.U_M).toString()} onChangeText={(value) =>{onValueChange(parseFloat(value),"U_M",item.UniqueKey)}}/>
+              <OtherFormTextArea   defaultValue={item.U_M && (item.U_M).toString()} Value={item.U_M && (item.U_M).toString()} onChangeText={(value) =>{onValueChange(value,"U_M",item.UniqueKey)}}/>
               <Camerabutton>
                 <CameraIcon name="camera" size={40} color="black" onPress={() => navigation.navigate("CameraScreen")}/>
                 </Camerabutton>

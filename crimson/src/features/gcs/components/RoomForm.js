@@ -87,11 +87,11 @@ export const RoomForm = ({ room_Measurement, updateLocalData, inspId }) => {
           </Col>
           <Col xs="2" md="2">
             <InputBoxHolder>
-              <InputButtonWrapper onPress={() => onValueChange(item.Room_Length - 1, "Room_Length", item.UniqueKey)}>
+              <InputButtonWrapper onPress={() => item.Room_Length >=1 && onValueChange(item.Room_Length - 1, "Room_Length", item.UniqueKey)}>
                 <Text>-</Text>
               </InputButtonWrapper>
               <InputFieldWrapper >
-                <TextInput keyboardType="number-pad" multiline={true} value={`${item.Room_Length}`} onChangeText={(value) => { onValueChange(Number(value), "Room_Length", item.UniqueKey) }} style={{ fontSize: 12 }} />
+                <TextInput keyboardType="number-pad" multiline={true} value={`${item.Room_Length<0?0:item.Room_Length==null?0:item.Room_Length}`} onChangeText={(value) => { value>=0 && onValueChange(Number(value), "Room_Length", item.UniqueKey) }} style={{ fontSize: 12 }} />
               </InputFieldWrapper>
               <InputButtonWrapper  onPress={() => onValueChange(item.Room_Length + 1, "Room_Length", item.UniqueKey)}>
                 <Text>+</Text>
@@ -100,11 +100,11 @@ export const RoomForm = ({ room_Measurement, updateLocalData, inspId }) => {
           </Col>
           <Col xs="2" md="2">
             <InputBoxHolder>
-              <InputButtonWrapper  onPress={() => onValueChange(item.Room_Width - 1, "Room_Width", item.UniqueKey)}>
+              <InputButtonWrapper  onPress={() =>item.Room_Width >=1 &&  onValueChange(item.Room_Width - 1, "Room_Width", item.UniqueKey)}>
                 <Text>-</Text>
               </InputButtonWrapper>
               <InputFieldWrapper >
-                <TextInput keyboardType="number-pad" multiline={true} value={`${item.Room_Width}`} onChangeText={(value) => { onValueChange(Number(value), "Room_Width", item.UniqueKey) }} style={{ fontSize: 12 }} />
+                <TextInput keyboardType="number-pad" multiline={true} value={`${item.Room_Width<0?0:item.Room_Width==null?0:item.Room_Width}`} onChangeText={(value) => { value>=0 && onValueChange(Number(value), "Room_Width", item.UniqueKey) }} style={{ fontSize: 12 }} />
               </InputFieldWrapper>
               <InputButtonWrapper  onPress={() => onValueChange(item.Room_Width + 1, "Room_Width", item.UniqueKey)}>
                 <Text>+</Text>

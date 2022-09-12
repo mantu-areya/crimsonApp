@@ -21,18 +21,12 @@ export const UploadOfflineData = () => {
       addDataToAsync(vendorFormDetails);
     }
     NetInfo.addEventListener(networkState => {
+      console.log(networkState.isConnected);
       if(networkState.isConnected){
-        setNetStateChange(networkState.isConnected )
+        offlineDataToSalesForce(vendorFormDetails)
       }
     });
   })
-  useEffect(() => {
-  NetInfo.addEventListener(networkState => {
-    if(networkState.isConnected){
-      offlineDataToSalesForce(vendorFormDetails)
-    }
-  });
-},[netStateChange])
 
   useEffect(() => {
     addVfData()
