@@ -17,7 +17,7 @@ import { InspectionDetailsCard } from "./InspectionDetailsCard"
 import { VendorFormContext } from "../../../services/context/VendorForm/vendorForm.contex";
 import Icon from 'react-native-vector-icons/SimpleLineIcons';
 import { ViewCarousal } from "../../../utilities/ViewCarousalComponent/ViewCarousal";
-import { useFocusEffect } from '@react-navigation/native';
+import { useIsFocused } from '@react-navigation/native';
 
 
 
@@ -61,6 +61,7 @@ export const VendorFormsPage = ({ inspectionData, navigation }) => {
   const [selectedCategory, setSelectedCategory] = React.useState('')
   const [formNum, setFormNum] = React.useState('')
   const catselected = useRef('')
+  const isFocused = useIsFocused();
 
   const GetDataByCategory = (inspData) => {
     let room_msrmnt = []
@@ -106,23 +107,18 @@ export const VendorFormsPage = ({ inspectionData, navigation }) => {
   }
 
 
-useEffect(()=>{
-  formNum !== '' && updateToSf(inspectionData.Id)
-},[formNum])
+  useEffect(() => {
+    formNum !== '' && updateToSf(inspectionData.Id)
+  }, [formNum])
 
 
-useFocusEffect(
-  React.useCallback(() => {
-    return () => {
-      console.log('Screen was unfocused');
-      updateToSf(inspectionData.Id)
-    };
-  }, [])
-);
+  useEffect(() => {
+    isFocused == false && updateToSf(inspectionData.Id)
+  }, [isFocused])
 
   useEffect(() => {
     let contexRecord = vendorFormDetails[inspectionData.Id]
-    if (contexRecord ) {
+    if (contexRecord) {
       if (contexRecord == "NA") {
         setShowMsg(true)
       }
@@ -132,10 +128,6 @@ useFocusEffect(
     }
   }, [vendorFormDetails]);
 
-
-
-
-
   const renderNoVFText = () => {
     return <InfoTextArea>
       <Text variant="InspectionHeaderName" > VENDOR FORM IS NOT AVAILABLE</Text>
@@ -144,10 +136,10 @@ useFocusEffect(
 
 
   return (<>
-   
+
     <SafeArea>
       <ScrollView keyboardDismissMode={'on-drag'} >
- 
+
         <Body>
           <Spacer position="top" size="medium" />
 
@@ -172,22 +164,22 @@ useFocusEffect(
             </View>
             <ViewCarousal setFormNum={setFormNum} >
               <CarousalScrren >
-                <RoomForm room_Measurement={room_MeasurementData}  inspId={inspectionData.Id} />
+                <RoomForm room_Measurement={room_MeasurementData} inspId={inspectionData.Id} />
               </CarousalScrren>
               <CarousalScrren >
-               {formNum==1 && <OtherCategoryForms navigation={ navigation } catName={"GENERAL RENTAL OPERATIONS SCOPE"} formData={general_Rental} inspId={inspectionData.Id}  />}
+                {formNum == 1 && <OtherCategoryForms navigation={navigation} catName={"GENERAL RENTAL OPERATIONS SCOPE"} formData={general_Rental} inspId={inspectionData.Id} />}
               </CarousalScrren >
               <CarousalScrren >
-              {formNum==2 &&<OtherCategoryForms navigation={ navigation } catName={"Pools"} formData={pools}  inspId={inspectionData.Id}/>}
+                {formNum == 2 && <OtherCategoryForms navigation={navigation} catName={"Pools"} formData={pools} inspId={inspectionData.Id} />}
               </CarousalScrren >
               <CarousalScrren >
-              {formNum==3 && <OtherCategoryForms navigation={ navigation } catName={"Exterior"} formData={exterior} inspId={inspectionData.Id}/>}
+                {formNum == 3 && <OtherCategoryForms navigation={navigation} catName={"Exterior"} formData={exterior} inspId={inspectionData.Id} />}
               </CarousalScrren>
               <CarousalScrren >
-              {formNum==4 && <OtherCategoryForms navigation={ navigation } catName={"Interior"} formData={interior} inspId={inspectionData.Id}/>}
+                {formNum == 4 && <OtherCategoryForms navigation={navigation} catName={"Interior"} formData={interior} inspId={inspectionData.Id} />}
               </CarousalScrren>
               <CarousalScrren >
-              {formNum==5 && <OtherCategoryForms navigation={ navigation } catName={"Mechanical, Electrical and Plumbing Systems"} formData={mech_Elec_Plumb} inspId={inspectionData.Id}/>}
+                {formNum == 5 && <OtherCategoryForms navigation={navigation} catName={"Mechanical, Electrical and Plumbing Systems"} formData={mech_Elec_Plumb} inspId={inspectionData.Id} />}
               </CarousalScrren>
               {console.log(inspectionData.Id)}
             </ViewCarousal>

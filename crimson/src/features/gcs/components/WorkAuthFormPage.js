@@ -155,7 +155,7 @@ const updateSignToContext = (image)=>{
 
   const renderNoVFText = () => {
     return <InfoTextArea>
-      <Text variant="DataNotFoundTitle" > WORK AUTH FORM IS NOT AVAILABLE</Text>
+      <Text variant="DataNotFoundTitle" > WORK AUTHORISATION FORM HAS NOT BEEN GENERATED FOR THIS RECORD</Text>
     </InfoTextArea>
   }
 
