@@ -110,33 +110,26 @@ function ListViewCard({ data }) {
   const navigation = useNavigation()
   let w = Dimensions.get('window').width - 48
   const inspectionData = data.item;
-  let formatDateTime = (date) => {
-    let DateArray = date.split('+')
-    let FormatedDateTime = new Date(DateArray[0]).toLocaleDateString("en-US", {
-      day: 'numeric',
-      month: 'numeric',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-    })
-    return FormatedDateTime
-  }
-
 
   return (
     <TouchableOpacity style={{ width: '100%' }} onPress={() => navigation.navigate('InspectionsDetail', { inspectionData })}>
       <View style={{ alignItems: "center", flexDirection: "row", borderRadius: 8, width: w, marginBottom: 16, padding: 8, backgroundColor: "#6A579A" }}>
-        <View style={{ flex: .8, }}>
-          <Text style={{ color: 'white', fontFamily: 'SF_BOLD', fontSize: 18,marginBottom:4 }}  >{data.item.Property_Address__c === '' ? 'Property Address NA' : data.item.Property_Address__c}</Text>
-          <Text style={{ color: 'white', fontFamily: 'SF_LIGHT', fontSize: 14 }} >Zip Code: {data.item.Property_Zip_Code__c}</Text>
-          <Text style={{ color: 'white', fontFamily: 'SF_LIGHT', fontSize: 14 }} >Repair estimator : {data.item.Repair_Estimator_Email__c}</Text>
-          <Text style={{ color: 'white', fontFamily: 'SF_LIGHT', fontSize: 14 }} >HHM FIELD PM : {data.item.HHM_Field_PM_Email__c}</Text>
-          <Text style={{ color: 'white', fontFamily: 'SF_LIGHT', fontSize: 14 }} >Inspection Due Date: {data.item.GC_Inspection_Due_Date__c}</Text>
+        <View style={{ width: "80%" }}>
+          <Text style={{ color: 'white', fontFamily: 'SF_BOLD', fontSize: 14,marginBottom:4 }}  >{data.item.Property_Address__c === '' ? 'Property Address NA' : data.item.Property_Address__c}</Text>
+          <Text style={{ color: 'white', fontFamily: 'SF_LIGHT', fontSize: 12 }} >Repair estimator : {data.item?.Repair_Estimator__r?.Name}</Text>
+          <Text style={{ color: 'white', fontFamily: 'SF_LIGHT', fontSize: 12 }} >HHM Field PM : {data.item.HHM_Field_PM__r.Name}</Text>
+          <Text style={{ color: 'white', fontFamily: 'SF_LIGHT', fontSize: 12 }} >Inspection Due Date: {data.item.GC_Inspection_Due_Date__c}</Text>
+          <Text style={{ color: 'white', fontFamily: 'SF_LIGHT', fontSize: 12 }} >Bid Recommendation: {data.item.HHM_Bid_Recommendation__c && `$${data.item.HHM_Bid_Recommendation__c}`}</Text>
 
         </View>
-        <TouchableOpacity style={{ flex: .2, justifyContent: "center", alignItems: "center" }}>
+        <View >
+        <TouchableOpacity style={{  justifyContent: "center", alignItems: "center" }}>
           {rightArr}
         </TouchableOpacity>
+        <Text style={{ marginTop: 16, color: 'white', fontFamily: 'SF_LIGHT', fontSize: 10 }} >
+          {data.item.Name}
+        </Text>
+        </View>
       </View>
     </TouchableOpacity>
   )
