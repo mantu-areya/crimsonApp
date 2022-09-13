@@ -9,3 +9,5 @@ border-bottom-color: ${(props) => props.variant=="active"?props.theme.colors.tex
 border-bottom-width: 2px;
 padding:${(props) => props.theme.space[1]};
 `;
+
+export const SubmitButton = styled(Pressable)``;

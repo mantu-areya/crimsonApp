@@ -12,13 +12,14 @@ import { Spacer } from "../../../components/spacer/spacer.component";
 import { InspectionDetailTile } from "../components/InspectionDetailTile";
 import { InspectionDetailsCard } from "../components/InspectionDetailsCard"
 import { Text } from "../../../components/typography/text.component";
-import { FormSections,FormSectionsContainer } from "./InspectionDetailScreenStyles"
+import { FormSections,FormSectionsContainer,SubmitButton} from "./InspectionDetailScreenStyles"
 import { WorkAuthFormPage } from "../components/WorkAuthFormPage";
 
 export const InspectionDetailScreen = ({ route, navigation }) => {
 
 
   const [formName, setFormaName] = useState('VF')
+  const [readonly, setreadonly] = useState(false)
   const { inspectionData } = route.params;
   const { vendorFormDetails, addToVfContex } = useContext(VendorFormContext);
   const setVendorFormData = async () => getVendorFormDetails(inspectionData.Id)
@@ -44,6 +45,11 @@ export const InspectionDetailScreen = ({ route, navigation }) => {
                 <Icon name="arrow-left" size={20} color="white" style={{ marginTop: 4 }} />
                 <Text variant="NavigationText">Back</Text>
               </Row></BackNavigator>
+              <Row>
+                  <SubmitButton onPress={()=>{setreadonly(true)}}>
+                <Text variant="NavigationText">submit</Text>
+                </SubmitButton>
+              </Row>
             <View>
               <FormSections>
                 <Row>
@@ -70,7 +76,7 @@ export const InspectionDetailScreen = ({ route, navigation }) => {
             <InspectionDetailsCard inspectionData={inspectionData} />
             <Spacer position="bottom" size="medium" />
           </HeaderCard  >
-          {formName == 'VF' && <VendorFormsPage inspectionData={inspectionData} navigation={navigation} />}
+          {formName == 'VF' && <VendorFormsPage inspectionData={inspectionData} navigation={navigation}  readonly={readonly}/>}
           {formName == 'WF' && <WorkAuthFormPage inspectionData={inspectionData} navigation={navigation} />}
         </ScrollView>
       </SafeArea>

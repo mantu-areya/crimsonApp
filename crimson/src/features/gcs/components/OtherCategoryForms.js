@@ -1,5 +1,5 @@
-import React, { useEffect,useContext, useRef } from "react";
-import { View, ScrollView,Pressable, TouchableOpacity, TextInput } from "react-native";
+import React, { useEffect, useContext, useRef } from "react";
+import { View, ScrollView, Pressable, TouchableOpacity, TextInput } from "react-native";
 import { CollapseSectionHeader, SectionHeaderEnd, SectionContainer, FormCard, CardHeader, CardBody, CardRow } from "./VendorFormPageStyles"
 import Collapsible from 'react-native-collapsible';
 import Icon from 'react-native-vector-icons/MaterialIcons';
@@ -7,26 +7,26 @@ import NoteIcon from 'react-native-vector-icons/SimpleLineIcons';
 import { Text } from "../../../components/typography/text.component";
 import { Col, Row } from "react-native-responsive-grid-system";
 import { Spacer, SpacerView } from "../../../components/spacer/spacer.component";
-import { TotalContainer, NumberInput, TextArea, ExpandSection, OtherFormTextArea,PressableIcon,Camerabutton } from "./VendorFormPageStyles";
+import { TotalContainer, NumberInput, TextArea, ExpandSection, OtherFormTextArea, PressableIcon, Camerabutton } from "./VendorFormPageStyles";
 import ContentLoader, { Rect } from 'react-content-loader/native'
 import { Platform } from 'react-native';
 import { VendorFormContext } from "../../../services/context/VendorForm/vendorForm.contex";
-import  CameraIcon from 'react-native-vector-icons/EvilIcons';
+import CameraIcon from 'react-native-vector-icons/EvilIcons';
 import { InputBoxHolder, InputButtonWrapper, InputFieldWrapper } from "./RoomFormStyle";
 
 
-export const OtherCategoryForms = ({ catName, formData, inspId,navigation }) => {
+export const OtherCategoryForms = ({ catName, formData, inspId, navigation, readonly }) => {
   const [isCollapsed, setIsCollapsed] = React.useState(false);
   const [isNotesCollapsed, setIsNotesCollapsed] = React.useState(false);
   const key = useRef('');
   const handlePress = (setIsCollapsed, isCollapsed) => setIsCollapsed(!isCollapsed);
   const handleNotes = (isNotesCollapsed, setIsNotesCollapsed, rowKey) => {
-    key.current=rowKey
-    if ( key.current==''||key.current == rowKey)
+    key.current = rowKey
+    if (key.current == '' || key.current == rowKey)
       return setIsNotesCollapsed(!isNotesCollapsed)
   };
   let [dataList, setDatalist] = React.useState([])
-  const {  updateVfContect } = useContext(VendorFormContext);
+  const { updateVfContect } = useContext(VendorFormContext);
 
   const MyLoader = () => {
     let height = Platform.isPad ? 30 : 15
@@ -61,12 +61,12 @@ export const OtherCategoryForms = ({ catName, formData, inspId,navigation }) => 
     return toatalSF
   }
 
-  const onValueChange = async (value,field,key)=>{
+  const onValueChange = async (value, field, key) => {
     const newState = dataList.map(obj => {
       if (obj.UniqueKey === key) {
         let newValues = { ...obj, [field]: value };
         let newTotal = (newValues.Quantity * newValues.Rate)
-        return { ...obj,[field]:value, ["Total"]: newTotal };
+        return { ...obj, [field]: value, ["Total"]: newTotal };
       }
       obj.UniqueKey === key && console.log("ff");
       return obj;
@@ -76,7 +76,7 @@ export const OtherCategoryForms = ({ catName, formData, inspId,navigation }) => 
 
 
 
-  const displayRows=(dataList)=>{
+  const displayRows = (dataList) => {
     return dataList.map((item, i) => {
       return (
         <View key={item.UniqueKey}>
@@ -87,50 +87,58 @@ export const OtherCategoryForms = ({ catName, formData, inspId,navigation }) => 
             </Col>
 
             <Col xs="3" md="3">
-            <InputBoxHolder>
-              <InputButtonWrapper  onPress={() => item.Quantity >=1 && onValueChange(item.Quantity - 1, "Quantity", item.UniqueKey)}>
-                <Text>-</Text>
-              </InputButtonWrapper>
-              <InputFieldWrapper >
-                <TextInput keyboardType="number-pad" multiline={true} value={`${item.Quantity<0?0:item.Quantity==null?0:item.Quantity}`} onChangeText={(value) => {value>=0 && onValueChange(Number(value), "Quantity", item.UniqueKey) }} style={{ fontSize: 12 }} />
-              </InputFieldWrapper>
-              <InputButtonWrapper  onPress={() => onValueChange(item.Quantity + 1, "Quantity", item.UniqueKey)}>
-                <Text>+</Text>
-              </InputButtonWrapper>
-            </InputBoxHolder>
+              {readonly ? <Text>{item.Quantity < 0 ? 0 : item.Quantity == null ? 0 : item.Quantity}</Text> :
+                <InputBoxHolder>
+                  <InputButtonWrapper onPress={() => item.Quantity >= 1 && onValueChange(item.Quantity - 1, "Quantity", item.UniqueKey)}>
+                    <Text>-</Text>
+                  </InputButtonWrapper>
+                  <InputFieldWrapper >
+                    <TextInput keyboardType="number-pad" multiline={true} value={`${item.Quantity < 0 ? 0 : item.Quantity == null ? 0 : item.Quantity}`} onChangeText={(value) => { value >= 0 && onValueChange(Number(value), "Quantity", item.UniqueKey) }} style={{ fontSize: 12 }} />
+                  </InputFieldWrapper>
+                  <InputButtonWrapper onPress={() => onValueChange(item.Quantity + 1, "Quantity", item.UniqueKey)}>
+                    <Text>+</Text>
+                  </InputButtonWrapper>
+                </InputBoxHolder>
+              }
             </Col>
             <Col xs="3" md="3">
-            <InputBoxHolder>
-              <InputButtonWrapper  onPress={() =>  item.Rate >=1 && onValueChange(item.Rate - 1, "Rate", item.UniqueKey)}>
-                <Text>-</Text>
-              </InputButtonWrapper>
-              <InputFieldWrapper >
-                <TextInput keyboardType="number-pad" multiline={true} value={`${item.Rate<0?0:item.Rate==null?0:item.Rate}`} onChangeText={(value) => { value>0 && onValueChange(Number(value), "Rate", item.UniqueKey) }} style={{ fontSize: 12 }} />
-              </InputFieldWrapper>
-              <InputButtonWrapper  onPress={() => onValueChange(item.Rate + 1, "Rate", item.UniqueKey)}>
-                <Text>+</Text>
-              </InputButtonWrapper>
-            </InputBoxHolder>
+              {readonly ? <Text>{item.Rate < 0 ? 0 : item.Rate == null ? 0 : item.Rate}</Text> :
+                <InputBoxHolder>
+                  <InputButtonWrapper onPress={() => item.Rate >= 1 && onValueChange(item.Rate - 1, "Rate", item.UniqueKey)}>
+                    <Text>-</Text>
+                  </InputButtonWrapper>
+                  <InputFieldWrapper >
+                    <TextInput keyboardType="number-pad" multiline={true} value={`${item.Rate < 0 ? 0 : item.Rate == null ? 0 : item.Rate}`} onChangeText={(value) => { value > 0 && onValueChange(Number(value), "Rate", item.UniqueKey) }} style={{ fontSize: 12 }} />
+                  </InputFieldWrapper>
+                  <InputButtonWrapper onPress={() => onValueChange(item.Rate + 1, "Rate", item.UniqueKey)}>
+                    <Text>+</Text>
+                  </InputButtonWrapper>
+                </InputBoxHolder>
+              }
             </Col>
             <Col xs="2" md="2">
               <Text variant="body">{item.Total}</Text>
             </Col>
             <Col>
-                <PressableIcon onPress={() => handleNotes(isNotesCollapsed, setIsNotesCollapsed, item.UniqueKey)}>
-              {(isNotesCollapsed && item.UniqueKey === key.current)? <Icon name="close" size={25} color="black"  />
-                : <NoteIcon name="note" size={20} color="black" />}
-           </PressableIcon>
+              <PressableIcon onPress={() => handleNotes(isNotesCollapsed, setIsNotesCollapsed, item.UniqueKey)}>
+                {(isNotesCollapsed && item.UniqueKey === key.current) ? <Icon name="close" size={25} color="black" />
+                  : <NoteIcon name="note" size={20} color="black" />}
+              </PressableIcon>
             </Col>
           </Row>
           <Collapsible collapsed={!(isNotesCollapsed && item.UniqueKey === key.current)} >
             <ExpandSection>
-            <Text variant="formHeader">SCOPE NOTES :</Text>
-            <OtherFormTextArea    defaultValue={item.Scope_Notes && (item.Scope_Notes).toString()} Value={item.Scope_Notes && (item.Scope_Notes).toString()} onChangeText={(value) =>{onValueChange(value,"Scope_Notes",item.UniqueKey)}}/>
+              <Text variant="formHeader">SCOPE NOTES :</Text>
+              {readonly ? <Text>{item.Scope_Notes }</Text> :
+                <OtherFormTextArea defaultValue={item.Scope_Notes && (item.Scope_Notes).toString()} Value={item.Scope_Notes && (item.Scope_Notes).toString()} onChangeText={(value) => { onValueChange(value, "Scope_Notes", item.UniqueKey) }} />
+              }
               <Text variant="formHeader">U/M :</Text>
-              <OtherFormTextArea   defaultValue={item.U_M && (item.U_M).toString()} Value={item.U_M && (item.U_M).toString()} onChangeText={(value) =>{onValueChange(value,"U_M",item.UniqueKey)}}/>
+              {readonly ? <Text>{item.U_M }</Text> :
+              <OtherFormTextArea defaultValue={item.U_M && (item.U_M).toString()} Value={item.U_M && (item.U_M).toString()} onChangeText={(value) => { onValueChange(value, "U_M", item.UniqueKey) }} />
+              }
               <Camerabutton>
-                <CameraIcon name="camera" size={40} color="black" onPress={() => navigation.navigate("CameraScreen")}/>
-                </Camerabutton>
+                <CameraIcon name="camera" size={40} color="black" onPress={() => navigation.navigate("CameraScreen")} />
+              </Camerabutton>
             </ExpandSection>
           </Collapsible>
           <Spacer position="top" size="medium" />
@@ -141,7 +149,7 @@ export const OtherCategoryForms = ({ catName, formData, inspId,navigation }) => 
   }
 
   useEffect(() => {
-      updateVfContect(dataList,"OTHRFM",inspId);
+    updateVfContect(dataList, "OTHRFM", inspId);
   }, [dataList]);
 
   useEffect(() => {
@@ -206,8 +214,8 @@ export const OtherCategoryForms = ({ catName, formData, inspId,navigation }) => 
             <CardBody>
               {dataList.length == 0 ?
                 MyLoader()
-                :displayRows(dataList)
-                }
+                : displayRows(dataList)
+              }
             </CardBody>
           </FormCard>
         </SectionContainer>

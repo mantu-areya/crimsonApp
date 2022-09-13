@@ -14,7 +14,7 @@ import { InputBoxHolder, InputButtonWrapper, InputFieldWrapper } from "./RoomFor
 
 
 
-export const RoomForm = ({ room_Measurement, updateLocalData, inspId }) => {
+export const RoomForm = ({ room_Measurement, updateLocalData, inspId, readonly }) => {
   const [isCollapsed, setIsCollapsed] = React.useState(false);
   const handlePress = (setIsCollapsed, isCollapsed) => setIsCollapsed(!isCollapsed);
   const [length, setLength] = React.useState(false);
@@ -86,33 +86,39 @@ export const RoomForm = ({ room_Measurement, updateLocalData, inspId }) => {
             <Text variant="body">{item.Sub_Category}</Text>
           </Col>
           <Col xs="2" md="2">
-            <InputBoxHolder>
-              <InputButtonWrapper onPress={() => item.Room_Length >=1 && onValueChange(item.Room_Length - 1, "Room_Length", item.UniqueKey)}>
-                <Text>-</Text>
-              </InputButtonWrapper>
-              <InputFieldWrapper >
-                <TextInput keyboardType="number-pad" multiline={true} value={`${item.Room_Length<0?0:item.Room_Length==null?0:item.Room_Length}`} onChangeText={(value) => { value>=0 && onValueChange(Number(value), "Room_Length", item.UniqueKey) }} style={{ fontSize: 12 }} />
-              </InputFieldWrapper>
-              <InputButtonWrapper  onPress={() => onValueChange(item.Room_Length + 1, "Room_Length", item.UniqueKey)}>
-                <Text>+</Text>
-              </InputButtonWrapper>
-            </InputBoxHolder>
+            {readonly ? <Text>{item.Room_Length < 0 ? 0 : item.Room_Length == null ? 0 : item.Room_Length}</Text> :
+              <InputBoxHolder>
+                <InputButtonWrapper onPress={() => item.Room_Length >= 1 && onValueChange(item.Room_Length - 1, "Room_Length", item.UniqueKey)}>
+                  <Text>-</Text>
+                </InputButtonWrapper>
+                <InputFieldWrapper >
+                  <TextInput keyboardType="number-pad" multiline={true} value={`${item.Room_Length < 0 ? 0 : item.Room_Length == null ? 0 : item.Room_Length}`} onChangeText={(value) => { value >= 0 && onValueChange(Number(value), "Room_Length", item.UniqueKey) }} style={{ fontSize: 12 }} />
+                </InputFieldWrapper>
+                <InputButtonWrapper onPress={() => onValueChange(item.Room_Length + 1, "Room_Length", item.UniqueKey)}>
+                  <Text>+</Text>
+                </InputButtonWrapper>
+              </InputBoxHolder>
+            }
           </Col>
           <Col xs="2" md="2">
-            <InputBoxHolder>
-              <InputButtonWrapper  onPress={() =>item.Room_Width >=1 &&  onValueChange(item.Room_Width - 1, "Room_Width", item.UniqueKey)}>
-                <Text>-</Text>
-              </InputButtonWrapper>
-              <InputFieldWrapper >
-                <TextInput keyboardType="number-pad" multiline={true} value={`${item.Room_Width<0?0:item.Room_Width==null?0:item.Room_Width}`} onChangeText={(value) => { value>=0 && onValueChange(Number(value), "Room_Width", item.UniqueKey) }} style={{ fontSize: 12 }} />
-              </InputFieldWrapper>
-              <InputButtonWrapper  onPress={() => onValueChange(item.Room_Width + 1, "Room_Width", item.UniqueKey)}>
-                <Text>+</Text>
-              </InputButtonWrapper>
-            </InputBoxHolder>
+            {readonly ? <Text>{item.Room_Width < 0 ? 0 : item.Room_Width == null ? 0 : item.Room_Width}</Text> :
+              <InputBoxHolder>
+                <InputButtonWrapper onPress={() => item.Room_Width >= 1 && onValueChange(item.Room_Width - 1, "Room_Width", item.UniqueKey)}>
+                  <Text>-</Text>
+                </InputButtonWrapper>
+                <InputFieldWrapper >
+                  <TextInput keyboardType="number-pad" multiline={true} value={`${item.Room_Width < 0 ? 0 : item.Room_Width == null ? 0 : item.Room_Width}`} onChangeText={(value) => { value >= 0 && onValueChange(Number(value), "Room_Width", item.UniqueKey) }} style={{ fontSize: 12 }} />
+                </InputFieldWrapper>
+                <InputButtonWrapper onPress={() => onValueChange(item.Room_Width + 1, "Room_Width", item.UniqueKey)}>
+                  <Text>+</Text>
+                </InputButtonWrapper>
+              </InputBoxHolder>
+            }
           </Col>
           <Col xs="2" md="3">
-            <TextArea keyboardType='numeric' defaultValue={item.Room_Misc_SF && (item.Room_Misc_SF).toString()} Value={item.Room_Misc_SF && (item.Room_Misc_SF).toString()} onChangeText={(value) => { onValueChange(parseFloat(value), "Room_Misc_SF", item.UniqueKey) }} />
+            {readonly ? <Text>{item.Room_Misc_SF < 0 ? 0 : item.Room_Misc_SF == null ? 0 : item.Room_Misc_SF}</Text> :
+              <TextArea keyboardType='numeric' defaultValue={item.Room_Misc_SF && (item.Room_Misc_SF).toString()} Value={item.Room_Misc_SF && (item.Room_Misc_SF).toString()} onChangeText={(value) => { onValueChange(parseFloat(value), "Room_Misc_SF", item.UniqueKey) }} />
+            }
           </Col>
           <Col xs="2" md="2">
             <Text variant="body">{item.Room_Total}</Text>
