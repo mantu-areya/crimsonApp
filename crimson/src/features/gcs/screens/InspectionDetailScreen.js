@@ -18,7 +18,7 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import { Button, Chip, IconButton } from "react-native-paper";
 import Toolbar from "../components/detailsView/Toolbar";
 import TabMenu from "../components/detailsView/TabMenu";
-import PropertyDetails from "../components/detailsView/PropertyDetails";
+import InspectionDetails from "../components/detailsView/InspectionDetails";
 const backIcon = <Icon name="arrow-left" size={12} />;
 
 
@@ -43,6 +43,8 @@ export const InspectionDetailScreen = ({ route, navigation }) => {
 
   const inspectionName = inspectionData.Name
 
+  // console.log({inspectionData});
+
 
   return (
 
@@ -53,7 +55,7 @@ export const InspectionDetailScreen = ({ route, navigation }) => {
         {/* Tab Menu */}
         <TabMenu {...{formName,setFormName}} />
         {/* Property Detail Card */}
-        <PropertyDetails />
+        <InspectionDetails data={inspectionData} />
       </ScrollView>
     </SafeAreaView>
   )

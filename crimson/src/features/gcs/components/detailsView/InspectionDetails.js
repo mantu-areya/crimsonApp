@@ -21,7 +21,22 @@ font-size: 16px;
 font-family: SF_BOLD;
 `
 
-export default function PropertyDetails() {
+export default function InspectionDetails({ data }) {
+
+    const {
+        Property_Address__c,
+        Property_City__c,
+        Property_State__c,
+        Property_Zip_Code__c,
+        HHM_Field_PM__r,
+        General_Contractor__r,
+        Repair_Estimator__r,
+        Inspection_Scheduled_Date__c,
+        Target_Rehab_Complete_Date__c
+    } = data
+
+
+
     const [isOpen, setIsOpen] = React.useState(true) // keep open in start
     const handleCollapseToggle = () => {
         setIsOpen(!isOpen);
@@ -48,9 +63,21 @@ export default function PropertyDetails() {
                     </View>
 
                     {/* Details Card */}
-                    <PropertyDetailsCard />
-                    <KeyContactInformationsCard />
-                    <KeyDateCard />
+                    <PropertyDetailsCard {...{
+                        Property_Address__c,
+                        Property_City__c,
+                        Property_State__c,
+                        Property_Zip_Code__c,
+                    }} />
+                    <KeyContactInformationsCard {...{
+                        HHM_Field_PM__r,
+                        General_Contractor__r,
+                        Repair_Estimator__r,
+                    }} />
+                    <KeyDateCard {...{
+                        Inspection_Scheduled_Date__c,
+                        Target_Rehab_Complete_Date__c
+                    }} />
                     {/* <DetailsCard/>
                     <DetailsCard/> */}
 
@@ -61,7 +88,12 @@ export default function PropertyDetails() {
 }
 
 
-function PropertyDetailsCard() {
+function PropertyDetailsCard({
+    Property_Address__c,
+    Property_City__c,
+    Property_State__c,
+    Property_Zip_Code__c,
+}) {
 
     const [isDetailsCardOpen, setIsDetailsCardOpen] = React.useState(true) // keep open in start
     const handleDetailsCardToggle = () => {
@@ -90,7 +122,7 @@ function PropertyDetailsCard() {
                                 Address:
                             </Text>
                             <Text style={{ color: "white" }}>
-                                606 Fairgreen Trail, Stockbridge, GA 30281
+                                {Property_Address__c}
                             </Text>
                         </View>
                         {/* City | State */}
@@ -101,7 +133,7 @@ function PropertyDetailsCard() {
                                     City:
                                 </Text>
                                 <Text style={{ color: "white" }}>
-                                    Stockbridge
+                                    {Property_City__c}
                                 </Text>
                             </View>
                             {/* State */}
@@ -110,7 +142,7 @@ function PropertyDetailsCard() {
                                     State:
                                 </Text>
                                 <Text style={{ color: "white" }}>
-                                    GA
+                                    {Property_State__c}
                                 </Text>
                             </View>
                         </View>
@@ -120,7 +152,7 @@ function PropertyDetailsCard() {
                                 Zip Code:
                             </Text>
                             <Text style={{ color: "white" }}>
-                                30281
+                                {Property_Zip_Code__c}
                             </Text>
                         </View>
                     </View>
@@ -132,7 +164,11 @@ function PropertyDetailsCard() {
 }
 
 
-function KeyContactInformationsCard() {
+function KeyContactInformationsCard({
+    HHM_Field_PM__r,
+    General_Contractor__r,
+    Repair_Estimator__r,
+}) {
 
     const [isKeyContactCardOpen, setIsKeyContactCardOpen] = React.useState(true) // keep open in start
     const handleKeyContactCardToggle = () => {
@@ -150,20 +186,20 @@ function KeyContactInformationsCard() {
             {/* Details */}
             <View style={{ width: '80%' }}>
                 <Text style={{ marginBottom: 4, color: "white", fontSize: 18, fontFamily: 'SF_BOLD' }}>
-                Key Contact Informations
+                    Key Contact Informations
                 </Text>
                 {
                     isKeyContactCardOpen &&
                     <View >
-                         {/* Row 1 */}
-                         <View style={{ marginBottom: 4, flexDirection: "row" }} >
+                        {/* Row 1 */}
+                        <View style={{ marginBottom: 4, flexDirection: "row" }} >
                             {/* General Contractor */}
                             <View style={{ flex: 1 }}>
                                 <Text style={{ color: "white", fontFamily: 'SF_BOLD' }}>
                                     General Contractor:
                                 </Text>
                                 <Text style={{ color: "white" }}>
-                                    Stockbridge
+                                    {General_Contractor__r?.Name}
                                 </Text>
                             </View>
                             {/* HHM Field PM */}
@@ -172,7 +208,7 @@ function KeyContactInformationsCard() {
                                     HHM Field PM:
                                 </Text>
                                 <Text style={{ color: "white" }}>
-                                    GA
+                                    {HHM_Field_PM__r?.Name}
                                 </Text>
                             </View>
                         </View>
@@ -184,16 +220,7 @@ function KeyContactInformationsCard() {
                                     Repair Estimator:
                                 </Text>
                                 <Text style={{ color: "white" }}>
-                                    Stockbridge
-                                </Text>
-                            </View>
-                            {/* Property Zip Code */}
-                            <View style={{ flex: 1 }}>
-                                <Text style={{ color: "white", fontFamily: 'SF_BOLD' }}>
-                                    Property Zip Code:
-                                </Text>
-                                <Text style={{ color: "white" }}>
-                                    GA
+                                    {Repair_Estimator__r?.Name}
                                 </Text>
                             </View>
                         </View>
@@ -205,7 +232,10 @@ function KeyContactInformationsCard() {
     )
 }
 
-function KeyDateCard() {
+function KeyDateCard({
+    Inspection_Scheduled_Date__c,
+    Target_Rehab_Complete_Date__c
+}) {
 
     const [isKeyDateCardOpen, setIsKeyDateCardOpen] = React.useState(true) // keep open in start
     const handleKeyDateCardToggle = () => {
@@ -223,27 +253,27 @@ function KeyDateCard() {
             {/* Details */}
             <View style={{ width: '80%' }}>
                 <Text style={{ marginBottom: 4, color: "white", fontSize: 18, fontFamily: 'SF_BOLD' }}>
-                Key Date
+                    Key Date
                 </Text>
                 {
                     isKeyDateCardOpen &&
                     <View >
-                          {/* Inspection Schedule Date */}
-                          <View>
+                        {/* Inspection Schedule Date */}
+                        <View>
                             <Text style={{ color: "white", fontFamily: 'SF_BOLD' }}>
                                 Inspection Schedule Date:
                             </Text>
                             <Text style={{ color: "white" }}>
-                                30281
+                                {Inspection_Scheduled_Date__c ?? 'NA'}
                             </Text>
                         </View>
-                          {/* Target Rehab Complete Date */}
-                          <View>
+                        {/* Target Rehab Complete Date */}
+                        <View>
                             <Text style={{ color: "white", fontFamily: 'SF_BOLD' }}>
                                 Target Rehab Complete Date:
                             </Text>
                             <Text style={{ color: "white" }}>
-                                30281
+                                {Target_Rehab_Complete_Date__c ?? 'NA'}
                             </Text>
                         </View>
                     </View>
