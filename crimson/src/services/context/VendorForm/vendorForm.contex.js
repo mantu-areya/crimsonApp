@@ -13,14 +13,27 @@ export const VendorFormContextProvider = ({ children }) => {
   :setVendorFormDetails(dataset)
 
   const addSignature = (inspId,img) => {
-
   let vfData = vendorFormDetails[inspId]
-  vfData.push({
-    signature: img
+  vfData && vfData.push({
+    "images":{
+      "image_type":"signature",
+      "file_name":"ContractorSignature",
+      "Image_Type":"png",
+      "parent_record_id":inspId,
+      "image_data": img,
+    }
   })
-  setVendorFormDetails({...vendorFormDetails,[inspId]: vfData.length > 0 ? vfData : "NA"})
 
-// console.log(vendorFormDetails[inspId],"dsdsd");
+  // vfData.map(ele=>{
+  //   if (ele.images){
+  //     console.log(JSON.stringify(ele, null, 4)); 
+  //     // console.log(ele);
+  //   }
+  // })
+
+  // vfData.length > 0 && console.log(vfData,"ccc");
+  img && vfData && setVendorFormDetails({...vendorFormDetails,[inspId]: vfData.length > 0 ? vfData : "NA"})
+
 }
   
 
@@ -62,9 +75,7 @@ const setAscynDataToApp =async () =>{
   });
 }
 
-useEffect(()=>{
-// console.log("vendorFormDetailsChanges");
-},[vendorFormDetails])
+
 
   const remove = (dataset) => {
     setVendorFormDetails([]);
@@ -93,7 +104,6 @@ useEffect(()=>{
         
       }}
     >
-      {/* {console.log(vendorFormDetails['a028C00000MigX6QAJ'],"rndr")} */}
       {children}
     </VendorFormContext.Provider>
   );
