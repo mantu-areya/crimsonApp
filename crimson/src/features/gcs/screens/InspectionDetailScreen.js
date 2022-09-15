@@ -52,6 +52,8 @@ export const InspectionDetailScreen = ({ route, navigation }) => {
   let [mech_Elec_Plumb, setMech_Elec_Plumb] = React.useState([])
   let [grandTotal, setGrandTotal] = useState(0.00)
   let [showMsg, setShowMsg] = React.useState(false)
+  // const { vendorFormDetails, updateToSf } = React.useContext(VendorFormContext);
+
   let [room_MeasurementData, setRoom_MeasurementData] = React.useState([])
   // let [vendorFormData, setVendorFormData] = React.useState([])
   // const { vendorFormDetails, updateToSf } = useContext(VendorFormContext);
@@ -60,7 +62,7 @@ export const InspectionDetailScreen = ({ route, navigation }) => {
   // const catselected = useRef('')
   // const isFocused = useIsFocused();
 
-  const GetDataByCategory = (inspData) => {
+  const getDataByCategory = (inspData) => {
     let room_msrmnt = []
     let category1 = []
     let category2 = []
@@ -103,6 +105,23 @@ export const InspectionDetailScreen = ({ route, navigation }) => {
     setVendorFormData(inspData)
   }
 
+  React.useEffect(() => {
+    let contexRecord = vendorFormDetails[inspectionData.Id]
+    if (contexRecord) {
+      if (contexRecord == "NA") {
+        setShowMsg(true)
+      }
+      else {
+        getDataByCategory(contexRecord)
+      }
+    }
+  }, [vendorFormDetails]);
+
+  const renderNoVFText = () => {
+    return <View>
+      <Text > VENDOR FORM IS NOT AVAILABLE</Text>
+    </View>
+  }
 
 
   return (

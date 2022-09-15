@@ -165,10 +165,6 @@ function PropertyDetailsCard({
     )
 }
 
-
-/** */
-
-
 function KeyContactInformationsCard({
     HHM_Field_PM__r,
     Repair_Estimator_Email__c,
@@ -199,8 +195,6 @@ function KeyContactInformationsCard({
                 </TouchableOpacity>
             </View>
             {/* Details */}
-
-
             {
                 isKeyContactCardOpen &&
                 <View style={{ marginLeft: 64 }}>
