@@ -12,9 +12,9 @@ import { Spacer } from "../../../components/spacer/spacer.component";
 import { InspectionDetailTile } from "../components/InspectionDetailTile";
 import { InspectionDetailsCard } from "../components/InspectionDetailsCard"
 import { Text } from "../../../components/typography/text.component";
-import { FormSections,FormSectionsContainer,SubmitButton} from "./InspectionDetailScreenStyles"
+import { FormSections, FormSectionsContainer, SubmitButton } from "./InspectionDetailScreenStyles"
 import { WorkAuthFormPage } from "../components/WorkAuthFormPage";
-
+import { updateSfVendorFormDetails } from "../../../services/inspections/inspections.service";
 export const InspectionDetailScreen = ({ route, navigation }) => {
 
 
@@ -34,6 +34,16 @@ export const InspectionDetailScreen = ({ route, navigation }) => {
     })
   }, []);
 
+  useEffect(() => {
+    inspectionData.Vendor_Bid_Submission_Complete__c && setreadonly(true)
+  }, [inspectionData])
+
+  const handleSubmit = () => {
+    setreadonly(true)
+    updateSfVendorFormDetails(vendorFormDetails[inspectionData.Id], inspectionData.Id, true).then(result => {
+      navigation.navigate('HomeStack')
+    })
+  }
 
   return (
     <>
@@ -45,20 +55,20 @@ export const InspectionDetailScreen = ({ route, navigation }) => {
                 <Icon name="arrow-left" size={20} color="white" style={{ marginTop: 4 }} />
                 <Text variant="NavigationText">Back</Text>
               </Row></BackNavigator>
-              <Row>
-                  <SubmitButton onPress={()=>{setreadonly(true)}}>
+            <Row>
+              <SubmitButton onPress={() => handleSubmit()}>
                 <Text variant="NavigationText">submit</Text>
-                </SubmitButton>
-              </Row>
+              </SubmitButton>
+            </Row>
             <View>
               <FormSections>
                 <Row>
-                  <FormSectionsContainer variant={formName=='VF'?"active":''} onPress={() => setFormaName('VF')}>
-                    <Text variant={formName=='VF'?"DetailcardHeaderactive":"DetailcardHeader"}>Vendor Forms</Text>
+                  <FormSectionsContainer variant={formName == 'VF' ? "active" : ''} onPress={() => setFormaName('VF')}>
+                    <Text variant={formName == 'VF' ? "DetailcardHeaderactive" : "DetailcardHeader"}>Vendor Forms</Text>
                   </FormSectionsContainer>
                   <Spacer position="right" size="medium" />
-                  <FormSectionsContainer variant={formName=='WF'?"active":''} onPress={() => setFormaName('WF')}>
-                    <Text variant={formName=='WF'?"DetailcardHeaderactive":"DetailcardHeader"} >Work Auth Forms</Text>
+                  <FormSectionsContainer variant={formName == 'WF' ? "active" : ''} onPress={() => setFormaName('WF')}>
+                    <Text variant={formName == 'WF' ? "DetailcardHeaderactive" : "DetailcardHeader"} >Work Auth Forms</Text>
                   </FormSectionsContainer>
                 </Row>
               </FormSections>
@@ -76,7 +86,7 @@ export const InspectionDetailScreen = ({ route, navigation }) => {
             <InspectionDetailsCard inspectionData={inspectionData} />
             <Spacer position="bottom" size="medium" />
           </HeaderCard  >
-          {formName == 'VF' && <VendorFormsPage inspectionData={inspectionData} navigation={navigation}  readonly={readonly}/>}
+          {formName == 'VF' && <VendorFormsPage inspectionData={inspectionData} navigation={navigation} readonly={readonly} />}
           {formName == 'WF' && <WorkAuthFormPage inspectionData={inspectionData} navigation={navigation} />}
         </ScrollView>
       </SafeArea>

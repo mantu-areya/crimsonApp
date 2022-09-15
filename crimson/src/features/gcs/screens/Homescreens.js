@@ -91,7 +91,7 @@ const AppBody = styled.View`
 
 
 export const HomeScreen = ({ navigation }) => {
-  const { isLoading,pendingInspection,isOnline,changeState } = useContext(InspectionsContext);
+  const { isLoading,pendingInspection,isOnline,changeState,reloadInspectionContext } = useContext(InspectionsContext);
   const {vendorFormDetails} = useContext(VendorFormContext)
   const [newState,setNewState]= useState(null)
   const [online,setonline] = useState(isOnline)
@@ -106,6 +106,7 @@ const recheckStatus=()=>{
 useEffect(()=>{
  navigation.addListener('focus', () => 
  NetInfo.fetch().then(networkState => {
+   networkState.isConnected &&   reloadInspectionContext()
   return setonline(networkState.isConnected)
   
 })

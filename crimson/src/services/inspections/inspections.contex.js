@@ -87,6 +87,20 @@ export const InspectionsContextProvider = ({ children }) => {
   }, [stateChnage])
 
   const changeState = () => setStaeChange(!stateChnage)
+
+  const reloadInspectionContext = ()=>{
+      NetInfo.fetch().then(networkState => {
+        if (networkState.isConnected) {
+          setToken().then(() => {
+            retrieveInspections();
+            return
+          }
+          )
+        } 
+        return
+      });
+  }
+
   return (
     <InspectionsContext.Provider
       value={{
@@ -97,6 +111,7 @@ export const InspectionsContextProvider = ({ children }) => {
         setVendorFormData,
         isOnline,
         changeState,
+        reloadInspectionContext
       }}
     >
       {children}
