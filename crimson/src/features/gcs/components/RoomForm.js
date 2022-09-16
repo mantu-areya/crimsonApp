@@ -20,17 +20,36 @@ export const RoomForm = ({ room_Measurement, updateLocalData, inspId, readonly }
   const [length, setLength] = React.useState(false);
   const [room_measurementData, setRoom_measurementData] = React.useState([]);
   const { updateVfContect } = useContext(VendorFormContext);
+  const [NewItemAdded, setNewItemAdded] = React.useState(0);
 
   const onValueChange = async (value, field, key) => {
-    const newState = room_measurementData.map(obj => {
-      if (obj.UniqueKey === key) {
-        let newValues = { ...obj, [field]: value };
-        let newTotal = (newValues.Room_Length * newValues.Room_Width) + newValues.Room_Misc_SF
-        return { ...obj, [field]: value, ["Room_Total"]: newTotal };
-      }
-      obj.UniqueKey === key && console.log("ff");
-      return obj;
-    });
+    {/* ////// code for adding New Line item /////  */ }
+    let newState;
+    if (field == "newItem") {
+      let itemObject = [{
+        Sub_Category: "",
+        Room_Total: 0,
+        Room_Misc_SF: "",
+        Room_Length: 0,
+        Room_Width: 0,
+        UniqueKey: inspId + (room_measurementData.length + 1)
+      }]
+      room_measurementData.push(itemObject[0])
+      newState = room_measurementData
+      setNewItemAdded(NewItemAdded + 1)
+    }
+    else {
+      newState = room_measurementData.map(obj => {
+        if (obj.UniqueKey === key) {
+          let newValues = { ...obj, [field]: value };
+          let newTotal = (newValues.Room_Length * newValues.Room_Width) + newValues.Room_Misc_SF
+          return { ...obj, [field]: value, ["Room_Total"]: newTotal };
+        }
+        obj.UniqueKey === key && console.log("ff");
+        return obj;
+      })
+    }
+
     setRoom_measurementData(newState)
   }
 
@@ -65,9 +84,10 @@ export const RoomForm = ({ room_Measurement, updateLocalData, inspId, readonly }
     return toatalSF
   }
 
+  {/* ////// code for adding New Line item /////  */ }
   useEffect(() => {
     updateVfContect(room_measurementData, "RM", inspId);
-  }, [room_measurementData]);
+  }, [room_measurementData, NewItemAdded]);
 
 
 
@@ -176,6 +196,15 @@ export const RoomForm = ({ room_Measurement, updateLocalData, inspId, readonly }
                 :
                 displayRows(room_measurementData)
               }
+              {/* ////// code for adding New Line item /////  */}
+
+              <Row>
+                <Col>
+                  <TotalContainer>
+                    <Pressable onPress={() => onValueChange(null, "newItem")}><Text>+</Text></Pressable>
+                  </TotalContainer>
+                </Col>
+              </Row>
               <Row>
                 <Col xs="9" md="10">
                   <TotalContainer>
