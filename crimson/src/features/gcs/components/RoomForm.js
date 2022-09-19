@@ -14,23 +14,42 @@ import { InputBoxHolder, InputButtonWrapper, InputFieldWrapper } from "./RoomFor
 
 
 
-export const RoomForm = ({ room_Measurement, updateLocalData, inspId }) => {
+export const RoomForm = ({ room_Measurement, updateLocalData, inspId, readonly }) => {
   const [isCollapsed, setIsCollapsed] = React.useState(false);
   const handlePress = (setIsCollapsed, isCollapsed) => setIsCollapsed(!isCollapsed);
   const [length, setLength] = React.useState(false);
   const [room_measurementData, setRoom_measurementData] = React.useState([]);
   const { updateVfContect } = useContext(VendorFormContext);
+  const [NewItemAdded, setNewItemAdded] = React.useState(0);
 
   const onValueChange = async (value, field, key) => {
-    const newState = room_measurementData.map(obj => {
-      if (obj.UniqueKey === key) {
-        let newValues = { ...obj, [field]: value };
-        let newTotal = (newValues.Room_Length * newValues.Room_Width) + newValues.Room_Misc_SF
-        return { ...obj, [field]: value, ["Room_Total"]: newTotal };
-      }
-      obj.UniqueKey === key && console.log("ff");
-      return obj;
-    });
+    {/* ////// code for adding New Line item /////  */ }
+    let newState;
+    if (field == "newItem") {
+      let itemObject = [{
+        Sub_Category: "",
+        Room_Total: 0,
+        Room_Misc_SF: "",
+        Room_Length: 0,
+        Room_Width: 0,
+        UniqueKey: inspId + (room_measurementData.length + 1)
+      }]
+      room_measurementData.push(itemObject[0])
+      newState = room_measurementData
+      setNewItemAdded(NewItemAdded + 1)
+    }
+    else {
+      newState = room_measurementData.map(obj => {
+        if (obj.UniqueKey === key) {
+          let newValues = { ...obj, [field]: value };
+          let newTotal = (newValues.Room_Length * newValues.Room_Width) + newValues.Room_Misc_SF
+          return { ...obj, [field]: value, ["Room_Total"]: newTotal };
+        }
+        obj.UniqueKey === key && console.log("ff");
+        return obj;
+      })
+    }
+
     setRoom_measurementData(newState)
   }
 
@@ -65,9 +84,10 @@ export const RoomForm = ({ room_Measurement, updateLocalData, inspId }) => {
     return toatalSF
   }
 
+  {/* ////// code for adding New Line item /////  */ }
   useEffect(() => {
     updateVfContect(room_measurementData, "RM", inspId);
-  }, [room_measurementData]);
+  }, [room_measurementData, NewItemAdded]);
 
 
 
@@ -86,33 +106,39 @@ export const RoomForm = ({ room_Measurement, updateLocalData, inspId }) => {
             <Text variant="body">{item.Sub_Category}</Text>
           </Col>
           <Col xs="2" md="2">
-            <InputBoxHolder>
-              <InputButtonWrapper onPress={() => item.Room_Length >=1 && onValueChange(item.Room_Length - 1, "Room_Length", item.UniqueKey)}>
-                <Text>-</Text>
-              </InputButtonWrapper>
-              <InputFieldWrapper >
-                <TextInput keyboardType="number-pad" multiline={true} value={`${item.Room_Length<0?0:item.Room_Length==null?0:item.Room_Length}`} onChangeText={(value) => { value>=0 && onValueChange(Number(value), "Room_Length", item.UniqueKey) }} style={{ fontSize: 12 }} />
-              </InputFieldWrapper>
-              <InputButtonWrapper  onPress={() => onValueChange(item.Room_Length + 1, "Room_Length", item.UniqueKey)}>
-                <Text>+</Text>
-              </InputButtonWrapper>
-            </InputBoxHolder>
+            {readonly ? <Text>{item.Room_Length < 0 ? 0 : item.Room_Length == null ? 0 : item.Room_Length}</Text> :
+              <InputBoxHolder>
+                <InputButtonWrapper onPress={() => item.Room_Length >= 1 && onValueChange(item.Room_Length - 1, "Room_Length", item.UniqueKey)}>
+                  <Text>-</Text>
+                </InputButtonWrapper>
+                <InputFieldWrapper >
+                  <TextInput keyboardType="number-pad" multiline={true} value={`${item.Room_Length < 0 ? 0 : item.Room_Length == null ? 0 : item.Room_Length}`} onChangeText={(value) => { value >= 0 && onValueChange(Number(value), "Room_Length", item.UniqueKey) }} style={{ fontSize: 12 }} />
+                </InputFieldWrapper>
+                <InputButtonWrapper onPress={() => onValueChange(item.Room_Length + 1, "Room_Length", item.UniqueKey)}>
+                  <Text>+</Text>
+                </InputButtonWrapper>
+              </InputBoxHolder>
+            }
           </Col>
           <Col xs="2" md="2">
-            <InputBoxHolder>
-              <InputButtonWrapper  onPress={() =>item.Room_Width >=1 &&  onValueChange(item.Room_Width - 1, "Room_Width", item.UniqueKey)}>
-                <Text>-</Text>
-              </InputButtonWrapper>
-              <InputFieldWrapper >
-                <TextInput keyboardType="number-pad" multiline={true} value={`${item.Room_Width<0?0:item.Room_Width==null?0:item.Room_Width}`} onChangeText={(value) => { value>=0 && onValueChange(Number(value), "Room_Width", item.UniqueKey) }} style={{ fontSize: 12 }} />
-              </InputFieldWrapper>
-              <InputButtonWrapper  onPress={() => onValueChange(item.Room_Width + 1, "Room_Width", item.UniqueKey)}>
-                <Text>+</Text>
-              </InputButtonWrapper>
-            </InputBoxHolder>
+            {readonly ? <Text>{item.Room_Width < 0 ? 0 : item.Room_Width == null ? 0 : item.Room_Width}</Text> :
+              <InputBoxHolder>
+                <InputButtonWrapper onPress={() => item.Room_Width >= 1 && onValueChange(item.Room_Width - 1, "Room_Width", item.UniqueKey)}>
+                  <Text>-</Text>
+                </InputButtonWrapper>
+                <InputFieldWrapper >
+                  <TextInput keyboardType="number-pad" multiline={true} value={`${item.Room_Width < 0 ? 0 : item.Room_Width == null ? 0 : item.Room_Width}`} onChangeText={(value) => { value >= 0 && onValueChange(Number(value), "Room_Width", item.UniqueKey) }} style={{ fontSize: 12 }} />
+                </InputFieldWrapper>
+                <InputButtonWrapper onPress={() => onValueChange(item.Room_Width + 1, "Room_Width", item.UniqueKey)}>
+                  <Text>+</Text>
+                </InputButtonWrapper>
+              </InputBoxHolder>
+            }
           </Col>
           <Col xs="2" md="3">
-            <TextArea keyboardType='numeric' defaultValue={item.Room_Misc_SF && (item.Room_Misc_SF).toString()} Value={item.Room_Misc_SF && (item.Room_Misc_SF).toString()} onChangeText={(value) => { onValueChange(parseFloat(value), "Room_Misc_SF", item.UniqueKey) }} />
+            {readonly ? <Text>{item.Room_Misc_SF < 0 ? 0 : item.Room_Misc_SF == null ? 0 : item.Room_Misc_SF}</Text> :
+              <TextArea keyboardType='numeric' defaultValue={item.Room_Misc_SF && (item.Room_Misc_SF).toString()} Value={item.Room_Misc_SF && (item.Room_Misc_SF).toString()} onChangeText={(value) => { onValueChange(parseFloat(value), "Room_Misc_SF", item.UniqueKey) }} />
+            }
           </Col>
           <Col xs="2" md="2">
             <Text variant="body">{item.Room_Total}</Text>
@@ -170,6 +196,15 @@ export const RoomForm = ({ room_Measurement, updateLocalData, inspId }) => {
                 :
                 displayRows(room_measurementData)
               }
+              {/* ////// code for adding New Line item /////  */}
+
+              <Row>
+                <Col>
+                  <TotalContainer>
+                    <Pressable onPress={() => onValueChange(null, "newItem")}><Text>+</Text></Pressable>
+                  </TotalContainer>
+                </Col>
+              </Row>
               <Row>
                 <Col xs="9" md="10">
                   <TotalContainer>

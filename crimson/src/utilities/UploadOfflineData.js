@@ -61,7 +61,7 @@ export const UploadOfflineData = () => {
   const offlineDataToSalesForce = () =>{
     let vFData = []
      Object.keys(vendorFormDetails).length > 0 &&  Object.keys(vendorFormDetails).map(ele => {
-       return vendorFormDetails[ele].map(obj=>{
+       return  vendorFormDetails[ele] !="NA" && vendorFormDetails[ele].map(obj=>{
          return vFData.push(obj)
        })
     })
