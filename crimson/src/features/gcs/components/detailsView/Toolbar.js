@@ -13,7 +13,6 @@ padding: 8px;
 align-items: center;
 justify-content: space-between;
 
-
 `
 const BackNavigatorButton = styled.Text`
 color:white;

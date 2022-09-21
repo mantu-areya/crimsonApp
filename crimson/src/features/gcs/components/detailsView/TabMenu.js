@@ -23,9 +23,16 @@ export default function TabMenu({ formName, setFormName }) {
         <ScrollView horizontal>
             <MenuWrapper>
                 {
-                    formTypes.map(({ type, title }, i) => <Button onPress={() => setFormName(type)} key={i} mode={formName === type ? 'contained' : 'outlined'} >{title}</Button>)
+                    formTypes.map(({ type, title }, i) =>
+                        <Button
+                            onPress={() => setFormName(type)}
+                            key={i} 
+                            mode={formName === type ? 'contained' : 'text'}
+                        >
+                            {title}
+                        </Button>)
                 }
             </MenuWrapper>
-        </ScrollView>
+         </ScrollView>
     )
 }

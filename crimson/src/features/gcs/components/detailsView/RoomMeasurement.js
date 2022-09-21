@@ -1,5 +1,5 @@
 import React from "react";
-import { FlatList, Text, TextInput, TouchableOpacity, View } from "react-native"
+import { ActivityIndicator, FlatList, Text, TextInput, TouchableOpacity, View } from "react-native"
 import styled from "styled-components/native"
 import MUiIcon from 'react-native-vector-icons/MaterialIcons';
 import { VendorFormContext } from "../../../../services/context/VendorForm/vendorForm.contex";
@@ -63,7 +63,7 @@ export default function RoomMeasurement({ room_Measurement, inspId }) {
                 {/* Text */}
                 <View>
                     <Text style={{ fontSize: 16, fontFamily: 'SF_BOLD' }}>Room Measurements</Text>
-                    <Text>Total Sq Ft: ${GetToalSqFt()}</Text>
+                    <Text>Total Sq Ft: {GetToalSqFt()} sq. ft.</Text>
                 </View>
                 {/* Icon */}
                 <TouchableOpacity onPress={handleCollapseToggle}>
@@ -79,21 +79,26 @@ export default function RoomMeasurement({ room_Measurement, inspId }) {
                         {/* Room */}
                         <Text style={{ flex: 4, fontFamily: 'SF_BOLD' }}>Room</Text>
                         {/* Length */}
-                        <Text style={{ flex: 2, fontFamily: 'SF_BOLD' }} >Length</Text>
+                        <Text style={{ flex: 2, fontFamily: 'SF_BOLD', textAlign: 'center' }} >Length</Text>
                         {/* Width */}
-                        <Text style={{ flex: 2, fontFamily: 'SF_BOLD' }}>Width</Text>
+                        <Text style={{ flex: 2, fontFamily: 'SF_BOLD', textAlign: 'center' }}>Width</Text>
                         {/* Misc SF */}
-                        <Text style={{ flex: 2, fontFamily: 'SF_BOLD' }}>Misc SF</Text>
+                        <Text style={{ flex: 2, fontFamily: 'SF_BOLD', textAlign: 'center' }}>Misc SF</Text>
                         {/* Total */}
                         <Text style={{ flex: 2, fontFamily: 'SF_BOLD', textAlign: 'right' }}>Total</Text>
                     </View>
-                    <FlatList
-                        data={room_measurementData ?? []}
-                        keyExtractor={(item) => item.UniqueKey}
-                        renderItem={(item) => (
-                            <RoomMeasurementLineItem item={item.item} onValueChange={onValueChange} />
-                        )} padding
-                    />
+                    {
+                        room_measurementData?.length > 0 ? <FlatList
+                            data={room_measurementData ?? []}
+                            keyExtractor={(item) => item.UniqueKey}
+                            renderItem={(item) => (
+                                <RoomMeasurementLineItem item={item.item} onValueChange={onValueChange} />
+                            )} padding
+                        /> :
+                            <View style={{padding:16}}>
+                                <ActivityIndicator />
+                            </View>
+                    }
                 </View>
             }
 
@@ -103,30 +108,48 @@ export default function RoomMeasurement({ room_Measurement, inspId }) {
 
 
 function RoomMeasurementLineItem({ item, onValueChange }) {
-    console.log(item, "item");
-    const [l, setL] = React.useState(item.Room_Length ?? 0)
-    const [w, setW] = React.useState(item.Room_Width ?? 0)
-    const [m, setM] = React.useState(item.Room_Misc_SF ?? 0)
+
+    const StyledTextInput = styled.TextInput`
+    flex: 2;
+    font-family: SF_LIGHT;
+    text-align: center;
+    background-color:white;
+    border-radius:4px;
+    margin: 0px 4px;
+    `;
+
     return (
 
         <View style={{ flexDirection: 'row', paddingVertical: 2, paddingHorizontal: 8, marginVertical: 2 }}>
             {/* Room */}
             <Text style={{ flex: 4, fontFamily: 'SF_LIGHT' }}>{item.Sub_Category}</Text>
             {/* Length */}
-            <TextInput keyboardType="number-pad" onChangeText={val => onValueChange(parseFloat(val), "Room_Length", item.UniqueKey)} value={`${item.Room_Length ?? 0}`} style={{ flex: 2, fontFamily: 'SF_LIGHT' }} />
+            <StyledTextInput
+                keyboardType="number-pad"
+                onChangeText={val => onValueChange(parseFloat(val), "Room_Length", item.UniqueKey)}
+                value={`${item.Room_Length ?? 0}`}
+            />
             {/* Width */}
-            <TextInput keyboardType="number-pad" onChangeText={val => setW(Number(val))} value={`${w}`} placeholderTextColor="pink" style={{ flex: 2, fontFamily: 'SF_LIGHT' }} />
+            <StyledTextInput
+                keyboardType="number-pad"
+                onChangeText={val => onValueChange(parseFloat(val), "Room_Width", item.UniqueKey)}
+                value={`${item.Room_Width ?? 0}`}
+            />
             {/* Misc SF */}
-            <TextInput keyboardType="number-pad" onChangeText={val => setM(Number(val))} value={`${m}`} style={{ flex: 2, fontFamily: 'SF_LIGHT' }} />
+            <StyledTextInput
+                keyboardType="number-pad"
+                onChangeText={val => onValueChange(parseFloat(val), "Room_Misc_SF", item.UniqueKey)}
+                value={`${item.Room_Misc_SF ?? 0}`}
+            />
             {/* Total */}
-            <Text style={{ flex: 2, fontFamily: 'SF_LIGHT', textAlign: 'right' }}>${item.Room_Total.toFixed(2)}</Text>
+            <Text style={{ flex: 2, fontFamily: 'SF_LIGHT', textAlign: 'right' }}>{item.Room_Total.toFixed(2)}</Text>
         </View>
 
 
     )
 }
 
-const Wrapper = styled.TouchableOpacity`
+const Wrapper = styled.View`
 background-color:#D9D9D9;
 margin: 16px 0;
 padding: 16px;

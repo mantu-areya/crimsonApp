@@ -132,6 +132,8 @@ export const getVendorFormDetails = async (inspId) => {
 
 export const updateSfVendorFormDetails = async (data,inspId) => {
   const token = await getStoredToken();
+  console.log(inspId);
+
   console.log("start","upload");
   // data.map(ele=>{
   //  ele.Sub_Category=="Garage" && console.log(ele);

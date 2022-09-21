@@ -128,7 +128,7 @@ export const WorkAuthFormPage = ({ inspectionData, navigation }) => {
 
 
 
-  useEffect(() => {
+  React.useEffect(() => {
     let contexRecord = vendorFormDetails[inspectionData.Id]
     if (contexRecord) {
       if (inspectionData.doCreateWAF__c == false) {
@@ -194,7 +194,7 @@ export const WorkAuthFormPage = ({ inspectionData, navigation }) => {
           <Spacer position="top" size="medium" />
 
 
-          {showMsg ? renderNoVFText() :
+          {!showMsg ? renderNoVFText() :
            <>
             <WorkAuthBidReviewForm bidReviewSummary={bidReviewSummary} />
             <Spacer position="top" size="large" />

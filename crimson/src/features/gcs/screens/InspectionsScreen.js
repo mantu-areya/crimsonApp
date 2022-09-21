@@ -65,12 +65,6 @@ export const InspectionsScreen = ({ navigation }) => {
 
   const onChangeSearch = query => setSearchQuery(query);
 
-  if (isLoading) {
-    return <View style={{flex:1}}>
-      <ActivityIndicator />
-    </View>
-  }
-
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: 'black' }}>
       {/* Top */}
@@ -91,13 +85,18 @@ export const InspectionsScreen = ({ navigation }) => {
       {/*  Bottom */}
       <BottomContainer>
 
-        <CardList
-          data={inspections !== null && inspections}
-          keyExtractor={(item) => item.Name}
-          renderItem={(item) => (
-            <ListViewCard data={item} />
-          )}
-        />
+        {isLoading ?
+          <View style={{ padding: 16 }}>
+            <ActivityIndicator />
+          </View> :
+          <CardList
+            data={inspections !== null && inspections}
+            keyExtractor={(item) => item.Name}
+            renderItem={(item) => (
+              <ListViewCard data={item} />
+            )}
+          />
+        }
 
       </BottomContainer>
 
@@ -115,20 +114,20 @@ function ListViewCard({ data }) {
     <TouchableOpacity style={{ width: '100%' }} onPress={() => navigation.navigate('InspectionsDetail', { inspectionData })}>
       <View style={{ alignItems: "center", flexDirection: "row", borderRadius: 8, width: w, marginBottom: 16, padding: 8, backgroundColor: "#6A579A" }}>
         <View style={{ width: "80%" }}>
-          <Text style={{ color: 'white', fontFamily: 'SF_BOLD', fontSize: 14,marginBottom:4 }}  >{data.item.Property_Address__c === '' ? 'Property Address NA' : data.item.Property_Address__c}</Text>
-          <Text style={{ color: 'white', fontFamily: 'SF_LIGHT', fontSize: 12,marginBottom:2 }} >Repair estimator : {data.item?.Repair_Estimator__r?.Name}</Text>
-          <Text style={{ color: 'white', fontFamily: 'SF_LIGHT', fontSize: 12, marginBottom:2 }} >HHM Field PM : {data.item.HHM_Field_PM__r.Name}</Text>
-          <Text style={{ color: 'white', fontFamily: 'SF_LIGHT', fontSize: 12, marginBottom:2 }} >Inspection Due Date: {data.item.GC_Inspection_Due_Date__c}</Text>
-          <Text style={{ color: 'white', fontFamily: 'SF_LIGHT', fontSize: 12, marginBottom:2 }} >Bid Recommendation: {data.item.HHM_Bid_Recommendation__c && `$${data.item.HHM_Bid_Recommendation__c}`}</Text>
+          <Text style={{ color: 'white', fontFamily: 'SF_BOLD', fontSize: 14, marginBottom: 4 }}  >{data.item.Property_Address__c === '' ? 'Property Address NA' : data.item.Property_Address__c}</Text>
+          <Text style={{ color: 'white', fontFamily: 'SF_LIGHT', fontSize: 12, marginBottom: 2 }} >Repair estimator : {data.item?.Repair_Estimator__r?.Name}</Text>
+          <Text style={{ color: 'white', fontFamily: 'SF_LIGHT', fontSize: 12, marginBottom: 2 }} >HHM Field PM : {data.item.HHM_Field_PM__r.Name}</Text>
+          <Text style={{ color: 'white', fontFamily: 'SF_LIGHT', fontSize: 12, marginBottom: 2 }} >Inspection Due Date: {data.item.GC_Inspection_Due_Date__c}</Text>
+          <Text style={{ color: 'white', fontFamily: 'SF_LIGHT', fontSize: 12, marginBottom: 2 }} >Bid Recommendation: {data.item.HHM_Bid_Recommendation__c && `$${data.item.HHM_Bid_Recommendation__c}`}</Text>
 
         </View>
         <View >
-        <TouchableOpacity style={{  justifyContent: "center", alignItems: "center" }}>
-          {rightArr}
-        </TouchableOpacity>
-        <Text style={{ marginTop: 16, color: 'white', fontFamily: 'SF_LIGHT', fontSize: 10 }} >
-          {data.item.Name}
-        </Text>
+          <TouchableOpacity onPress={() => navigation.navigate('InspectionsDetail', { inspectionData })} style={{ justifyContent: "center", alignItems: "center" }}>
+            {rightArr}
+          </TouchableOpacity>
+          <Text style={{ marginTop: 16, color: 'white', fontFamily: 'SF_LIGHT', fontSize: 10 }} >
+            {data.item.Name}
+          </Text>
         </View>
       </View>
     </TouchableOpacity>
