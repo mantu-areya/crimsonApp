@@ -14,12 +14,12 @@ import { NewVendorForm } from "../components/NewVendorForm"
 import { ActivityIndicator, Text } from "react-native-paper";
 import NewWorkAuthForm from "../components/NewWorkAuthForm";
 import { WorkAuthFormPage } from "../components/WorkAuthFormPage";
-
-
+import { updateSfVendorFormDetails } from "../../../services/inspections/inspections.service";
 export const InspectionDetailScreen = ({ route, navigation }) => {
 
 
-  const [formName, setFormName] = useState('VF')
+  const [formName, setFormaName] = useState('VF')
+  const [readonly, setreadonly] = useState(false)
   const { inspectionData } = route.params;
   const { addToVfContex } = useContext(VendorFormContext);
   const setVendorFormData = async () => getVendorFormDetails(inspectionData.Id)
@@ -34,6 +34,16 @@ export const InspectionDetailScreen = ({ route, navigation }) => {
     })
   }, []);
 
+  useEffect(() => {
+    inspectionData.Vendor_Bid_Submission_Complete__c && setreadonly(true)
+  }, [inspectionData])
+
+  const handleSubmit = () => {
+    setreadonly(true)
+    updateSfVendorFormDetails(vendorFormDetails[inspectionData.Id], inspectionData.Id, true).then(result => {
+      navigation.navigate('HomeStack')
+    })
+  }
 
   const inspectionName = inspectionData.Name
 

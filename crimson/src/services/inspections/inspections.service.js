@@ -130,7 +130,7 @@ export const getVendorFormDetails = async (inspId) => {
   // return mockedVendorFormDetails
 }
 
-export const updateSfVendorFormDetails = async (data,inspId) => {
+export const updateSfVendorFormDetails = async (data,inspId,submitStatus=false) => {
   const token = await getStoredToken();
   console.log(inspId);
 
@@ -139,7 +139,7 @@ export const updateSfVendorFormDetails = async (data,inspId) => {
   //  ele.Sub_Category=="Garage" && console.log(ele);
   // })
   return apiPost(
-    `https://hudsonhomesmgmt--uat.sandbox.my.salesforce.com/services/apexrest/crimson?InspectionId=${inspId}`,
+    `https://hudsonhomesmgmt--uat.sandbox.my.salesforce.com/services/apexrest/crimson?InspectionId=${inspId}&Submit=${submitStatus}`,
     data,
     {      
       headers: {
@@ -147,7 +147,7 @@ export const updateSfVendorFormDetails = async (data,inspId) => {
       },
     },
   )
-    .then(response =>response.data["DynamicVendorTemplates"].DynamicVendorTemplate )
+    .then(response =>submitStatus?response.data.Status:response.data["DynamicVendorTemplates"].DynamicVendorTemplate )
     .catch(err => {
       console.error(err);
       // throw err;

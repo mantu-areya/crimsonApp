@@ -46,7 +46,7 @@ margin-top:50%;
 
 
 
-export const VendorFormsPage = ({ inspectionData, navigation }) => {
+export const VendorFormsPage = ({ inspectionData, navigation,readonly }) => {
   // let [room_Measurement, setRoom_Measurement] = React.useState({ ROOM: [], LENGTH: [], WIDTH: [], MISC_SF: [], TOTAL: [] })
   let [general_Rental, setGeneral_Rental] = React.useState([])
   let [pools, setPools] = React.useState([])
@@ -164,22 +164,22 @@ export const VendorFormsPage = ({ inspectionData, navigation }) => {
             </View>
             <ViewCarousal setFormNum={setFormNum} >
               <CarousalScrren >
-                <RoomForm room_Measurement={room_MeasurementData} inspId={inspectionData.Id} />
+                <RoomForm room_Measurement={room_MeasurementData} inspId={inspectionData.Id} readonly={readonly} />
               </CarousalScrren>
               <CarousalScrren >
-                {formNum == 1 && <OtherCategoryForms navigation={navigation} catName={"GENERAL RENTAL OPERATIONS SCOPE"} formData={general_Rental} inspId={inspectionData.Id} />}
+                {formNum == 1 && <OtherCategoryForms navigation={navigation} catName={"GENERAL RENTAL OPERATIONS SCOPE"} formData={general_Rental} inspId={inspectionData.Id} readonly={readonly}  />}
               </CarousalScrren >
               <CarousalScrren >
-                {formNum == 2 && <OtherCategoryForms navigation={navigation} catName={"Pools"} formData={pools} inspId={inspectionData.Id} />}
+                {formNum == 2 && <OtherCategoryForms navigation={navigation} catName={"Pools"} formData={pools} inspId={inspectionData.Id} readonly={readonly}  />}
               </CarousalScrren >
               <CarousalScrren >
-                {formNum == 3 && <OtherCategoryForms navigation={navigation} catName={"Exterior"} formData={exterior} inspId={inspectionData.Id} />}
+                {formNum == 3 && <OtherCategoryForms navigation={navigation} catName={"Exterior"} formData={exterior} inspId={inspectionData.Id} readonly={readonly}  />}
               </CarousalScrren>
               <CarousalScrren >
-                {formNum == 4 && <OtherCategoryForms navigation={navigation} catName={"Interior"} formData={interior} inspId={inspectionData.Id} />}
+                {formNum == 4 && <OtherCategoryForms navigation={navigation} catName={"Interior"} formData={interior} inspId={inspectionData.Id} readonly={readonly}  />}
               </CarousalScrren>
               <CarousalScrren >
-                {formNum == 5 && <OtherCategoryForms navigation={navigation} catName={"Mechanical, Electrical and Plumbing Systems"} formData={mech_Elec_Plumb} inspId={inspectionData.Id} />}
+                {formNum == 5 && <OtherCategoryForms navigation={navigation} catName={"Mechanical, Electrical and Plumbing Systems"} formData={mech_Elec_Plumb} inspId={inspectionData.Id} readonly={readonly} />}
               </CarousalScrren>
               {console.log(inspectionData.Id)}
             </ViewCarousal>
