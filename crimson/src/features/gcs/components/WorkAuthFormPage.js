@@ -260,10 +260,10 @@ const updateSignToContext = (image)=>{
                       }}>
 
                       <Sign onOK={(e) => {
-                        console.log(e,"vvv");
+                        let bs64dataArray = e.split(',')
                         setImg(e);
                         setModalVisible(!modalVisible);
-                        updateSignToContext(e)
+                        updateSignToContext(bs64dataArray[1])
                       }} text='Contractor Sign' />
 
 

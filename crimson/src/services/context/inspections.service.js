@@ -122,7 +122,7 @@ export const getVendorFormDetails = async (inspId) => {
     .then(response => response.data["DynamicVendorTemplates"].DynamicVendorTemplate )
     .catch(err => {
       console.log(err);
-      console.error(err);
+      console.error(err.request,"upld");
       // throw err;
     });
 
@@ -136,6 +136,7 @@ export const updateSfVendorFormDetails = async (data,inspId,submitStatus=false) 
   // data.map(ele=>{
   //  ele.Sub_Category=="Garage" && console.log(ele);
   // })
+  console.log(    `https://hudsonhomesmgmt--uat.sandbox.my.salesforce.com/services/apexrest/crimson?InspectionId=${inspId}&Submit=${submitStatus}`  );
   return apiPost(
     `https://hudsonhomesmgmt--uat.sandbox.my.salesforce.com/services/apexrest/crimson?InspectionId=${inspId}&Submit=${submitStatus}`,
     data,
@@ -148,31 +149,7 @@ export const updateSfVendorFormDetails = async (data,inspId,submitStatus=false) 
     .then(response =>submitStatus?response.data.Status:response.data["DynamicVendorTemplates"].DynamicVendorTemplate )
     .catch(err => {
       console.error(err);
-      // throw err;
-    });
-}
-
-
-export const uploadSignImage = async (data) => {
-  const token = await getStoredToken();
-  console.log("uploading Sign Image");
-  console.log(data.parent_record_id > "1.txt");
-  console.log(data.parent_record_id);
-  return apiPut(
-    `https://hudsonhomesmgmt--uat.sandbox.my.salesforce.com/services/apexrest/crimson/insertImages`,
-    data,
-    {      
-      headers: {
-        'Authorization': `Bearer ${token}`,
-      },
-    },
-  )
-    .then(response => {
-       console.log(response.data) 
-       return response.data
-    })
-    .catch(err => {
-      console.error(JSON.stringify(err.request));
+      console.log(JSON.stringify(err.request));
       // throw err;
     });
 }

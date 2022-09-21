@@ -1,5 +1,5 @@
 import React, { createContext, useEffect, useState, useContext } from "react";
-import { updateSfVendorFormDetails } from "../../inspections/inspections.service";
+import { updateSfVendorFormDetails,uploadSignImage } from "../../inspections/inspections.service";
 import { InspectionsContext } from "../../inspections/inspections.contex"
 import AsyncStorage  from "@react-native-async-storage/async-storage"
 import NetInfo from "@react-native-community/netinfo";
@@ -13,16 +13,28 @@ export const VendorFormContextProvider = ({ children }) => {
   :setVendorFormDetails(dataset)
 
   const addSignature = (inspId,img) => {
-  let vfData = vendorFormDetails[inspId]
-  vfData && vfData.push({
-    "images":{
-      "image_type":"signature",
-      "file_name":"ContractorSignature",
-      "Image_Type":"png",
-      "parent_record_id":inspId,
+   //backup code for adding to the context 
+  // let vfData = vendorFormDetails[inspId]
+  // vfData && vfData.push({
+  //   "images":{
+  //     "file_name":"Contractor signature",
+  //     "image_data": img,
+  //     "parent_record_id":inspId,
+  //     "image_type":"sign_item",
+  //     "line_item_id":inspId,
+  //   }
+  // })
+
+  const data = {
+      "file_name":"Contractor signature",
       "image_data": img,
+      "parent_record_id":inspId,
+      "image_type":"sign_item",
+      "line_item_id":inspId,
     }
-  })
+  
+
+  uploadSignImage(data)
 
   // vfData.map(ele=>{
   //   if (ele.images){
@@ -32,7 +44,7 @@ export const VendorFormContextProvider = ({ children }) => {
   // })
 
   // vfData.length > 0 && console.log(vfData,"ccc");
-  img && vfData && setVendorFormDetails({...vendorFormDetails,[inspId]: vfData.length > 0 ? vfData : "NA"})
+  // img && vfData && setVendorFormDetails({...vendorFormDetails,[inspId]: vfData.length > 0 ? vfData : "NA"})
 
 }
   
