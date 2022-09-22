@@ -27,7 +27,7 @@ export const VendorFormContextProvider = ({ children }) => {
         });
       }
       if (formType === "OTHRFM") {
-        console.log("Testing OTHRFM");
+        // console.log("Testing OTHRFM");
         modifiedData.forEach(obj => {
           if (obj.UniqueKey === ele.UniqueKey) {
             ele['Quantity'] = obj.Quantity;

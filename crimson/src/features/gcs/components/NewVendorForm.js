@@ -56,8 +56,10 @@ export const NewVendorForm = ({ inspectionData, navigation }) => {
     let [mech_Elec_Plumb, setMech_Elec_Plumb] = React.useState([])
     let [grandTotal, setGrandTotal] = useState(0.00)
     let [room_MeasurementData, setRoom_MeasurementData] = React.useState([])
-    const { vendorFormDetails } = useContext(VendorFormContext);
+    const { vendorFormDetails, updateToSf} = useContext(VendorFormContext);
 
+
+    const isFocused = useIsFocused();
 
 
     const GetDataByCategory = (inspData) => {
@@ -124,6 +126,11 @@ export const NewVendorForm = ({ inspectionData, navigation }) => {
         'Mechanical, Electrical and Plumbing Systems': mech_Elec_Plumb,
     }
 
+    console.log("ID",inspectionData.Id);
+
+    useEffect(() => {
+        isFocused == false && updateToSf(inspectionData.Id)
+      }, [isFocused])
 
     return (<>
 

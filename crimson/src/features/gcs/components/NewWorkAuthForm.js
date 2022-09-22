@@ -96,12 +96,11 @@ export default function NewWorkAuthForm({ inspectionData, navigation }) {
     React.useEffect(() => {
         let contexRecord = vendorFormDetails[inspectionData.Id]
         if (contexRecord) {
-            console.log(inspectionData.doCreateWAF__c);
             if (inspectionData.doCreateWAF__c) {
                 setIsWorkAuthCreated(true)
+                GetDataByCategory(contexRecord)
             }
             else {
-                GetDataByCategory(contexRecord)
             }
         }
     }, [vendorFormDetails]);

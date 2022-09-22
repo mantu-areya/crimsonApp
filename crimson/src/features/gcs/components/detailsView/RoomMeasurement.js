@@ -107,9 +107,7 @@ export default function RoomMeasurement({ room_Measurement, inspId }) {
 }
 
 
-function RoomMeasurementLineItem({ item, onValueChange }) {
-
-    const StyledTextInput = styled.TextInput`
+const StyledTextInput = styled.TextInput`
     flex: 2;
     font-family: SF_LIGHT;
     text-align: center;
@@ -117,6 +115,10 @@ function RoomMeasurementLineItem({ item, onValueChange }) {
     border-radius:4px;
     margin: 0px 4px;
     `;
+
+
+function RoomMeasurementLineItem({ item, onValueChange }) {
+    
 
     return (
 

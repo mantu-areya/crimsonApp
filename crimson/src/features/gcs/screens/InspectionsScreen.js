@@ -65,6 +65,8 @@ export const InspectionsScreen = ({ navigation }) => {
 
   const onChangeSearch = query => setSearchQuery(query);
 
+  const filterInspections = inspections?.filter((ins) => ins?.Name.includes(searchQuery))
+
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: 'black' }}>
       {/* Top */}
@@ -90,7 +92,7 @@ export const InspectionsScreen = ({ navigation }) => {
             <ActivityIndicator />
           </View> :
           <CardList
-            data={inspections !== null && inspections}
+            data={filterInspections ?? []}
             keyExtractor={(item) => item.Name}
             renderItem={(item) => (
               <ListViewCard data={item} />

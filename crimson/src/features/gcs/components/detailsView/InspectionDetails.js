@@ -107,7 +107,7 @@ function PropertyDetailsCard({
         <TouchableOpacity style={{ padding: 8, marginTop: 8, borderRadius: 4, backgroundColor: '#B5A7D7' }}>
             {/* Header */}
             <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                <View style={{ justifyContent: 'center', alignItems: 'center', width: 48, height: 48, backgroundColor: '#6A579A', borderRadius: '100%' }}>
+                <View style={{ justifyContent: 'center', alignItems: 'center', width: 48, height: 48, backgroundColor: '#6A579A', borderRadius: 100 }}>
                     <FWIcon name={"building"} color="white" size={24} />
                 </View>
                 <View style={{ marginLeft: 16 }}>
@@ -182,7 +182,7 @@ function KeyContactInformationsCard({
 
             {/* Header */}
             <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                <View style={{ justifyContent: 'center', alignItems: 'center', width: 48, height: 48, backgroundColor: '#6A579A', borderRadius: '100%' }}>
+                <View style={{ justifyContent: 'center', alignItems: 'center', width: 48, height: 48, backgroundColor: '#6A579A', borderRadius: 100 }}>
                     <MCIcon name={"folder-key"} color="white" size={24} />
                 </View>
                 <View style={{ marginLeft: 16 }}>
@@ -251,7 +251,7 @@ function KeyDateCard({
         <TouchableOpacity onPress={handleKeyDateCardToggle} style={{ padding: 8, marginTop: 8, borderRadius: 4, backgroundColor: '#B5A7D7' }}>
             {/* Header */}
             <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                <View style={{ justifyContent: 'center', alignItems: 'center', width: 48, height: 48, backgroundColor: '#6A579A', borderRadius: '100%' }}>
+                <View style={{ justifyContent: 'center', alignItems: 'center', width: 48, height: 48, backgroundColor: '#6A579A', borderRadius: 100 }}>
                     <MCIcon name={"calendar-month"} color="white" size={24} />
                 </View>
                 <View style={{ marginLeft: 16 }}>

@@ -18,7 +18,7 @@ import { updateSfVendorFormDetails } from "../../../services/inspections/inspect
 export const InspectionDetailScreen = ({ route, navigation }) => {
 
 
-  const [formName, setFormaName] = useState('VF')
+  const [formName, setFormName] = useState('VF')
   const [readonly, setreadonly] = useState(false)
   const { inspectionData } = route.params;
   const { addToVfContex } = useContext(VendorFormContext);

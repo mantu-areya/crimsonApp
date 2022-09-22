@@ -1,5 +1,5 @@
 import React, { useEffect, useContext } from "react";
-import { View, Text, Pressable, ScrollView, TextInput, Platform } from "react-native";
+import { View, Text, Pressable, ScrollView, TextInput, Platform, TouchableOpacity } from "react-native";
 import Collapsible from 'react-native-collapsible';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import ContentLoader, { Rect } from 'react-content-loader/native'
@@ -9,11 +9,12 @@ import styled from "styled-components/native";
 
 
 export const ApprovedItemsTable = ({ approvedItems, updateLocalData, inspId }) => {
-    const [isCollapsed, setIsCollapsed] = React.useState(false);
-    const handlePress = (setIsCollapsed, isCollapsed) => setIsCollapsed(!isCollapsed);
-    const [length, setLength] = React.useState(false);
     const [approvedItemsData, setApprovedItemsData] = React.useState([]);
 
+    const [isOpen, setIsOpen] = React.useState(true) // keep open in start
+    const handleCollapseToggle = () => {
+        setIsOpen(!isOpen);
+    }
 
 
     const MyLoader = () => {
@@ -85,82 +86,76 @@ export const ApprovedItemsTable = ({ approvedItems, updateLocalData, inspId }) =
 
     }
 
-    console.log({ approvedItemsData });
 
     return (
 
         <Wrapper>
             {/* Total */}
-            <View style={{ padding: 16 }}>
-                <Text style={{ fontSize: 18, fontFamily: 'SF_LIGHT' }}>Total : {GetToalSqFt()} </Text>
+            <View style={{ padding: 16, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+                <Text style={{ fontSize: 18, fontFamily: 'SF_LIGHT' }}>Total : ${GetToalSqFt()} </Text>
+                <TouchableOpacity onPress={handleCollapseToggle}>
+                    <Icon name={isOpen ? "keyboard-arrow-up" : "keyboard-arrow-down"} color="black" size={36} />
+                </TouchableOpacity>
             </View>
+
             {/* Table */}
+            {
+                isOpen &&
+                <View>
+                    <View style={{ padding: 16, marginRight: 8, flexDirection: 'row' }}>
 
-
-
-            <View style={{ backgroundColor: 'red' }}>
-                {/* <View style={{ padding: 16, marginRight: 8, flexDirection: 'row' }}>
-                    <FixedColumnHeader>
-                        <Text style={{ fontSize: 28, fontFamily: 'SF_BOLD' }}>{`Matrix Price`}</Text>
-                    </FixedColumnHeader>
-                    <TableWrapper horizontal>
-                        <Text style={{ fontSize: 28, fontFamily: 'SF_BOLD' }}>{`Scope Notes`}</Text>
-                        <Text style={{ fontSize: 28, fontFamily: 'SF_BOLD' }}>{`Approval Status`}</Text>
-                        <Text style={{ fontSize: 28, fontFamily: 'SF_BOLD' }}>{`Owner Notes`}</Text>
-                        <Text style={{ fontSize: 28, fontFamily: 'SF_BOLD' }}>{`Quantity`}</Text>
-                        <Text style={{ fontSize: 28, fontFamily: 'SF_BOLD' }}>{`U/M`}</Text>
-                        <Text style={{ fontSize: 28, fontFamily: 'SF_BOLD' }}>{`Rate`}</Text>
-                        <Text style={{ fontSize: 28, fontFamily: 'SF_BOLD' }}>{`Total`}</Text>
-                    </TableWrapper>
-                </View> */}
-                <View style={{ padding: 16, marginRight: 8, flexDirection: 'row' }}>
-
-                    <View>
-                        <FixedColumnHeader>
-                            <Text style={{width:120, fontSize: 14, fontFamily: 'SF_BOLD' }}>Matrix Price </Text>
-                        </FixedColumnHeader>
-                        {
-                            [1, 2, 3, 4, 5, 6, 7, 8, 9].map((item, i) =>
-                                <FixedColumnHeader key={i}>
-                                    <Text style={{width:120, fontSize: 16, fontFamily: 'SF_LIGHT' }}> Item{item}</Text>
-                                </FixedColumnHeader>
-                            )
-                        }
-                    </View>
-
-                    <ScrollView horizontal>
-                        <View >
-                            <View style={{ flexDirection: 'row'}}>
-                                <Text style={{width:80, flex:1, fontSize: 14, fontFamily: 'SF_BOLD' }}>{`Scope Notes`}</Text>
-                                <Text style={{width:80, flex:1, fontSize: 14, fontFamily: 'SF_BOLD' }}>{`Approval Status`}</Text>
-                                <Text style={{width:80, flex:1, fontSize: 14, fontFamily: 'SF_BOLD' }}>{`Owner Notes`}</Text>
-                                <Text style={{width:80, flex:1, fontSize: 14, fontFamily: 'SF_BOLD' }}>{`Quantity`}</Text>
-                                <Text style={{width:80, flex:1, fontSize: 14, fontFamily: 'SF_BOLD' }}>{`U/M`}</Text>
-                                <Text style={{width:80, flex:1, fontSize: 14, fontFamily: 'SF_BOLD' }}>{`Rate`}</Text>
-                                <Text style={{width:80, flex:1, fontSize: 14, fontFamily: 'SF_BOLD' }}>{`Total`}</Text>
-                            </View>
-
-                            {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((item, i) =>
-
-                                <View style={{ flexDirection: 'row' }}>
-                                    <Text style={{width:80,flex:1, fontSize: 16, fontFamily: 'SF_LIGHT' }}>{`item ${item}`}</Text>
-                                    <Text style={{width:80,flex:1, fontSize: 16, fontFamily: 'SF_LIGHT' }}>{`item ${item}`}</Text>
-                                    <Text style={{width:80,flex:1, fontSize: 16, fontFamily: 'SF_LIGHT' }}>{`item ${item}`}</Text>
-                                    <Text style={{width:80,flex:1, fontSize: 16, fontFamily: 'SF_LIGHT' }}>{`item ${item}`}</Text>
-                                    <Text style={{width:80,flex:1, fontSize: 16, fontFamily: 'SF_LIGHT' }}>{`item ${item}`}</Text>
-                                    <Text style={{width:80,flex:1, fontSize: 16, fontFamily: 'SF_LIGHT' }}>{`item ${item}`}</Text>
-                                    <Text style={{width:80,flex:1, fontSize: 16, fontFamily: 'SF_LIGHT' }}>{`item ${item}`}</Text>
-                                </View>
-                            )
+                        <View style={{ marginRight: 16 }}>
+                            <FixedColumnHeader style={{}}>
+                                <Text style={{ width: 140, height: 32, fontSize: 14, fontFamily: 'SF_BOLD' }}>Matrix Price </Text>
+                            </FixedColumnHeader>
+                            {
+                                approvedItems.map((item, i) =>
+                                    <FixedColumnHeader style={{ marginBottom: 10 }} key={i}>
+                                        <Text style={{ width: 140, height: 64, fontSize: 16, fontFamily: 'SF_LIGHT' }}>{item.Matrix_Price}</Text>
+                                    </FixedColumnHeader>
+                                )
                             }
                         </View>
-                    </ScrollView>
+
+                        <ScrollView horizontal>
+                            <View >
+                                <View style={{ flexDirection: 'row' }}>
+                                    <Text style={{ height: 32, textAlign: 'center', width: 120, flex: 1, fontSize: 14, fontFamily: 'SF_BOLD' }}>{`Scope Notes`}</Text>
+                                    <Text style={{ height: 32, textAlign: 'center', width: 120, flex: 1, fontSize: 14, fontFamily: 'SF_BOLD' }}>{`Approval Status`}</Text>
+                                    <Text style={{ height: 32, textAlign: 'center', width: 120, flex: 1, fontSize: 14, fontFamily: 'SF_BOLD' }}>{`Owner Notes`}</Text>
+                                    <Text style={{ height: 32, textAlign: 'center', width: 120, flex: 1, fontSize: 14, fontFamily: 'SF_BOLD' }}>{`Quantity`}</Text>
+                                    <Text style={{ height: 32, textAlign: 'center', width: 120, flex: 1, fontSize: 14, fontFamily: 'SF_BOLD' }}>{`U/M`}</Text>
+                                    <Text style={{ height: 32, textAlign: 'center', width: 120, flex: 1, fontSize: 14, fontFamily: 'SF_BOLD' }}>{`Rate`}</Text>
+                                    <Text style={{ height: 32, textAlign: 'center', width: 120, flex: 1, fontSize: 14, fontFamily: 'SF_BOLD' }}>{`Total`}</Text>
+                                </View>
+
+                                {approvedItems.map((item, i) =>
+
+                                    <View key={i} style={{ flexDirection: 'row', marginBottom: 10 }}>
+                                        {/* <FixedColumnHeader key={i}>
+                            <Text style={{ width: 120, fontSize: 16, fontFamily: 'SF_LIGHT' }}>{item.Matrix_Price}</Text>
+                        </FixedColumnHeader> */}
+                                        <Text style={{ height: 64, width: 120, flex: 1, fontSize: 16, fontFamily: 'SF_LIGHT' }}>{item.Scope_Notes}</Text>
+                                        <Text style={{ height: 64, textAlign: 'center', width: 120, flex: 1, fontSize: 16, fontFamily: 'SF_LIGHT' }}>{item.Approval_Status}</Text>
+                                        <Text style={{ height: 64, textAlign: 'center', width: 120, flex: 1, fontSize: 16, fontFamily: 'SF_LIGHT' }}>{item.Owner_Clarification}</Text>
+                                        <Text style={{ height: 64, textAlign: 'center', width: 120, flex: 1, fontSize: 16, fontFamily: 'SF_LIGHT' }}>{item.Quantity}</Text>
+                                        <Text style={{ height: 64, textAlign: 'center', width: 120, flex: 1, fontSize: 16, fontFamily: 'SF_LIGHT' }}>{item.U_M}</Text>
+                                        <Text style={{ height: 64, textAlign: 'center', width: 120, flex: 1, fontSize: 16, fontFamily: 'SF_LIGHT' }}>${item.Rate.toFixed(2)}</Text>
+                                        <Text style={{ height: 64, textAlign: 'center', width: 120, flex: 1, fontSize: 16, fontFamily: 'SF_LIGHT' }}>${item.Total.toFixed(2)}</Text>
+                                    </View>
+                                )
+                                }
+                            </View>
+                        </ScrollView>
+
+
+                    </View>
 
 
                 </View>
+            }
 
 
-            </View>
         </Wrapper >
 
     )
@@ -179,7 +174,7 @@ position: relative;
 `;
 
 const FixedColumnHeader = styled.View`
-position: fixed;
+position: sticky;
 left: 0;
 z-index: 9999;
 justify-content: center;
