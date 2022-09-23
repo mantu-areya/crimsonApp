@@ -29,7 +29,7 @@ const BrandIcon = styled(Image)`
 resizeMode: stretch;
 `
 const Loading = styled(ActivityIndicator)`
-  margin-left: -25px;
+margin-left: -50%;
 `;
 const LoadingContainer = styled.View`
 margin-top:50%;
@@ -51,11 +51,11 @@ export const WorkAuthFormPage = ({ inspectionData, navigation }) => {
   let [showMsg, setShowMsg] = React.useState(false)
   let [approvedItemsData, setApprovedItemsData] = React.useState([])
   let [vendorFormData, setVendorFormData] = React.useState([])
-  const { vendorFormDetails, updateToSf,addSignature } = useContext(VendorFormContext);
+  const { vendorFormDetails, updateToSf,addSignature, contextImages } = useContext(VendorFormContext);
   const [selectedCategory, setSelectedCategory] = React.useState('')
   const [formNum, setFormNum] = React.useState('')
   const [bidReviewSummary, BidReviewSummary] = React.useState({ totalApproved_Amount: 0, approvedItemsCount: 0, grandTotal: 0, totalBidAmount: 0, approvedasNotedAmount: 0, approved_as_Noted_Count: 0, declinedAmount: 0, declined_Count: 0, approved_as_Noted_Count: 0 })
-
+  const [uploadloading,setUploadLoading] = React.useState(false)
 
   const GetDataByCategory = (inspData) => {
     let approvedItems = [];
@@ -133,8 +133,7 @@ export const WorkAuthFormPage = ({ inspectionData, navigation }) => {
 
 
 const updateSignToContext = (image)=>{
-    addSignature(inspectionData.Id,image);
-
+    addSignature(inspectionData.Id,image)
 }
 
   useEffect(() => {
@@ -150,7 +149,15 @@ const updateSignToContext = (image)=>{
   }, [vendorFormDetails]);
 
 
-
+useEffect(()=>{
+  contextImages[inspectionData.Id] && contextImages[inspectionData.Id].map(ele=>{
+    if (ele.file_name ==  "Contractor signature.jpeg") {
+    console.log(ele.file_public_url,"vfvfvfv"); 
+    setImg(ele.file_public_url)
+    return
+  }
+  })
+},[contextImages])
 
 
   const renderNoVFText = () => {
@@ -170,7 +177,7 @@ const updateSignToContext = (image)=>{
 
     try {
 
-      setIsLoading(true);
+      // setIsLoading(true);
 
 
       let result = await ImagePicker.launchImageLibraryAsync({
@@ -180,17 +187,20 @@ const updateSignToContext = (image)=>{
         base64: true,
       });
 
-      result = "data:image/jpeg;base64,"+result.base64
+      result = result.base64
 
-      console.log(result,"kkk");
+      if(result){
+        console.log(result,"kkk");
+        // setImg(result);
+        updateSignToContext(result)
+        setIsLoading(true);
+      }
 
-      setImg(result);
-      updateSignToContext(result)
-      setIsLoading(false);
 
     } catch (error) {
 
       setIsLoading(false);
+      console.log(error);
       alert('Upload Error' + error)
 
     }
@@ -222,13 +232,16 @@ const updateSignToContext = (image)=>{
                   {/* Contractor Signature */}
                   <View style={{ padding: 16, flex: .5 }}>
                     <Text style={{ fontSize: 12 }}>Contractor Signature</Text>
-                    {img &&
+                    {console.log(img,"miggg")}
+                    {img ?
                       <View style={{ justifyContent: 'center', marginVertical: 8, padding: 4 }}>
-                        <Image style={{
+                        <Image
+                        accessibilityLabel="Signature Image"
+                        style={{
                           width: 80,
                           height: 80
                         }} source={{ uri: img }} />
-                      </View>}
+                      </View>:isLoading &&<Loading size={40} animating={true} color={"black"} />}
                      {img && <Text style={{ fontSize: 12 }}>Date : {new Date().toDateString()}</Text>}
                     {!img && <>
                       <PaperButton style={{
@@ -264,6 +277,7 @@ const updateSignToContext = (image)=>{
                         setImg(e);
                         setModalVisible(!modalVisible);
                         updateSignToContext(bs64dataArray[1])
+                        setIsLoading(true);
                       }} text='Contractor Sign' />
 
 

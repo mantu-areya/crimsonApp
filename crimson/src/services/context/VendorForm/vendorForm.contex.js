@@ -1,5 +1,5 @@
 import React, { createContext, useEffect, useState, useContext } from "react";
-import { updateSfVendorFormDetails,uploadSignImage } from "../../inspections/inspections.service";
+import { updateSfVendorFormDetails,uploadSignImage, getVendorFormDetails } from "../../inspections/inspections.service";
 import { InspectionsContext } from "../../inspections/inspections.contex"
 import AsyncStorage  from "@react-native-async-storage/async-storage"
 import NetInfo from "@react-native-community/netinfo";
@@ -7,10 +7,14 @@ import NetInfo from "@react-native-community/netinfo";
 export const VendorFormContext = createContext();
 export const VendorFormContextProvider = ({ children }) => {
   const [vendorFormDetails, setVendorFormDetails] = useState({});
-  const { inspections } = useContext(InspectionsContext);
-
+  const [contextImages , setContextImages] = useState({});
   const add = (dataset, inspData) => inspData?setVendorFormDetails({ ...vendorFormDetails, [inspData.Id]: dataset.length > 0 ? dataset : "NA" })
   :setVendorFormDetails(dataset)
+
+  const addImagesToContex = (inspId) =>{
+    getVendorFormDetails(inspId)
+    .then(data => setContextImages({...contextImages, [inspId]:data["Images"]}));
+  }
 
   const addSignature = (inspId,img) => {
    //backup code for adding to the context 
@@ -34,7 +38,10 @@ export const VendorFormContextProvider = ({ children }) => {
     }
   
 
-  uploadSignImage(data)
+  uploadSignImage(data,true).then(result=>{
+    addImagesToContex(inspId)
+    return result
+  })
 
   // vfData.map(ele=>{
   //   if (ele.images){
@@ -112,7 +119,9 @@ const setAscynDataToApp =async () =>{
         updateVfContect: update,
         updateToSf: updateToSF,
         setAscynDataToApp,
-        addSignature:addSignature
+        addSignature:addSignature,
+        addImagesToContex,
+        contextImages,
         
       }}
     >

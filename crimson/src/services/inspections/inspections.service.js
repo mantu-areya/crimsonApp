@@ -119,10 +119,10 @@ export const getVendorFormDetails = async (inspId) => {
       }
     },
   )
-    .then(response => response.data["DynamicVendorTemplates"].DynamicVendorTemplate )
+    .then(response => response.data )
     .catch(err => {
       console.log(err);
-      console.error(err);
+      console.error(JSON.stringify(err.request));
       // throw err;
     });
 
@@ -153,13 +153,13 @@ export const updateSfVendorFormDetails = async (data,inspId,submitStatus=false) 
 }
 
 
-export const uploadSignImage = async (data) => {
+export const uploadSignImage = async (data,base64Flag) => {
   const token = await getStoredToken();
   console.log("uploading Sign Image");
   console.log(data.parent_record_id > "1.txt");
   console.log(data.parent_record_id);
   return apiPut(
-    `https://hudsonhomesmgmt--uat.sandbox.my.salesforce.com/services/apexrest/crimson/insertImages`,
+    `https://hudsonhomesmgmt--uat.sandbox.my.salesforce.com/services/apexrest/crimson/insertImages?base64=${base64Flag}`,
     data,
     {      
       headers: {
