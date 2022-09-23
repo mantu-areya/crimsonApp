@@ -19,7 +19,7 @@ export default function OtherCategoryForm({ currFormdata, inspId }) {
         console.log("changing",field,'with',value);
         const newState = dataList.map(obj => {
           if (obj.UniqueKey === key) {
-            let newValues = { ...obj, [field]: value };
+            let newValues = { ...obj, [field]: parseFloat(value) };
             let newTotal = (newValues.Quantity * newValues.Rate)
             return { ...obj,[field]:value, ["Total"]: newTotal };
           }

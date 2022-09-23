@@ -16,29 +16,6 @@ export const ApprovedItemsTable = ({ approvedItems, updateLocalData, inspId }) =
         setIsOpen(!isOpen);
     }
 
-
-    const MyLoader = () => {
-        const getRowLoader = (y) => {
-            let height = Platform.isPad ? 30 : 15
-            return (<>
-                <ContentLoader interval="0.01" backgroundColor="#D3D3D3" style={{ height: height, flex: 1 }} viewBox="0 0 600 1">
-                    <Rect x="1" y="0" rx="3" ry="3" width="180" height="10" />
-                    <Rect x="200" y="0" rx="4" ry="4" width="60" height="10" />
-                    <Rect x="300" y="0" rx="3" ry="3" width="60" height="10" />
-                    <Rect x="400" y="0" rx="3" ry="3" width="60" height="10" />
-                    <Rect x="500" y="0" rx="3" ry="3" width="60" height="10" />
-                </ContentLoader>
-
-            </>
-            )
-        }
-        return <>
-            {getRowLoader()}
-            {getRowLoader()}
-            {getRowLoader()}
-        </>
-    }
-
     const GetToalSqFt = () => {
         let toatalSF = 0;
         approvedItemsData.map(ele => {
@@ -52,39 +29,6 @@ export const ApprovedItemsTable = ({ approvedItems, updateLocalData, inspId }) =
         setApprovedItemsData(approvedItems);
     }, [approvedItems])
 
-    const displayRows = () => {
-        return approvedItemsData.map((item, i) => {
-            return (
-                <Row key={item.UniqueKey}>
-                    <Col xs="2" md="2" style={{ textAlign: "center" }}>
-                        <Text variant="body">{item.Category}</Text>
-                    </Col>
-                    <Col xs="2" md="2">
-                        <Text variant="body">{item.Sub_Category}</Text>
-                    </Col>
-                    <Col xs="2" md="2">
-                        <Text variant="body">{item.Approval_Status}</Text>
-                    </Col>
-                    <Col xs="2" md="2">
-                        <Text variant="body">{item.Owner_Clarification}</Text>
-                    </Col>
-                    <Col xs="1" md="1">
-                        <Text variant="body">{item.Quantity}</Text>
-                    </Col>
-                    <Col xs="1" md="1">
-                        <Text variant="body">{item.U_M}</Text>
-                    </Col>
-                    <Col xs="1" md="1">
-                        <Text variant="body">{item.Rate}</Text>
-                    </Col>
-                    <Col xs="1" md="1">
-                        <Text variant="body">{item.Total}</Text>
-                    </Col>
-                </Row>
-            )
-        })
-
-    }
 
 
     return (
@@ -92,7 +36,10 @@ export const ApprovedItemsTable = ({ approvedItems, updateLocalData, inspId }) =
         <Wrapper>
             {/* Total */}
             <View style={{ padding: 16, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-                <Text style={{ fontSize: 18, fontFamily: 'SF_LIGHT' }}>Total : ${GetToalSqFt()} </Text>
+                <View>
+                    <Text style={{ fontSize: 18, fontFamily: 'SF_BOLD' }}>Approved Items</Text>
+                    <Text style={{ fontSize: 14, fontFamily: 'SF_BOLD' }}>Total : ${GetToalSqFt().toFixed(2)} </Text>
+                </View>
                 <TouchableOpacity onPress={handleCollapseToggle}>
                     <Icon name={isOpen ? "keyboard-arrow-up" : "keyboard-arrow-down"} color="black" size={36} />
                 </TouchableOpacity>
@@ -132,16 +79,13 @@ export const ApprovedItemsTable = ({ approvedItems, updateLocalData, inspId }) =
                                 {approvedItems.map((item, i) =>
 
                                     <View key={i} style={{ flexDirection: 'row', marginBottom: 10 }}>
-                                        {/* <FixedColumnHeader key={i}>
-                            <Text style={{ width: 120, fontSize: 16, fontFamily: 'SF_LIGHT' }}>{item.Matrix_Price}</Text>
-                        </FixedColumnHeader> */}
-                                        <Text style={{ height: 64, width: 120, flex: 1, fontSize: 16, fontFamily: 'SF_LIGHT' }}>{item.Scope_Notes}</Text>
-                                        <Text style={{ height: 64, textAlign: 'center', width: 120, flex: 1, fontSize: 16, fontFamily: 'SF_LIGHT' }}>{item.Approval_Status}</Text>
-                                        <Text style={{ height: 64, textAlign: 'center', width: 120, flex: 1, fontSize: 16, fontFamily: 'SF_LIGHT' }}>{item.Owner_Clarification}</Text>
-                                        <Text style={{ height: 64, textAlign: 'center', width: 120, flex: 1, fontSize: 16, fontFamily: 'SF_LIGHT' }}>{item.Quantity}</Text>
-                                        <Text style={{ height: 64, textAlign: 'center', width: 120, flex: 1, fontSize: 16, fontFamily: 'SF_LIGHT' }}>{item.U_M}</Text>
-                                        <Text style={{ height: 64, textAlign: 'center', width: 120, flex: 1, fontSize: 16, fontFamily: 'SF_LIGHT' }}>${item.Rate.toFixed(2)}</Text>
-                                        <Text style={{ height: 64, textAlign: 'center', width: 120, flex: 1, fontSize: 16, fontFamily: 'SF_LIGHT' }}>${item.Total.toFixed(2)}</Text>
+                                        <Text style={{ height: 64, width: 120, flex: 1, fontSize: 16, fontFamily: 'SF_LIGHT' }}>{item?.Scope_Notes}</Text>
+                                        <Text style={{ height: 64, textAlign: 'center', width: 120, flex: 1, fontSize: 16, fontFamily: 'SF_LIGHT' }}>{item?.Approval_Status}</Text>
+                                        <Text style={{ height: 64, textAlign: 'center', width: 120, flex: 1, fontSize: 16, fontFamily: 'SF_LIGHT' }}>{item?.Owner_Clarification}</Text>
+                                        <Text style={{ height: 64, textAlign: 'center', width: 120, flex: 1, fontSize: 16, fontFamily: 'SF_LIGHT' }}>{item?.Quantity}</Text>
+                                        <Text style={{ height: 64, textAlign: 'center', width: 120, flex: 1, fontSize: 16, fontFamily: 'SF_LIGHT' }}>{item?.U_M}</Text>
+                                        <Text style={{ height: 64, textAlign: 'center', width: 120, flex: 1, fontSize: 16, fontFamily: 'SF_LIGHT' }}>${item?.Rate.toFixed(2)}</Text>
+                                        <Text style={{ height: 64, textAlign: 'center', width: 120, flex: 1, fontSize: 16, fontFamily: 'SF_LIGHT' }}>${item?.Total.toFixed(2)}</Text>
                                     </View>
                                 )
                                 }

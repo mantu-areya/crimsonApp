@@ -25,10 +25,10 @@ import OtherCategoryForm from "./OtherCategoryForm";
             {/* Totals */}
             <View style={{ alignItems: "flex-end", marginTop: 8 }}>
                 <Text style={{ fontSize: 16, fontFamily: 'SF_BOLD' }}>
-                    Grand Total: ${grandTotal}
+                    Grand Total: ${grandTotal.toFixed(2)}
                 </Text>
                 <Text style={{ fontSize: 14, fontFamily: 'SF_BOLD' }}>
-                    {currentForm} Total: ${GetToal()}
+                    {currentForm} Total: ${GetToal().toFixed(2)}
                 </Text>
             </View>
             <ScrollView horizontal style={{ marginVertical: 8, paddingHorizontal: 8 }}>

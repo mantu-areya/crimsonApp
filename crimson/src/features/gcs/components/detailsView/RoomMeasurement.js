@@ -3,8 +3,6 @@ import { ActivityIndicator, FlatList, Text, TextInput, TouchableOpacity, View } 
 import styled from "styled-components/native"
 import MUiIcon from 'react-native-vector-icons/MaterialIcons';
 import { VendorFormContext } from "../../../../services/context/VendorForm/vendorForm.contex";
-import { Col, Row } from "react-native-responsive-grid-system";
-import { TextArea } from "../VendorFormPageStyles";
 
 
 export default function RoomMeasurement({ room_Measurement, inspId }) {
@@ -19,7 +17,7 @@ export default function RoomMeasurement({ room_Measurement, inspId }) {
     const onValueChange = async (value, field, key) => {
         const newData = room_Measurement.map(obj => {
             if (obj.UniqueKey === key) {
-                let newValues = { ...obj, [field]: value };
+                let newValues = { ...obj, [field]: parseFloat(value) };
                 let newTotal = (newValues.Room_Length * newValues.Room_Width) + newValues.Room_Misc_SF
                 return { ...obj, [field]: value, ["Room_Total"]: newTotal };
             }
@@ -93,7 +91,7 @@ export default function RoomMeasurement({ room_Measurement, inspId }) {
                             keyExtractor={(item) => item.UniqueKey}
                             renderItem={(item) => (
                                 <RoomMeasurementLineItem item={item.item} onValueChange={onValueChange} />
-                            )} padding
+                            )}
                         /> :
                             <View style={{padding:16}}>
                                 <ActivityIndicator />
@@ -128,13 +126,13 @@ function RoomMeasurementLineItem({ item, onValueChange }) {
             {/* Length */}
             <StyledTextInput
                 keyboardType="number-pad"
-                onChangeText={val => onValueChange(parseFloat(val), "Room_Length", item.UniqueKey)}
+                onChangeText={val => onValueChange((val), "Room_Length", item.UniqueKey)}
                 value={`${item.Room_Length ?? 0}`}
             />
             {/* Width */}
             <StyledTextInput
                 keyboardType="number-pad"
-                onChangeText={val => onValueChange(parseFloat(val), "Room_Width", item.UniqueKey)}
+                onChangeText={val => onValueChange((val), "Room_Width", item.UniqueKey)}
                 value={`${item.Room_Width ?? 0}`}
             />
             {/* Misc SF */}
@@ -157,37 +155,3 @@ margin: 16px 0;
 padding: 16px;
 border-radius: 8px;
 `
-
-
-/*
-
-            <Row>
-                <Col xs="4" md="6" style={{ textAlign: "center" }}>
-                    <Text variant="body">{item.Sub_Category}</Text>
-                </Col>
-                <Col xs="2" md="6">
-                    <TextInput
-                        keyboardType="number-pad"
-                        multiline={true}
-                        value={`${item.Room_Length < 0 ? 0 : item.Room_Length == null ? 0 : item.Room_Length}`}
-                        // onChangeText={(value) => { value>=0 && onValueChange(Number(value), "Room_Length", item.UniqueKey) }}
-                        style={{ fontSize: 12 }} />
-                </Col>
-                <Col xs="2" md="6">
-
-                    <TextInput keyboardType="number-pad" multiline={true} value={`${item.Room_Width < 0 ? 0 : item.Room_Width == null ? 0 : item.Room_Width}`}
-                        // onChangeText={(value) => { value>=0 && onValueChange(Number(value), "Room_Width", item.UniqueKey) }}
-                        style={{ fontSize: 12 }} />
-
-                </Col>
-                <Col xs="2" md="6">
-                    <TextArea keyboardType='numeric' defaultValue={item.Room_Misc_SF && (item.Room_Misc_SF).toString()}
-                        Value={item.Room_Misc_SF && (item.Room_Misc_SF).toString()}
-                    // onChangeText={(value) => { onValueChange(parseFloat(value), "Room_Misc_SF", item.UniqueKey) }}
-                    />
-                </Col>
-                <Col xs="2" md="6">
-                    <Text variant="body">{item.Room_Total}</Text>
-                </Col>
-            </Row>
-*/ 

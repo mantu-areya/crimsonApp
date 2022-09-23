@@ -28,13 +28,13 @@ export default function OtherCategoryLineItem({ item, onValueChange }) {
                     {
                         !isOpen ? <View style={{ marginTop: 16, flexDirection: 'row', justifyContent: 'flex-start', alignItems: 'center' }}>
                             <Text style={{ width: '33%', color: 'white', fontFamily: 'SF_LIGHT' }}>
-                                Quantity: {item.Quantity}
+                                Quantity: {item?.Quantity}
                             </Text>
                             <Text style={{ width: '33%', color: 'white', fontFamily: 'SF_LIGHT' }}>
-                                Rate: ${item.Rate.toFixed(2)}
+                                Rate: ${item?.Rate.toFixed(2)}
                             </Text>
                             <Text style={{ width: '33%', color: 'white', fontFamily: 'SF_LIGHT' }}>
-                                Total: ${item.Total.toFixed(2)}
+                                Total: ${item?.Total.toFixed(2)}
                             </Text>
                         </View> : null
                     }
@@ -52,21 +52,22 @@ export default function OtherCategoryLineItem({ item, onValueChange }) {
                     <StyledLabel >Quantity</StyledLabel>
                     <StyledTextInput
                         keyboardType="number-pad"
-                        onChangeText={val => onValueChange(parseFloat(val), "Quantity", item.UniqueKey)}
+                        onChangeText={val =>   onValueChange(Number(val), "Quantity", item.UniqueKey)} // ! Quantity should not be in decimal format
                         value={`${item.Quantity ?? 0}`}
                     />
                     <StyledLabel >U/A</StyledLabel>
                     <StyledTextInput
-                        onChangeText={val => onValueChange(parseFloat(val), "Quantity", item.UniqueKey)}
+                        onChangeText={val => onValueChange((val), "Quantity", item.UniqueKey)}
                         value={`${item.U_M ?? 0}`}
                         keyboardType="number-pad"
                     />
                     <StyledLabel >Rate</StyledLabel>
                     <StyledTextInput
                         onChangeText={val => {
-                            onValueChange(parseFloat(val.replace("$","")), "Rate", item.UniqueKey)
+                            onValueChange((val.replace("$","")), "Rate", item.UniqueKey)
                         }}
                         value={`$${item.Rate}`}
+                        keyboardType="number-pad"
                     />
                     <StyledLabel >Total</StyledLabel>
                     <StyledTextInput keyboardType="number-pad" value={`$${item.Total}`} />
