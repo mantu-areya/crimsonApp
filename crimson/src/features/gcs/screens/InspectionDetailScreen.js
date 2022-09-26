@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 import { VendorFormContext } from "../../../services/context/VendorForm/vendorForm.contex"
 import { getVendorFormDetails } from "../../../services/inspections/inspections.service"
 import NetInfo from "@react-native-community/netinfo";
-import { View, ScrollView, Pressable, SafeAreaView, TouchableOpacity, FlatList, TextInput } from "react-native";
+import { View, ScrollView, Pressable, TouchableOpacity, FlatList, TextInput } from "react-native";
 
 import styled from "styled-components/native";
 import Icon from 'react-native-vector-icons/FontAwesome';
@@ -15,6 +15,7 @@ import { ActivityIndicator, Text } from "react-native-paper";
 import NewWorkAuthForm from "../components/NewWorkAuthForm";
 import { WorkAuthFormPage } from "../components/WorkAuthFormPage";
 import { updateSfVendorFormDetails } from "../../../services/inspections/inspections.service";
+import { SafeAreaView } from "react-native-safe-area-context";
 export const InspectionDetailScreen = ({ route, navigation }) => {
 
 

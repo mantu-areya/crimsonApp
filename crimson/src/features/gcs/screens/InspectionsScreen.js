@@ -25,18 +25,19 @@ import {
 } from './InspectionScreenStyles'
 
 import { Searchbar as PaperSearchBar, Colors, IconButton } from 'react-native-paper';
-import { ActivityIndicator, Dimensions, SafeAreaView, Text, TouchableOpacity, View } from "react-native";
+import { ActivityIndicator, Dimensions, Text, TouchableOpacity, View } from "react-native";
 import styled from "styled-components/native";
 
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { useNavigation } from "@react-navigation/native";
+import { SafeAreaView } from "react-native-safe-area-context";
 const backIcon = <Icon name="arrow-left" size={16} />;
 const rightArr = <Icon name="angle-right" size={48} color="white" />;
 
 
 const TopContainer = styled.View`
 
-height: 25%;
+height: 180px;
 background-color:#2B243E;
 width: 100%;
 border-bottom-left-radius:24px ;

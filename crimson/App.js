@@ -12,6 +12,7 @@ import { VendorFormContextProvider } from "./src/services/context/VendorForm/ven
 import { UploadOfflineData } from "./src/utilities/UploadOfflineData"
 import { Navigation } from "./src/infrastructure/navigation";
 import { useFonts } from 'expo-font';
+import { SafeAreaProvider } from "react-native-safe-area-context";
 
 
 export default function App() {
@@ -44,12 +45,14 @@ export default function App() {
   return (
     <>
       <ThemeProvider theme={theme}>
+      <SafeAreaProvider>
         <InspectionsContextProvider>
           <VendorFormContextProvider>
             <UploadOfflineData />
             <Navigation />
           </VendorFormContextProvider>
         </InspectionsContextProvider>
+        </SafeAreaProvider>
       </ThemeProvider>
       <ExpoStatusBar style={"inverted"} backgroundColor="#2B243E" />
     </>

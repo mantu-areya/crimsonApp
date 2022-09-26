@@ -1,9 +1,10 @@
-import { SafeAreaView, StyleSheet, Text, View } from 'react-native'
+import {  StyleSheet, Text, View } from 'react-native'
 import React from 'react'
 import { VendorFormContext } from '../../../services/context/VendorForm/vendorForm.contex'
 import styled from 'styled-components/native';
 import BidReviewSummaryCard from "./workAuth/BidReviewSummaryCard"
 import { ApprovedItemsTable } from './workAuth/ApprovedItemsTable';
+import SafeAreaView from 'react-native-safe-area-view';
 
 
 
@@ -117,8 +118,10 @@ export default function NewWorkAuthForm({ inspectionData, navigation }) {
     }
 
 
+
+
     return (
-        <SafeAreaView>
+        <SafeAreaView style={{flex:1}}> 
 
             <BidReviewSummaryCard bidReviewSummary={bidReviewSummary} />
             <ApprovedItemsTable approvedItems={approvedItemsData} />

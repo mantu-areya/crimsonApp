@@ -25,7 +25,7 @@ export const ApprovedItemsTable = ({ approvedItems, updateLocalData, inspId }) =
         return toatalSF
     }
 
-    useEffect(() => {
+    React.useEffect(() => {
         setApprovedItemsData(approvedItems);
     }, [approvedItems])
 
@@ -38,7 +38,7 @@ export const ApprovedItemsTable = ({ approvedItems, updateLocalData, inspId }) =
             <View style={{ padding: 16, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
                 <View>
                     <Text style={{ fontSize: 18, fontFamily: 'SF_BOLD' }}>Approved Items</Text>
-                    <Text style={{ fontSize: 14, fontFamily: 'SF_BOLD' }}>Total : ${GetToalSqFt().toFixed(2)} </Text>
+                    <Text style={{ fontSize: 14, fontFamily: 'SF_BOLD' }}>Total : ${GetToalSqFt()?.toFixed(2)} </Text>
                 </View>
                 <TouchableOpacity onPress={handleCollapseToggle}>
                     <Icon name={isOpen ? "keyboard-arrow-up" : "keyboard-arrow-down"} color="black" size={36} />
@@ -58,7 +58,7 @@ export const ApprovedItemsTable = ({ approvedItems, updateLocalData, inspId }) =
                             {
                                 approvedItems.map((item, i) =>
                                     <FixedColumnHeader style={{ marginBottom: 10 }} key={i}>
-                                        <Text style={{ width: 140, height: 64, fontSize: 16, fontFamily: 'SF_LIGHT' }}>{item.Matrix_Price}</Text>
+                                        <Text style={{ width: 140,height:64, fontSize: 16, fontFamily: 'SF_LIGHT' }}>{item?.Matrix_Price}</Text>
                                     </FixedColumnHeader>
                                 )
                             }
@@ -118,12 +118,11 @@ position: relative;
 `;
 
 const FixedColumnHeader = styled.View`
-position: sticky;
+
 left: 0;
 z-index: 9999;
 justify-content: center;
 align-items: center;
-/* background-color: white; */
 `
 
 

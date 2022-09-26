@@ -14,10 +14,7 @@ export default function BidReviewSummaryCard({ bidReviewSummary }) {
         setIsOpen(!isOpen);
     }
 
-    console.log({ bidReviewSummary });
-
     let hhm_approved_amount = bidReviewSummary && Number(bidReviewSummary.totalApproved_Amount + bidReviewSummary.approvedasNotedAmount)
-    console.log(hhm_approved_amount);
         let variance = Number(hhm_approved_amount - bidReviewSummary.totalBidAmount)
         let percentVariance = variance > 0 ? variance / bidReviewSummary?.totalBidAmount * 100 : 0
         let totalcount = bidReviewSummary && bidReviewSummary.approvedItemsCount + bidReviewSummary.approved_as_Noted_Count + bidReviewSummary.declined_Count
@@ -63,7 +60,7 @@ export default function BidReviewSummaryCard({ bidReviewSummary }) {
                                 <TableRowItemHeading style={{ textAlign: 'center' }} >$ Variance</TableRowItemHeading>
                             </View>
                             <View style={{ width: '25%' }}>
-                                <TabelRowItemValue   >${variance.toFixed(2)}</TabelRowItemValue>
+                                <TabelRowItemValue   >${variance?.toFixed(2)}</TabelRowItemValue>
                             </View>
                         </TableRowWrapper>
                         <TableRowWrapper style={{ flexDirection: 'row' }}>
@@ -71,20 +68,20 @@ export default function BidReviewSummaryCard({ bidReviewSummary }) {
                                 <TableRowItemHeading >HHM Approved Amount</TableRowItemHeading>
                             </View>
                             <View style={{ width: '25%' }}>
-                                <TabelRowItemValue   >${hhm_approved_amount.toFixed(2)}</TabelRowItemValue>
+                                <TabelRowItemValue   >${hhm_approved_amount?.toFixed(2)}</TabelRowItemValue>
                             </View>
                             <View style={{ width: '25%' }}>
                                 <TableRowItemHeading style={{ textAlign: 'center' }} >% Variance</TableRowItemHeading>
                             </View>
                             <View style={{ width: '25%' }}>
-                                <TabelRowItemValue >{percentVariance.toFixed(2)}%</TabelRowItemValue>
+                                <TabelRowItemValue >{percentVariance?.toFixed(2)}%</TabelRowItemValue>
                             </View>
                         </TableRowWrapper>
                     </View>
                     {/* Section 2 */}
                     <View style={{}}>
                         {/* Table Header */}
-                        <TableHeader style={{alignItems: 'start'}}>
+                        <TableHeader>
                             <View style={{ width: '25%' }}>
                                 <TableSectionHeadings >Status</TableSectionHeadings>
                             </View>
