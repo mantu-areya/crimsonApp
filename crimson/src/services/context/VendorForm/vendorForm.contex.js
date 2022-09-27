@@ -1,5 +1,5 @@
 import React, { createContext, useEffect, useState, useContext } from "react";
-import { updateSfVendorFormDetails } from "../../inspections/inspections.service";
+import { updateSfVendorFormDetails,uploadSignImage, getVendorFormDetails } from "../../inspections/inspections.service";
 import { InspectionsContext } from "../../inspections/inspections.contex"
 import AsyncStorage  from "@react-native-async-storage/async-storage"
 import NetInfo from "@react-native-community/netinfo";
@@ -7,10 +7,53 @@ import NetInfo from "@react-native-community/netinfo";
 export const VendorFormContext = createContext();
 export const VendorFormContextProvider = ({ children }) => {
   const [vendorFormDetails, setVendorFormDetails] = useState({});
-  const { inspections } = useContext(InspectionsContext);
-
+  const [contextImages , setContextImages] = useState({});
   const add = (dataset, inspData) => inspData?setVendorFormDetails({ ...vendorFormDetails, [inspData.Id]: dataset.length > 0 ? dataset : "NA" })
   :setVendorFormDetails(dataset)
+
+  const addImagesToContex = (inspId) =>{
+    getVendorFormDetails(inspId)
+    .then(data => setContextImages({...contextImages, [inspId]:data["Images"]}));
+  }
+
+  const addSignature = (inspId,img) => {
+   //backup code for adding to the context 
+  // let vfData = vendorFormDetails[inspId]
+  // vfData && vfData.push({
+  //   "images":{
+  //     "file_name":"Contractor signature",
+  //     "image_data": img,
+  //     "parent_record_id":inspId,
+  //     "image_type":"sign_item",
+  //     "line_item_id":inspId,
+  //   }
+  // })
+
+  const data = {
+      "file_name":"Contractor signature",
+      "image_data": img,
+      "parent_record_id":inspId,
+      "image_type":"sign_item",
+      "line_item_id":inspId,
+    }
+  
+
+  uploadSignImage(data,true).then(result=>{
+    addImagesToContex(inspId)
+    return result
+  })
+
+  // vfData.map(ele=>{
+  //   if (ele.images){
+  //     console.log(JSON.stringify(ele, null, 4)); 
+  //     // console.log(ele);
+  //   }
+  // })
+
+  // vfData.length > 0 && console.log(vfData,"ccc");
+  // img && vfData && setVendorFormDetails({...vendorFormDetails,[inspId]: vfData.length > 0 ? vfData : "NA"})
+
+}
   
 
   const update = (modifiedData, formType, inspId) => {
@@ -51,9 +94,7 @@ const setAscynDataToApp =async () =>{
   });
 }
 
-useEffect(()=>{
-// console.log("vendorFormDetailsChanges");
-},[vendorFormDetails])
+
 
   const remove = (dataset) => {
     setVendorFormDetails([]);
@@ -78,10 +119,12 @@ useEffect(()=>{
         updateVfContect: update,
         updateToSf: updateToSF,
         setAscynDataToApp,
+        addSignature:addSignature,
+        addImagesToContex,
+        contextImages,
         
       }}
     >
-      {/* {console.log(vendorFormDetails['a028C00000MigX6QAJ'],"rndr")} */}
       {children}
     </VendorFormContext.Provider>
   );

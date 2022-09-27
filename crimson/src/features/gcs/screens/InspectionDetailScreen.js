@@ -21,14 +21,15 @@ export const InspectionDetailScreen = ({ route, navigation }) => {
   const [formName, setFormaName] = useState('VF')
   const [readonly, setreadonly] = useState(false)
   const { inspectionData } = route.params;
-  const { vendorFormDetails, addToVfContex } = useContext(VendorFormContext);
+  const { vendorFormDetails, addToVfContex , addImagesToContex} = useContext(VendorFormContext);
   const setVendorFormData = async () => getVendorFormDetails(inspectionData.Id)
-    .then(data => addToVfContex(data, inspectionData));
+    .then(data => addToVfContex(data["DynamicVendorTemplates"].DynamicVendorTemplate, inspectionData));
 
   useEffect(() => {
     NetInfo.fetch().then(networkState => {
       if (networkState.isConnected) {
         setVendorFormData();
+        addImagesToContex(inspectionData.Id)
       }
       return
     })
