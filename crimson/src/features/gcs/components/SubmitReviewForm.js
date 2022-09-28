@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { ExpandSection, CheckListbox, Header, InputField, ErrorBanner,RequireMarkText } from "./SubmitReviewFormStyle"
+import { ExpandSection, CheckListbox, Header, InputField, ErrorBanner, RequireMarkText } from "./SubmitReviewFormStyle"
 import { Row, Col } from 'react-native-responsive-grid-system';
 import { Text } from "../../../components/typography/text.component";
 import { Pressable, View, } from 'react-native'
@@ -134,27 +134,31 @@ export const SubmitReviewForm = ({ setreadonly, inspVfDetails, inspId, navigatio
     }
 
     let hasNoError
+    let requiredFields = ["electric","water", "gas_fuel_tank","sewer","electric_meter","water_meter"]
     tempObject && Object.keys(tempObject).every(ele => {
-      if (tempObject[ele] == "") {
-        hasNoError = false
-        setErrorState(true)
-        return false;
+      // console.log(ele,);
+      if (requiredFields.includes(ele)) {
+        if (tempObject[ele] == "") {
+          hasNoError = false
+          setErrorState(true)
+          return false;
+        }
+        hasNoError = true
+        setErrorState(false)
+        return true;
       }
-      hasNoError = true
-      setErrorState(false)
       return true;
     })
     console.log(hasNoError && hasNoError, "ooo");
 
     /// check not have any error and upload the data
-    hasNoError && hasNoError && console.log("frfrfr");
+    // hasNoError && hasNoError && console.log("frfrfr");
     hasNoError && hasNoError && updateSfVendorFormDetails(inspVfDetails, inspId, false).then(result => {
       result && updateSfVendorFormDetails(tempObject, inspId, true).then(response => {
         console.log("response", response)
         setreadonly(true)
         navigation.navigate('HomeStack')
       })
-
     })
   }
 
@@ -162,6 +166,8 @@ export const SubmitReviewForm = ({ setreadonly, inspVfDetails, inspId, navigatio
     setErrorState(false)
     setIsNotesCollapsed(false)
   }
+
+  const requiredLabel = ["Electric Meter #","Water Meter #"]
 
   return (
     <>
@@ -178,10 +184,10 @@ export const SubmitReviewForm = ({ setreadonly, inspVfDetails, inspId, navigatio
         <Row>
           {checkList && Object.keys(checkList).map(ele => {
             return <Col xs="4" key={ele}>
-              <Text><RequireMarkText > *</RequireMarkText>{ele} : </Text>
+              <Text> <RequireMarkText > *</RequireMarkText>{ele} : </Text>
               {Object.keys(checkList[ele]).map((item, i) => {
                 return <CheckListbox key={ele + i}
-                  isChecked={checkList[ele][item]}
+                  isChecked={checkList[ele][item] ? true : false}
                   onClick={() => { handleIsChacked(ele, item, checkList[ele][item]) }
                   }
                   rightText={item}
@@ -196,9 +202,9 @@ export const SubmitReviewForm = ({ setreadonly, inspVfDetails, inspId, navigatio
         <Row>
           {
             textObj && Object.keys(textObj).map(ele => {
-              let showText = '*'+ele
+              let showText = requiredLabel.includes(ele)?'*'+ele:ele
               return <Col xs="4" key={ele}>
-                
+
                 <InputField
                   label={showText}
                   value={textObj[ele]}
@@ -213,7 +219,7 @@ export const SubmitReviewForm = ({ setreadonly, inspVfDetails, inspId, navigatio
           {selectListObject && Object.keys(selectListObject).map(ele => {
             let key = String(ele)
             return <View key={ele}><Row >
-              <Text><RequireMarkText > *</RequireMarkText>{ele} : </Text>
+              <Text>{ele} : </Text>
               {customSelector(ele, selectListObject[ele])}
               <Spacer position={'right'} size={"large"} />
             </Row>
