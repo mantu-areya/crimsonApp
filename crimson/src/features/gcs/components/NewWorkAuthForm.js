@@ -1,11 +1,14 @@
-import {  StyleSheet, Text, View } from 'react-native'
+import { Image, Modal, StyleSheet, Text, View } from 'react-native'
 import React from 'react'
 import { VendorFormContext } from '../../../services/context/VendorForm/vendorForm.contex'
 import styled from 'styled-components/native';
 import BidReviewSummaryCard from "./workAuth/BidReviewSummaryCard"
 import { ApprovedItemsTable } from './workAuth/ApprovedItemsTable';
 import SafeAreaView from 'react-native-safe-area-view';
-
+import SignatureScreen from "react-native-signature-canvas";
+import * as ImagePicker from "expo-image-picker";
+import { Button as PaperButton } from "react-native-paper"
+import Sign from './workAuth/Sign';
 
 
 
@@ -20,11 +23,45 @@ export default function NewWorkAuthForm({ inspectionData, navigation }) {
     let [isWorkAuthCreated, setIsWorkAuthCreated] = React.useState(false)
     let [approvedItemsData, setApprovedItemsData] = React.useState([])
     let [vendorFormData, setVendorFormData] = React.useState([])
-    const { vendorFormDetails, updateToSf } = React.useContext(VendorFormContext);
+    // const { vendorFormDetails, updateToSf } = React.useContext(VendorFormContext);
+    const { vendorFormDetails, updateToSf, addSignature, contextImages } = React.useContext(VendorFormContext);
+
     const [selectedCategory, setSelectedCategory] = React.useState('')
     const [formNum, setFormNum] = React.useState('')
     const [bidReviewSummary, BidReviewSummary] = React.useState({ totalApproved_Amount: 0, approvedItemsCount: 0, grandTotal: 0, totalBidAmount: 0, approvedasNotedAmount: 0, approved_as_Noted_Count: 0, declinedAmount: 0, declined_Count: 0, approved_as_Noted_Count: 0 })
 
+    const [img, setImg] = React.useState(null)
+
+    const [modalVisible, setModalVisible] = React.useState(false);
+
+    const [isLoading, setIsLoading] = React.useState(false)
+
+    const uploadImage = async () => {
+
+        try {
+
+            setIsLoading(true);
+
+
+            let result = await ImagePicker.launchImageLibraryAsync({
+                mediaTypes: "Images",
+                aspect: [4, 3],
+                quality: 1,
+            });
+
+            console.log({ result });
+
+            setImg(result.uri);
+            setIsLoading(false);
+
+        } catch (error) {
+
+            setIsLoading(false);
+            alert('Upload Error' + error)
+
+        }
+
+    }
 
     const GetDataByCategory = (inspData) => {
         let approvedItems = [];
@@ -107,6 +144,21 @@ export default function NewWorkAuthForm({ inspectionData, navigation }) {
     }, [vendorFormDetails]);
 
 
+    const updateSignToContext = (image) => {
+        addSignature(inspectionData.Id, image)
+    }
+
+    React.useEffect(() => {
+        contextImages[inspectionData.Id] && contextImages[inspectionData.Id].map(ele => {
+            if (ele.file_name == "Contractor signature.jpeg") {
+                console.log(ele.file_public_url, "vfvfvfv");
+                setImg(ele.file_public_url)
+                return
+            }
+        })
+    }, [contextImages])
+
+
     if (!isWorkAuthCreated) {
         return (
             <View>
@@ -120,11 +172,86 @@ export default function NewWorkAuthForm({ inspectionData, navigation }) {
 
 
 
+
+
+
     return (
-        <SafeAreaView style={{flex:1}}> 
+        <SafeAreaView style={{ flex: 1 }}>
 
             <BidReviewSummaryCard bidReviewSummary={bidReviewSummary} />
             <ApprovedItemsTable approvedItems={approvedItemsData} />
+
+            <View style={{ flexDirection: "row" }}>
+                {/* Contractor Signature */}
+                <View style={{ padding: 16, flex: .5 }}>
+                    <Text style={{ fontSize: 12, fontFamily: 'SF_BOLD', color: 'white' }}>Contractor Signature</Text>
+                    {img &&
+                        <View style={{ justifyContent: 'center', marginVertical: 8, padding: 4 }}>
+                            <Image style={{
+                                width: 80,
+                                height: 80
+                            }} source={{ uri: img }} />
+                        </View>}
+                    {img && <Text style={{ fontSize: 12 }}>Date : {new Date().toDateString()}</Text>}
+                    {!img && <>
+                        <PaperButton style={{
+                            backgroundColor: 'black',
+                            color: "white",
+                            marginVertical: 2,
+                            marginTop: 4,
+                            width: 100,
+                            fontSize: 28
+                        }} mode="contained" onPress={() => setModalVisible(true)}>
+                            Sign
+                        </PaperButton>
+                        <PaperButton style={{
+                            backgroundColor: 'black',
+                            color: "white",
+                            marginVertical: 2,
+                            width: 100,
+                        }} loading={isLoading} mode="contained" onPress={uploadImage}>
+                            Upload
+                        </PaperButton>
+                    </>}
+                    {/* <Button title="Sign"  /> */}
+                    <Modal
+                        animationType="slide"
+                        transparent={true}
+                        visible={modalVisible}
+                        onRequestClose={() => {
+                            setModalVisible(!modalVisible);
+                        }}>
+
+                        {/* <Sign onOK={(e) => {
+                            setImg(e);
+                            setModalVisible(!modalVisible);
+                        }} text='Contractor Sign' /> */}
+
+                        <Sign onOK={(e) => {
+                            let bs64dataArray = e.split(',')
+                            setImg(e);
+                            setModalVisible(!modalVisible);
+                            updateSignToContext(bs64dataArray[1])
+                            setIsLoading(true);
+                        }} text='Contractor Sign' />
+
+
+                    </Modal>
+
+                </View>
+                {/* HHM Signature */}
+                <View style={{ padding: 16, flex: .5, alignItems: "flex-end" }}>
+                    <Text style={{ fontSize: 12, fontFamily: 'SF_BOLD', color: 'white' }}>HHM Signature</Text>
+                    {/* {img &&
+                      <View style={{ justifyContent: 'center', alignItems: 'flex-end', marginVertical: 8, padding: 4 }}>
+                        <Image style={{
+                          width: 80,
+                          height: 80
+                        }} source={{ uri: img }} />
+                      </View>}
+                    <Text style={{ fontSize: 12 }}>Date : {new Date().toDateString()}</Text> */}
+                </View>
+            </View>
 
         </SafeAreaView>
     )

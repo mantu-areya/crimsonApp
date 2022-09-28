@@ -109,7 +109,7 @@ export const NewVendorForm = ({ inspectionData, navigation }) => {
         let contexRecord = vendorFormDetails[inspectionData.Id]
         if (contexRecord) {
             if (contexRecord == "NA") {
-                setShowMsg(true)
+                // setShowMsg(true)
             }
             else {
                 GetDataByCategory(contexRecord)
