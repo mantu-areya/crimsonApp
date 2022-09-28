@@ -29,7 +29,7 @@ const BrandIcon = styled(Image)`
 resizeMode: stretch;
 `
 const Loading = styled(ActivityIndicator)`
-  margin-left: -25px;
+margin-left: -50%;
 `;
 const LoadingContainer = styled.View`
 margin-top:50%;
@@ -51,11 +51,11 @@ export const WorkAuthFormPage = ({ inspectionData, navigation }) => {
   let [showMsg, setShowMsg] = React.useState(false)
   let [approvedItemsData, setApprovedItemsData] = React.useState([])
   let [vendorFormData, setVendorFormData] = React.useState([])
-  const { vendorFormDetails, updateToSf } = useContext(VendorFormContext);
+  const { vendorFormDetails, updateToSf,addSignature, contextImages } = useContext(VendorFormContext);
   const [selectedCategory, setSelectedCategory] = React.useState('')
   const [formNum, setFormNum] = React.useState('')
   const [bidReviewSummary, BidReviewSummary] = React.useState({ totalApproved_Amount: 0, approvedItemsCount: 0, grandTotal: 0, totalBidAmount: 0, approvedasNotedAmount: 0, approved_as_Noted_Count: 0, declinedAmount: 0, declined_Count: 0, approved_as_Noted_Count: 0 })
-
+  const [uploadloading,setUploadLoading] = React.useState(false)
 
   const GetDataByCategory = (inspData) => {
     let approvedItems = [];
@@ -111,6 +111,10 @@ export const WorkAuthFormPage = ({ inspectionData, navigation }) => {
       if (inspData[item].Approval_Status === "Approved" || inspData[item].Approval_Status === "Approved as Noted") {
         approvedItems.push(inspData[item])
       }
+
+      if(inspData[item].signature ){
+        setImg(inspData[item].signature);
+      }
     })
     setApprovedItemsData(approvedItems);
     setGeneral_Rental(category1);
@@ -128,7 +132,11 @@ export const WorkAuthFormPage = ({ inspectionData, navigation }) => {
 
 
 
-  React.useEffect(() => {
+const updateSignToContext = (image)=>{
+    addSignature(inspectionData.Id,image)
+}
+
+  useEffect(() => {
     let contexRecord = vendorFormDetails[inspectionData.Id]
     if (contexRecord) {
       if (inspectionData.doCreateWAF__c == false) {
@@ -141,7 +149,15 @@ export const WorkAuthFormPage = ({ inspectionData, navigation }) => {
   }, [vendorFormDetails]);
 
 
-
+useEffect(()=>{
+  contextImages[inspectionData.Id] && contextImages[inspectionData.Id].map(ele=>{
+    if (ele.file_name ==  "Contractor signature.jpeg") {
+    console.log(ele.file_public_url,"vfvfvfv"); 
+    setImg(ele.file_public_url)
+    return
+  }
+  })
+},[contextImages])
 
 
   const renderNoVFText = () => {
@@ -161,23 +177,30 @@ export const WorkAuthFormPage = ({ inspectionData, navigation }) => {
 
     try {
 
-      setIsLoading(true);
+      // setIsLoading(true);
 
 
       let result = await ImagePicker.launchImageLibraryAsync({
         mediaTypes: "Images",
         aspect: [4, 3],
         quality: 1,
+        base64: true,
       });
 
-      console.log({result});
+      result = result.base64
 
-      setImg(result.uri);
-      setIsLoading(false);
+      if(result){
+        console.log(result,"kkk");
+        // setImg(result);
+        updateSignToContext(result)
+        setIsLoading(true);
+      }
+
 
     } catch (error) {
 
       setIsLoading(false);
+      console.log(error);
       alert('Upload Error' + error)
 
     }
@@ -209,13 +232,16 @@ export const WorkAuthFormPage = ({ inspectionData, navigation }) => {
                   {/* Contractor Signature */}
                   <View style={{ padding: 16, flex: .5 }}>
                     <Text style={{ fontSize: 12 }}>Contractor Signature</Text>
-                    {img &&
+                    {console.log(img,"miggg")}
+                    {img ?
                       <View style={{ justifyContent: 'center', marginVertical: 8, padding: 4 }}>
-                        <Image style={{
+                        <Image
+                        accessibilityLabel="Signature Image"
+                        style={{
                           width: 80,
                           height: 80
                         }} source={{ uri: img }} />
-                      </View>}
+                      </View>:isLoading &&<Loading size={40} animating={true} color={"black"} />}
                      {img && <Text style={{ fontSize: 12 }}>Date : {new Date().toDateString()}</Text>}
                     {!img && <>
                       <PaperButton style={{
@@ -247,8 +273,11 @@ export const WorkAuthFormPage = ({ inspectionData, navigation }) => {
                       }}>
 
                       <Sign onOK={(e) => {
+                        let bs64dataArray = e.split(',')
                         setImg(e);
                         setModalVisible(!modalVisible);
+                        updateSignToContext(bs64dataArray[1])
+                        setIsLoading(true);
                       }} text='Contractor Sign' />
 
 
@@ -328,9 +357,9 @@ const Sign = ({ text, onOK }) => {
         autoClear={false}
         descriptionText={text}
         backgroundColor={"white"}
-        penColor={"rgba(255,117,2,1)"}
+        penColor={"rgba(0,0,0)"}
         imageType="image/jpeg"
-        minWidth={5}
+        minWidth={1}
         overlayHeight="100%"
         showImage={true}
       />
