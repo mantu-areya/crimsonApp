@@ -74,7 +74,7 @@ export const InspectionsScreen = ({ navigation }) => {
       <TopContainer>
         {/* Back Button */}
         <BackNavigatorButton onPress={() => navigation.goBack()}>
-          {backIcon} Home
+          {backIcon} Back
         </BackNavigatorButton>
 
         {/* Heading */}

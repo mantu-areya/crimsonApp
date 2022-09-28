@@ -30,7 +30,7 @@ export default function Toolbar({ inspectionName, goBack }) {
     <ToolBarWrapper style={{ flexDirection: 'row' }}>
       {/* Back Button */}
       <BackNavigatorButton onPress={goBack}>
-        {backIcon} Home
+        {backIcon} Back
       </BackNavigatorButton>
       {/* InspectionId */}
       <ToolBarTitle>{inspectionName}</ToolBarTitle>
