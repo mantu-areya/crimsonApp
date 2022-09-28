@@ -12,16 +12,18 @@ import { Spacer } from "../../../components/spacer/spacer.component";
 import { InspectionDetailTile } from "../components/InspectionDetailTile";
 import { InspectionDetailsCard } from "../components/InspectionDetailsCard"
 import { Text } from "../../../components/typography/text.component";
-import { FormSections, FormSectionsContainer, SubmitButton } from "./InspectionDetailScreenStyles"
+import { FormSections, FormSectionsContainer, SubmitButton, ExpandSection, CheckListbox } from "./InspectionDetailScreenStyles"
 import { WorkAuthFormPage } from "../components/WorkAuthFormPage";
 import { updateSfVendorFormDetails } from "../../../services/inspections/inspections.service";
+import Collapsible from 'react-native-collapsible';
+import { SubmitReviewForm } from "../components/SubmitReviewForm"
 export const InspectionDetailScreen = ({ route, navigation }) => {
 
-
+  const [isNotesCollapsed, setIsNotesCollapsed] = React.useState(false);
   const [formName, setFormaName] = useState('VF')
   const [readonly, setreadonly] = useState(false)
   const { inspectionData } = route.params;
-  const { vendorFormDetails, addToVfContex , addImagesToContex} = useContext(VendorFormContext);
+  const { vendorFormDetails, addToVfContex, addImagesToContex } = useContext(VendorFormContext);
   const setVendorFormData = async () => getVendorFormDetails(inspectionData.Id)
     .then(data => addToVfContex(data["DynamicVendorTemplates"].DynamicVendorTemplate, inspectionData));
 
@@ -40,10 +42,7 @@ export const InspectionDetailScreen = ({ route, navigation }) => {
   }, [inspectionData])
 
   const handleSubmit = () => {
-    setreadonly(true)
-    updateSfVendorFormDetails(vendorFormDetails[inspectionData.Id], inspectionData.Id, true).then(result => {
-      navigation.navigate('HomeStack')
-    })
+    setIsNotesCollapsed(true)
   }
 
   return (
@@ -60,6 +59,11 @@ export const InspectionDetailScreen = ({ route, navigation }) => {
               <SubmitButton onPress={() => handleSubmit()}>
                 <Text variant="NavigationText">submit</Text>
               </SubmitButton>
+            </Row>
+            <Row>
+              {!readonly && <Collapsible collapsed={!(isNotesCollapsed)}  >
+                <SubmitReviewForm setreadonly={setreadonly} inspVfDetails={vendorFormDetails[inspectionData.Id]} inspId={inspectionData.Id} navigation={navigation} setIsNotesCollapsed={setIsNotesCollapsed} />
+              </Collapsible>}
             </Row>
             <View>
               <FormSections>
