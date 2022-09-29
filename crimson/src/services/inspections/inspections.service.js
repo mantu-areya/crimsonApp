@@ -13,8 +13,8 @@ export const getToken = (username, password, apiKeyAuthInfo) => {
     'grant_type': 'password',
     'client_id': '3MVG9S6qnsIUe5wCpVvuUrA_3HWCcmCNiTsimddyoHUtYNepSZ47B85lSvFdBZkXJd6fmdvpTRbpgNeiELukB',
     'client_secret': '99178E587F5BFD5AB0CEC5091E38823E9D2F529FC942DF34FE161A58DD3ED482',
-    'username': 'yogeeswaran.saravanan@areya.tech.uat',
-    'password': 'spring@1234ctLKh1PZeolAOujuSgFCmada3'
+    'username': 'mahantesh.pyati@areya.tech',
+    'password': 'Crimson@123FPSlsl2gGEj62stJpSJlxZ8H'
   });
   return apiPost('https://test.salesforce.com/services/oauth2/token', data
   )

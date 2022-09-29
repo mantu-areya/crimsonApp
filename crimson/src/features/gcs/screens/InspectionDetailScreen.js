@@ -15,14 +15,15 @@ import { ActivityIndicator, Text } from "react-native-paper";
 import NewWorkAuthForm from "../components/NewWorkAuthForm";
 import { WorkAuthFormPage } from "../components/WorkAuthFormPage";
 import { updateSfVendorFormDetails } from "../../../services/inspections/inspections.service";
-import { SafeAreaView } from "react-native-safe-area-context";
+import Collapsible from 'react-native-collapsible';
+import { SubmitReviewForm } from "../components/SubmitReviewForm"
 export const InspectionDetailScreen = ({ route, navigation }) => {
 
-
-  const [formName, setFormName] = useState('VF')
+  const [isNotesCollapsed, setIsNotesCollapsed] = React.useState(false);
+  const [formName, setFormaName] = useState('VF')
   const [readonly, setreadonly] = useState(false)
   const { inspectionData } = route.params;
-  const { vendorFormDetails, addToVfContex , addImagesToContex} = useContext(VendorFormContext);
+  const { vendorFormDetails, addToVfContex, addImagesToContex } = useContext(VendorFormContext);
   const setVendorFormData = async () => getVendorFormDetails(inspectionData.Id)
     .then(data => addToVfContex(data["DynamicVendorTemplates"].DynamicVendorTemplate, inspectionData));
 
@@ -41,10 +42,7 @@ export const InspectionDetailScreen = ({ route, navigation }) => {
   }, [inspectionData])
 
   const handleSubmit = () => {
-    setreadonly(true)
-    updateSfVendorFormDetails(vendorFormDetails[inspectionData.Id], inspectionData.Id, true).then(result => {
-      navigation.navigate('HomeStack')
-    })
+    setIsNotesCollapsed(true)
   }
 
   const inspectionName = inspectionData.Name
