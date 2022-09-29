@@ -1,8 +1,7 @@
-import { FlatList, Text, TouchableOpacity, View } from "react-native";
+import { TouchableOpacity, View } from "react-native";
 import styled from "styled-components/native";
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import React from "react";
-import { Col, Row } from "react-native-responsive-grid-system";
 
 
 

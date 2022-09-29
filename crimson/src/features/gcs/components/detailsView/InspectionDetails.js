@@ -21,7 +21,8 @@ font-size: 16px;
 font-family: SF_BOLD;
 `
 
-export default function InspectionDetails({ data }) {
+export default function InspectionDetails({ data, handleSubmit, formName }) {
+
 
     const {
         Property_Address__c,
@@ -34,9 +35,7 @@ export default function InspectionDetails({ data }) {
         Inspection_Scheduled_Date__c,
         Target_Rehab_Complete_Date__c,
         HHM_Field_PM_Email__c
-    } = data
-
-
+    } = data;
 
 
     const [isOpen, setIsOpen] = React.useState(true) // keep open in start
@@ -60,7 +59,7 @@ export default function InspectionDetails({ data }) {
                     {/* CTA */}
 
                     <View style={{ flexDirection: "row", justifyContent: "flex-end", padding: 4 }}>
-                        <Button mode="contained" style={{ marginRight: 8 }}>Submit</Button>
+                        {formName === 'VF' && <Button onPress={handleSubmit} mode="contained" style={{ marginRight: 8 }}>Submit</Button>}
                         <Button mode="contained">Print PDF</Button>
                     </View>
 
@@ -190,7 +189,7 @@ function KeyContactInformationsCard({
                         Key Contact Informations
                     </Text>
                 </View>
-                <TouchableOpacity style={{marginLeft:"auto"}} onPress={handleKeyContactCardToggle}>
+                <TouchableOpacity style={{ marginLeft: "auto" }} onPress={handleKeyContactCardToggle}>
                     <Icon name={isKeyContactCardOpen ? "keyboard-arrow-up" : "keyboard-arrow-down"} color="white" size={36} />
                 </TouchableOpacity>
             </View>
@@ -259,7 +258,7 @@ function KeyDateCard({
                         Key Date
                     </Text>
                 </View>
-                <TouchableOpacity style={{marginLeft:"auto"}} onPress={handleKeyDateCardToggle}>
+                <TouchableOpacity style={{ marginLeft: "auto" }} onPress={handleKeyDateCardToggle}>
                     <Icon name={isKeyDateCardOpen ? "keyboard-arrow-up" : "keyboard-arrow-down"} color="white" size={36} />
                 </TouchableOpacity>
             </View>

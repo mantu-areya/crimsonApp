@@ -1,11 +1,9 @@
-import { Image, Modal, StyleSheet, Text, View } from 'react-native'
+import { Image, Modal, Text, View } from 'react-native'
 import React from 'react'
 import { VendorFormContext } from '../../../services/context/VendorForm/vendorForm.contex'
-import styled from 'styled-components/native';
 import BidReviewSummaryCard from "./workAuth/BidReviewSummaryCard"
 import { ApprovedItemsTable } from './workAuth/ApprovedItemsTable';
 import SafeAreaView from 'react-native-safe-area-view';
-import SignatureScreen from "react-native-signature-canvas";
 import * as ImagePicker from "expo-image-picker";
 import { Button as PaperButton } from "react-native-paper"
 import Sign from './workAuth/Sign';
