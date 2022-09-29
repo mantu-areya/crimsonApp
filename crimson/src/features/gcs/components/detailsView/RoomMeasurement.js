@@ -3,6 +3,7 @@ import { ActivityIndicator, FlatList, Text, TextInput, TouchableOpacity, View } 
 import styled from "styled-components/native"
 import MUiIcon from 'react-native-vector-icons/MaterialIcons';
 import { VendorFormContext } from "../../../../services/context/VendorForm/vendorForm.contex";
+import { Button } from "react-native-paper";
 
 
 export default function RoomMeasurement({ room_Measurement, inspId }) {
@@ -15,6 +16,10 @@ export default function RoomMeasurement({ room_Measurement, inspId }) {
     const { updateVfContect } = React.useContext(VendorFormContext);
 
     const onValueChange = async (value, field, key) => {
+
+        if (value < 0 || value === '' || value === null || value === undefined) {
+            return;
+        }
         const newData = room_Measurement.map(obj => {
             if (obj.UniqueKey === key) {
                 let newValues = { ...obj, [field]: parseFloat(value) };
@@ -40,6 +45,7 @@ export default function RoomMeasurement({ room_Measurement, inspId }) {
 
 
     React.useEffect(() => {
+        console.log("Updating RM to VF Contxt");
         updateVfContect(room_measurementData, "RM", inspId);
     }, [room_measurementData]);
 
@@ -61,7 +67,7 @@ export default function RoomMeasurement({ room_Measurement, inspId }) {
                 {/* Text */}
                 <View>
                     <Text style={{ fontSize: 16, fontFamily: 'SF_BOLD' }}>Room Measurements</Text>
-                    <Text>Total Sq Ft: {GetToalSqFt()} sq. ft.</Text>
+                    <Text>Total Sq Ft: {GetToalSqFt()?.toFixed(2)} sq. ft.</Text>
                 </View>
                 {/* Icon */}
                 <TouchableOpacity onPress={handleCollapseToggle}>
@@ -93,10 +99,11 @@ export default function RoomMeasurement({ room_Measurement, inspId }) {
                                 <RoomMeasurementLineItem item={item.item} onValueChange={onValueChange} />
                             )}
                         /> :
-                            <View style={{padding:16}}>
+                            <View style={{ padding: 16 }}>
                                 <ActivityIndicator />
                             </View>
                     }
+
                 </View>
             }
 
@@ -116,7 +123,33 @@ const StyledTextInput = styled.TextInput`
 
 
 function RoomMeasurementLineItem({ item, onValueChange }) {
-    
+
+    let length,width,misc;
+
+
+
+    function getFormatedRowValues(value) {
+        if (value === undefined || value === null) {
+            return 0;
+        }
+        return value > 1 ? value.replace(/^0+/, '') : value;
+    }
+
+    length = getFormatedRowValues(item.Room_Length);
+    width = getFormatedRowValues(item.Room_Width);
+    misc = getFormatedRowValues(item.Room_Misc_SF)
+
+    // if (item?.Room_Length > 1) {
+    //     length = item.Room_Length.replace(/^0+/, '')
+    // } else {
+    //     length = item.Room_Length
+    // }
+
+    // if (item?.Room_Width > 1) {
+    //     width = item.Room_Width.replace(/^0+/, '')
+    // } else {
+    //     width = item.Room_Width
+    // }
 
     return (
 
@@ -127,22 +160,23 @@ function RoomMeasurementLineItem({ item, onValueChange }) {
             <StyledTextInput
                 keyboardType="number-pad"
                 onChangeText={val => onValueChange((val), "Room_Length", item.UniqueKey)}
-                value={`${item.Room_Length ?? 0}`}
+                value={`${length}`}
             />
             {/* Width */}
             <StyledTextInput
                 keyboardType="number-pad"
-                onChangeText={val => onValueChange((val), "Room_Width", item.UniqueKey)}
-                value={`${item.Room_Width ?? 0}`}
+                onChangeText={val =>
+                    onValueChange((val), "Room_Width", item.UniqueKey)}
+                value={`${width}`}
             />
             {/* Misc SF */}
             <StyledTextInput
                 keyboardType="number-pad"
-                onChangeText={val => onValueChange(parseFloat(val), "Room_Misc_SF", item.UniqueKey)}
-                value={`${item.Room_Misc_SF ?? 0}`}
+                onChangeText={val => onValueChange((val), "Room_Misc_SF", item.UniqueKey)}
+                value={`${misc}`}
             />
             {/* Total */}
-            <Text style={{ flex: 2, fontFamily: 'SF_LIGHT', textAlign: 'right' }}>{item.Room_Total.toFixed(2)}</Text>
+            <Text style={{ flex: 2, fontFamily: 'SF_LIGHT', textAlign: 'right' }}>{item.Room_Total ? item.Room_Total.toFixed(2) : 0.00}</Text>
         </View>
 
 
