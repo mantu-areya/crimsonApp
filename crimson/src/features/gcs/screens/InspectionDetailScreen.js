@@ -17,10 +17,12 @@ import { WorkAuthFormPage } from "../components/WorkAuthFormPage";
 import { updateSfVendorFormDetails } from "../../../services/inspections/inspections.service";
 import Collapsible from 'react-native-collapsible';
 import { SubmitReviewForm } from "../components/SubmitReviewForm"
+import { SafeAreaView } from "react-native-safe-area-context";
+import { Row } from "react-native-responsive-grid-system";
 export const InspectionDetailScreen = ({ route, navigation }) => {
 
   const [isNotesCollapsed, setIsNotesCollapsed] = React.useState(false);
-  const [formName, setFormaName] = useState('VF')
+  const [formName, setFormName] = useState('VF')
   const [readonly, setreadonly] = useState(false)
   const { inspectionData } = route.params;
   const { vendorFormDetails, addToVfContex, addImagesToContex } = useContext(VendorFormContext);
@@ -54,6 +56,12 @@ export const InspectionDetailScreen = ({ route, navigation }) => {
       <Toolbar inspectionName={inspectionName} goBack={() => navigation.goBack()} />
 
       <ScrollView keyboardDismissMode={'on-drag'}>
+        <Row>
+          {!readonly &&
+            <Collapsible collapsed={!(isNotesCollapsed)}  >
+              <SubmitReviewForm setreadonly={setreadonly} inspVfDetails={vendorFormDetails[inspectionData.Id]} inspId={inspectionData.Id} navigation={navigation} setIsNotesCollapsed={setIsNotesCollapsed} />
+            </Collapsible>}
+        </Row>
         {/* Tab Menu */}
         <TabMenu {...{ formName, setFormName }} />
         {/* Property Detail Card */}
