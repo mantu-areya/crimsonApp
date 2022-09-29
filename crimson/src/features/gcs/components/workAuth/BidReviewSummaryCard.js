@@ -2,26 +2,52 @@ import { TouchableOpacity, View } from "react-native";
 import styled from "styled-components/native";
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import React from "react";
+import { getVendorFormDetails } from "../../../../services/inspections/inspections.service";
+import { ActivityIndicator } from "react-native-paper";
 
 
 
 
 
-export default function BidReviewSummaryCard({ bidReviewSummary }) {
+export default function BidReviewSummaryCard({ inspId }) {
     const [isOpen, setIsOpen] = React.useState(true) // keep open in start
     const handleCollapseToggle = () => {
         setIsOpen(!isOpen);
     }
 
-    let hhm_approved_amount = bidReviewSummary && Number(bidReviewSummary.totalApproved_Amount + bidReviewSummary.approvedasNotedAmount)
-        let variance = Number(hhm_approved_amount - bidReviewSummary.totalBidAmount)
-        let percentVariance = variance > 0 ? variance / bidReviewSummary?.totalBidAmount * 100 : 0
-        let totalcount = bidReviewSummary && bidReviewSummary.approvedItemsCount + bidReviewSummary.approved_as_Noted_Count + bidReviewSummary.declined_Count
-        let total$ = bidReviewSummary.totalApproved_Amount + bidReviewSummary.declinedAmount + bidReviewSummary.approvedasNotedAmount
-        let approvedAmntPercent = bidReviewSummary && ((bidReviewSummary.totalApproved_Amount / bidReviewSummary.totalBidAmount) * 100)
-        let approvedAsNotedAmntPercent = bidReviewSummary && ((bidReviewSummary.approvedasNotedAmount / bidReviewSummary.totalBidAmount) * 100)
-        let declinedAmntPercent = parseFloat(bidReviewSummary && ((bidReviewSummary.declinedAmount / bidReviewSummary.totalBidAmount) * 100))
-        let totalPercent = (approvedAmntPercent + approvedAsNotedAmntPercent + declinedAmntPercent)
+    const [summary, setSummary] = React.useState()
+
+
+    const getBidReviewSummary = async () => {
+        try {
+
+
+            const res = await getVendorFormDetails(inspId)
+            setSummary(res.BidReviewSummary)
+
+        } catch (error) {
+            console.log(error);
+
+        }
+    }
+
+
+    React.useEffect(() => {
+        getBidReviewSummary();
+    }, [inspId])
+
+    /* 
+     "BidReviewSummary": {
+         "% Variance Percentage": "$-0.882205915395320563845407565198762",
+         "$ Variance": "$-20260.00",
+         "totalApprovedItems": "10",
+         "countApprovedasNoted": "0",
+         "countApproved": "10",
+         "countSubmitted": "12",
+         "totalBidApproved": "$2,705.16",
+         "totalBidSubmitted": "$22,965.16"
+     }
+    */
 
 
 
@@ -37,103 +63,111 @@ export default function BidReviewSummaryCard({ bidReviewSummary }) {
             {/* Body */}
             {isOpen &&
                 <BodyWrapper>
-                    {/* Section 1 */}
-                    <View>
-                        {/* Table Header */}
-                        <TableHeader>
-                            <View style={{ width: '25%' }}>
-                                <TableSectionHeadings >Scope</TableSectionHeadings>
-                            </View>
-                            <View style={{ width: '25%' }}>
-                                <TableSectionHeadings style={{ textAlign: 'center' }}  >Amount</TableSectionHeadings>
-                            </View>
-                        </TableHeader>
-                        <TableRowWrapper style={{ flexDirection: 'row' }}>
-                            <View style={{ width: '25%' }}>
-                                <TableRowItemHeading>Contractor Bid Submitted Amount</TableRowItemHeading>
-                            </View>
-                            <View style={{ width: '25%' }}>
-                                <TabelRowItemValue  >${bidReviewSummary?.totalBidAmount.toFixed(2)}</TabelRowItemValue>
-                            </View>
-                            <View style={{ width: '25%' }}>
-                                <TableRowItemHeading style={{ textAlign: 'center' }} >$ Variance</TableRowItemHeading>
-                            </View>
-                            <View style={{ width: '25%' }}>
-                                <TabelRowItemValue   >${variance?.toFixed(2)}</TabelRowItemValue>
-                            </View>
-                        </TableRowWrapper>
-                        <TableRowWrapper style={{ flexDirection: 'row' }}>
-                            <View style={{ width: '25%' }}>
-                                <TableRowItemHeading >HHM Approved Amount</TableRowItemHeading>
-                            </View>
-                            <View style={{ width: '25%' }}>
-                                <TabelRowItemValue   >${hhm_approved_amount?.toFixed(2)}</TabelRowItemValue>
-                            </View>
-                            <View style={{ width: '25%' }}>
-                                <TableRowItemHeading style={{ textAlign: 'center' }} >% Variance</TableRowItemHeading>
-                            </View>
-                            <View style={{ width: '25%' }}>
-                                <TabelRowItemValue >{percentVariance?.toFixed(2)}%</TabelRowItemValue>
-                            </View>
-                        </TableRowWrapper>
-                    </View>
-                    {/* Section 2 */}
-                    <View style={{}}>
-                        {/* Table Header */}
-                        <TableHeader>
-                            <View style={{ width: '25%' }}>
-                                <TableSectionHeadings >Status</TableSectionHeadings>
-                            </View>
-                            <View style={{ width: '25%' }}>
-                                <TableSectionHeadings style={{ textAlign: 'center' }}  >Count Submitted</TableSectionHeadings>
-                            </View>
-                            <View style={{ width: '25%' }}>
-                                <TableSectionHeadings style={{ textAlign: 'center' }}  >$</TableSectionHeadings>
-                            </View>
-                            <View style={{ width: '25%' }}>
-                                <TableSectionHeadings style={{ textAlign: 'center' }}  >% of Contractor Bid Amt</TableSectionHeadings>
-                            </View>
-                        </TableHeader>
-                        {
-                            [
-                                {title: 'Approved'},
-                                {title: 'Approved as Noted'},
-                                {title: 'Decline'},
-                            ].map((item, i) =>
-                                <TableRowWrapper key={i} style={{ flexDirection: 'row' }}>
+                    {
+                        !summary ?
+                            <View>
+                                <ActivityIndicator />
+                            </View> : <>
+                                {/* Section 1 */}
+                                <View>
+                                    {/* Table Header */}
+                                    <TableHeader>
+                                        <View style={{ width: '25%' }}>
+                                            <TableSectionHeadings >Scope</TableSectionHeadings>
+                                        </View>
+                                        <View style={{ width: '25%' }}>
+                                            <TableSectionHeadings style={{ textAlign: 'center' }}  >Amount</TableSectionHeadings>
+                                        </View>
+                                    </TableHeader>
+                                    <TableRowWrapper style={{ flexDirection: 'row' }}>
+                                        <View style={{ width: '25%' }}>
+                                            <TableRowItemHeading>Contractor Bid Submitted Amount</TableRowItemHeading>
+                                        </View>
+                                        <View style={{ width: '25%' }}>
+                                            <TabelRowItemValue  >{summary?.totalBidSubmitted}</TabelRowItemValue>
+                                        </View>
+                                        <View style={{ width: '25%' }}>
+                                            <TableRowItemHeading style={{ textAlign: 'center' }} >$ Variance</TableRowItemHeading>
+                                        </View>
+                                        <View style={{ width: '25%' }}>
+                                            <TabelRowItemValue   >{summary['$ Variance']}</TabelRowItemValue>
+                                        </View>
+                                    </TableRowWrapper>
+                                    <TableRowWrapper style={{ flexDirection: 'row' }}>
+                                        <View style={{ width: '25%' }}>
+                                            <TableRowItemHeading >HHM Approved Amount</TableRowItemHeading>
+                                        </View>
+                                        <View style={{ width: '25%' }}>
+                                            <TabelRowItemValue   >{summary?.totalBidApproved}</TabelRowItemValue>
+                                        </View>
+                                        <View style={{ width: '25%' }}>
+                                            <TableRowItemHeading style={{ textAlign: 'center' }} >% Variance</TableRowItemHeading>
+                                        </View>
+                                        <View style={{ width: '25%' }}>
+                                            <TabelRowItemValue >{summary['% Variance Percentage']}%</TabelRowItemValue>
+                                        </View>
+                                    </TableRowWrapper>
+                                </View>
+                                {/* Section 2 */}
+                                <View style={{}}>
+                                    {/* Table Header */}
+                                    <TableHeader>
+                                        <View style={{ width: '25%' }}>
+                                            <TableSectionHeadings >Status</TableSectionHeadings>
+                                        </View>
+                                        <View style={{ width: '25%' }}>
+                                            <TableSectionHeadings style={{ textAlign: 'center' }}  >Count Submitted</TableSectionHeadings>
+                                        </View>
+                                        <View style={{ width: '25%' }}>
+                                            <TableSectionHeadings style={{ textAlign: 'center' }}  >$</TableSectionHeadings>
+                                        </View>
+                                        <View style={{ width: '25%' }}>
+                                            <TableSectionHeadings style={{ textAlign: 'center' }}  >% of Contractor Bid Amt</TableSectionHeadings>
+                                        </View>
+                                    </TableHeader>
+                                    {
+                                        [
+                                            { title: 'Approved' },
+                                            { title: 'Approved as Noted' },
+                                            { title: 'Decline' },
+                                        ].map((item, i) =>
+                                            <TableRowWrapper key={i} style={{ flexDirection: 'row' }}>
+                                                <View style={{ width: '25%' }}>
+                                                    <TableRowItemHeading >{item.title}</TableRowItemHeading>
+                                                </View>
+                                                <View style={{ width: '25%' }}>
+                                                    <TabelRowItemValue >000.00</TabelRowItemValue>
+                                                </View>
+                                                <View style={{ width: '25%' }}>
+                                                    <TabelRowItemValue >000.00</TabelRowItemValue>
+                                                </View>
+                                                <View style={{ width: '25%' }}>
+                                                    <TabelRowItemValue >000.00</TabelRowItemValue>
+                                                </View>
+                                            </TableRowWrapper>)
+                                    }
+                                </View>
+                                {/* Total */}
+                                {/* Table Header */}
+                                <TableHeader>
                                     <View style={{ width: '25%' }}>
-                                        <TableRowItemHeading >{item.title}</TableRowItemHeading>
+                                        <TableSectionHeadings >Total</TableSectionHeadings>
                                     </View>
                                     <View style={{ width: '25%' }}>
-                                        <TabelRowItemValue >000.00</TabelRowItemValue>
+                                        <TabelRowItemValue >{summary?.totalApprovedItems}</TabelRowItemValue>
                                     </View>
                                     <View style={{ width: '25%' }}>
-                                        <TabelRowItemValue >000.00</TabelRowItemValue>
+                                        <TabelRowItemValue >${0}</TabelRowItemValue>
                                     </View>
                                     <View style={{ width: '25%' }}>
-                                        <TabelRowItemValue >000.00</TabelRowItemValue>
+                                        <TabelRowItemValue >{0}%</TabelRowItemValue>
                                     </View>
-                                </TableRowWrapper>)
-                        }
-                    </View>
-                    {/* Total */}
-                    {/* Table Header */}
-                    <TableHeader>
-                        <View style={{ width: '25%' }}>
-                            <TableSectionHeadings >Total</TableSectionHeadings>
-                        </View>
-                        <View style={{ width: '25%' }}>
-                            <TabelRowItemValue >{totalcount}</TabelRowItemValue>
-                        </View>
-                        <View style={{ width: '25%' }}>
-                            <TabelRowItemValue >${total$?.toFixed(2)}</TabelRowItemValue>
-                        </View>
-                        <View style={{ width: '25%' }}>
-                            <TabelRowItemValue >{isNaN(totalPercent) ? `0.00` : totalPercent.toFixed(2)}%</TabelRowItemValue>
-                        </View>
-                    </TableHeader>
+                                </TableHeader>
+                            </>
+                    }
                 </BodyWrapper>
             }
+
         </Wrapper>
     )
 }
@@ -181,3 +215,12 @@ const TabelRowItemValue = styled.Text`
 text-align: center;
 font-size: 12px;
 `
+
+
+
+
+/* 
+
+
+
+*/

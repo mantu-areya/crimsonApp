@@ -21,12 +21,7 @@ export default function NewWorkAuthForm({ inspectionData, navigation }) {
     let [isWorkAuthCreated, setIsWorkAuthCreated] = React.useState(false)
     let [approvedItemsData, setApprovedItemsData] = React.useState([])
     let [vendorFormData, setVendorFormData] = React.useState([])
-    // const { vendorFormDetails, updateToSf } = React.useContext(VendorFormContext);
     const { vendorFormDetails, updateToSf, addSignature, contextImages } = React.useContext(VendorFormContext);
-
-    const [selectedCategory, setSelectedCategory] = React.useState('')
-    const [formNum, setFormNum] = React.useState('')
-    const [bidReviewSummary, BidReviewSummary] = React.useState({ totalApproved_Amount: 0, approvedItemsCount: 0, grandTotal: 0, totalBidAmount: 0, approvedasNotedAmount: 0, approved_as_Noted_Count: 0, declinedAmount: 0, declined_Count: 0, approved_as_Noted_Count: 0 })
 
     const [img, setImg] = React.useState(null)
 
@@ -69,6 +64,7 @@ export default function NewWorkAuthForm({ inspectionData, navigation }) {
     }
 
     const GetDataByCategory = (inspData) => {
+
         let approvedItems = [];
         let category1 = [];
         let category2 = [];
@@ -131,13 +127,14 @@ export default function NewWorkAuthForm({ inspectionData, navigation }) {
         setMech_Elec_Plumb(category5);
         setGrandTotal(grandTtl)
         setVendorFormData(inspData)
-        BidReviewSummary({ ...bidReviewSummary, ["totalApproved_Amount"]: approvedTotal, ["approvedItemsCount"]: approved_Items_Count, ["grandTotal"]: grandTtl, ["totalBidAmount"]: totalBidAmount, ["approvedasNotedAmount"]: approvedasNotedAmount, ["approved_as_Noted_Count"]: approved_as_Noted_Count, ["declined_Count"]: declined_Count, ["declinedAmount"]: declinedAmount })
     }
+
 
 
 
     React.useEffect(() => {
         let contexRecord = vendorFormDetails[inspectionData.Id]
+
         if (contexRecord) {
             if (inspectionData.doCreateWAF__c) {
                 setIsWorkAuthCreated(true)
@@ -147,6 +144,7 @@ export default function NewWorkAuthForm({ inspectionData, navigation }) {
             }
         }
     }, [vendorFormDetails]);
+
 
 
     const updateSignToContext = (image) => {
@@ -176,14 +174,10 @@ export default function NewWorkAuthForm({ inspectionData, navigation }) {
 
 
 
-
-
-
-
     return (
         <SafeAreaView style={{ flex: 1 }}>
 
-            <BidReviewSummaryCard bidReviewSummary={bidReviewSummary} />
+            <BidReviewSummaryCard inspId={inspectionData?.Id} />
             <ApprovedItemsTable approvedItems={approvedItemsData} />
 
             <View style={{ flexDirection: "row" }}>
