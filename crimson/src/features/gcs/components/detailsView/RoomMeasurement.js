@@ -142,7 +142,7 @@ function RoomMeasurementLineItem({ item, onValueChange }) {
         if (value === undefined || value === null) {
             return 0;
         }
-        return value > 1 ? value.replace(/^0+/, '') : value;
+        return value > 1 ? value.toString().replace(/^0+/, '') : value;
     }
 
     length = getFormatedRowValues(item.Room_Length);
