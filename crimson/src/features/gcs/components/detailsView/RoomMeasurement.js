@@ -56,6 +56,10 @@ export default function RoomMeasurement({ room_Measurement, inspId }) {
     }, [room_Measurement])
 
 
+    function handleAddNewItem() {
+        alert("Add new item");
+    }
+
 
     return (
 
@@ -104,6 +108,12 @@ export default function RoomMeasurement({ room_Measurement, inspId }) {
                             </View>
                     }
 
+                    <View style={{alignItems: 'start',marginTop:8}}>
+                        <Button mode="contained" onPress={handleAddNewItem}>
+                            Add New Item
+                        </Button>
+                    </View>
+
                 </View>
             }
 
@@ -139,17 +149,6 @@ function RoomMeasurementLineItem({ item, onValueChange }) {
     width = getFormatedRowValues(item.Room_Width);
     misc = getFormatedRowValues(item.Room_Misc_SF)
 
-    // if (item?.Room_Length > 1) {
-    //     length = item.Room_Length.replace(/^0+/, '')
-    // } else {
-    //     length = item.Room_Length
-    // }
-
-    // if (item?.Room_Width > 1) {
-    //     width = item.Room_Width.replace(/^0+/, '')
-    // } else {
-    //     width = item.Room_Width
-    // }
 
     return (
 
