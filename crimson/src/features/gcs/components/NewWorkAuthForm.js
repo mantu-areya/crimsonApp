@@ -43,20 +43,27 @@ export default function NewWorkAuthForm({ inspectionData, navigation }) {
             setIsLoading(true);
 
 
+
             let result = await ImagePicker.launchImageLibraryAsync({
                 mediaTypes: "Images",
                 aspect: [4, 3],
                 quality: 1,
+                base64: true,
             });
 
-            console.log({ result });
+            result = result.base64
 
-            setImg(result.uri);
-            setIsLoading(false);
+            if (result) {
+                console.log(result, "kkk");
+                // setImg(result);
+                updateSignToContext(result)
+                setIsLoading(true);
+            }
 
         } catch (error) {
 
             setIsLoading(false);
+            console.log(error);
             alert('Upload Error' + error)
 
         }
