@@ -110,7 +110,7 @@ export default function RoomMeasurement({ room_Measurement, inspId }) {
                             </View>
                     }
 
-                    <View style={{alignItems: 'start',marginTop:8}}>
+                    <View style={{marginTop:8}}>
                         <Button mode="contained" onPress={handleAddNewItem}>
                             Add New Item
                         </Button>
