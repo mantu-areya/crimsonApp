@@ -48,7 +48,7 @@ margin-top:50%;
 
 
 
-export const NewVendorForm = ({ inspectionData, navigation }) => {
+export const NewVendorForm = ({ inspectionData, readOnly }) => {
     let [general_Rental, setGeneral_Rental] = React.useState([])
     let [pools, setPools] = React.useState([])
     let [exterior, setExterior] = React.useState([])
@@ -131,6 +131,12 @@ export const NewVendorForm = ({ inspectionData, navigation }) => {
     useEffect(() => {
         isFocused == false && updateToSf(inspectionData.Id)
       }, [isFocused])
+
+      if (readOnly) {
+       return <View>
+            <Text style={{color: "white", fontFamily: 'SF_BOLD' }}>Vendor Form is submitted</Text>
+        </View>
+      }
 
     return (<>
 

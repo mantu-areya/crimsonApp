@@ -135,6 +135,9 @@ export const updateSfVendorFormDetails = async (data,inspId,submitStatus=false) 
   console.log(inspId);
 
   console.log("start","upload");
+
+  // console.log("Upload Data",data);
+
   // data.map(ele=>{
   //  ele.Sub_Category=="Garage" && console.log(ele);
   // })
@@ -147,9 +150,13 @@ export const updateSfVendorFormDetails = async (data,inspId,submitStatus=false) 
       },
     },
   )
-    .then(response =>submitStatus?response.data.Status:response.data["DynamicVendorTemplates"].DynamicVendorTemplate )
+    .then(response =>{
+      console.log("Upload :",response.data.Status);
+     return submitStatus?response.data.Status:response.data["DynamicVendorTemplates"].DynamicVendorTemplate 
+    })
     .catch(err => {
-      console.error(err);
+      console.error("Upload :",err.message);
+
       // throw err;
     });
 }

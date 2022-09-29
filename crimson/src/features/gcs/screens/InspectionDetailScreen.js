@@ -59,9 +59,9 @@ export const InspectionDetailScreen = ({ route, navigation }) => {
         {/* Tab Menu */}
         <TabMenu {...{ formName, setFormName }} />
         {/* Property Detail Card */}
-        <InspectionDetails formName={formName} data={inspectionData} />
+        <InspectionDetails formName={formName} data={inspectionData} handleSubmit={handleSubmit} />
         {/* Vendor Form */}
-        {formName === 'VF' && <NewVendorForm inspectionData={inspectionData} navigation={navigation} />}
+        {formName === 'VF' && <NewVendorForm readOnly={readonly} inspectionData={inspectionData} navigation={navigation} />}
         {/* Work Auth */}
         {
           formName === 'WAF' &&

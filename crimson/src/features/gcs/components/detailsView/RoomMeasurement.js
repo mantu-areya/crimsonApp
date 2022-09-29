@@ -24,11 +24,13 @@ export default function RoomMeasurement({ room_Measurement, inspId }) {
             if (obj.UniqueKey === key) {
                 let newValues = { ...obj, [field]: parseFloat(value) };
                 let newTotal = (newValues.Room_Length * newValues.Room_Width) + newValues.Room_Misc_SF
-                return { ...obj, [field]: value, ["Room_Total"]: newTotal };
+                return { ...obj, [field]: parseFloat(value) , ["Room_Total"]: newTotal };
             }
-            obj.UniqueKey === key && console.log("ff");
+            // obj.UniqueKey === key && console.log("ff");
+
             return obj;
         });
+
         setRoom_measurementData(newData)
     }
 
