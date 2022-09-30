@@ -48,7 +48,7 @@ margin-top:50%;
 
 
 
-export const NewVendorForm = ({ inspectionData, readOnly }) => {
+export const NewVendorForm = ({ inspectionData, readOnly,navigation }) => {
     let [general_Rental, setGeneral_Rental] = React.useState([])
     let [pools, setPools] = React.useState([])
     let [exterior, setExterior] = React.useState([])
@@ -142,7 +142,7 @@ export const NewVendorForm = ({ inspectionData, readOnly }) => {
 
         <SafeArea>
             <RoomMeasurement room_Measurement={room_MeasurementData} inspId={inspectionData.Id} />
-            <OtherFormTabMenu formsData={formsData} inspId={inspectionData.Id} grandTotal={grandTotal} />
+            <OtherFormTabMenu formsData={formsData} inspId={inspectionData.Id} grandTotal={grandTotal}  navigation={navigation}/>
         </SafeArea>
     </>
     )

@@ -4,7 +4,7 @@ import { Button } from "react-native-paper";
 import { VendorFormContext } from "../../../../services/context/VendorForm/vendorForm.contex";
 import OtherCategoryForm from "./OtherCategoryForm";
 
- export default function OtherFormTabMenu({ formsData, inspId, grandTotal }) {
+ export default function OtherFormTabMenu({ formsData, inspId, grandTotal, navigation }) {
     const [currentForm, setCurrentForm] = React.useState('General Rental Operations Scope')
   const { vendorFormDetails, updateToSf } = React.useContext(VendorFormContext);
     const GetToal = () => {
@@ -42,7 +42,7 @@ import OtherCategoryForm from "./OtherCategoryForm";
                 </View>
             </ScrollView>
             {/* Other Forms */}
-            <OtherCategoryForm currFormdata={formsData[currentForm]} inspId={inspId} />
+            <OtherCategoryForm currFormdata={formsData[currentForm]} inspId={inspId} navigation={navigation} />
         </View>
     )
 }
