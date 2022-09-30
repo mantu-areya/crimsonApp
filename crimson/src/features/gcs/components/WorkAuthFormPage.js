@@ -217,7 +217,7 @@ useEffect(()=>{
           <Spacer position="top" size="medium" />
 
 
-          {showMsg ? renderNoVFText() :
+          {!showMsg ? renderNoVFText() :
            <>
             <WorkAuthBidReviewForm bidReviewSummary={bidReviewSummary} />
             <Spacer position="top" size="large" />

@@ -1,26 +1,28 @@
 import React, { useContext, useEffect, useState } from "react";
-import { VendorFormsPage } from "../components/VendorFormsPage"
 import { VendorFormContext } from "../../../services/context/VendorForm/vendorForm.contex"
 import { getVendorFormDetails } from "../../../services/inspections/inspections.service"
 import NetInfo from "@react-native-community/netinfo";
-import { View, ScrollView, Pressable } from "react-native";
-import { SafeArea } from "../../../components/utility/safe-area.component";
-import { TotalContainer, InfoTextArea, ActionContainer, HeaderCardCover, BackNavigator, HeaderCard, Body, CarousalScrren } from "../components/VendorFormPageStyles";
-import { Row, Col } from 'react-native-responsive-grid-system';
-import Icon from 'react-native-vector-icons/SimpleLineIcons';
-import { Spacer } from "../../../components/spacer/spacer.component";
-import { InspectionDetailTile } from "../components/InspectionDetailTile";
-import { InspectionDetailsCard } from "../components/InspectionDetailsCard"
-import { Text } from "../../../components/typography/text.component";
-import { FormSections, FormSectionsContainer, SubmitButton, ExpandSection, CheckListbox } from "./InspectionDetailScreenStyles"
+import { View, ScrollView, Pressable, TouchableOpacity, FlatList, TextInput } from "react-native";
+
+import styled from "styled-components/native";
+import Icon from 'react-native-vector-icons/FontAwesome';
+import Toolbar from "../components/detailsView/Toolbar";
+import TabMenu from "../components/detailsView/TabMenu";
+import InspectionDetails from "../components/detailsView/InspectionDetails";
+import RoomMeasurement from "../components/detailsView/RoomMeasurement";
+import { NewVendorForm } from "../components/NewVendorForm"
+import { ActivityIndicator, Text } from "react-native-paper";
+import NewWorkAuthForm from "../components/NewWorkAuthForm";
 import { WorkAuthFormPage } from "../components/WorkAuthFormPage";
 import { updateSfVendorFormDetails } from "../../../services/inspections/inspections.service";
 import Collapsible from 'react-native-collapsible';
 import { SubmitReviewForm } from "../components/SubmitReviewForm"
+import { SafeAreaView } from "react-native-safe-area-context";
+import { Row } from "react-native-responsive-grid-system";
 export const InspectionDetailScreen = ({ route, navigation }) => {
 
   const [isNotesCollapsed, setIsNotesCollapsed] = React.useState(false);
-  const [formName, setFormaName] = useState('VF')
+  const [formName, setFormName] = useState('VF')
   const [readonly, setreadonly] = useState(false)
   const { inspectionData } = route.params;
   const { vendorFormDetails, addToVfContex, addImagesToContex } = useContext(VendorFormContext);
@@ -45,57 +47,34 @@ export const InspectionDetailScreen = ({ route, navigation }) => {
     setIsNotesCollapsed(true)
   }
 
+  const inspectionName = inspectionData.Name
+
   return (
-    <>
-      <SafeArea>
-        <ScrollView keyboardDismissMode={'on-drag'}>
-          <HeaderCard  >
-            <BackNavigator onPress={() => { navigation.goBack() }}>
-              <Row>
-                <Icon name="arrow-left" size={20} color="white" style={{ marginTop: 4 }} />
-                <Text variant="NavigationText">Back</Text>
-              </Row></BackNavigator>
-            <Row>
-              <SubmitButton onPress={() => handleSubmit()}>
-                <Text variant="NavigationText">submit</Text>
-              </SubmitButton>
-            </Row>
-            <Row>
-              {!readonly && <Collapsible collapsed={!(isNotesCollapsed)}  >
-                <SubmitReviewForm setreadonly={setreadonly} inspVfDetails={vendorFormDetails[inspectionData.Id]} inspId={inspectionData.Id} navigation={navigation} setIsNotesCollapsed={setIsNotesCollapsed} />
-              </Collapsible>}
-            </Row>
-            <View>
-              <FormSections>
-                <Row>
-                  <FormSectionsContainer variant={formName == 'VF' ? "active" : ''} onPress={() => setFormaName('VF')}>
-                    <Text variant={formName == 'VF' ? "DetailcardHeaderactive" : "DetailcardHeader"}>Vendor Forms</Text>
-                  </FormSectionsContainer>
-                  <Spacer position="right" size="medium" />
-                  <FormSectionsContainer variant={formName == 'WF' ? "active" : ''} onPress={() => setFormaName('WF')}>
-                    <Text variant={formName == 'WF' ? "DetailcardHeaderactive" : "DetailcardHeader"} >Work Auth Forms</Text>
-                  </FormSectionsContainer>
-                </Row>
-              </FormSections>
-              <Spacer position="bottom" size="medium" />
-            </View>
-            <View>
-              <Row>
-                <Text variant="InspectionHeaderName">{inspectionData.Name} | </Text>
-                {formName == 'VF' ? <Text variant="InspectionHeaderName">VENDOR ESTIMATE FORM</Text>
-                  : formName == 'WF' && <Text variant="InspectionHeaderName">WORK AUTH FORM</Text>}
-              </Row>
-              <Text variant="HeaderName">{inspectionData.Property_Address__c} </Text>
-            </View>
-            <Spacer position="top" size="large" />
-            <InspectionDetailsCard inspectionData={inspectionData} />
-            <Spacer position="bottom" size="medium" />
-          </HeaderCard  >
-          {formName == 'VF' && <VendorFormsPage inspectionData={inspectionData} navigation={navigation} readonly={readonly} />}
-          {formName == 'WF' && <WorkAuthFormPage inspectionData={inspectionData} navigation={navigation} />}
-        </ScrollView>
-      </SafeArea>
-    </>
+
+    <SafeAreaView style={{ flex: 1, backgroundColor: 'black' }}>
+      {/* Toolbar */}
+      <Toolbar inspectionName={inspectionName} goBack={() => navigation.goBack()} />
+
+      <ScrollView keyboardDismissMode={'on-drag'}>
+        <Row>
+          {!readonly &&
+            <Collapsible collapsed={!(isNotesCollapsed)}  >
+              <SubmitReviewForm setreadonly={setreadonly} inspVfDetails={vendorFormDetails[inspectionData.Id]} inspId={inspectionData.Id} navigation={navigation} setIsNotesCollapsed={setIsNotesCollapsed} />
+            </Collapsible>}
+        </Row>
+        {/* Tab Menu */}
+        <TabMenu {...{ formName, setFormName }} />
+        {/* Property Detail Card */}
+        <InspectionDetails formName={formName} data={inspectionData} handleSubmit={handleSubmit} />
+        {/* Vendor Form */}
+        {formName === 'VF' && <NewVendorForm readOnly={readonly} inspectionData={inspectionData} navigation={navigation} />}
+        {/* Work Auth */}
+        {
+          formName === 'WAF' &&
+          <NewWorkAuthForm inspectionData={inspectionData} navigation={navigation} />
+        }
+      </ScrollView>
+    </SafeAreaView>
   )
 
 }
