@@ -36,17 +36,26 @@ export default function BidReviewSummaryCard({ inspId }) {
         getBidReviewSummary();
     }, [inspId])
 
+
     /* 
-     "BidReviewSummary": {
-         "% Variance Percentage": "$-0.882205915395320563845407565198762",
-         "$ Variance": "$-20260.00",
-         "totalApprovedItems": "10",
-         "countApprovedasNoted": "0",
-         "countApproved": "10",
-         "countSubmitted": "12",
-         "totalBidApproved": "$2,705.16",
-         "totalBidSubmitted": "$22,965.16"
-     }
+   "BidReviewSummary": {
+       "variancePercentage": "$0.00",
+        "percentageTotalAmount": "100.00%",
+        "percentageDeclinedContractAmount": "0.00%",
+        "percentageApprovedAsNotedContractAmount": "0.00%",
+        "percentageApprovedContractAmount": "100.00%",
+        "totalAmount": "$945.16",
+        "countDeclined": "0",
+        "bidDeclinedAmount": "$0",
+        "bidApprovedAsNotedAmount": "$0",
+        "bidApprovedStatusAmount": "$945.16",
+        "variance": "$0.00",
+        "countApprovedasNoted": "0",
+        "countApproved": "10",
+        "countSubmitted": "10",
+        "totalBidApproved": "$945.16",
+        "totalBidSubmitted": "$945.16"
+    }
     */
 
 
@@ -90,7 +99,7 @@ export default function BidReviewSummaryCard({ inspId }) {
                                             <TableRowItemHeading style={{ textAlign: 'center' }} >$ Variance</TableRowItemHeading>
                                         </View>
                                         <View style={{ width: '25%' }}>
-                                            <TabelRowItemValue   >{summary['$ Variance']}</TabelRowItemValue>
+                                            <TabelRowItemValue   >{summary?.variance}</TabelRowItemValue>
                                         </View>
                                     </TableRowWrapper>
                                     <TableRowWrapper style={{ flexDirection: 'row' }}>
@@ -104,7 +113,7 @@ export default function BidReviewSummaryCard({ inspId }) {
                                             <TableRowItemHeading style={{ textAlign: 'center' }} >% Variance</TableRowItemHeading>
                                         </View>
                                         <View style={{ width: '25%' }}>
-                                            <TabelRowItemValue >{summary['% Variance Percentage']}%</TabelRowItemValue>
+                                            <TabelRowItemValue >{summary?.variancePercentage}%</TabelRowItemValue>
                                         </View>
                                     </TableRowWrapper>
                                 </View>
@@ -127,22 +136,22 @@ export default function BidReviewSummaryCard({ inspId }) {
                                     </TableHeader>
                                     {
                                         [
-                                            { title: 'Approved' },
-                                            { title: 'Approved as Noted' },
-                                            { title: 'Decline' },
+                                            { title: 'Approved',count: summary?.countApproved, price: summary?.bidApprovedStatusAmount, percentage: summary?.percentageApprovedContractAmount },
+                                            { title: 'Approved as Noted', count: summary?.countApprovedasNoted, price :summary?.bidApprovedAsNotedAmount, percentage :summary?.percentageApprovedAsNotedContractAmount },
+                                            { title: 'Decline', count: summary?.countDeclined, price :summary?.bidDeclinedAmount, percentage: summary?.percentageDeclinedContractAmount },
                                         ].map((item, i) =>
                                             <TableRowWrapper key={i} style={{ flexDirection: 'row' }}>
                                                 <View style={{ width: '25%' }}>
                                                     <TableRowItemHeading >{item.title}</TableRowItemHeading>
                                                 </View>
                                                 <View style={{ width: '25%' }}>
-                                                    <TabelRowItemValue >000.00</TabelRowItemValue>
+                                                    <TabelRowItemValue >{item.count}</TabelRowItemValue>
                                                 </View>
                                                 <View style={{ width: '25%' }}>
-                                                    <TabelRowItemValue >000.00</TabelRowItemValue>
+                                                    <TabelRowItemValue >{item.price}</TabelRowItemValue>
                                                 </View>
                                                 <View style={{ width: '25%' }}>
-                                                    <TabelRowItemValue >000.00</TabelRowItemValue>
+                                                    <TabelRowItemValue >{item.percentage}</TabelRowItemValue>
                                                 </View>
                                             </TableRowWrapper>)
                                     }
@@ -154,13 +163,13 @@ export default function BidReviewSummaryCard({ inspId }) {
                                         <TableSectionHeadings >Total</TableSectionHeadings>
                                     </View>
                                     <View style={{ width: '25%' }}>
-                                        <TabelRowItemValue >{summary?.totalApprovedItems}</TabelRowItemValue>
+                                        <TabelRowItemValue >{summary?.countSubmitted}</TabelRowItemValue>
                                     </View>
                                     <View style={{ width: '25%' }}>
-                                        <TabelRowItemValue >${0}</TabelRowItemValue>
+                                        <TabelRowItemValue >{summary?.totalAmount}</TabelRowItemValue>
                                     </View>
                                     <View style={{ width: '25%' }}>
-                                        <TabelRowItemValue >{0}%</TabelRowItemValue>
+                                        <TabelRowItemValue >{summary?.percentageTotalAmount}</TabelRowItemValue>
                                     </View>
                                 </TableHeader>
                             </>

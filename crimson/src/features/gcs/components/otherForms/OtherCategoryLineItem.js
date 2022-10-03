@@ -6,7 +6,7 @@ import styled from "styled-components/native";
 import React from "react";
 
 
-export default function OtherCategoryLineItem({ item, onValueChange }) {
+export default function OtherCategoryLineItem({ item, onValueChange,navigation }) {
     const [isOpen, setIsOpen] = React.useState(false) // keep open in start
     const handleCollapseToggle = () => {
         setIsOpen(!isOpen);
