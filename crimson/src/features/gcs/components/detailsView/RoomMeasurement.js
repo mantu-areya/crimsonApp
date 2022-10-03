@@ -14,28 +14,52 @@ export default function RoomMeasurement({ room_Measurement, inspId, sequence, se
   const [room_measurementData, setRoom_measurementData] = React.useState([]);
   const [NewItemAdded, setNewItemAdded] = React.useState(0);
 
-  const { updateVfContect } = React.useContext(VendorFormContext);
+  const { updateVfContect,addNewItem } = React.useContext(VendorFormContext);
 
   const onValueChange = async (value, field, key) => {
 
     let newData;
-    let newSequence = sequence+1
+    let newSequence = sequence + 1
     if (field == "newItem") {
       let itemObject = [{
-        Sub_Category: "room_measurment",
-        Room_Total: 0,
-        Room_Misc_SF: "",
-        Room_Length: 0,
-        Room_Width: 0,
-        Matrix_Price:"",
-        Sequence:newSequence,
-        UniqueKey: (inspId+'#'+newSequence.toFixed(3))
+        "Sub_Category": "Other - Write in",
+        "Room_Total": 0,
+        "Room_Misc_SF": null,
+        "Room_Length": null,
+        "Room_Width": null,
+        "Matrix_Price": "",
+        "Sequence": newSequence,
+        "UniqueKey": (inspId + '#' + newSequence.toFixed(3)),
+        "U_M": null,
+        "Total": 0.00,
+        "Scope_Notes": null,
+        "Rate": 0.00,
+        "Quantity": 0,
+        "Owner_Clarification": null,
+        "Lookup_To_Parent": inspId,
+        "line_item_images": null,
+        "Cost_Category": null,
+        "Contract_Type": null,
+        "Category": "Room Measurements",
+        "Approved_Amount": 0.00,
+        "Approval_Status": null,
+        "Adj_U_M": null,
+        "Adj_Rate": 0.00,
+        "Adj_Quantity": 0,
+        "newItem":true
       }]
-      console.log(itemObject[0]);
       room_measurementData.push(itemObject[0])
       newData = room_measurementData
       setSequence(newSequence)
+      addNewItem(itemObject,inspId)
       setNewItemAdded(NewItemAdded + 1)
+    } else if(field =="Sub_Category" ){
+      newData = room_Measurement.map(obj => {
+        if (obj.UniqueKey === key) {
+          return { ...obj, [field]: value };
+        }
+        return obj;
+      });
     } else {
 
       if (value < 0 || value === '' || value === null || value === undefined) {
@@ -159,11 +183,20 @@ const StyledTextInput = styled.TextInput`
     margin: 0px 4px;
     `;
 
+const SubCategoryTextInput = styled.TextInput`
+    flex: 4;
+    font-family: SF_LIGHT;
+    text-align: center;
+    background-color:white;
+    border-radius:4px;
+    margin: 0px 2px;
+    `;
+
 
 function RoomMeasurementLineItem({ item, onValueChange }) {
 
   let length, width, misc;
-
+  const Sub_Category_List = ["Garage", "Foyed", "Family Room", "Breakfast Nook", "Kitchen", "Laundry Room", "Formal Living Room", "Hallway 1", "Hallway 2", "Half Bathroom", "Master Bathroom", "Bathroom 2", "Bathroom 3", "Master Bedroom", "Bedroom 2", "Bedroom 3", "Bedroom 4", "Gameroom", "Office/Study", "Basement", "master closet", "Dining Room",]
 
 
   function getFormatedRowValues(value) {
@@ -182,9 +215,13 @@ function RoomMeasurementLineItem({ item, onValueChange }) {
 
     <View style={{ flexDirection: 'row', paddingVertical: 2, paddingHorizontal: 8, marginVertical: 2 }}>
       {/* Room */}
-      <Text style={{ flex: 4, fontFamily: 'SF_LIGHT' }}>{item.Sub_Category}</Text>
+      {Sub_Category_List.includes(item.Sub_Category) ? <Text style={{ flex: 4, fontFamily: 'SF_LIGHT' }}>{item.Sub_Category}</Text>
+        : <SubCategoryTextInput
+          onChangeText={val => onValueChange((val), "Sub_Category", item.UniqueKey)}
+          value={`${item.Sub_Category}`}
+        />}
       {/* Length */}
-      <StyledTextInput
+      <SubCategoryTextInput
         keyboardType="number-pad"
         onChangeText={val => onValueChange((val), "Room_Length", item.UniqueKey)}
         value={`${length}`}

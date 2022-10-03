@@ -54,7 +54,11 @@ export const VendorFormContextProvider = ({ children }) => {
   // img && vfData && setVendorFormDetails({...vendorFormDetails,[inspId]: vfData.length > 0 ? vfData : "NA"})
 
 }
-  
+  const addNewItem = (newData,inspId)=>{
+    let newVfDataArray = vendorFormDetails[inspId]
+    newVfDataArray.push(newData[0])
+    setVendorFormDetails({ ...vendorFormDetails, [inspId]: newVfDataArray})
+  }
 
   const update = (modifiedData, formType, inspId) => {
     Object.keys(vendorFormDetails).length > 0 && vendorFormDetails[inspId]&&vendorFormDetails[inspId].map(ele => {
@@ -123,6 +127,7 @@ const setAscynDataToApp =async () =>{
         addSignature:addSignature,
         addImagesToContex,
         contextImages,
+        addNewItem
         
       }}
     >
