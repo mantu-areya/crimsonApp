@@ -152,7 +152,7 @@ export default function RoomMeasurement({ room_Measurement, inspId, sequence, se
               data={room_measurementData ?? []}
               keyExtractor={(item) => item.UniqueKey}
               renderItem={(item) => (
-                <RoomMeasurementLineItem item={item.item} onValueChange={onValueChange} />
+                <RoomMeasurementLineItem item={item.item} onValueChange={onValueChange} readOnly={readOnly} />
               )}
             /> :
               <View style={{ padding: 16 }}>
@@ -160,11 +160,11 @@ export default function RoomMeasurement({ room_Measurement, inspId, sequence, se
               </View>
           }
 
-          <View style={{ marginTop: 8 }}>
+          {!readOnly && <View style={{ marginTop: 8 }}>
             <Button mode="contained" onPress={handleAddNewItem}>
               Add New Item
             </Button>
-          </View>
+          </View>}
 
         </View>
       }

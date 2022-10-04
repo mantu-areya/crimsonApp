@@ -3,7 +3,7 @@ import { ActivityIndicator, FlatList, View } from "react-native";
 import { VendorFormContext } from "../../../../services/context/VendorForm/vendorForm.contex";
 import OtherCategoryLineItem from "./OtherCategoryLineItem";
 
-export default function OtherCategoryForm({ currFormdata, inspId, navigation }) {
+export default function OtherCategoryForm({ currFormdata, inspId, navigation ,readOnly}) {
 
     const [dataList,setDatalist] = React.useState([])
 
@@ -43,7 +43,7 @@ export default function OtherCategoryForm({ currFormdata, inspId, navigation }) 
                         data={dataList ?? []}
                         keyExtractor={(item) => item.UniqueKey}
                         renderItem={(item) => (
-                            <OtherCategoryLineItem item={item.item} onValueChange={onValueChange}  navigation={navigation}/>
+                            <OtherCategoryLineItem item={item.item} onValueChange={onValueChange}  navigation={navigation} readOnly={readOnly}/>
                         )}
                     /> :
                     <View style={{ padding: 16 }}>

@@ -6,7 +6,7 @@ import styled from "styled-components/native";
 import React from "react";
 
 
-export default function OtherCategoryLineItem({ item, onValueChange,navigation }) {
+export default function OtherCategoryLineItem({ item, onValueChange,navigation, readOnly }) {
     const [isOpen, setIsOpen] = React.useState(false) // keep open in start
     const handleCollapseToggle = () => {
         setIsOpen(!isOpen);
@@ -50,36 +50,36 @@ export default function OtherCategoryLineItem({ item, onValueChange,navigation }
                 isOpen &&
                 <View style={{ padding: 8, borderRadius: 8, marginVertical: 4 }}>
                     <StyledLabel >Quantity</StyledLabel>
-                    <StyledTextInput
+                    {readOnly?<Text>{item.Quantity ?? 0}</Text>:<StyledTextInput
                         keyboardType="number-pad"
                         onChangeText={val =>   onValueChange(Number(val), "Quantity", item.UniqueKey)} // ! Quantity should not be in decimal format
                         value={`${item.Quantity ?? 0}`}
-                    />
+                    />}
                     <StyledLabel >U/A</StyledLabel>
-                    <StyledTextInput
+                    {readOnly?<Text>{item.U_M ?? 0}</Text>:<StyledTextInput
                         onChangeText={val => onValueChange((val), "Quantity", item.UniqueKey)}
                         value={`${item.U_M ?? 0}`}
                         keyboardType="number-pad"
-                    />
+                    />}
                     <StyledLabel >Rate</StyledLabel>
-                    <StyledTextInput
+                    {readOnly?<Text>{item.Rate ?? 0}</Text>:<StyledTextInput
                         onChangeText={val => {
                             onValueChange((val.replace("$","")), "Rate", item.UniqueKey)
                         }}
                         value={`$${item.Rate}`}
                         keyboardType="number-pad"
-                    />
+                    />}
                     <StyledLabel >Total</StyledLabel>
-                    <StyledTextInput keyboardType="number-pad" value={`$${item.Total}`} />
+                    {readOnly?<Text>{item.Total ?? 0}</Text>:<StyledTextInput keyboardType="number-pad" value={`$${item.Total}`} />}
                     <StyledLabel >Scope Notes</StyledLabel>
-                    <StyledTextInput
+                    {readOnly?<Text>{item.Scope_Notesi ?? ''}</Text>:<StyledTextInput
                         value={item.Scope_Notes}
                         multiline={true}
                         editable
                         onChangeText={val => onValueChange(val, "Scope_Notes", item.UniqueKey)}
                         numberOfLines={4}
                         style={{ height: 140, backgroundColor: 'white', padding: 16, paddingTop: 18, fontSize: 16, borderRadius: 8, marginBottom: 8 }}
-                    />
+                    />}
                     <TouchableOpacity onPress={() => navigation.navigate("CameraScreen")} style={{ width: 132, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', backgroundColor: "white", padding: 8, borderRadius: 8 }}>
                         <CameraIcon name="camera" size={28} color="black" />
                         <Text >Capture Image</Text>
