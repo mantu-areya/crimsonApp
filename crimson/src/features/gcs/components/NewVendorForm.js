@@ -144,17 +144,12 @@ export const NewVendorForm = ({ inspectionData, readOnly,navigation }) => {
         isFocused == false && updateToSf(inspectionData.Id)
       }, [isFocused])
 
-      if (readOnly) {
-       return <View>
-            <Text style={{color: "white", fontFamily: 'SF_BOLD' }}>Vendor Form is submitted</Text>
-        </View>
-      }
 
     return (<>
 
         <SafeArea>
-            <RoomMeasurement room_Measurement={room_MeasurementData} inspId={inspectionData.Id} sequence={sequence}  setSequence={setSequence}/>
-            <OtherFormTabMenu formsData={formsData} inspId={inspectionData.Id} grandTotal={grandTotal}  navigation={navigation} sequence={sequence}  setSequence={setSequence}/>
+            <RoomMeasurement room_Measurement={room_MeasurementData} inspId={inspectionData.Id} sequence={sequence}  setSequence={setSequence} readOnly={readOnly}/>
+            <OtherFormTabMenu formsData={formsData} inspId={inspectionData.Id} grandTotal={grandTotal}  navigation={navigation} sequence={sequence}  setSequence={setSequence} readOnly={readOnly}/>
         </SafeArea>
     </>
     )

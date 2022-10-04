@@ -6,7 +6,7 @@ import { VendorFormContext } from "../../../../services/context/VendorForm/vendo
 import { Button } from "react-native-paper";
 
 
-export default function RoomMeasurement({ room_Measurement, inspId, sequence, setSequence }) {
+export default function RoomMeasurement({ room_Measurement, inspId, sequence, setSequence, readOnly }) {
   const [isOpen, setIsOpen] = React.useState(true) // keep open in start
   const handleCollapseToggle = () => {
     setIsOpen(!isOpen);
@@ -14,7 +14,7 @@ export default function RoomMeasurement({ room_Measurement, inspId, sequence, se
   const [room_measurementData, setRoom_measurementData] = React.useState([]);
   const [NewItemAdded, setNewItemAdded] = React.useState(0);
 
-  const { updateVfContect,addNewItem } = React.useContext(VendorFormContext);
+  const { updateVfContect, addNewItem } = React.useContext(VendorFormContext);
 
   const onValueChange = async (value, field, key) => {
 
@@ -191,9 +191,15 @@ const SubCategoryTextInput = styled.TextInput`
     border-radius:4px;
     margin: 0px 2px;
     `;
+const SubCategoryTextLabel = styled.Text`
+    flex: 4;
+    font-family: SF_LIGHT;
+    text-align: center;
+    border-radius:4px;
+    `;
 
 
-function RoomMeasurementLineItem({ item, onValueChange }) {
+function RoomMeasurementLineItem({ item, onValueChange, readOnly }) {
 
   let length, width, misc;
   const Sub_Category_List = ["Garage", "Foyed", "Family Room", "Breakfast Nook", "Kitchen", "Laundry Room", "Formal Living Room", "Hallway 1", "Hallway 2", "Half Bathroom", "Master Bathroom", "Bathroom 2", "Bathroom 3", "Master Bedroom", "Bedroom 2", "Bedroom 3", "Bedroom 4", "Gameroom", "Office/Study", "Basement", "master closet", "Dining Room",]
@@ -215,30 +221,30 @@ function RoomMeasurementLineItem({ item, onValueChange }) {
 
     <View style={{ flexDirection: 'row', paddingVertical: 2, paddingHorizontal: 8, marginVertical: 2 }}>
       {/* Room */}
-      {Sub_Category_List.includes(item.Sub_Category) ? <Text style={{ flex: 4, fontFamily: 'SF_LIGHT' }}>{item.Sub_Category}</Text>
+      {(Sub_Category_List.includes(item.Sub_Category) || readOnly) ? <Text style={{ flex: 4, fontFamily: 'SF_LIGHT' }}>{item.Sub_Category}</Text>
         : <SubCategoryTextInput
           onChangeText={val => onValueChange((val), "Sub_Category", item.UniqueKey)}
           value={`${item.Sub_Category}`}
         />}
       {/* Length */}
-      <SubCategoryTextInput
+      {readOnly ? <SubCategoryTextLabel>{length}</SubCategoryTextLabel> : <SubCategoryTextInput
         keyboardType="number-pad"
         onChangeText={val => onValueChange((val), "Room_Length", item.UniqueKey)}
         value={`${length}`}
-      />
+      />}
       {/* Width */}
-      <StyledTextInput
+      {readOnly ? <SubCategoryTextLabel>{width}</SubCategoryTextLabel> : <StyledTextInput
         keyboardType="number-pad"
         onChangeText={val =>
           onValueChange((val), "Room_Width", item.UniqueKey)}
         value={`${width}`}
-      />
+      />}
       {/* Misc SF */}
-      <StyledTextInput
+      {readOnly ? <SubCategoryTextLabel>{misc}</SubCategoryTextLabel> : <StyledTextInput
         keyboardType="number-pad"
         onChangeText={val => onValueChange((val), "Room_Misc_SF", item.UniqueKey)}
         value={`${misc}`}
-      />
+      />}
       {/* Total */}
       <Text style={{ flex: 2, fontFamily: 'SF_LIGHT', textAlign: 'right' }}>{item.Room_Total ? item.Room_Total.toFixed(2) : 0.00}</Text>
     </View>
