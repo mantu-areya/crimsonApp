@@ -23,7 +23,7 @@ export const InspectionDetailScreen = ({ route, navigation }) => {
 
   const [isNotesCollapsed, setIsNotesCollapsed] = React.useState(false);
   const [formName, setFormName] = useState('VF')
-  const [readonly, setreadonly] = useState(false)
+  const [readOnly, setreadonly] = useState(false)
   const { inspectionData } = route.params;
   const { vendorFormDetails, addToVfContex, addImagesToContex } = useContext(VendorFormContext);
   const setVendorFormData = async () => getVendorFormDetails(inspectionData.Id)
@@ -57,7 +57,7 @@ export const InspectionDetailScreen = ({ route, navigation }) => {
 
       <ScrollView keyboardDismissMode={'on-drag'}>
         <Row>
-          {!readonly &&
+          {!readOnly &&
             <Collapsible collapsed={!(isNotesCollapsed)}  >
               <SubmitReviewForm setreadonly={setreadonly} inspVfDetails={vendorFormDetails[inspectionData.Id]} inspId={inspectionData.Id} navigation={navigation} setIsNotesCollapsed={setIsNotesCollapsed} />
             </Collapsible>}
@@ -67,7 +67,7 @@ export const InspectionDetailScreen = ({ route, navigation }) => {
         {/* Property Detail Card */}
         <InspectionDetails formName={formName} data={inspectionData} handleSubmit={handleSubmit} />
         {/* Vendor Form */}
-        {formName === 'VF' && <NewVendorForm readOnly={readonly} inspectionData={inspectionData} navigation={navigation} />}
+        {formName === 'VF' && <NewVendorForm readOnly={readOnly} inspectionData={inspectionData} navigation={navigation} />}
         {/* Work Auth */}
         {
           formName === 'WAF' &&

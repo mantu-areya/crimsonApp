@@ -156,6 +156,7 @@ export const updateSfVendorFormDetails = async (data,inspId,submitStatus=false) 
     })
     .catch(err => {
       console.error("Upload :",err.message);
+      console.error(JSON.stringify(err.request));
 
       // throw err;
     });

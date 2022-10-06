@@ -56,6 +56,8 @@ export const NewVendorForm = ({ inspectionData, readOnly,navigation }) => {
     let [mech_Elec_Plumb, setMech_Elec_Plumb] = React.useState([])
     let [grandTotal, setGrandTotal] = useState(0.00)
     let [room_MeasurementData, setRoom_MeasurementData] = React.useState([])
+    const [sequence,setSequence] = React.useState();
+
     const { vendorFormDetails, updateToSf} = useContext(VendorFormContext);
 
 
@@ -70,23 +72,30 @@ export const NewVendorForm = ({ inspectionData, readOnly,navigation }) => {
         let category4 = []
         let category5 = []
         let grandTtl = 0.00;
+        let sequenceArray = []
 
         Object.keys(inspData).map(item => {
             if (inspData[item].Category === "Room Measurements") {
+              sequenceArray.push(inspData[item].Sequence)
                 room_msrmnt.push(inspData[item])
             }
             else if (inspData[item].Category === "General Rental Operations Scope") {
+              sequenceArray.push(inspData[item].Sequence)
                 category1.push(inspData[item])
             } else if (inspData[item].Category === "Pools") {
+              sequenceArray.push(inspData[item].Sequence)
                 category2.push(inspData[item])
 
             } else if (inspData[item].Category === "Exterior") {
+              sequenceArray.push(inspData[item].Sequence)
                 category3.push(inspData[item])
 
             } else if (inspData[item].Category === "Interior") {
+              sequenceArray.push(inspData[item].Sequence)
                 category4.push(inspData[item])
 
             } else if (inspData[item].Category === "Mechanical, Electrical and Plumbing Systems") {
+              sequenceArray.push(inspData[item].Sequence)
                 category5.push(inspData[item])
 
             }
@@ -95,6 +104,9 @@ export const NewVendorForm = ({ inspectionData, readOnly,navigation }) => {
             }
 
         })
+
+        let lastSequence = sequenceArray.sort(function (a, b) {  return a - b;  }).pop()
+        setSequence(lastSequence)
         setRoom_MeasurementData(room_msrmnt);
         setGeneral_Rental(category1);
         setPools(category2);
@@ -132,17 +144,12 @@ export const NewVendorForm = ({ inspectionData, readOnly,navigation }) => {
         isFocused == false && updateToSf(inspectionData.Id)
       }, [isFocused])
 
-      if (readOnly) {
-       return <View>
-            <Text style={{color: "white", fontFamily: 'SF_BOLD' }}>Vendor Form is submitted</Text>
-        </View>
-      }
 
     return (<>
 
         <SafeArea>
-            <RoomMeasurement room_Measurement={room_MeasurementData} inspId={inspectionData.Id} />
-            <OtherFormTabMenu formsData={formsData} inspId={inspectionData.Id} grandTotal={grandTotal}  navigation={navigation}/>
+            <RoomMeasurement room_Measurement={room_MeasurementData} inspId={inspectionData.Id} sequence={sequence}  setSequence={setSequence} readOnly={readOnly}/>
+            <OtherFormTabMenu formsData={formsData} inspId={inspectionData.Id} grandTotal={grandTotal}  navigation={navigation} sequence={sequence}  setSequence={setSequence} readOnly={readOnly}/>
         </SafeArea>
     </>
     )
