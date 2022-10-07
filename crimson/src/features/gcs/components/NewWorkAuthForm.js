@@ -153,7 +153,7 @@ export default function NewWorkAuthForm({ inspectionData, navigation }) {
 
     React.useEffect(() => {
         contextImages[inspectionData.Id] && contextImages[inspectionData.Id].map(ele => {
-            if (ele.file_name == "Contractor signature.jpeg") {
+            if (ele.file_name == "Contractor_Signature.jpeg") {
                 console.log(ele.file_public_url, "vfvfvfv");
                 setImg(ele.file_public_url)
                 return

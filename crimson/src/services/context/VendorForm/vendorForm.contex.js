@@ -7,7 +7,7 @@ import NetInfo from "@react-native-community/netinfo";
 export const VendorFormContext = createContext();
 export const VendorFormContextProvider = ({ children }) => {
   const [vendorFormDetails, setVendorFormDetails] = useState({});
-  const [contextImages , setContextImages] = useState({});
+  const [contextImages , setContextImages] = useState();
   const add = (dataset, inspData) => inspData?setVendorFormDetails({ ...vendorFormDetails, [inspData.Id]: dataset.length > 0 ? dataset : "NA" })
   :setVendorFormDetails(dataset)
 
@@ -29,16 +29,15 @@ export const VendorFormContextProvider = ({ children }) => {
   //   }
   // })
 
-  const data = {
-      "file_name":"Contractor signature",
+  const data = [{
+      "file_name":"Contractor_Signature",
       "image_data": img,
       "parent_record_id":inspId,
       "image_type":"sign_item",
       "line_item_id":inspId,
-    }
-  
+    }]
 
-  uploadSignImage(data,true).then(result=>{
+  uploadSignImage(data,inspId).then(result=>{
     addImagesToContex(inspId)
     return result
   })
@@ -82,6 +81,7 @@ export const VendorFormContextProvider = ({ children }) => {
             ele['Total'] = obj.Total;
             ele['Scope_Notes'] = obj.Scope_Notes;
             ele['U_M'] = obj.U_M;
+            ele['Matrix_Price'] = obj.Matrix_Price;
 
           }
           return obj
