@@ -7,7 +7,7 @@ import NetInfo from "@react-native-community/netinfo";
 export const VendorFormContext = createContext();
 export const VendorFormContextProvider = ({ children }) => {
   const [vendorFormDetails, setVendorFormDetails] = useState({});
-  const [contextImages , setContextImages] = useState();
+  const [contextImages , setContextImages] = useState({});
   const add = (dataset, inspData) => inspData?setVendorFormDetails({ ...vendorFormDetails, [inspData.Id]: dataset.length > 0 ? dataset : "NA" })
   :setVendorFormDetails(dataset)
 
