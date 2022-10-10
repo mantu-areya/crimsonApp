@@ -35,8 +35,8 @@ export const VendorFormContextProvider = ({ children }) => {
       "parent_record_id":inspId,
       "image_type":"sign_item",
       "line_item_id":inspId,
+      "date":new Date().toLocaleDateString()
     }]
-
   uploadSignImage(data,inspId).then(result=>{
     addImagesToContex(inspId)
     return result

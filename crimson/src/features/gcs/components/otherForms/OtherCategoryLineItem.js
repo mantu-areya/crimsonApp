@@ -5,6 +5,12 @@ import CameraIcon from 'react-native-vector-icons/EvilIcons';
 import styled from "styled-components/native";
 import React from "react";
 
+let requiredSubCategories = [
+  "Off Matrix - Pool",
+  "Off Matrix - Exterior",
+  "Off Matrix - Interior",
+  "Off Matrix - MEP"
+]
 
 export default function OtherCategoryLineItem({ item, onValueChange, navigation, readOnly }) {
   const [isOpen, setIsOpen] = React.useState(false) // keep open in start
@@ -18,8 +24,6 @@ export default function OtherCategoryLineItem({ item, onValueChange, navigation,
   // if (!item.Matrix_Price) {
   //     return null;
   // }
-
-
   return (
     <View style={{ borderRadius: 8, paddingVertical: 2, paddingHorizontal: 8, marginVertical: 4, backgroundColor: '#6A579A' }}>
 
@@ -34,7 +38,7 @@ export default function OtherCategoryLineItem({ item, onValueChange, navigation,
               keyboardType="number-pad"
             />
               : <Text style={{ color: 'white', fontFamily: 'SF_BOLD', fontSize: 18 }}> {item?.Matrix_Price}</Text>
-          ) :<Text style={{ color: 'white', fontFamily: 'SF_BOLD', fontSize: 18 }}> {item?.Matrix_Price?.substring(0, 70)}</Text>}</View>
+          ) : <Text style={{ color: 'white', fontFamily: 'SF_BOLD', fontSize: 18 }}> {item?.Matrix_Price?.substring(0, 70)}</Text>}</View>
           {
             !isOpen ? <View style={{ marginTop: 16, flexDirection: 'row', justifyContent: 'flex-start', alignItems: 'center' }}>
               <Text style={{ width: '33%', color: 'white', fontFamily: 'SF_LIGHT' }}>
@@ -72,15 +76,21 @@ export default function OtherCategoryLineItem({ item, onValueChange, navigation,
             keyboardType="number-pad"
           />}
           <StyledLabel >Rate</StyledLabel>
-          {readOnly ? <Text>{item.Rate ?? 0}</Text> : <StyledTextInput
-            onChangeText={val => {
-              onValueChange((val.replace("$", "")), "Rate", item.UniqueKey)
-            }}
-            value={`$${item.Rate}`}
-            keyboardType="number-pad"
-          />}
+          {readOnly ? <Text>{item.Rate ?? 0}</Text> :
+            requiredSubCategories.includes(item.Sub_Category) ?
+              <StyledTextInput
+
+                onChangeText={val => {
+                  onValueChange((val.replace("$", "")), "Rate", item.UniqueKey)
+                }}
+                value={`$${item.Rate}`}
+                keyboardType="number-pad"
+              />
+              :
+              <Text>{item.Rate ?? 0}</Text>
+          }
           <StyledLabel >Total</StyledLabel>
-          {readOnly ? <Text>${item.Total ?? 0}</Text> : <StyledTextInput keyboardType="number-pad" value={`$${item.Total}`} />}
+          {readOnly ? <Text>{item.Total ?? 0}</Text> : <StyledTextInput keyboardType="number-pad" value={`$${item.Total}`} />}
           <StyledLabel >Scope Notes</StyledLabel>
           {readOnly ? <Text>{item.Scope_Notesi ?? ''}</Text> : <StyledTextInput
             value={item.Scope_Notes}
@@ -96,9 +106,8 @@ export default function OtherCategoryLineItem({ item, onValueChange, navigation,
           </TouchableOpacity>
         </View>
       }
-    </View>
+    </View >
   )
-
 }
 
 const StyledLabel = styled.Text`

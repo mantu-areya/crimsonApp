@@ -156,6 +156,7 @@ export const SubmitReviewForm = ({ setreadonly, inspVfDetails, inspId, navigatio
     hasNoError && hasNoError && updateSfVendorFormDetails(inspVfDetails, inspId, false).then(result => {
       result && updateSfVendorFormDetails(tempObject, inspId, true).then(response => {
         console.log("response", response)
+        alert("Submitted Successfully") // ! Need a proper alert component here
         setreadonly(true)
         navigation.navigate('HomeStack')
       })
