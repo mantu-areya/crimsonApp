@@ -143,9 +143,7 @@ color: #84919B;
 
 
 const DescriptionWrapper = styled.View`
-
 padding: 16px 16px 0;
-
 `
 
 const DescriptionText = styled.Text`
