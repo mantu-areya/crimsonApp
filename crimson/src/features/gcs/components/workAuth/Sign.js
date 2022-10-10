@@ -38,7 +38,7 @@ export default function Sign({ text, onOK }) {
           autoClear={false}
           descriptionText={text}
           backgroundColor={"white"}
-          penColor={"rgba(255,117,2,1)"}
+          penColor={"rgba(0,0,0)"}
           imageType="image/jpeg"
           minWidth={5}
           overlayHeight="100%"

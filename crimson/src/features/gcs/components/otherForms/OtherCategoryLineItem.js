@@ -5,8 +5,15 @@ import CameraIcon from 'react-native-vector-icons/EvilIcons';
 import styled from "styled-components/native";
 import React from "react";
 
+let requiredSubCategories = [
+    "Off Matrix - Pool",
+    "Off Matrix - Exterior",
+    "Off Matrix - Interior",
+    "Off Matrix - MEP"
+]
 
-export default function OtherCategoryLineItem({ item, onValueChange,navigation, readOnly }) {
+
+export default function OtherCategoryLineItem({ item, onValueChange, navigation, readOnly }) {
     const [isOpen, setIsOpen] = React.useState(false) // keep open in start
     const handleCollapseToggle = () => {
         setIsOpen(!isOpen);
@@ -15,6 +22,14 @@ export default function OtherCategoryLineItem({ item, onValueChange,navigation, 
     if (!item.Matrix_Price) {
         return null;
     }
+  
+    /**
+     * 
+    Pools - Off Matrix - Pool
+    Exterior- Off Matrix - Exterior
+    Interior - Off Matrix - Interior
+    mechanical - Off Matrix - MEP
+     */
 
 
     return (
@@ -50,29 +65,35 @@ export default function OtherCategoryLineItem({ item, onValueChange,navigation, 
                 isOpen &&
                 <View style={{ padding: 8, borderRadius: 8, marginVertical: 4 }}>
                     <StyledLabel >Quantity</StyledLabel>
-                    {readOnly?<Text>{item.Quantity ?? 0}</Text>:<StyledTextInput
+                    {readOnly ? <Text>{item.Quantity ?? 0}</Text> : <StyledTextInput
                         keyboardType="number-pad"
-                        onChangeText={val =>   onValueChange(Number(val), "Quantity", item.UniqueKey)} // ! Quantity should not be in decimal format
+                        onChangeText={val => onValueChange(Number(val), "Quantity", item.UniqueKey)} // ! Quantity should not be in decimal format
                         value={`${item.Quantity ?? 0}`}
                     />}
                     <StyledLabel >U/A</StyledLabel>
-                    {readOnly?<Text>{item.U_M ?? 0}</Text>:<StyledTextInput
+                    {readOnly ? <Text>{item.U_M ?? 0}</Text> : <StyledTextInput
                         onChangeText={val => onValueChange((val), "Quantity", item.UniqueKey)}
                         value={`${item.U_M ?? 0}`}
                         keyboardType="number-pad"
                     />}
                     <StyledLabel >Rate</StyledLabel>
-                    {readOnly?<Text>{item.Rate ?? 0}</Text>:<StyledTextInput
-                        onChangeText={val => {
-                            onValueChange((val.replace("$","")), "Rate", item.UniqueKey)
-                        }}
-                        value={`$${item.Rate}`}
-                        keyboardType="number-pad"
-                    />}
+                    {readOnly ? <Text>{item.Rate ?? 0}</Text> :
+                        requiredSubCategories.includes(item.Sub_Category) ?
+                            <StyledTextInput
+
+                                onChangeText={val => {
+                                    onValueChange((val.replace("$", "")), "Rate", item.UniqueKey)
+                                }}
+                                value={`$${item.Rate}`}
+                                keyboardType="number-pad"
+                            />
+                            :
+                            <Text>{item.Rate ?? 0}</Text>
+                    }
                     <StyledLabel >Total</StyledLabel>
-                    {readOnly?<Text>{item.Total ?? 0}</Text>:<StyledTextInput keyboardType="number-pad" value={`$${item.Total}`} />}
+                    {readOnly ? <Text>{item.Total ?? 0}</Text> : <StyledTextInput keyboardType="number-pad" value={`$${item.Total}`} />}
                     <StyledLabel >Scope Notes</StyledLabel>
-                    {readOnly?<Text>{item.Scope_Notesi ?? ''}</Text>:<StyledTextInput
+                    {readOnly ? <Text>{item.Scope_Notesi ?? ''}</Text> : <StyledTextInput
                         value={item.Scope_Notes}
                         multiline={true}
                         editable
