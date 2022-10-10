@@ -60,11 +60,12 @@ export const AppNavigator = () => {
       <HomeStack.Navigator>
         <HomeStack.Screen options={{ headerShown: false }}
           name="HomeStack" component={HomeScreen} />
-        <HomeStack.Screen options={{ headerShown: false }}
+        <HomeStack.Screen 
+        options={{ headerShown: false }}
           name="Inspections" component={InspectionsScreen} />
-        <HomeStack.Screen options={{ headerShown: false }}
+        <HomeStack.Screen   options={{ headerShown: false,}}
           name="InspectionsDetail" component={InspectionDetails} />
-        <HomeStack.Screen options={{ headerShown: false }}
+        <HomeStack.Screen options={{ headerShown: false, }}
           name="CameraScreen" component={CameraScreen} />
       </HomeStack.Navigator>
 
@@ -77,7 +78,9 @@ export const AppNavigator = () => {
 
       <Tab.Navigator screenOptions={screenOptions}>
         <Tab.Screen
-          options={{ headerShown: false }}
+          options={{ headerShown: false, tabBarStyle: {
+            display: 'none'
+          }  }}
           name="Home"
           component={HomeStackScreen}
         />
