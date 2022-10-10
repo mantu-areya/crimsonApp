@@ -22,25 +22,15 @@ export default function App() {
     'SF_LIGHT': require('./assets/fonts/SF_LIGHT.ttf'),
   });
 
-  let [oswaldLoaded] = useOswald({
-    Oswald_400Regular,
-    Oswald_700Bold, Oswald_600SemiBold,
+  const [urbanistLoaded] = useFonts({
+    'URBAN_BOLD': require('./assets/fonts/urbanist/Urbanist-Bold.ttf'),
+    'URBAN_MEDIUM': require('./assets/fonts/urbanist/Urbanist-Medium.ttf'),
+    'URBAN_REGULAR': require('./assets/fonts/urbanist/Urbanist-Regular.ttf'),
   });
 
-  let [latoLoaded] = useLato({
-    Lato_400Regular,
-  });
-
-  if (!oswaldLoaded || !latoLoaded || !sfProLoaded) {
+  if ( !sfProLoaded || !urbanistLoaded) {
     return null;
   }
-  const TAB_ICON = {
-    Home: "md-home",
-    Map: "md-map",
-    Settings: "md-settings",
-  };
-
-  console.log({sfProLoaded});
 
   return (
     <>
