@@ -3,7 +3,7 @@ import MUiIcon from 'react-native-vector-icons/MaterialIcons';
 import CameraIcon from 'react-native-vector-icons/EvilIcons';
 
 import styled from "styled-components/native";
-import React from "react";
+import React, { useEffect, useState } from "react";
 
 let requiredSubCategories = [
   "Off Matrix - Pool",
@@ -12,13 +12,18 @@ let requiredSubCategories = [
   "Off Matrix - MEP"
 ]
 
-export default function OtherCategoryLineItem({ item, onValueChange, navigation, readOnly }) {
+export default function OtherCategoryLineItem({ item, onValueChange, navigation, readOnly,setShowAddButton }) {
   const [isOpen, setIsOpen] = React.useState(false) // keep open in start
   const handleCollapseToggle = () => {
     setIsOpen(!isOpen);
   }
 
   const Sub_Category_Keys = ["Off Matrix - Pool", "Off Matrix - Exterior", "Off Matrix - Interior", "Off Matrix - MEP"]
+  const Category_Keys = ["Pools","Exterior","Interior","Mechanical, Electrical and Plumbing Systems"]
+    
+useEffect(()=>{
+  setShowAddButton(Category_Keys.includes(item?.Category)?true:false)
+},[])
 
   // ! dont render line item with no Matrix Price property
   // if (!item.Matrix_Price) {
@@ -35,7 +40,6 @@ export default function OtherCategoryLineItem({ item, onValueChange, navigation,
             Sub_Category_Keys.includes(item?.Sub_Category) ? <SubCategoryInput
               onChangeText={val => onValueChange((val), "Matrix_Price", item.UniqueKey)}
               value={`${item?.Matrix_Price ?? 0}`}
-              keyboardType="number-pad"
             />
               : <Text style={{ color: 'white', fontFamily: 'SF_BOLD', fontSize: 18 }}> {item?.Matrix_Price}</Text>
           ) : <Text style={{ color: 'white', fontFamily: 'SF_BOLD', fontSize: 18 }}> {item?.Matrix_Price?.substring(0, 70)}</Text>}</View>

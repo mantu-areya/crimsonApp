@@ -28,14 +28,14 @@ export const VendorFormContextProvider = ({ children }) => {
   //     "line_item_id":inspId,
   //   }
   // })
-
+    let date = new Date().toLocaleDateString()
+    let formatedDate = date.split('/')
   const data = [{
-      "file_name":"Contractor_Signature",
+      "file_name":"Contractor_Signature_"+formatedDate[2]+"-"+formatedDate[1]+"-"+formatedDate[0],
       "image_data": img,
       "parent_record_id":inspId,
       "image_type":"sign_item",
       "line_item_id":inspId,
-      "date":new Date().toLocaleDateString()
     }]
   uploadSignImage(data,inspId).then(result=>{
     addImagesToContex(inspId)
@@ -68,6 +68,7 @@ export const VendorFormContextProvider = ({ children }) => {
             ele['Room_Width'] = obj.Room_Width;
             ele['Room_Misc_SF'] = obj.Room_Misc_SF;
             ele['Room_Total'] = obj.Room_Total;
+            ele['Sub_Category'] = obj.Sub_Category;
           }
           return obj
         });

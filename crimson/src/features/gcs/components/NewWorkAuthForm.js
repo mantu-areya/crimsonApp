@@ -12,236 +12,238 @@ import Sign from './workAuth/Sign';
 
 
 export default function NewWorkAuthForm({ inspectionData, navigation }) {
-    let [general_Rental, setGeneral_Rental] = React.useState([])
-    let [pools, setPools] = React.useState([])
-    let [exterior, setExterior] = React.useState([])
-    let [interior, setInterior] = React.useState([])
-    let [mech_Elec_Plumb, setMech_Elec_Plumb] = React.useState([])
-    let [grandTotal, setGrandTotal] = React.useState(0.00)
-    let [isWorkAuthCreated, setIsWorkAuthCreated] = React.useState(false)
-    let [approvedItemsData, setApprovedItemsData] = React.useState([])
-    let [vendorFormData, setVendorFormData] = React.useState([])
-    const { vendorFormDetails, updateToSf, addSignature, contextImages } = React.useContext(VendorFormContext);
+  let [general_Rental, setGeneral_Rental] = React.useState([])
+  let [pools, setPools] = React.useState([])
+  let [exterior, setExterior] = React.useState([])
+  let [interior, setInterior] = React.useState([])
+  let [mech_Elec_Plumb, setMech_Elec_Plumb] = React.useState([])
+  let [grandTotal, setGrandTotal] = React.useState(0.00)
+  let [isWorkAuthCreated, setIsWorkAuthCreated] = React.useState(false)
+  let [approvedItemsData, setApprovedItemsData] = React.useState([])
+  let [vendorFormData, setVendorFormData] = React.useState([])
+  const { vendorFormDetails, updateToSf, addSignature, contextImages } = React.useContext(VendorFormContext);
 
-    const [img, setImg] = React.useState(null)
+  const [img, setImg] = React.useState(null)
 
-    const [modalVisible, setModalVisible] = React.useState(false);
+  const [modalVisible, setModalVisible] = React.useState(false);
 
-    const [isLoading, setIsLoading] = React.useState(false)
+  const [isLoading, setIsLoading] = React.useState(false)
 
-    const uploadImage = async () => {
+  const uploadImage = async () => {
 
-        try {
+    try {
 
-            setIsLoading(true);
+      setIsLoading(true);
 
 
 
-            let result = await ImagePicker.launchImageLibraryAsync({
-                mediaTypes: "Images",
-                aspect: [4, 3],
-                quality: 1,
-                base64: true,
-            });
+      let result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: "Images",
+        aspect: [4, 3],
+        quality: 1,
+        base64: true,
+      });
 
-            result = result.base64
+      result = result.base64
 
-            if (result) {
-                console.log(result, "kkk");
-                // setImg(result);
-                updateSignToContext(result)
-                setIsLoading(true);
-            }
+      if (result) {
+        console.log(result, "kkk");
+        // setImg(result);
+        updateSignToContext(result)
+        setIsLoading(true);
+      }
 
-        } catch (error) {
+    } catch (error) {
 
-            setIsLoading(false);
-            console.log(error);
-            alert('Upload Error' + error)
-
-        }
+      setIsLoading(false);
+      console.log(error);
+      alert('Upload Error' + error)
 
     }
 
-    const GetDataByCategory = (inspData) => {
+  }
 
-        let approvedItems = [];
-        let category1 = [];
-        let category2 = [];
-        let category3 = [];
-        let category4 = [];
-        let category5 = [];
-        let approvedTotal = 0
-        let grandTtl = 0.00;
-        let approved_Items_Count = 0;
-        let totalBidAmount = 0;
-        let approved_as_Noted_Count = 0;
-        let approvedasNotedAmount = 0;
-        let declined_Count = 0;
-        let declinedAmount = 0;
+  const GetDataByCategory = (inspData) => {
 
-        Object.keys(inspData).map(item => {
-            if (inspData[item].Approval_Status === "Approved") {
-                approvedTotal += inspData[item].Approved_Amount
-                approved_Items_Count += 1
-            }
-            if (inspData[item].Category === "General Rental Operations Scope") {
-                category1.push(inspData[item])
-            } else if (inspData[item].Category === "Pools") {
-                category2.push(inspData[item])
+    let approvedItems = [];
+    let category1 = [];
+    let category2 = [];
+    let category3 = [];
+    let category4 = [];
+    let category5 = [];
+    let approvedTotal = 0
+    let grandTtl = 0.00;
+    let approved_Items_Count = 0;
+    let totalBidAmount = 0;
+    let approved_as_Noted_Count = 0;
+    let approvedasNotedAmount = 0;
+    let declined_Count = 0;
+    let declinedAmount = 0;
 
-            } else if (inspData[item].Category === "Exterior") {
-                category3.push(inspData[item])
+    Object.keys(inspData).map(item => {
+      if (inspData[item].Approval_Status === "Approved") {
+        approvedTotal += inspData[item].Approved_Amount
+        approved_Items_Count += 1
+      }
+      if (inspData[item].Category === "General Rental Operations Scope") {
+        category1.push(inspData[item])
+      } else if (inspData[item].Category === "Pools") {
+        category2.push(inspData[item])
 
-            } else if (inspData[item].Category === "Interior") {
-                category4.push(inspData[item])
+      } else if (inspData[item].Category === "Exterior") {
+        category3.push(inspData[item])
 
-            } else if (inspData[item].Category === "Mechanical, Electrical and Plumbing Systems") {
-                category5.push(inspData[item])
+      } else if (inspData[item].Category === "Interior") {
+        category4.push(inspData[item])
 
-            }
-            if (inspData[item].Category !== "Room Measurements") {
-                grandTtl = grandTtl + (inspData[item].Total)
-            }
-            if (inspData[item].Approval_Status === "Declined") {
-                declinedAmount += inspData[item].Approved_Amount
-                declined_Count += 1
-            }
-            if (inspData[item].Quantity > 0) {
-                totalBidAmount += inspData[item].Total
-            }
-            if (inspData[item].Approval_Status === "Approved as Noted") {
-                approvedasNotedAmount += inspData[item].Approved_Amount
-                approved_as_Noted_Count += 1
-            }
+      } else if (inspData[item].Category === "Mechanical, Electrical and Plumbing Systems") {
+        category5.push(inspData[item])
 
-            if (inspData[item].Approval_Status === "Approved" || inspData[item].Approval_Status === "Approved as Noted") {
-                approvedItems.push(inspData[item])
-            }
-        })
-        setApprovedItemsData(approvedItems);
-        setGeneral_Rental(category1);
-        setPools(category2);
-        setExterior(category3);
-        setInterior(category4);
-        setMech_Elec_Plumb(category5);
-        setGrandTotal(grandTtl)
-        setVendorFormData(inspData)
+      }
+      if (inspData[item].Category !== "Room Measurements") {
+        grandTtl = grandTtl + (inspData[item].Total)
+      }
+      if (inspData[item].Approval_Status === "Declined") {
+        declinedAmount += inspData[item].Approved_Amount
+        declined_Count += 1
+      }
+      if (inspData[item].Quantity > 0) {
+        totalBidAmount += inspData[item].Total
+      }
+      if (inspData[item].Approval_Status === "Approved as Noted") {
+        approvedasNotedAmount += inspData[item].Approved_Amount
+        approved_as_Noted_Count += 1
+      }
+
+      if (inspData[item].Approval_Status === "Approved" || inspData[item].Approval_Status === "Approved as Noted") {
+        approvedItems.push(inspData[item])
+      }
+    })
+    setApprovedItemsData(approvedItems);
+    setGeneral_Rental(category1);
+    setPools(category2);
+    setExterior(category3);
+    setInterior(category4);
+    setMech_Elec_Plumb(category5);
+    setGrandTotal(grandTtl)
+    setVendorFormData(inspData)
+  }
+
+
+
+
+  React.useEffect(() => {
+    let contexRecord = vendorFormDetails[inspectionData.Id]
+
+    if (contexRecord) {
+      if (inspectionData.doCreateWAF__c) {
+        setIsWorkAuthCreated(true)
+        GetDataByCategory(contexRecord)
+      }
+      else {
+      }
     }
+  }, [vendorFormDetails]);
 
 
 
+  const updateSignToContext = (image) => {
+    addSignature(inspectionData.Id, image,)
+  }
 
-    React.useEffect(() => {
-        let contexRecord = vendorFormDetails[inspectionData.Id]
-
-        if (contexRecord) {
-            if (inspectionData.doCreateWAF__c) {
-                setIsWorkAuthCreated(true)
-                GetDataByCategory(contexRecord)
-            }
-            else {
-            }
-        }
-    }, [vendorFormDetails]);
-
-
-
-    const updateSignToContext = (image) => {
-        addSignature(inspectionData.Id, image)
-    }
-
-    React.useEffect(() => {
-        contextImages[inspectionData.Id] && contextImages[inspectionData.Id].map(ele => {
-            if (ele.file_name == "Contractor_Signature.jpeg") {
-                console.log(ele.file_public_url, "vfvfvfv");
-                setImg(ele.file_public_url)
-                return
-            }
-        })
-    }, [contextImages])
+  React.useEffect(() => {
+    contextImages[inspectionData.Id] && contextImages[inspectionData.Id].map(ele => {
+      let string = ele.file_name;
+      let substring = "Contractor_Signature";
+      if (string.includes(substring)) {
+        console.log(ele.file_public_url, "vfvfvfv");
+        setImg(ele.file_public_url)
+        return
+      }
+    })
+  }, [contextImages])
 
 
-    if (!isWorkAuthCreated) {
-        return (
-            <View>
-                <Text style={{ fontSize: 18, color: 'white', fontFamily: 'SF_LIGHT' }}>
-                    Work Auth form not created.
-                </Text>
-            </View>
-        )
-    }
-
-
-
+  if (!isWorkAuthCreated) {
     return (
-        <SafeAreaView style={{ flex: 1 }}>
+      <View>
+        <Text style={{ fontSize: 18, color: 'white', fontFamily: 'SF_LIGHT' }}>
+          Work Auth form not created.
+        </Text>
+      </View>
+    )
+  }
 
-            <BidReviewSummaryCard inspId={inspectionData?.Id} />
-            <ApprovedItemsTable approvedItems={approvedItemsData} />
 
-            <View style={{ flexDirection: "row" }}>
-                {/* Contractor Signature */}
-                <View style={{ padding: 16, flex: .5 }}>
-                    <Text style={{ fontSize: 12, fontFamily: 'SF_BOLD', color: 'white' }}>Contractor Signature</Text>
-                    {img &&
-                        <View style={{ justifyContent: 'center', marginVertical: 8, padding: 4 }}>
-                            <Image style={{
-                                width: 80,
-                                height: 80
-                            }} source={{ uri: img }} />
-                        </View>}
-                    {img && <Text style={{ fontSize: 12 }}>Date : {new Date().toDateString()}</Text>}
-                    {!img && <>
-                        <PaperButton style={{
-                            backgroundColor: 'black',
-                            color: "white",
-                            marginVertical: 2,
-                            marginTop: 4,
-                            width: 100,
-                            fontSize: 28
-                        }} mode="contained" onPress={() => setModalVisible(true)}>
-                            Sign
-                        </PaperButton>
-                        <PaperButton style={{
-                            backgroundColor: 'black',
-                            color: "white",
-                            marginVertical: 2,
-                            width: 100,
-                        }} loading={isLoading} mode="contained" onPress={uploadImage}>
-                            Upload
-                        </PaperButton>
-                    </>}
-                    {/* <Button title="Sign"  /> */}
-                    <Modal
-                        animationType="slide"
-                        transparent={true}
-                        visible={modalVisible}
-                        onRequestClose={() => {
-                            setModalVisible(!modalVisible);
-                        }}>
 
-                        {/* <Sign onOK={(e) => {
+  return (
+    <SafeAreaView style={{ flex: 1 }}>
+
+      <BidReviewSummaryCard inspId={inspectionData?.Id} />
+      <ApprovedItemsTable approvedItems={approvedItemsData} />
+
+      <View style={{ flexDirection: "row" }}>
+        {/* Contractor Signature */}
+        <View style={{ padding: 16, flex: .5 }}>
+          <Text style={{ fontSize: 12, fontFamily: 'SF_BOLD', color: 'white' }}>Contractor Signature</Text>
+          {img &&
+            <View style={{ justifyContent: 'center', marginVertical: 8, padding: 4 }}>
+              <Image style={{
+                width: 80,
+                height: 80
+              }} source={{ uri: img }} />
+            </View>}
+          {img && <Text style={{ fontSize: 12 }}>Date : {new Date().toDateString()}</Text>}
+          {!img && <>
+            <PaperButton style={{
+              backgroundColor: 'black',
+              color: "white",
+              marginVertical: 2,
+              marginTop: 4,
+              width: 100,
+              fontSize: 28
+            }} mode="contained" onPress={() => setModalVisible(true)}>
+              Sign
+            </PaperButton>
+            <PaperButton style={{
+              backgroundColor: 'black',
+              color: "white",
+              marginVertical: 2,
+              width: 100,
+            }} loading={isLoading} mode="contained" onPress={uploadImage}>
+              Upload
+            </PaperButton>
+          </>}
+          {/* <Button title="Sign"  /> */}
+          <Modal
+            animationType="slide"
+            transparent={true}
+            visible={modalVisible}
+            onRequestClose={() => {
+              setModalVisible(!modalVisible);
+            }}>
+
+            {/* <Sign onOK={(e) => {
                             setImg(e);
                             setModalVisible(!modalVisible);
                         }} text='Contractor Sign' /> */}
 
-                        <Sign onOK={(e) => {
-                            let bs64dataArray = e.split(',')
-                            setImg(e);
-                            setModalVisible(!modalVisible);
-                            updateSignToContext(bs64dataArray[1])
-                            setIsLoading(true);
-                        }} text='Contractor Sign' />
+            <Sign onOK={(e) => {
+              let bs64dataArray = e.split(',')
+              setImg(e);
+              setModalVisible(!modalVisible);
+              updateSignToContext(bs64dataArray[1])
+              setIsLoading(true);
+            }} text='Contractor Sign' />
 
 
-                    </Modal>
+          </Modal>
 
-                </View>
-                {/* HHM Signature */}
-                <View style={{ padding: 16, flex: .5, alignItems: "flex-end" }}>
-                    <Text style={{ fontSize: 12, fontFamily: 'SF_BOLD', color: 'white' }}>HHM Signature</Text>
-                    {/* {img &&
+        </View>
+        {/* HHM Signature */}
+        <View style={{ padding: 16, flex: .5, alignItems: "flex-end" }}>
+          <Text style={{ fontSize: 12, fontFamily: 'SF_BOLD', color: 'white' }}>HHM Signature</Text>
+          {/* {img &&
                       <View style={{ justifyContent: 'center', alignItems: 'flex-end', marginVertical: 8, padding: 4 }}>
                         <Image style={{
                           width: 80,
@@ -249,11 +251,11 @@ export default function NewWorkAuthForm({ inspectionData, navigation }) {
                         }} source={{ uri: img }} />
                       </View>}
                     <Text style={{ fontSize: 12 }}>Date : {new Date().toDateString()}</Text> */}
-                </View>
-            </View>
+        </View>
+      </View>
 
-        </SafeAreaView>
-    )
+    </SafeAreaView>
+  )
 }
 
 

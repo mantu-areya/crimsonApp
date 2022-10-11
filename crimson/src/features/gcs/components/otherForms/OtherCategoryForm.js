@@ -10,6 +10,7 @@ export default function OtherCategoryForm({ currFormdata, inspId, navigation ,re
 
     const { updateVfContect, addNewItem } = React.useContext(VendorFormContext);
     const [NewItemAdded, setNewItemAdded] = React.useState(0);
+    const [showAddButton , setShowAddButton] = React.useState(false)
 
     React.useEffect(() => {
         updateVfContect(dataList,"OTHRFM",inspId);
@@ -21,7 +22,7 @@ export default function OtherCategoryForm({ currFormdata, inspId, navigation ,re
         let newSequence = sequence + 1
         let Category = currFormdata && currFormdata[0].Category
         if (field == "newItem") {
-          const Category_Keys = {"Pools":"Off Matrix - Pool","Exterior":"Off Matrix - Exterior","Interior":"Off Matrix - Interior","mechanical":"Off Matrix - MEP"}
+          const Category_Keys = {"Pools":"Off Matrix - Pool","Exterior":"Off Matrix - Exterior","Interior":"Off Matrix - Interior","Mechanical, Electrical and Plumbing Systems":"Off Matrix - MEP"}
           Category_Keys && Object.keys(Category_Keys).map (ele=>{
             Category == ele && (Sub_Category = Category_Keys[ele])
           })
@@ -90,14 +91,14 @@ export default function OtherCategoryForm({ currFormdata, inspId, navigation ,re
                         data={dataList ?? []}
                         keyExtractor={(item) => item.UniqueKey}
                         renderItem={(item) => (
-                            <OtherCategoryLineItem item={item.item} onValueChange={onValueChange}  navigation={navigation} readOnly={readOnly}/>
+                            <OtherCategoryLineItem item={item.item} onValueChange={onValueChange}  navigation={navigation} readOnly={readOnly} setShowAddButton={setShowAddButton}/>
                         )}
                     /> :
                     <View style={{ padding: 16 }}>
                         <ActivityIndicator />
                     </View>
             }
-            {!readOnly && <View style={{ marginTop: 8 }}>
+            {!readOnly &&showAddButton &&  <View style={{ marginTop: 8 }}>
                     <Button mode="contained" onPress={handleAddNewItem}>
                       Add New Item
                     </Button>
