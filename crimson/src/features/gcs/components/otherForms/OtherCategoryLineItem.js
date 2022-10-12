@@ -49,7 +49,7 @@ useEffect(()=>{
                 Quantity: {item?.Quantity}
               </Text>
               <Text style={{ width: '33%', color: 'white', fontFamily: 'SF_LIGHT' }}>
-                Rate: ${item?.Rate.toFixed(2)}
+                Rate: ${ Number(item?.Rate).toFixed(2)}
               </Text>
               <Text style={{ width: '33%', color: 'white', fontFamily: 'SF_LIGHT' }}>
                 Total: ${item?.Total.toFixed(2)}
@@ -80,23 +80,23 @@ useEffect(()=>{
             keyboardType="number-pad"
           />}
           <StyledLabel >Rate</StyledLabel>
-          {readOnly ? <Text>{item.Rate ?? 0}</Text> :
+          {readOnly ? <Text>$ {item.Rate ?? 0}</Text> :
             requiredSubCategories.includes(item.Sub_Category) ?
               <StyledTextInput
 
                 onChangeText={val => {
-                  onValueChange((val.replace("$", "")), "Rate", item.UniqueKey)
+                  onValueChange(Number( (val.replace("$", ""))), "Rate", item.UniqueKey)
                 }}
                 value={`$${item.Rate}`}
                 keyboardType="number-pad"
               />
               :
-              <Text>{item.Rate ?? 0}</Text>
+              <Text>$ {item.Rate ?? 0}</Text>
           }
           <StyledLabel >Total</StyledLabel>
-          {readOnly ? <Text>{item.Total ?? 0}</Text> : <StyledTextInput keyboardType="number-pad" value={`$${item.Total}`} />}
+          {readOnly ? <Text>$ {item.Total ?? 0}</Text> : <StyledTextInput keyboardType="number-pad" value={`$${item.Total}`} />}
           <StyledLabel >Scope Notes</StyledLabel>
-          {readOnly ? <Text>{item.Scope_Notesi ?? ''}</Text> : <StyledTextInput
+          {readOnly ? <Text>{item.Scope_Notes ?? ''}</Text> : <StyledTextInput
             value={item.Scope_Notes}
             multiline={true}
             editable
@@ -104,10 +104,10 @@ useEffect(()=>{
             numberOfLines={4}
             style={{ height: 140, backgroundColor: 'white', padding: 16, paddingTop: 18, fontSize: 16, borderRadius: 8, marginBottom: 8 }}
           />}
-          <TouchableOpacity onPress={() => navigation.navigate("CameraScreen")} style={{ width: 132, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', backgroundColor: "white", padding: 8, borderRadius: 8 }}>
+          {!readOnly && <TouchableOpacity onPress={() => navigation.navigate("CameraScreen")} style={{ width: 132, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', backgroundColor: "white", padding: 8, borderRadius: 8 }}>
             <CameraIcon name="camera" size={28} color="black" />
             <Text >Capture Image</Text>
-          </TouchableOpacity>
+          </TouchableOpacity>}
         </View>
       }
     </View >

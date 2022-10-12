@@ -25,7 +25,7 @@ import OtherCategoryForm from "./OtherCategoryForm";
             {/* Totals */}
             <View style={{ alignItems: "flex-end", marginTop: 8 }}>
                 <Text style={{ fontSize: 16, fontFamily: 'SF_BOLD' }}>
-                    Grand Total: ${grandTotal.toFixed(2)}
+                GRAND TOTAL BID SUBMITTED : ${grandTotal.toFixed(2)}
                 </Text>
                 <Text style={{ fontSize: 14, fontFamily: 'SF_BOLD' }}>
                     {currentForm} Total: ${GetToal().toFixed(2)}
