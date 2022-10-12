@@ -4,24 +4,23 @@ import styled from 'styled-components/native'
 import Ionicons from "react-native-vector-icons/Ionicons"
 
 
-import * as NavigationBar from 'expo-navigation-bar';
 import { useNavigation } from '@react-navigation/native';
+import Overlay from 'react-native-modal-overlay';
 
 const image = { uri: 'https://reactjs.org/logo-og.png' };
 
 const Hero = () => {
-    const visibility = NavigationBar.useVisibility()
 
     const navigation = useNavigation()
+    const [overlayVisible, setOverlayVisible] = React.useState(false)
 
-    console.log({ visibility });
 
     return (
         <Container>
             {/* Image Background */}
-            <ImageBackgroundWrapper>
+            <ImageBackgroundWrapper onPress={() => setOverlayVisible(true)} >
 
-                <Image source={image} style={{ width: '100%', height: 320, borderRadius: 16 }} />
+                <Image  source={image} style={{ width: '100%', height: 320, borderRadius: 16 }} />
 
                 <InsideContentWrapper>
                     <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
@@ -35,13 +34,17 @@ const Hero = () => {
                 </InsideContentWrapper>
 
             </ImageBackgroundWrapper>
+            <Overlay childrenWrapperStyle={{backgroundColor: 'black'}} containerStyle={{ backgroundColor: 'black' }} visible={overlayVisible} onClose={() => setOverlayVisible(false)} closeOnTouchOutside >
+                <Ionicons onPress={() => setOverlayVisible(false)} name="close" color="white" size={32} />
+                <Image source={image} style={{ width: 320, height: 320, borderRadius: 16 }} />
+            </Overlay>
             {/* Description */}
             <DescriptionWrapper>
                 <Text style={{ color: 'black', fontFamily: 'URBAN_BOLD', fontSize: 16 }}>DESCRIPTION</Text>
-                <DescriptionText style={{marginTop: 14}}>
+                <DescriptionText style={{ marginTop: 14 }}>
                     2137 Janett Ln, Willingmington, WV 24921 is a 3 Bed Room Property with 4 Baths and 2400 Sq Ft. Built in 2022 this property is a New Construction.
                 </DescriptionText>
-                <DescriptionText style={{marginTop: 16}}>
+                <DescriptionText style={{ marginTop: 16 }}>
                     Inspection Schedule Date - 15.02.2022
                 </DescriptionText>
                 <DescriptionText>
