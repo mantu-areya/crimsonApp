@@ -93,13 +93,13 @@ export default function BidReviewSummaryCard({ inspId }) {
                                             <TableRowItemHeading>Contractor Bid Submitted Amount</TableRowItemHeading>
                                         </View>
                                         <View style={{ width: '25%' }}>
-                                            <TabelRowItemValue  >{summary?.totalBidSubmitted}</TabelRowItemValue>
+                                            <TabelRowItemValue  >${summary?.totalBidSubmitted}</TabelRowItemValue>
                                         </View>
                                         <View style={{ width: '25%' }}>
                                             <TableRowItemHeading style={{ textAlign: 'center' }} >$ Variance</TableRowItemHeading>
                                         </View>
                                         <View style={{ width: '25%' }}>
-                                            <TabelRowItemValue   >{summary?.variance}</TabelRowItemValue>
+                                            <TabelRowItemValue   >${summary?.variance}</TabelRowItemValue>
                                         </View>
                                     </TableRowWrapper>
                                     <TableRowWrapper style={{ flexDirection: 'row' }}>
@@ -107,7 +107,7 @@ export default function BidReviewSummaryCard({ inspId }) {
                                             <TableRowItemHeading >HHM Approved Amount</TableRowItemHeading>
                                         </View>
                                         <View style={{ width: '25%' }}>
-                                            <TabelRowItemValue   >{summary?.totalBidApproved}</TabelRowItemValue>
+                                            <TabelRowItemValue   >${summary?.totalAmount}</TabelRowItemValue>
                                         </View>
                                         <View style={{ width: '25%' }}>
                                             <TableRowItemHeading style={{ textAlign: 'center' }} >% Variance</TableRowItemHeading>
@@ -148,10 +148,10 @@ export default function BidReviewSummaryCard({ inspId }) {
                                                     <TabelRowItemValue >{item.count}</TabelRowItemValue>
                                                 </View>
                                                 <View style={{ width: '25%' }}>
-                                                    <TabelRowItemValue >{item.price}</TabelRowItemValue>
+                                                    <TabelRowItemValue >${item.price}</TabelRowItemValue>
                                                 </View>
                                                 <View style={{ width: '25%' }}>
-                                                    <TabelRowItemValue >{item.percentage}</TabelRowItemValue>
+                                                    <TabelRowItemValue >{item.percentage}%</TabelRowItemValue>
                                                 </View>
                                             </TableRowWrapper>)
                                     }
@@ -166,10 +166,10 @@ export default function BidReviewSummaryCard({ inspId }) {
                                         <TabelRowItemValue >{summary?.countSubmitted}</TabelRowItemValue>
                                     </View>
                                     <View style={{ width: '25%' }}>
-                                        <TabelRowItemValue >{summary?.totalAmount}</TabelRowItemValue>
+                                        <TabelRowItemValue >${summary?.totalAmount}</TabelRowItemValue>
                                     </View>
                                     <View style={{ width: '25%' }}>
-                                        <TabelRowItemValue >{summary?.percentageTotalAmount}</TabelRowItemValue>
+                                        <TabelRowItemValue >{summary?.percentageTotalAmount}%</TabelRowItemValue>
                                     </View>
                                 </TableHeader>
                             </>

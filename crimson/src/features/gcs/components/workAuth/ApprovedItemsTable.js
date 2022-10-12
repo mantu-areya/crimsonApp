@@ -82,10 +82,10 @@ export const ApprovedItemsTable = ({ approvedItems, updateLocalData, inspId }) =
                                         <Text style={{ height: 64, width: 120, flex: 1, fontSize: 16, fontFamily: 'SF_LIGHT' }}>{item?.Scope_Notes}</Text>
                                         <Text style={{ height: 64, textAlign: 'center', width: 120, flex: 1, fontSize: 16, fontFamily: 'SF_LIGHT' }}>{item?.Approval_Status}</Text>
                                         <Text style={{ height: 64, textAlign: 'center', width: 120, flex: 1, fontSize: 16, fontFamily: 'SF_LIGHT' }}>{item?.Owner_Clarification}</Text>
-                                        <Text style={{ height: 64, textAlign: 'center', width: 120, flex: 1, fontSize: 16, fontFamily: 'SF_LIGHT' }}>{item?.Quantity}</Text>
+                                        <Text style={{ height: 64, textAlign: 'center', width: 120, flex: 1, fontSize: 16, fontFamily: 'SF_LIGHT' }}>{ item?.Adj_Quantity}</Text>
                                         <Text style={{ height: 64, textAlign: 'center', width: 120, flex: 1, fontSize: 16, fontFamily: 'SF_LIGHT' }}>{item?.U_M}</Text>
-                                        <Text style={{ height: 64, textAlign: 'center', width: 120, flex: 1, fontSize: 16, fontFamily: 'SF_LIGHT' }}>${item?.Rate.toFixed(2)}</Text>
-                                        <Text style={{ height: 64, textAlign: 'center', width: 120, flex: 1, fontSize: 16, fontFamily: 'SF_LIGHT' }}>${item?.Total.toFixed(2)}</Text>
+                                        <Text style={{ height: 64, textAlign: 'center', width: 120, flex: 1, fontSize: 16, fontFamily: 'SF_LIGHT' }}>${item?.Adj_Rate.toFixed(2)}</Text>
+                                        <Text style={{ height: 64, textAlign: 'center', width: 120, flex: 1, fontSize: 16, fontFamily: 'SF_LIGHT' }}>${item?.Approved_Amount.toFixed(2)}</Text>
                                     </View>
                                 )
                                 }
