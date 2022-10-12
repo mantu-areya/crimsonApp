@@ -73,11 +73,10 @@ useEffect(()=>{
             onChangeText={val => onValueChange(Number(val), "Quantity", item.UniqueKey)} // ! Quantity should not be in decimal format
             value={`${item.Quantity ?? 0}`}
           />}
-          <StyledLabel >U/A</StyledLabel>
+          <StyledLabel >U/M</StyledLabel>
           {readOnly ? <Text>{item.U_M ?? 0}</Text> : <StyledTextInput
             onChangeText={val => onValueChange((val), "Quantity", item.UniqueKey)}
             value={`${item.U_M ?? 0}`}
-            keyboardType="number-pad"
           />}
           <StyledLabel >Rate</StyledLabel>
           {readOnly ? <Text>$ {item.Rate ?? 0}</Text> :
