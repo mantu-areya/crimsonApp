@@ -46,15 +46,27 @@ const InspectionDetails = () => {
   const [currentForm, setCurrentForm] = React.useState("General Scope Notes")
   const currentFormData = new Array(20).fill(1).map((v, i) => (currentForm + (i * v)))
 
+  const [show,setShow] = React.useState(false);
+  const [offSetY,setOffSetY] = React.useState(0);
+
+  React.useEffect(() => {
+    if (offSetY < 200) {
+      console.log("Hiding Call");
+      setShow(true);
+    } else {
+      setShow(false)
+    }
+  },[offSetY])
+
   return (
     <SafeAreaView style={{ flex: 1 }}>
-      <ScrollView>
+      <ScrollView onScroll={(e) => setOffSetY(e.nativeEvent.contentOffset.y)}>
         {/* Hero */}
         <Hero />
         {/* CTA's */}
         <CTA handleOnChat={() => alert("Chat")} handleOnSubmit={() => alert("Submit")} />
         {/* Forms */}
-        <View style={{ height: 360 }}>
+        <View style={{ height: 560 }}>
           {/* Menu */}
           <MenuWrapper >
             {
@@ -72,7 +84,8 @@ const InspectionDetails = () => {
 
       </ScrollView>
       {/* Call Now */}
-      <CallNow />
+    
+       {show && <CallNow /> } 
     </SafeAreaView>
   )
 }
@@ -100,18 +113,18 @@ function FormLineItem({ item }) {
   };
 
   const rightButtons = [
-    <TouchableOpacity onPress={() => { alert("Add Notes")}} style={{backgroundColor: '#F0BA91',justifyContent:'center',alignItems: 'center',width:64,flex:1}}>
+    <TouchableOpacity onPress={() => { alert("Add Notes") }} style={{ backgroundColor: '#F0BA91', justifyContent: 'center', alignItems: 'center', width: 64, flex: 1 }}>
       <View>
-        <MaterialCommunityIcons name="note-plus" size={24}  />
+        <MaterialCommunityIcons name="note-plus" size={24} />
         {/* <Text>Add Notes</Text> */}
       </View>
     </TouchableOpacity>,
-     <TouchableOpacity onPress={() => { alert("Delete")}} style={{backgroundColor: '#F3206F',justifyContent:'center',alignItems: 'center',width:64,flex:1}}>
-     <View>
-       <MaterialCommunityIcons name="delete" size={24} color="white" />
-       {/* <Text>Delete</Text> */}
-     </View>
-   </TouchableOpacity>
+    <TouchableOpacity onPress={() => { alert("Delete") }} style={{ backgroundColor: '#F3206F', justifyContent: 'center', alignItems: 'center', width: 64, flex: 1 }}>
+      <View>
+        <MaterialCommunityIcons name="delete" size={24} color="white" />
+        {/* <Text>Delete</Text> */}
+      </View>
+    </TouchableOpacity>
   ];
 
 
