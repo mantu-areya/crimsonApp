@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity, ScrollView, FlatList, TextInput } from 'react-native'
+import { View, Text, TouchableOpacity, ScrollView, FlatList, TextInput, Animated, TouchableHighlight } from 'react-native'
 import React from 'react'
 import { SafeAreaView } from "react-native-safe-area-context"
 import CallNow from '../components/inspection-details/CallNow'
@@ -10,6 +10,10 @@ import styled from 'styled-components/native'
 import Overlay from 'react-native-modal-overlay';
 import Ionicons from "react-native-vector-icons/Ionicons"
 import { Button } from "react-native-paper"
+// import Swipeable from 'react-native-gesture-handler/Swipeable';
+import { RectButton } from 'react-native-gesture-handler';
+import Swipeable from 'react-native-swipeable';
+
 
 
 const menuItems = [
@@ -76,26 +80,64 @@ const InspectionDetails = () => {
 function FormLineItem({ item }) {
   const [overlayVisible, setOverlayVisible] = React.useState(false)
 
+  const renderLeftActions = (progress, dragX) => {
+    const trans = dragX.interpolate({
+      inputRange: [0, 50, 100, 101],
+      outputRange: [-2, 0, 0, 1],
+    });
+    return (
+      <RectButton style={{ backgroundColor: 'blue', justifyContent: 'center', alignItems: 'center' }} onPress={() => { alert("ARCHIVE") }}>
+        <Animated.Text
+          style={[
+            {
+              transform: [{ translateX: trans }],
+            },
+          ]}>
+          <Ionicons name="share" size={24} color="white" />
+        </Animated.Text>
+      </RectButton>
+    );
+  };
+
+  const rightButtons = [
+    <TouchableOpacity onPress={() => { alert("Add Notes")}} style={{backgroundColor: '#F0BA91',justifyContent:'center',alignItems: 'center',width:64,flex:1}}>
+      <View>
+        <MaterialCommunityIcons name="note-plus" size={24}  />
+        {/* <Text>Add Notes</Text> */}
+      </View>
+    </TouchableOpacity>,
+     <TouchableOpacity onPress={() => { alert("Delete")}} style={{backgroundColor: '#F3206F',justifyContent:'center',alignItems: 'center',width:64,flex:1}}>
+     <View>
+       <MaterialCommunityIcons name="delete" size={24} color="white" />
+       {/* <Text>Delete</Text> */}
+     </View>
+   </TouchableOpacity>
+  ];
+
+
   return (
     <>
-      <LineItemWrapper >
-        <View style={{ flex: 1 }}>
-          <LineItemHeading>
-            {item}
-          </LineItemHeading>
-          <LineItemInputGroup>
-            {/* QTY */}
-            <LineItemInputText onPress={() => setOverlayVisible(true)}>Qty +</LineItemInputText>
-            {/* RATE */}
-            <LineItemInputText onPress={() => setOverlayVisible(true)}>Rate +</LineItemInputText>
-            {/* NOTES */}
-            <LineItemInputText onPress={() => setOverlayVisible(true)}>Notes +</LineItemInputText>
-          </LineItemInputGroup>
-        </View>
-        {/* Icon */}
-        <Ionicons name="camera" size={24} />
 
-      </LineItemWrapper>
+      <Swipeable rightButtons={rightButtons}>
+        <LineItemWrapper >
+          <View style={{ flex: 1 }}>
+            <LineItemHeading>
+              {item}
+            </LineItemHeading>
+            <LineItemInputGroup>
+              {/* QTY */}
+              <LineItemInputText onPress={() => setOverlayVisible(true)}>Qty +</LineItemInputText>
+              {/* RATE */}
+              <LineItemInputText onPress={() => setOverlayVisible(true)}>Rate +</LineItemInputText>
+              {/* NOTES */}
+              <LineItemInputText onPress={() => setOverlayVisible(true)}>Notes +</LineItemInputText>
+            </LineItemInputGroup>
+          </View>
+          {/* Icon */}
+          <Ionicons name="camera" size={24} />
+
+        </LineItemWrapper>
+      </Swipeable>
       <Overlay visible={overlayVisible} onClose={() => setOverlayVisible(false)} closeOnTouchOutside >
 
         <LineItemHeading>
@@ -121,6 +163,7 @@ function FormLineItem({ item }) {
 
       </Overlay>
     </>
+
   )
 
 }
