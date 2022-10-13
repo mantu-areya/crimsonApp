@@ -4,7 +4,7 @@ import { VendorFormContext } from "../../../../services/context/VendorForm/vendo
 import OtherCategoryLineItem from "./OtherCategoryLineItem";
 import { Button } from "react-native-paper";
 
-export default function OtherCategoryForm({ currFormdata, inspId, navigation ,readOnly, sequence, setSequence}) {
+export default function OtherCategoryForm({ currFormdata, inspId, navigation ,readOnly, sequence, setSequence, currFormName}) {
 
     const [dataList,setDatalist] = React.useState([])
 
@@ -91,7 +91,7 @@ export default function OtherCategoryForm({ currFormdata, inspId, navigation ,re
                         data={dataList ?? []}
                         keyExtractor={(item) => item.UniqueKey}
                         renderItem={(item) => (
-                            <OtherCategoryLineItem item={item.item} onValueChange={onValueChange}  navigation={navigation} readOnly={readOnly} setShowAddButton={setShowAddButton}/>
+                            <OtherCategoryLineItem item={item.item} onValueChange={onValueChange}  navigation={navigation} readOnly={readOnly} setShowAddButton={setShowAddButton} formTabName={currFormName} inspId={inspId}/>
                         )}
                     /> :
                     <View style={{ padding: 16 }}>
