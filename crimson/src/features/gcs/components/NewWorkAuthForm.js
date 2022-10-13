@@ -28,6 +28,7 @@ export default function NewWorkAuthForm({ inspectionData, navigation }) {
   const [modalVisible, setModalVisible] = React.useState(false);
 
   const [isLoading, setIsLoading] = React.useState(false)
+  const [signDate,setSignDate] = React.useState()
 
   const uploadImage = async () => {
 
@@ -156,7 +157,8 @@ export default function NewWorkAuthForm({ inspectionData, navigation }) {
       let string = ele.file_name;
       let substring = "Contractor_Signature";
       if (string.includes(substring)) {
-        console.log(ele.file_public_url, "vfvfvfv");
+        // console.log(ele.file_public_url, "vfvfvfv");
+        setSignDate(ele.file_name.split(  /["Contractor_Signature_  " .jpg]+/)[1])
         setImg(ele.file_public_url)
         return
       }
@@ -238,7 +240,7 @@ export default function NewWorkAuthForm({ inspectionData, navigation }) {
 
 
           </Modal>
-
+          <Text style={{ fontSize: 12, fontFamily: 'SF_BOLD', color: 'white' }}>Date: {signDate&&signDate}</Text>
         </View>
         {/* HHM Signature */}
         <View style={{ padding: 16, flex: .5, alignItems: "flex-end" }}>
