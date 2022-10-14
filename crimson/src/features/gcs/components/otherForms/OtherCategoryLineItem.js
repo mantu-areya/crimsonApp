@@ -12,7 +12,7 @@ let requiredSubCategories = [
   "Off Matrix - MEP"
 ]
 
-export default function OtherCategoryLineItem({ item, onValueChange, navigation, readOnly,setShowAddButton }) {
+export default function OtherCategoryLineItem({ item, onValueChange, navigation, readOnly,setShowAddButton,  inspId}) {
   const [isOpen, setIsOpen] = React.useState(false) // keep open in start
   const handleCollapseToggle = () => {
     setIsOpen(!isOpen);

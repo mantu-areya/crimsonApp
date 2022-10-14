@@ -82,9 +82,9 @@ export const CameraScreen = ({navigation}) => {
     const newImages = [...images];
     newImages.push({ uri: photo.uri, imagData : base64});
     setImages(newImages);
-
+    
     setPreviewVisible(true)
-    //setStartCamera(false)
+    setStartCamera(false)
     setCapturedImage(photo)
   }
 
@@ -95,13 +95,13 @@ export const CameraScreen = ({navigation}) => {
     var linItemId;
     navigation.getState().routes.forEach(element => {
       if(element.name == 'CameraScreen'){
-        recId = element.params.lineItemId;
-        linItemId = element.params.inspId.inspId;
+        linItemId = element.params.lineItemId;
+        recId = element.params.inspId.inspId;
         console.log(element.params.lineItemId)
         console.log(element.params.inspId.inspId)
       }
     }); 
-    var i = 1; 
+    var i = 1;
     images.forEach(img=>{
       
       var imageData = {
@@ -111,11 +111,11 @@ export const CameraScreen = ({navigation}) => {
         "image_type":"line_item",
         "line_item_id":linItemId,
       }
-      imagelst.push(imageData)
+      imagelst.push(imageData);
+      i++; 
     })
-    
-      uploadSignImage(imagelst,true).then(result=>{
-        console.log('')
+      uploadSignImage(imagelst,recId).then(result=>{
+        console.log('hjhjjh')
       })
     
     navigation.goBack();
