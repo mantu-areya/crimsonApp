@@ -1,7 +1,7 @@
 import { Text, TouchableOpacity, View } from "react-native";
 import MUiIcon from 'react-native-vector-icons/MaterialIcons';
 import CameraIcon from 'react-native-vector-icons/EvilIcons';
-
+import { uploadSignImage } from "../../../../services/inspections/inspections.service";
 import styled from "styled-components/native";
 import React, { useEffect, useState } from "react";
 
@@ -12,7 +12,7 @@ let requiredSubCategories = [
   "Off Matrix - MEP"
 ]
 
-export default function OtherCategoryLineItem({ item, onValueChange, navigation, readOnly,setShowAddButton }) {
+export default function OtherCategoryLineItem({ item, onValueChange, navigation, readOnly,setShowAddButton,  inspId}) {
   const [isOpen, setIsOpen] = React.useState(false) // keep open in start
   const handleCollapseToggle = () => {
     setIsOpen(!isOpen);
@@ -103,7 +103,7 @@ useEffect(()=>{
             numberOfLines={4}
             style={{ height: 140, backgroundColor: 'white', padding: 16, paddingTop: 18, fontSize: 16, borderRadius: 8, marginBottom: 8 }}
           />}
-          {!readOnly && <TouchableOpacity onPress={() => navigation.navigate("CameraScreen")} style={{ width: 132, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', backgroundColor: "white", padding: 8, borderRadius: 8 }}>
+          {!readOnly && <TouchableOpacity onPress={() => navigation.navigate("CameraScreen",{inspId : {inspId}, lineItemId : item.Id })} style={{ width: 132, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', backgroundColor: "white", padding: 8, borderRadius: 8 }}>
             <CameraIcon name="camera" size={28} color="black" />
             <Text >Capture Image</Text>
           </TouchableOpacity>}

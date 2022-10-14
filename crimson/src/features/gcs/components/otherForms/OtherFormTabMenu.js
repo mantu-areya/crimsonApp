@@ -42,7 +42,7 @@ import OtherCategoryForm from "./OtherCategoryForm";
                 </View>
             </ScrollView>
             {/* Other Forms */}
-            <OtherCategoryForm currFormdata={formsData[currentForm]} inspId={inspId} navigation={navigation} readOnly={readOnly} setSequence={setSequence} sequence={sequence} />
+            <OtherCategoryForm currFormdata={formsData[currentForm]} currFormName={currentForm} inspId={inspId} navigation={navigation} readOnly={readOnly} setSequence={setSequence} sequence={sequence} />
         </View>
     )
 }

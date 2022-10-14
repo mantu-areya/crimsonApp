@@ -257,9 +257,3 @@ export default function NewWorkAuthForm({ inspectionData, navigation }) {
     </SafeAreaView>
   )
 }
-
-
-
-
-
-

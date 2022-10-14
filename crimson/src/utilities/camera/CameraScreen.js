@@ -1,20 +1,33 @@
 import styled from "styled-components/native";
 import React, { useRef, useState, useEffect } from "react";
 import { Camera } from "expo-camera";
+import * as FileSystem from 'expo-file-system';
+import { ActivityIndicator } from "react-native-paper";
 import { Text } from "../../components/typography/text.component";
 import { SafeArea } from "../../components/utility/safe-area.component";
 import { StyleSheet, View, TouchableOpacity, Alert, ImageBackground, Image, FlatList, ScrollView } from 'react-native'
 import { Spacer } from "../../components/spacer/spacer.component";
+import { uploadSignImage } from "../../services/inspections/inspections.service";
 import { Col, Row } from "react-native-responsive-grid-system";
 const CameraView = styled(Camera)`
   width: 100%;
-  height: 100%;
+  height: 100%; 
   position:absolute;
 `;
 
 const CaptureButton = styled(TouchableOpacity)`
-margin-top:170%;
-margin-left:40%
+margin-top:145%;
+margin-left:19%
+`;
+
+const ReTakeButton = styled(TouchableOpacity)`
+margin-top:150%;
+margin-left:5%
+`;
+
+const ConfirmButton = styled(TouchableOpacity)`
+margin-top:150%;
+margin-left:19%
 `;
 
 const Images = styled(ImageBackground).attrs({
@@ -23,7 +36,15 @@ margin:3px;
 width:50px;
 `;
 
-export const CameraScreen = () => {
+const Loading = styled(ActivityIndicator)`
+  margin-left: -25px;
+`;
+
+const LoadingContainer = styled.View`
+margin-top:50%;
+`;
+
+export const CameraScreen = ({navigation}) => {
   const [hasPermission, setHasPermission] = useState(null);
   const cameraRef = useRef();
   const [startCamera, setStartCamera] = React.useState(false)
@@ -38,7 +59,7 @@ export const CameraScreen = () => {
       setHasPermission(status === "granted");
     })();
   }, []);
-
+  
   const __startCamera = async () => {
     const { status } = await Camera.requestCameraPermissionsAsync()
     console.log(status)
@@ -50,22 +71,60 @@ export const CameraScreen = () => {
   }
 
   const __takePicture = async () => {
-    const photo = await cameraRef.current.takePictureAsync();
+    const photo = await cameraRef.current.takePictureAsync({
+      mediaTypes:"Images",
+      allowsEditing:true,
+      aspect:[4,3],
+      quality:0.1
+  })
+    const base64 = await FileSystem.readAsStringAsync(photo.uri, { encoding: 'base64' });
     console.log(photo.uri, "ee")
     const newImages = [...images];
-    newImages.push({ uri: photo.uri });
+    newImages.push({ uri: photo.uri, imagData : base64});
     setImages(newImages);
-
+    
     setPreviewVisible(true)
-    //setStartCamera(false)
+    setStartCamera(false)
     setCapturedImage(photo)
   }
 
-  const __savePhoto = () => { }
-  const __retakePicture = () => {
-    setCapturedImage(null)
-    setPreviewVisible(false)
-    __startCamera()
+  const __savePhoto = () => {
+    var imagelst=[];
+    
+    var recId;
+    var linItemId;
+    navigation.getState().routes.forEach(element => {
+      if(element.name == 'CameraScreen'){
+        linItemId = element.params.lineItemId;
+        recId = element.params.inspId.inspId;
+        console.log(element.params.lineItemId)
+        console.log(element.params.inspId.inspId)
+      }
+    }); 
+    var i = 1;
+    images.forEach(img=>{
+      
+      var imageData = {
+        "file_name":linItemId + '_' + i,
+        "image_data": img.imagData,
+        "parent_record_id":recId,
+        "image_type":"line_item",
+        "line_item_id":linItemId,
+      }
+      imagelst.push(imageData);
+      i++; 
+    })
+      uploadSignImage(imagelst,recId).then(result=>{
+        console.log('hjhjjh')
+      })
+    
+    navigation.goBack();
+  }
+  const __retakePicture = async () => {
+    const photo = await cameraRef.current.takePictureAsync();
+    images.pop()
+    setPreviewVisible(true)
+    setCapturedImage(photo)
   }
 
   if (hasPermission === null) {
@@ -87,13 +146,27 @@ export const CameraScreen = () => {
         ref={(camera) => (cameraRef.current = camera)}
       >
         <SafeArea>
+
+        <View style={{ padding: 16 }}>
+                                <ActivityIndicator />
+                            </View>
           {previewVisible && capturedImage && <CameraPreview photo={capturedImage} savePhoto={() => { __savePhoto }} retakePicture={() => { __retakePicture }} images={images} />}
 
           <Col>
-{/* <Row>
+            {/* <Row>
   <Text>action button</Text>
 </Row> */}
             <Row>
+              <ReTakeButton onPress={__retakePicture} >
+                <Text
+                  style={{
+                    color: '#fff',
+                    fontSize: 20
+                  }}
+                >
+                  Re-take
+                </Text>
+              </ReTakeButton>
               <CaptureButton
                 onPress={__takePicture}
                 style={{
@@ -105,6 +178,16 @@ export const CameraScreen = () => {
 
                 }}
               />
+              <ConfirmButton onPress={__savePhoto}>
+                <Text
+                  style={{
+                    color: '#fff',
+                    fontSize: 20
+                  }}
+                >
+                  Confirm
+                </Text>
+              </ConfirmButton>
             </Row>
 
           </Col>
