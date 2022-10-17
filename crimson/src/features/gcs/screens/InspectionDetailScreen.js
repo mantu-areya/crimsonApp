@@ -40,7 +40,8 @@ export const InspectionDetailScreen = ({ route, navigation }) => {
   }, []);
 
   useEffect(() => {
-    inspectionData.Vendor_Bid_Submission_Complete__c && setreadonly(true)
+    let stagesArray = ["Work Auth Form Completed","Reviewer Form Completed","Vendor Form Completed"]
+    stagesArray.includes(inspectionData.Inspection_Form_Stage__c) && setreadonly(true)
   }, [inspectionData])
 
   const handleSubmit = () => {

@@ -4,7 +4,7 @@ import { Button } from "react-native-paper";
 import { VendorFormContext } from "../../../../services/context/VendorForm/vendorForm.contex";
 import OtherCategoryForm from "./OtherCategoryForm";
 
- export default function OtherFormTabMenu({ formsData, inspId, grandTotal, navigation ,readOnly}) {
+ export default function OtherFormTabMenu({ formsData, inspId, grandTotal, navigation ,readOnly,sequence, setSequence}) {
     const [currentForm, setCurrentForm] = React.useState('General Rental Operations Scope')
   const { vendorFormDetails, updateToSf } = React.useContext(VendorFormContext);
     const GetToal = () => {
@@ -25,7 +25,7 @@ import OtherCategoryForm from "./OtherCategoryForm";
             {/* Totals */}
             <View style={{ alignItems: "flex-end", marginTop: 8 }}>
                 <Text style={{ fontSize: 16, fontFamily: 'SF_BOLD' }}>
-                    Grand Total: ${grandTotal.toFixed(2)}
+                GRAND TOTAL BID SUBMITTED : ${grandTotal.toFixed(2)}
                 </Text>
                 <Text style={{ fontSize: 14, fontFamily: 'SF_BOLD' }}>
                     {currentForm} Total: ${GetToal().toFixed(2)}
@@ -42,7 +42,7 @@ import OtherCategoryForm from "./OtherCategoryForm";
                 </View>
             </ScrollView>
             {/* Other Forms */}
-            <OtherCategoryForm currFormdata={formsData[currentForm]} inspId={inspId} navigation={navigation} readOnly={readOnly}/>
+            <OtherCategoryForm currFormdata={formsData[currentForm]} inspId={inspId} navigation={navigation} readOnly={readOnly} setSequence={setSequence} sequence={sequence} />
         </View>
     )
 }

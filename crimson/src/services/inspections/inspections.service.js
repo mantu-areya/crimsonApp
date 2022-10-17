@@ -163,13 +163,13 @@ export const updateSfVendorFormDetails = async (data,inspId,submitStatus=false) 
 }
 
 
-export const uploadSignImage = async (data,base64Flag) => {
+export const uploadSignImage = async (data,inspId) => {
   const token = await getStoredToken();
   console.log("uploading Sign Image");
   console.log(data.parent_record_id > "1.txt");
   console.log(data.parent_record_id);
   return apiPut(
-    `https://hudsonhomesmgmt--uat.sandbox.my.salesforce.com/services/apexrest/crimson/insertImages?base64=${base64Flag}`,
+    `https://hudsonhomesmgmt--uat.sandbox.my.salesforce.com/services/apexrest/crimson/insertImages?recordId=${inspId}`,
     data,
     {      
       headers: {
