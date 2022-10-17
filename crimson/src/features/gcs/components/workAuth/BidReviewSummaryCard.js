@@ -85,7 +85,7 @@ export default function BidReviewSummaryCard({ inspId }) {
                                             <TableSectionHeadings >Scope</TableSectionHeadings>
                                         </View>
                                         <View style={{ width: '25%' }}>
-                                            <TableSectionHeadings style={{ textAlign: 'center' }}  >Amount</TableSectionHeadings>
+                                            <TableSectionHeadings style={{ textAlign: 'center' }}  >QTY</TableSectionHeadings>
                                         </View>
                                     </TableHeader>
                                     <TableRowWrapper style={{ flexDirection: 'row' }}>

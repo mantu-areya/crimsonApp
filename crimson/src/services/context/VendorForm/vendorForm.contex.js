@@ -31,12 +31,13 @@ export const VendorFormContextProvider = ({ children }) => {
     let date = new Date().toLocaleDateString()
     let formatedDate = date.split('/')
   const data = [{
-      "file_name":"Contractor_Signature_"+formatedDate[2]+"-"+formatedDate[1]+"-"+formatedDate[0],
+      "file_name":"Contractor_Signature_"+new Date().toISOString().slice(0, 10),
       "image_data": img,
       "parent_record_id":inspId,
       "image_type":"sign_item",
       "line_item_id":inspId,
     }]
+    console.log(data.file_name);
   uploadSignImage(data,inspId).then(result=>{
     addImagesToContex(inspId)
     return result

@@ -189,6 +189,14 @@ const SubCategoryTextInput = styled.TextInput`
     text-align: center;
     background-color:white;
     border-radius:4px;
+    `;
+
+    const FormTextInput = styled.TextInput`
+    flex: 2;
+    font-family: SF_LIGHT;
+    text-align: center;
+    background-color:white;
+    border-radius:4px;
     margin: 0px 2px;
     `;
 const SubCategoryTextLabel = styled.Text`
@@ -227,7 +235,7 @@ function RoomMeasurementLineItem({ item, onValueChange, readOnly }) {
           value={`${item.Sub_Category}`}
         />}
       {/* Length */}
-      {readOnly ? <SubCategoryTextLabel>{length}</SubCategoryTextLabel> : <SubCategoryTextInput
+      {readOnly ? <SubCategoryTextLabel>{length}</SubCategoryTextLabel> : <FormTextInput
         keyboardType="number-pad"
         onChangeText={val => onValueChange((val), "Room_Length", item.UniqueKey)}
         value={`${length}`}
