@@ -1,9 +1,10 @@
-import { View, Text } from 'react-native'
+import { View, Text, TextInput } from 'react-native'
 import React from 'react'
 import styled from 'styled-components/native'
 import { useSafeAreaInsets } from "react-native-safe-area-context"
-import { TextInput, Button } from 'react-native-paper'
+import { Button, IconButton } from 'react-native-paper'
 import { AuthContext } from '../../contexts/AuthContext'
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 
 
 const shadowStyle = {
@@ -34,36 +35,42 @@ const Login = ({ navigation }) => {
                 <Title>
                     CRIMSON
                 </Title>
-                {/* Sub Title */}
-                <SubTitle>
-                    Welcome Back,
-                </SubTitle>
                 {/* Email */}
-                <StyledTextInput
-                    label="Email"
-                    placeholder="Enter Your Email"
-                    placeholderColor="#E1EDF9"
-                    value={email}
-                    mode="outlined"
-                    outlineColor="#E1EDF9"
-                    activeOutlineColor="#4B39EF"
-                    right={<TextInput.Icon color="#96A1AC" icon={"email"} />}
-                    onChangeText={email => setEmail(email)}
-                />
-                {/* Password */}
-                <StyledTextInput
-                    label="Password"
-                    placeholder="Enter Your Password"
-                    placeholderColor="#E1EDF9"
-                    value={password}
-                    mode="outlined"
-                    secureTextEntry={showPassword}
-                    outlineColor="#E1EDF9"
-                    activeOutlineColor="#4B39EF"
-                    right={<TextInput.Icon color="#96A1AC" onPress={() => setShowPassword(!showPassword)} icon={showPassword ? "eye" : "eye-off"} />}
-                    onChangeText={password => setPassword(password)}
-                />
-                <View style={{flexDirection: 'row', justifyContent:'space-between', alignItems: 'center', marginVertical: 16}}>
+                <Text style={{ paddingHorizontal: 16, marginBottom: 4, color: 'white', fontSize: 16, fontFamily: 'URBAN_BOLD' }}>Email Address</Text>
+                <InputWrapper
+                >
+                    <TextInput
+                        style={{
+                            color: 'white',
+                            fontSize: 16,
+                            fontFamily: 'URBAN_BOLD'
+                        }}
+                        onChangeText={email => setEmail(email)}
+                        value={email}
+                        placeholderTextColor={"#7E8892"}
+                        placeholder="Enter your email here"
+                    />
+                </InputWrapper>
+
+                {/* Passowrd */}
+                <Text style={{ paddingHorizontal: 16, marginBottom: 4, color: 'white', fontSize: 16, fontFamily: 'URBAN_BOLD' }}>Password</Text>
+                <InputWrapper>
+                    <TextInput
+                        style={{
+                            color: 'white',
+                            fontSize: 16,
+                            fontFamily: 'URBAN_BOLD'
+                        }}
+                        value={password}
+                        onChangeText={password => setPassword(password)}
+                        secureTextEntry={showPassword}
+                        placeholderTextColor={"#7E8892"}
+                        placeholder="Enter your Password here"
+                    />
+                    <MaterialCommunityIcons size={24} onPress={() => setShowPassword(!showPassword)} name={showPassword ? "eye" : "eye-off"} color="#7E8892" />
+                </InputWrapper>
+
+                <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginVertical: 16 }}>
                     {/* Forgot Password */}
                     <ForgotPasswordLink>Forgot Password?</ForgotPasswordLink>
                     {/* Login Button */}
@@ -91,14 +98,15 @@ const Wrapper = styled.View`
 flex:1;
 justify-content: center;
 align-items: center;
-padding: 16px;
+padding: 16px 8px;
+background-color: #000;
 `;
 
 const FormWrapper = styled.View`
 width: 100%;
-padding: 48px 32px;
+padding: 48px 8px;
 border-radius: 8px;
-background-color: #fff;
+background-color: #000;
 `;
 
 
@@ -106,27 +114,34 @@ const Title = styled.Text`
 font-size: 32px;
 font-family: URBAN_BOLD;
 color: #96A1AC;
-margin-bottom: 24px;
+margin-bottom: 64px;
+color: white;
+text-align: center;
 `;
 
-const SubTitle = styled.Text`
-font-size: 24px;
-font-family: URBAN_BOLD;
-margin-bottom: 12px;
-`;
-
-const StyledTextInput = styled(TextInput)`
-margin: 8px 0;
-font-family: URBAN_MEDIUM;
+const InputWrapper = styled.View`
+width: 100%;
+flex-direction: row;
+padding: 24px;
+justify-content: space-between;
+align-items: center;
+margin-bottom: 16px;
+border-width: 1px;
 border-radius: 8px;
-`;
+border-color: #14181B;
+
+
+`
+
 
 const ForgotPasswordLink = styled.Text`
-font-size: 16px;
+font-size: 18px;
 font-family: URBAN_BOLD;
+color: white;
 `;
 
 const StyledLoginButton = styled(Button)`
-padding: 8px;
-background-color: #4B39EF;
+padding: 12px 24px;
+border-radius: 16px;
+background-color: #E45679;
 `;
