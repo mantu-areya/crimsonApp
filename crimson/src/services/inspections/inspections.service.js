@@ -1,4 +1,4 @@
-import { apiPost, apiPut, apiGet } from '../api/api';
+import { apiPost, apiPut, apiGet, apiPatch } from '../api/api';
 var qs = require('qs');
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import NetInfo, { useNetInfo } from "@react-native-community/netinfo";
@@ -91,6 +91,7 @@ export const getInspectionsData = async () => {
 export const getPendingInspections = async () => {
 
   const token = await getStoredToken();
+  console.log(token && token);
   return apiGet(
     `https://hudsonhomesmgmt--uat.sandbox.my.salesforce.com/services/data/v54.0/query/?q=SELECT+FIELDS(ALL)+from+inspection__c+where+Quip_Template_Version__c='v1.1'+and+Inspection_Stage__c!='Ordered'+LIMIT 3`,
     {
@@ -179,6 +180,28 @@ export const uploadSignImage = async (data,inspId) => {
   )
     .then(response => {
        console.log(response.data) 
+       return response.data
+    })
+    .catch(err => {
+      console.error(JSON.stringify(err.request));
+      // throw err;
+    });
+}
+
+export const deleteLineItem = async (dvdId) => {
+  const token = await getStoredToken();
+  console.log("deleting Line Item");
+  let data={}
+  return apiPatch(
+    `https://hudsonhomesmgmt--uat.sandbox.my.salesforce.com/services/apexrest/crimson/deleteItems?recordId=${dvdId}`,
+    data,
+    {      
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
+    },
+  )
+    .then(response => {
        return response.data
     })
     .catch(err => {

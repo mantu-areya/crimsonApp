@@ -4,7 +4,7 @@ import { FlatList, View, Image, ScrollView, ImageBackground, AppState } from 're
 import { InspectionsContext } from "../services/inspections/inspections.contex"
 import { VendorFormContext } from "../services/context/VendorForm/vendorForm.contex"
 import AsyncStorage from "@react-native-async-storage/async-storage"
-import { updateSfVendorFormDetails } from "../services/inspections/inspections.service"
+import { updateSfVendorFormDetails, deleteLineItem } from "../services/inspections/inspections.service"
 
 export const UploadOfflineData = () => {
 
@@ -12,7 +12,7 @@ export const UploadOfflineData = () => {
   const [appStateVisible, setAppStateVisible] = useState(appState.current);
   const [netStateChange, setNetStateChange] = useState('');
 
-  const { addToVfContex, setAscynDataToApp, vendorFormDetails } = useContext(VendorFormContext)
+  const { addToVfContex, setAscynDataToApp, vendorFormDetails, deletedLineItems } = useContext(VendorFormContext)
   const { inspections } = useContext(InspectionsContext);
 
   useEffect(() => {
@@ -59,6 +59,8 @@ export const UploadOfflineData = () => {
   }
 
   const offlineDataToSalesForce = () =>{
+    let keyString =  deletedLineItems.length>0 && deletedLineItems.join(',')
+    deleteLineItem(keyString)
     let vFData = []
      Object.keys(vendorFormDetails).length > 0 &&  Object.keys(vendorFormDetails).map(ele => {
        return  vendorFormDetails[ele] !="NA" && vendorFormDetails[ele].map(obj=>{

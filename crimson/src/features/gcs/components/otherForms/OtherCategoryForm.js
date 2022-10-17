@@ -8,7 +8,7 @@ export default function OtherCategoryForm({ currFormdata, inspId, navigation ,re
 
     const [dataList,setDatalist] = React.useState([])
 
-    const { updateVfContect, addNewItem } = React.useContext(VendorFormContext);
+    const { updateVfContect, addNewItem,deleteNewItem } = React.useContext(VendorFormContext);
     const [NewItemAdded, setNewItemAdded] = React.useState(0);
     const [showAddButton , setShowAddButton] = React.useState(false)
 
@@ -91,7 +91,7 @@ export default function OtherCategoryForm({ currFormdata, inspId, navigation ,re
                         data={dataList ?? []}
                         keyExtractor={(item) => item.UniqueKey}
                         renderItem={(item) => (
-                            <OtherCategoryLineItem item={item.item} onValueChange={onValueChange}  navigation={navigation} readOnly={readOnly} setShowAddButton={setShowAddButton}/>
+                            <OtherCategoryLineItem item={item.item} onValueChange={onValueChange}  navigation={navigation} readOnly={readOnly} setShowAddButton={setShowAddButton} deleteNewItem={deleteNewItem} inspId={inspId}/>
                         )}
                     /> :
                     <View style={{ padding: 16 }}>

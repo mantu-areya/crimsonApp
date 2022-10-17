@@ -3,10 +3,12 @@ import { updateSfVendorFormDetails,uploadSignImage, getVendorFormDetails } from 
 import { InspectionsContext } from "../../inspections/inspections.contex"
 import AsyncStorage  from "@react-native-async-storage/async-storage"
 import NetInfo from "@react-native-community/netinfo";
+import {deleteLineItem} from "../../inspections/inspections.service"
 
 export const VendorFormContext = createContext();
 export const VendorFormContextProvider = ({ children }) => {
   const [vendorFormDetails, setVendorFormDetails] = useState({});
+  const [deletedLineItems, setDeletedLineItems] = useState([])
   const [contextImages , setContextImages] = useState({});
   const add = (dataset, inspData) => inspData?setVendorFormDetails({ ...vendorFormDetails, [inspData.Id]: dataset.length > 0 ? dataset : "NA" })
   :setVendorFormDetails(dataset)
@@ -58,6 +60,23 @@ export const VendorFormContextProvider = ({ children }) => {
     let newVfDataArray = vendorFormDetails[inspId]
     newVfDataArray.push(newData[0])
     setVendorFormDetails({ ...vendorFormDetails, [inspId]: newVfDataArray})
+  }
+
+  const deleteNewItem = (dvdId,inspId,UniqueKey)=>{
+    let newVfDataArray = vendorFormDetails[inspId].filter(ele=>{
+      return dvdId?ele.Id != dvdId:ele.UniqueKey!=UniqueKey;
+    })
+    setVendorFormDetails({ ...vendorFormDetails, [inspId]: newVfDataArray})
+    NetInfo.fetch().then(networkState => {
+      if(networkState.isConnected){
+        deleteLineItem(dvdId).catch(err=>{
+          console.log(" error in deleting :",err);
+        })
+      }else{
+        deletedLineItems.push(dvdId)
+        setDeletedLineItems(deletedLineItems)
+      }
+    })
   }
 
   const update = (modifiedData, formType, inspId) => {
@@ -129,8 +148,9 @@ const setAscynDataToApp =async () =>{
         addSignature:addSignature,
         addImagesToContex,
         contextImages,
-        addNewItem
-        
+        addNewItem,
+        deleteNewItem,
+        deletedLineItems
       }}
     >
       {children}
