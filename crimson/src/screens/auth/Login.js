@@ -18,13 +18,13 @@ const shadowStyle = {
     elevation: 3,
 }
 
-const Login = ({navigation}) => {
+const Login = ({ navigation }) => {
     const insets = useSafeAreaInsets()
     const [email, setEmail] = React.useState("");
     const [password, setPassword] = React.useState("");
     const [showPassword, setShowPassword] = React.useState(false);
 
-  const {handleLogin} = React.useContext(AuthContext);
+    const { handleLogin } = React.useContext(AuthContext);
 
 
     return (
@@ -63,20 +63,22 @@ const Login = ({navigation}) => {
                     right={<TextInput.Icon color="#96A1AC" onPress={() => setShowPassword(!showPassword)} icon={showPassword ? "eye" : "eye-off"} />}
                     onChangeText={password => setPassword(password)}
                 />
-                {/* Forgot Password */}
-                <ForgotPasswordLink>Forgot Password?</ForgotPasswordLink>
-                {/* Login Button */}
-                <StyledLoginButton
-                    onPress={() => {
-                        handleLogin();
-                        navigation.navigate("Home");
-                    }}
-                    labelStyle={{
-                        fontFamily: 'URBAN_BOLD',
-                        fontSize: 18
-                    }} mode="contained">
-                    Login
-                </StyledLoginButton>
+                <View style={{flexDirection: 'row', justifyContent:'space-between', alignItems: 'center', marginVertical: 16}}>
+                    {/* Forgot Password */}
+                    <ForgotPasswordLink>Forgot Password?</ForgotPasswordLink>
+                    {/* Login Button */}
+                    <StyledLoginButton
+                        onPress={() => {
+                            handleLogin();
+                            navigation.navigate("Home");
+                        }}
+                        labelStyle={{
+                            fontFamily: 'URBAN_BOLD',
+                            fontSize: 18
+                        }} mode="contained">
+                        Login
+                    </StyledLoginButton>
+                </View>
             </FormWrapper>
         </Wrapper>
     )
@@ -122,12 +124,9 @@ border-radius: 8px;
 const ForgotPasswordLink = styled.Text`
 font-size: 16px;
 font-family: URBAN_BOLD;
-margin: 0 0 8px; 
-margin-left: auto;
 `;
 
 const StyledLoginButton = styled(Button)`
 padding: 8px;
-margin: 8px 0;
 background-color: #4B39EF;
 `;
