@@ -2,17 +2,13 @@ import React from "react";
 import { StatusBar as ExpoStatusBar } from "expo-status-bar";
 import { theme } from "./src/infrastructure";
 import { ThemeProvider } from "styled-components";
-import {
-  useFonts as useOswald,
-  Oswald_400Regular, Oswald_700Bold, Oswald_600SemiBold,
-} from "@expo-google-fonts/oswald";
-import { useFonts as useLato, Lato_400Regular } from "@expo-google-fonts/lato";
 import { InspectionsContextProvider } from "./src/services/inspections/inspections.contex";
 import { VendorFormContextProvider } from "./src/services/context/VendorForm/vendorForm.contex";
 import { UploadOfflineData } from "./src/utilities/UploadOfflineData"
 import { Navigation } from "./src/infrastructure/navigation";
 import { useFonts } from 'expo-font';
 import { SafeAreaProvider } from "react-native-safe-area-context";
+import { AuthContextProvider } from "./src/contexts/AuthContext";
 
 
 export default function App() {
@@ -28,20 +24,22 @@ export default function App() {
     'URBAN_REGULAR': require('./assets/fonts/urbanist/Urbanist-Regular.ttf'),
   });
 
-  if ( !sfProLoaded || !urbanistLoaded) {
+  if (!sfProLoaded || !urbanistLoaded) {
     return null;
   }
 
   return (
     <>
       <ThemeProvider theme={theme}>
-      <SafeAreaProvider>
-        <InspectionsContextProvider>
-          <VendorFormContextProvider>
-            <UploadOfflineData />
-            <Navigation />
-          </VendorFormContextProvider>
-        </InspectionsContextProvider>
+        <SafeAreaProvider>
+          <AuthContextProvider>
+            <InspectionsContextProvider>
+              <VendorFormContextProvider>
+                <UploadOfflineData />
+                <Navigation />
+              </VendorFormContextProvider>
+            </InspectionsContextProvider>
+          </AuthContextProvider>
         </SafeAreaProvider>
       </ThemeProvider>
       <ExpoStatusBar style={"inverted"} backgroundColor="#2B243E" />
