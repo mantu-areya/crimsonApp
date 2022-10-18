@@ -22,3 +22,11 @@ export const apiGet = (url, additionalParams) =>
     url,
     ...additionalParams,
   });
+
+  export const apiPatch = (url, data, additionalParams = {}) =>
+  axios({
+      method: 'PATCH',
+      url,
+      data,
+      ...additionalParams,
+    })

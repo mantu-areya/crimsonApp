@@ -148,7 +148,7 @@ export const NewVendorForm = ({ inspectionData, readOnly,navigation }) => {
     return (<>
 
         <SafeArea>
-            <RoomMeasurement room_Measurement={room_MeasurementData} inspId={inspectionData.Id} sequence={sequence}  setSequence={setSequence} readOnly={readOnly}/>
+            <RoomMeasurement room_Measurement={room_MeasurementData} inspId={inspectionData.Id} sequence={sequence}  setSequence={setSequence} readOnly={readOnly} />
             <OtherFormTabMenu formsData={formsData} inspId={inspectionData.Id} grandTotal={grandTotal}  navigation={navigation} sequence={sequence}  setSequence={setSequence} readOnly={readOnly}/>
         </SafeArea>
     </>
