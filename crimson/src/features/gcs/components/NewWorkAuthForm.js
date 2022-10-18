@@ -167,7 +167,7 @@ export default function NewWorkAuthForm({ inspectionData, navigation }) {
   if (!isWorkAuthCreated) {
     return (
       <View>
-        <Text style={{ fontSize: 18, color: 'white', fontFamily: 'SF_LIGHT' }}>
+        <Text style={{ fontSize: 18, color: 'white', fontFamily: 'URBAN_REGULAR' }}>
           Work Auth form not created.
         </Text>
       </View>
@@ -185,7 +185,7 @@ export default function NewWorkAuthForm({ inspectionData, navigation }) {
       <View style={{ flexDirection: "row" }}>
         {/* Contractor Signature */}
         <View style={{ padding: 16, flex: .5 }}>
-          <Text style={{ fontSize: 12, fontFamily: 'SF_BOLD', color: 'white' }}>Contractor Signature</Text>
+          <Text style={{ fontSize: 12, fontFamily: 'URBAN_BOLD', color: 'white' }}>Contractor Signature</Text>
           {img &&
             <View style={{ justifyContent: 'center', marginVertical: 8, padding: 4 }}>
               <Image style={{
@@ -242,7 +242,7 @@ export default function NewWorkAuthForm({ inspectionData, navigation }) {
         </View>
         {/* HHM Signature */}
         <View style={{ padding: 16, flex: .5, alignItems: "flex-end" }}>
-          <Text style={{ fontSize: 12, fontFamily: 'SF_BOLD', color: 'white' }}>HHM Signature</Text>
+          <Text style={{ fontSize: 12, fontFamily: 'URBAN_BOLD', color: 'white' }}>HHM Signature</Text>
           {/* {img &&
                       <View style={{ justifyContent: 'center', alignItems: 'flex-end', marginVertical: 8, padding: 4 }}>
                         <Image style={{

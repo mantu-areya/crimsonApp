@@ -122,7 +122,7 @@ export default function RoomMeasurement({ room_Measurement, inspId, sequence, se
       <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
         {/* Text */}
         <View>
-          <Text style={{ fontSize: 16, fontFamily: 'SF_BOLD' }}>Room Measurements</Text>
+          <Text style={{ fontSize: 16, fontFamily: 'URBAN_BOLD' }}>Room Measurements</Text>
           <Text>Total Sq Ft: {GetToalSqFt()?.toFixed(2)} sq. ft.</Text>
         </View>
         {/* Icon */}
@@ -137,15 +137,15 @@ export default function RoomMeasurement({ room_Measurement, inspId, sequence, se
           {/* Header */}
           <View style={{ flexDirection: 'row', backgroundColor: '#C4C4C4', paddingVertical: 12, paddingHorizontal: 8, marginTop: 16 }}>
             {/* Room */}
-            <Text style={{ flex: 4, fontFamily: 'SF_BOLD' }}>Room</Text>
+            <Text style={{ flex: 4, fontFamily: 'URBAN_BOLD' }}>Room</Text>
             {/* Length */}
-            <Text style={{ flex: 2, fontFamily: 'SF_BOLD', textAlign: 'center' }} >Length</Text>
+            <Text style={{ flex: 2, fontFamily: 'URBAN_BOLD', textAlign: 'center' }} >Length</Text>
             {/* Width */}
-            <Text style={{ flex: 2, fontFamily: 'SF_BOLD', textAlign: 'center' }}>Width</Text>
+            <Text style={{ flex: 2, fontFamily: 'URBAN_BOLD', textAlign: 'center' }}>Width</Text>
             {/* Misc SF */}
-            <Text style={{ flex: 2, fontFamily: 'SF_BOLD', textAlign: 'center' }}>Misc SF</Text>
+            <Text style={{ flex: 2, fontFamily: 'URBAN_BOLD', textAlign: 'center' }}>Misc SF</Text>
             {/* Total */}
-            <Text style={{ flex: 2, fontFamily: 'SF_BOLD', textAlign: 'right' }}>Total</Text>
+            <Text style={{ flex: 2, fontFamily: 'URBAN_BOLD', textAlign: 'right' }}>Total</Text>
           </View>
           {
             room_measurementData?.length > 0 ? <FlatList
@@ -176,7 +176,7 @@ export default function RoomMeasurement({ room_Measurement, inspId, sequence, se
 
 const StyledTextInput = styled.TextInput`
     flex: 2;
-    font-family: SF_LIGHT;
+    font-family: URBAN_REGULAR;
     text-align: center;
     background-color:white;
     border-radius:4px;
@@ -185,7 +185,7 @@ const StyledTextInput = styled.TextInput`
 
 const SubCategoryTextInput = styled.TextInput`
     flex: 4;
-    font-family: SF_LIGHT;
+    font-family: URBAN_REGULAR;
     text-align: center;
     background-color:white;
     border-radius:4px;
@@ -193,7 +193,7 @@ const SubCategoryTextInput = styled.TextInput`
     `;
 const SubCategoryTextLabel = styled.Text`
     flex: 4;
-    font-family: SF_LIGHT;
+    font-family: URBAN_REGULAR;
     text-align: center;
     border-radius:4px;
     `;
@@ -221,7 +221,7 @@ function RoomMeasurementLineItem({ item, onValueChange, readOnly }) {
 
     <View style={{ flexDirection: 'row', paddingVertical: 2, paddingHorizontal: 8, marginVertical: 2 }}>
       {/* Room */}
-      {(Sub_Category_List.includes(item.Sub_Category) || readOnly) ? <Text style={{ flex: 4, fontFamily: 'SF_LIGHT' }}>{item.Sub_Category}</Text>
+      {(Sub_Category_List.includes(item.Sub_Category) || readOnly) ? <Text style={{ flex: 4, fontFamily: 'URBAN_REGULAR' }}>{item.Sub_Category}</Text>
         : <SubCategoryTextInput
           onChangeText={val => onValueChange((val), "Sub_Category", item.UniqueKey)}
           value={`${item.Sub_Category}`}
@@ -246,7 +246,7 @@ function RoomMeasurementLineItem({ item, onValueChange, readOnly }) {
         value={`${misc}`}
       />}
       {/* Total */}
-      <Text style={{ flex: 2, fontFamily: 'SF_LIGHT', textAlign: 'right' }}>{item.Room_Total ? item.Room_Total.toFixed(2) : 0.00}</Text>
+      <Text style={{ flex: 2, fontFamily: 'URBAN_REGULAR', textAlign: 'right' }}>{item.Room_Total ? item.Room_Total.toFixed(2) : 0.00}</Text>
     </View>
 
 

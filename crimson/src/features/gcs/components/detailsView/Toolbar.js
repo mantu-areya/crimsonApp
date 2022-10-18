@@ -23,7 +23,7 @@ font-weight:bold;
 const ToolBarTitle = styled.Text`
 color: white;
 font-size:16px;
-font-family: SF_BOLD;
+font-family: URBAN_BOLD;
 `
 export default function Toolbar({ inspectionName, goBack }) {
   return (

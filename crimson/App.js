@@ -13,18 +13,13 @@ import { AuthContextProvider } from "./src/contexts/AuthContext";
 
 export default function App() {
 
-  const [sfProLoaded] = useFonts({
-    'SF_BOLD': require('./assets/fonts/SF_BOLD.ttf'),
-    'SF_LIGHT': require('./assets/fonts/SF_LIGHT.ttf'),
-  });
-
   const [urbanistLoaded] = useFonts({
     'URBAN_BOLD': require('./assets/fonts/urbanist/Urbanist-Bold.ttf'),
     'URBAN_MEDIUM': require('./assets/fonts/urbanist/Urbanist-Medium.ttf'),
     'URBAN_REGULAR': require('./assets/fonts/urbanist/Urbanist-Regular.ttf'),
   });
 
-  if (!sfProLoaded || !urbanistLoaded) {
+  if (!urbanistLoaded) {
     return null;
   }
 
