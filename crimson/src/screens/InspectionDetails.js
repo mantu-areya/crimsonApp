@@ -207,7 +207,7 @@ flex: 1;
 const StyledTextInputLabel = styled.Text`
 font-size: 14px;
 font-family: 'URBAN_BOLD';
-align-self: start;
+align-self: flex-start;
 margin-bottom: 4px;
 `;
 
