@@ -191,7 +191,7 @@ margin: 16px 0;
 const Heading = styled.Text`
 color: white;
 font-size: 16px;
-font-family: SF_BOLD;
+font-family: URBAN_BOLD;
 `;
 
 const BodyWrapper = styled.View`
@@ -213,11 +213,11 @@ padding: 8px;
 
 const TableSectionHeadings = styled.Text`
 font-size: 12px;
-font-family: SF_BOLD;
+font-family: URBAN_BOLD;
 `
 
 const TableRowItemHeading = styled.Text`
-font-family: SF_LIGHT;
+font-family: URBAN_REGULAR;
 `
 
 const TabelRowItemValue = styled.Text`

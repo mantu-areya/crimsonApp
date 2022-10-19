@@ -37,8 +37,8 @@ export const ApprovedItemsTable = ({ approvedItems, updateLocalData, inspId }) =
             {/* Total */}
             <View style={{ padding: 16, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
                 <View>
-                    <Text style={{ fontSize: 18, fontFamily: 'SF_BOLD' }}>Approved Items</Text>
-                    <Text style={{ fontSize: 14, fontFamily: 'SF_BOLD' }}>Total : ${GetToalSqFt()?.toFixed(2)} </Text>
+                    <Text style={{ fontSize: 18, fontFamily: 'URBAN_BOLD' }}>Approved Items</Text>
+                    <Text style={{ fontSize: 14, fontFamily: 'URBAN_BOLD' }}>Total : ${GetToalSqFt()?.toFixed(2)} </Text>
                 </View>
                 <TouchableOpacity onPress={handleCollapseToggle}>
                     <Icon name={isOpen ? "keyboard-arrow-up" : "keyboard-arrow-down"} color="black" size={36} />
@@ -53,12 +53,12 @@ export const ApprovedItemsTable = ({ approvedItems, updateLocalData, inspId }) =
 
                         <View style={{ marginRight: 16 }}>
                             <FixedColumnHeader style={{}}>
-                                <Text style={{ width: 140, height: 32, fontSize: 14, fontFamily: 'SF_BOLD' }}>Matrix Price </Text>
+                                <Text style={{ width: 140, height: 32, fontSize: 14, fontFamily: 'URBAN_BOLD' }}>Matrix Price </Text>
                             </FixedColumnHeader>
                             {
                                 approvedItems.map((item, i) =>
                                     <FixedColumnHeader style={{ marginBottom: 10 }} key={i}>
-                                        <Text style={{ width: 140,height:64, fontSize: 16, fontFamily: 'SF_LIGHT' }}>{item?.Matrix_Price}</Text>
+                                        <Text style={{ width: 140,height:64, fontSize: 16, fontFamily: 'URBAN_REGULAR' }}>{item?.Matrix_Price}</Text>
                                     </FixedColumnHeader>
                                 )
                             }
@@ -67,25 +67,25 @@ export const ApprovedItemsTable = ({ approvedItems, updateLocalData, inspId }) =
                         <ScrollView horizontal>
                             <View >
                                 <View style={{ flexDirection: 'row' }}>
-                                    <Text style={{ height: 32, textAlign: 'center', width: 120, flex: 1, fontSize: 14, fontFamily: 'SF_BOLD' }}>{`Scope Notes`}</Text>
-                                    <Text style={{ height: 32, textAlign: 'center', width: 120, flex: 1, fontSize: 14, fontFamily: 'SF_BOLD' }}>{`Approval Status`}</Text>
-                                    <Text style={{ height: 32, textAlign: 'center', width: 120, flex: 1, fontSize: 14, fontFamily: 'SF_BOLD' }}>{`Owner Notes`}</Text>
-                                    <Text style={{ height: 32, textAlign: 'center', width: 120, flex: 1, fontSize: 14, fontFamily: 'SF_BOLD' }}>{`Quantity`}</Text>
-                                    <Text style={{ height: 32, textAlign: 'center', width: 120, flex: 1, fontSize: 14, fontFamily: 'SF_BOLD' }}>{`U/M`}</Text>
-                                    <Text style={{ height: 32, textAlign: 'center', width: 120, flex: 1, fontSize: 14, fontFamily: 'SF_BOLD' }}>{`Rate`}</Text>
-                                    <Text style={{ height: 32, textAlign: 'center', width: 120, flex: 1, fontSize: 14, fontFamily: 'SF_BOLD' }}>{`Total`}</Text>
+                                    <Text style={{ height: 32, textAlign: 'center', width: 120, flex: 1, fontSize: 14, fontFamily: 'URBAN_BOLD' }}>{`Scope Notes`}</Text>
+                                    <Text style={{ height: 32, textAlign: 'center', width: 120, flex: 1, fontSize: 14, fontFamily: 'URBAN_BOLD' }}>{`Approval Status`}</Text>
+                                    <Text style={{ height: 32, textAlign: 'center', width: 120, flex: 1, fontSize: 14, fontFamily: 'URBAN_BOLD' }}>{`Owner Notes`}</Text>
+                                    <Text style={{ height: 32, textAlign: 'center', width: 120, flex: 1, fontSize: 14, fontFamily: 'URBAN_BOLD' }}>{`Quantity`}</Text>
+                                    <Text style={{ height: 32, textAlign: 'center', width: 120, flex: 1, fontSize: 14, fontFamily: 'URBAN_BOLD' }}>{`U/M`}</Text>
+                                    <Text style={{ height: 32, textAlign: 'center', width: 120, flex: 1, fontSize: 14, fontFamily: 'URBAN_BOLD' }}>{`Rate`}</Text>
+                                    <Text style={{ height: 32, textAlign: 'center', width: 120, flex: 1, fontSize: 14, fontFamily: 'URBAN_BOLD' }}>{`Total`}</Text>
                                 </View>
 
                                 {approvedItems.map((item, i) =>
 
                                     <View key={i} style={{ flexDirection: 'row', marginBottom: 10 }}>
-                                        <Text style={{ height: 64, width: 120, flex: 1, fontSize: 16, fontFamily: 'SF_LIGHT' }}>{item?.Scope_Notes}</Text>
-                                        <Text style={{ height: 64, textAlign: 'center', width: 120, flex: 1, fontSize: 16, fontFamily: 'SF_LIGHT' }}>{item?.Approval_Status}</Text>
-                                        <Text style={{ height: 64, textAlign: 'center', width: 120, flex: 1, fontSize: 16, fontFamily: 'SF_LIGHT' }}>{item?.Owner_Clarification}</Text>
-                                        <Text style={{ height: 64, textAlign: 'center', width: 120, flex: 1, fontSize: 16, fontFamily: 'SF_LIGHT' }}>{ item?.Adj_Quantity}</Text>
-                                        <Text style={{ height: 64, textAlign: 'center', width: 120, flex: 1, fontSize: 16, fontFamily: 'SF_LIGHT' }}>{item?.U_M}</Text>
-                                        <Text style={{ height: 64, textAlign: 'center', width: 120, flex: 1, fontSize: 16, fontFamily: 'SF_LIGHT' }}>${item?.Adj_Rate.toFixed(2)}</Text>
-                                        <Text style={{ height: 64, textAlign: 'center', width: 120, flex: 1, fontSize: 16, fontFamily: 'SF_LIGHT' }}>${item?.Approved_Amount.toFixed(2)}</Text>
+                                        <Text style={{ height: 64, width: 120, flex: 1, fontSize: 16, fontFamily: 'URBAN_REGULAR' }}>{item?.Scope_Notes}</Text>
+                                        <Text style={{ height: 64, textAlign: 'center', width: 120, flex: 1, fontSize: 16, fontFamily: 'URBAN_REGULAR' }}>{item?.Approval_Status}</Text>
+                                        <Text style={{ height: 64, textAlign: 'center', width: 120, flex: 1, fontSize: 16, fontFamily: 'URBAN_REGULAR' }}>{item?.Owner_Clarification}</Text>
+                                        <Text style={{ height: 64, textAlign: 'center', width: 120, flex: 1, fontSize: 16, fontFamily: 'URBAN_REGULAR' }}>{ item?.Adj_Quantity}</Text>
+                                        <Text style={{ height: 64, textAlign: 'center', width: 120, flex: 1, fontSize: 16, fontFamily: 'URBAN_REGULAR' }}>{item?.U_M}</Text>
+                                        <Text style={{ height: 64, textAlign: 'center', width: 120, flex: 1, fontSize: 16, fontFamily: 'URBAN_REGULAR' }}>${item?.Adj_Rate.toFixed(2)}</Text>
+                                        <Text style={{ height: 64, textAlign: 'center', width: 120, flex: 1, fontSize: 16, fontFamily: 'URBAN_REGULAR' }}>${item?.Approved_Amount.toFixed(2)}</Text>
                                     </View>
                                 )
                                 }

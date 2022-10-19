@@ -24,10 +24,10 @@ import OtherCategoryForm from "./OtherCategoryForm";
         <View style={{ borderRadius: 8, padding: 8, marginBottom: 32, backgroundColor: "#D9D9D9", }}>
             {/* Totals */}
             <View style={{ alignItems: "flex-end", marginTop: 8 }}>
-                <Text style={{ fontSize: 16, fontFamily: 'SF_BOLD' }}>
+                <Text style={{ fontSize: 16, fontFamily: 'URBAN_BOLD' }}>
                 GRAND TOTAL BID SUBMITTED : ${grandTotal.toFixed(2)}
                 </Text>
-                <Text style={{ fontSize: 14, fontFamily: 'SF_BOLD' }}>
+                <Text style={{ fontSize: 14, fontFamily: 'URBAN_BOLD' }}>
                     {currentForm} Total: ${GetToal().toFixed(2)}
                 </Text>
             </View>

@@ -45,17 +45,17 @@ useEffect(()=>{
               onChangeText={val => onValueChange((val), "Matrix_Price", item.UniqueKey)}
               value={`${item?.Matrix_Price ?? 0}`}
             />
-              : <Text style={{ color: 'white', fontFamily: 'SF_BOLD', fontSize: 18 }}> {item?.Matrix_Price}</Text>
-          ) : <Text style={{ color: 'white', fontFamily: 'SF_BOLD', fontSize: 18 }}> {item?.Matrix_Price?.substring(0, 70)}</Text>}</View>
+              : <Text style={{ color: 'white', fontFamily: 'URBAN_BOLD', fontSize: 18 }}> {item?.Matrix_Price}</Text>
+          ) : <Text style={{ color: 'white', fontFamily: 'URBAN_BOLD', fontSize: 18 }}> {item?.Matrix_Price?.substring(0, 70)}</Text>}</View>
           {
             !isOpen ? <View style={{ marginTop: 16, flexDirection: 'row', justifyContent: 'flex-start', alignItems: 'center' }}>
-              <Text style={{ width: '33%', color: 'white', fontFamily: 'SF_LIGHT' }}>
+              <Text style={{ width: '33%', color: 'white', fontFamily: 'URBAN_REGULAR' }}>
                 Quantity: {item?.Quantity}
               </Text>
-              <Text style={{ width: '33%', color: 'white', fontFamily: 'SF_LIGHT' }}>
+              <Text style={{ width: '33%', color: 'white', fontFamily: 'URBAN_REGULAR' }}>
                 Rate: ${ Number(item?.Rate).toFixed(2)}
               </Text>
-              <Text style={{ width: '33%', color: 'white', fontFamily: 'SF_LIGHT' }}>
+              <Text style={{ width: '33%', color: 'white', fontFamily: 'URBAN_REGULAR' }}>
                 Total: ${item?.Total.toFixed(2)}
               </Text>
             </View> : null
@@ -120,7 +120,7 @@ useEffect(()=>{
 
 const StyledLabel = styled.Text`
 color: white;
-font-family: 'SF_BOLD';
+font-family: 'URBAN_BOLD';
 margin-bottom: 2px;  
 `;
 

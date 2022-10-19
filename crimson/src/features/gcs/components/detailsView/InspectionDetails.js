@@ -18,7 +18,7 @@ border-radius: 8px;
 const Heading = styled.Text`
 color: white;
 font-size: 16px;
-font-family: SF_BOLD;
+font-family: URBAN_BOLD;
 `
 
 export default function InspectionDetails({ data, handleSubmit, formName }) {
@@ -110,11 +110,11 @@ function PropertyDetailsCard({
                     <FWIcon name={"building"} color="white" size={24} />
                 </View>
                 <View style={{ marginLeft: 16 }}>
-                    <Text style={{ color: "white", fontSize: 18, fontFamily: 'SF_BOLD' }}>
+                    <Text style={{ color: "white", fontSize: 18, fontFamily: 'URBAN_BOLD' }}>
                         Property Details
                     </Text>
                     <View style={{ marginTop: 2 }} >
-                        <Text style={{ color: "white", fontFamily: 'SF_BOLD' }}>
+                        <Text style={{ color: "white", fontFamily: 'URBAN_BOLD' }}>
                             {Property_Address__c}
                         </Text>
                     </View>
@@ -130,7 +130,7 @@ function PropertyDetailsCard({
                     <View style={{ marginBottom: 4, flexDirection: "row" }} >
                         {/* City */}
                         <View style={{ flex: 1 }}>
-                            <Text style={{ color: "white", fontFamily: 'SF_BOLD' }}>
+                            <Text style={{ color: "white", fontFamily: 'URBAN_BOLD' }}>
                                 City:
                             </Text>
                             <Text style={{ color: "white" }}>
@@ -139,7 +139,7 @@ function PropertyDetailsCard({
                         </View>
                         {/* State */}
                         <View style={{ flex: 1 }}>
-                            <Text style={{ color: "white", fontFamily: 'SF_BOLD' }}>
+                            <Text style={{ color: "white", fontFamily: 'URBAN_BOLD' }}>
                                 State:
                             </Text>
                             <Text style={{ color: "white" }}>
@@ -149,7 +149,7 @@ function PropertyDetailsCard({
                     </View>
                     {/* Zip Code */}
                     <View>
-                        <Text style={{ color: "white", fontFamily: 'SF_BOLD' }}>
+                        <Text style={{ color: "white", fontFamily: 'URBAN_BOLD' }}>
                             Zip Code:
                         </Text>
                         <Text style={{ color: "white" }}>
@@ -185,7 +185,7 @@ function KeyContactInformationsCard({
                     <MCIcon name={"folder-key"} color="white" size={24} />
                 </View>
                 <View style={{ marginLeft: 16 }}>
-                    <Text style={{ color: "white", fontSize: 18, fontFamily: 'SF_BOLD' }}>
+                    <Text style={{ color: "white", fontSize: 18, fontFamily: 'URBAN_BOLD' }}>
                         Key Contact Informations
                     </Text>
                 </View>
@@ -201,7 +201,7 @@ function KeyContactInformationsCard({
                     <View style={{ marginBottom: 16, flexDirection: "row" }} >
                         {/* HHM Field PM */}
                         <View style={{ flex: 1 }}>
-                            <Text style={{ color: "white", fontFamily: 'SF_BOLD' }}>
+                            <Text style={{ color: "white", fontFamily: 'URBAN_BOLD' }}>
                                 HHM Field PM:
                             </Text>
                             <Text style={{ color: "white" }}>
@@ -216,7 +216,7 @@ function KeyContactInformationsCard({
                     <View style={{ marginBottom: 4, flexDirection: "row" }} >
                         {/* Repair Estimator */}
                         <View style={{ flex: 1 }}>
-                            <Text style={{ color: "white", fontFamily: 'SF_BOLD' }}>
+                            <Text style={{ color: "white", fontFamily: 'URBAN_BOLD' }}>
                                 Repair Estimator:
                             </Text>
                             <Text style={{ color: "white" }}>
@@ -254,7 +254,7 @@ function KeyDateCard({
                     <MCIcon name={"calendar-month"} color="white" size={24} />
                 </View>
                 <View style={{ marginLeft: 16 }}>
-                    <Text style={{ color: "white", fontSize: 18, fontFamily: 'SF_BOLD' }}>
+                    <Text style={{ color: "white", fontSize: 18, fontFamily: 'URBAN_BOLD' }}>
                         Key Date
                     </Text>
                 </View>
@@ -269,7 +269,7 @@ function KeyDateCard({
                 <View style={{ marginLeft: 64 }} >
                     {/* Inspection Schedule Date */}
                     <View>
-                        <Text style={{ color: "white", fontFamily: 'SF_BOLD' }}>
+                        <Text style={{ color: "white", fontFamily: 'URBAN_BOLD' }}>
                             Inspection Schedule Date:
                         </Text>
                         <Text style={{ color: "white" }}>
@@ -278,7 +278,7 @@ function KeyDateCard({
                     </View>
                     {/* Target Rehab Complete Date */}
                     <View>
-                        <Text style={{ color: "white", fontFamily: 'SF_BOLD' }}>
+                        <Text style={{ color: "white", fontFamily: 'URBAN_BOLD' }}>
                             Target Rehab Complete Date:
                         </Text>
                         <Text style={{ color: "white" }}>

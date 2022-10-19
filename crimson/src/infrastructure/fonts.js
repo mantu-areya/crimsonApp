@@ -1,9 +1,9 @@
 export const fonts = {
-  body: "Oswald_400Regular",
-  heading: "Lato_400Regular",
-  monospace: "Oswald_400Regular",
-  bold:"Oswald_700Bold",
-  semibold:"Oswald_600SemiBold"
+  body: "URBAN_REGULAR",
+  heading: "URBAN_REGULAR",
+  monospace: "URBAN_REGULAR",
+  bold:"URBAN_MEDIUM",
+  semibold:"URBAN_MEDIUM"
 };
 
 export const fontWeights = {
