@@ -14,7 +14,7 @@ export default function RoomMeasurement({ room_Measurement, inspId, sequence, se
   const [room_measurementData, setRoom_measurementData] = React.useState([]);
   const [NewItemAdded, setNewItemAdded] = React.useState(0);
 
-  const { updateVfContect, addNewItem } = React.useContext(VendorFormContext);
+  const { updateVfContect, addNewItem, deleteNewItem } = React.useContext(VendorFormContext);
 
   const onValueChange = async (value, field, key) => {
 
@@ -152,7 +152,7 @@ export default function RoomMeasurement({ room_Measurement, inspId, sequence, se
               data={room_measurementData ?? []}
               keyExtractor={(item) => item.UniqueKey}
               renderItem={(item) => (
-                <RoomMeasurementLineItem item={item.item} onValueChange={onValueChange} readOnly={readOnly} />
+                <RoomMeasurementLineItem item={item.item} onValueChange={onValueChange} readOnly={readOnly} deleteNewItem={deleteNewItem} inspId={inspId}/>
               )}
             /> :
               <View style={{ padding: 16 }}>
@@ -197,6 +197,14 @@ const SubCategoryTextInput = styled.TextInput`
     text-align: center;
     background-color:white;
     border-radius:4px;
+    `;
+
+    const FormTextInput = styled.TextInput`
+    flex: 2;
+    font-family: SF_LIGHT;
+    text-align: center;
+    background-color:white;
+    border-radius:4px;
     margin: 0px 2px;
     `;
 const SubCategoryTextLabel = styled.Text`
@@ -207,7 +215,7 @@ const SubCategoryTextLabel = styled.Text`
     `;
 
 
-function RoomMeasurementLineItem({ item, onValueChange, readOnly }) {
+function RoomMeasurementLineItem({ item, onValueChange, readOnly,deleteNewItem,inspId }) {
 
   let length, width, misc;
   const Sub_Category_List = ["Garage", "Foyed", "Family Room", "Breakfast Nook", "Kitchen", "Laundry Room", "Formal Living Room", "Hallway 1", "Hallway 2", "Half Bathroom", "Master Bathroom", "Bathroom 2", "Bathroom 3", "Master Bedroom", "Bedroom 2", "Bedroom 3", "Bedroom 4", "Gameroom", "Office/Study", "Basement", "master closet", "Dining Room",]
@@ -218,6 +226,10 @@ function RoomMeasurementLineItem({ item, onValueChange, readOnly }) {
       return 0;
     }
     return value > 1 ? value.toString().replace(/^0+/, '') : value;
+  }
+
+  const handleDelete = (dvdId, inspId,UniqueKey) => {
+    deleteNewItem(dvdId, inspId,UniqueKey)
   }
 
   length = getFormatedRowValues(item.Room_Length);
@@ -254,7 +266,7 @@ function RoomMeasurementLineItem({ item, onValueChange, readOnly }) {
         value={`${misc}`}
       />}
       {/* Total */}
-      <Text style={{ flex: 2, fontFamily: 'URBAN_REGULAR', textAlign: 'right' }}>{item.Room_Total ? item.Room_Total.toFixed(2) : 0.00}</Text>
+      <Text onPress={()=>handleDelete(item.Id,inspId,item.UniqueKey)} style={{ flex: 2, fontFamily: 'URBAN_REGULAR', textAlign: 'left' ,paddingLeft:10}}>{item.Room_Total ? item.Room_Total.toFixed(2) : 0.00}{ !readOnly && !Sub_Category_List.includes(item.Sub_Category) && <MUiIcon name="delete" color="#6A579A" size={22}  />} </Text>
     </View>
 
 

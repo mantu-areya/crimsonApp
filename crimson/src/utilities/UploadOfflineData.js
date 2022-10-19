@@ -4,26 +4,29 @@ import { FlatList, View, Image, ScrollView, ImageBackground, AppState } from 're
 import { InspectionsContext } from "../services/inspections/inspections.contex"
 import { VendorFormContext } from "../services/context/VendorForm/vendorForm.contex"
 import AsyncStorage from "@react-native-async-storage/async-storage"
-import { updateSfVendorFormDetails } from "../services/inspections/inspections.service"
+import { updateSfVendorFormDetails, deleteLineItem } from "../services/inspections/inspections.service"
 
 export const UploadOfflineData = () => {
 
   const appState = useRef(AppState.currentState);
   const [appStateVisible, setAppStateVisible] = useState(appState.current);
   const [netStateChange, setNetStateChange] = useState('');
+  const [offlineUploadStart, setOfflineUploadStart] = useState("NS")
 
-  const { addToVfContex, setAscynDataToApp, vendorFormDetails } = useContext(VendorFormContext)
+  const { addToVfContex, setAscynDataToApp, vendorFormDetails, deletedLineItems } = useContext(VendorFormContext)
   const { inspections } = useContext(InspectionsContext);
 
   useEffect(() => {
     if (AppState.currentState == 'background' || AppState.currentState == 'inactive') {
-      console.log("ffff");
       addDataToAsync(vendorFormDetails);
     }
     NetInfo.addEventListener(networkState => {
       console.log(networkState.isConnected);
       if(networkState.isConnected){
-        offlineDataToSalesForce(vendorFormDetails)
+        if (offlineUploadStart == "NS" || offlineUploadStart == "END"  ){
+            setOfflineUploadStart("STRD")
+            offlineDataToSalesForce()
+        } 
       }
     });
   })
@@ -48,7 +51,6 @@ export const UploadOfflineData = () => {
     }
     catch (err) {
       console.log(err);
-
     }
   }
 
@@ -59,13 +61,21 @@ export const UploadOfflineData = () => {
   }
 
   const offlineDataToSalesForce = () =>{
+    let keyString =  deletedLineItems.length>0 && deletedLineItems.join(',')
+    deleteLineItem(keyString).catch(error=>{
+      setOfflineUploadStar("END")
+    })
     let vFData = []
      Object.keys(vendorFormDetails).length > 0 &&  Object.keys(vendorFormDetails).map(ele => {
        return  vendorFormDetails[ele] !="NA" && vendorFormDetails[ele].map(obj=>{
          return vFData.push(obj)
        })
     })
-    vFData.length>0 && updateSfVendorFormDetails(vFData,"BulkDvt")
+    vFData.length>0 && updateSfVendorFormDetails(vFData,"BulkDvt").then(
+      setOfflineUploadStart("UPLD")
+    ).catch(error=>{
+      setOfflineUploadStar("END")
+    })
   }
 
   return <>

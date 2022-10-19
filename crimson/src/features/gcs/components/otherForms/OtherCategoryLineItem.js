@@ -12,7 +12,7 @@ let requiredSubCategories = [
   "Off Matrix - MEP"
 ]
 
-export default function OtherCategoryLineItem({ item, onValueChange, navigation, readOnly,setShowAddButton }) {
+export default function OtherCategoryLineItem({ item, onValueChange, navigation, readOnly,setShowAddButton, deleteNewItem,inspId}) {
   const [isOpen, setIsOpen] = React.useState(false) // keep open in start
   const handleCollapseToggle = () => {
     setIsOpen(!isOpen);
@@ -29,6 +29,10 @@ useEffect(()=>{
   // if (!item.Matrix_Price) {
   //     return null;
   // }
+
+  const handleDelete = (dvdId, inspId,UniqueKey) => {
+    deleteNewItem(dvdId, inspId,UniqueKey)
+  }
   return (
     <View style={{ borderRadius: 8, paddingVertical: 2, paddingHorizontal: 8, marginVertical: 4, backgroundColor: '#6A579A' }}>
 
@@ -75,7 +79,7 @@ useEffect(()=>{
           />}
           <StyledLabel >U/M</StyledLabel>
           {readOnly ? <Text>{item.U_M ?? 0}</Text> : <StyledTextInput
-            onChangeText={val => onValueChange((val), "Quantity", item.UniqueKey)}
+            onChangeText={val => onValueChange((val), "U_M", item.UniqueKey)}
             value={`${item.U_M ?? 0}`}
           />}
           <StyledLabel >Rate</StyledLabel>
@@ -107,6 +111,7 @@ useEffect(()=>{
             <CameraIcon name="camera" size={28} color="black" />
             <Text >Capture Image</Text>
           </TouchableOpacity>}
+          { !readOnly && Sub_Category_Keys.includes(item.Sub_Category) &&<MUiIcon onPress={()=>handleDelete(item.Id,inspId,item.UniqueKey)} name="delete" color="black" size={28}  />} 
         </View>
       }
     </View >
