@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity, ScrollView, FlatList, TextInput, Animated, TouchableHighlight } from 'react-native'
+import { View, ScrollView, FlatList } from 'react-native'
 import React from 'react'
 import { SafeAreaView } from "react-native-safe-area-context"
 import CallNow from '../components/inspection-details/CallNow'
@@ -7,12 +7,14 @@ import CTA from '../components/inspection-details/CTA'
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons"
 import MaterialIcons from "react-native-vector-icons/MaterialIcons"
 import styled from 'styled-components/native'
-import Overlay from 'react-native-modal-overlay';
-import Ionicons from "react-native-vector-icons/Ionicons"
-import { Button } from "react-native-paper"
-// import Swipeable from 'react-native-gesture-handler/Swipeable';
-import { RectButton } from 'react-native-gesture-handler';
-import Swipeable from 'react-native-swipeable';
+import { VendorFormContext } from '../services/context/VendorForm/vendorForm.contex'
+import { getVendorFormDetails } from '../services/inspections/inspections.service'
+import NetInfo from "@react-native-community/netinfo";
+import { useIsFocused } from '@react-navigation/native'
+import OtherForms from '../components/inspection-details/vendor-form/OtherForms'
+import { Row } from 'react-native-responsive-grid-system'
+import Collapsible from 'react-native-collapsible'
+import { SubmitReviewForm } from '../features/gcs/components/SubmitReviewForm'
 
 
 
@@ -42,12 +44,10 @@ const menuItems = [
   },
 ]
 
-const InspectionDetails = () => {
-  const [currentForm, setCurrentForm] = React.useState("General Scope Notes")
-  const currentFormData = new Array(20).fill(1).map((v, i) => (currentForm + (i * v)))
+const InspectionDetails = ({ route, navigation }) => {
 
-  const [show,setShow] = React.useState(false);
-  const [offSetY,setOffSetY] = React.useState(0);
+  const [show, setShow] = React.useState(false);
+  const [offSetY, setOffSetY] = React.useState(0);
 
   React.useEffect(() => {
     if (offSetY < 200) {
@@ -56,195 +56,67 @@ const InspectionDetails = () => {
     } else {
       setShow(false)
     }
-  },[offSetY])
+  }, [offSetY])
+
+
+  const [isNotesCollapsed, setIsNotesCollapsed] = React.useState(false);
+  const [readOnly, setreadonly] = React.useState(false)
+  const { inspectionData } = route.params;
+  const { vendorFormDetails, addToVfContex, addImagesToContex } = React.useContext(VendorFormContext);
+  const setVendorFormData = async () => getVendorFormDetails(inspectionData.Id)
+    .then(data => addToVfContex(data["DynamicVendorTemplates"].DynamicVendorTemplate, inspectionData));
+
+  React.useEffect(() => {
+    NetInfo.fetch().then(networkState => {
+      if (networkState.isConnected) {
+        setVendorFormData();
+        addImagesToContex(inspectionData.Id)
+      }
+      return
+    })
+  }, []);
+
+  React.useEffect(() => {
+    let stagesArray = ["Work Auth Form Completed", "Reviewer Form Completed", "Vendor Form Completed"]
+    stagesArray.includes(inspectionData.Inspection_Form_Stage__c) && setreadonly(true)
+  }, [inspectionData])
+
+  const handleSubmit = () => {
+    setIsNotesCollapsed(true)
+  }
+
+  const inspectionName = inspectionData.Name
+
+
+
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <ScrollView onScroll={(e) => setOffSetY(e.nativeEvent.contentOffset.y)}>
+        <Row>
+          {!readOnly &&
+            <Collapsible collapsed={!(isNotesCollapsed)}  >
+              <SubmitReviewForm setreadonly={setreadonly} inspVfDetails={vendorFormDetails[inspectionData.Id]} inspId={inspectionData.Id} navigation={navigation} setIsNotesCollapsed={setIsNotesCollapsed} />
+            </Collapsible>}
+        </Row>
         {/* Hero */}
         <Hero />
         {/* CTA's */}
-        <CTA handleOnChat={() => alert("Chat")} handleOnSubmit={() => alert("Submit")} />
+        <CTA handleOnChat={() => alert("Chat")} handleOnSubmit={handleSubmit} />
         {/* Forms */}
-        <View style={{ height: 560 }}>
-          {/* Menu */}
-          <MenuWrapper >
-            {
-              menuItems.map((item, i) => <MenuItem onPress={() => setCurrentForm(item.title)} key={i}>{item.icon}</MenuItem>)
-            }
-          </MenuWrapper>
-          <CurrentFormHeading>{currentForm}</CurrentFormHeading>
-          <FlatList
-            data={currentFormData}
-            keyExtractor={item => item}
-            renderItem={({ item }) => <FormLineItem item={item} onPress={() => setOverlayVisible(true)} />}
-          />
-        </View>
-
-
+        <OtherForms readOnly={readOnly} inspectionData={inspectionData} navigation={navigation} />
       </ScrollView>
       {/* Call Now */}
-    
-       {show && <CallNow /> } 
+      {show && <CallNow />}
     </SafeAreaView>
   )
 }
 
-function FormLineItem({ item }) {
-  const [overlayVisible, setOverlayVisible] = React.useState(false)
-
-  const renderLeftActions = (progress, dragX) => {
-    const trans = dragX.interpolate({
-      inputRange: [0, 50, 100, 101],
-      outputRange: [-2, 0, 0, 1],
-    });
-    return (
-      <RectButton style={{ backgroundColor: 'blue', justifyContent: 'center', alignItems: 'center' }} onPress={() => { alert("ARCHIVE") }}>
-        <Animated.Text
-          style={[
-            {
-              transform: [{ translateX: trans }],
-            },
-          ]}>
-          <Ionicons name="share" size={24} color="white" />
-        </Animated.Text>
-      </RectButton>
-    );
-  };
-
-  const rightButtons = [
-    <TouchableOpacity onPress={() => { alert("Add Notes") }} style={{ backgroundColor: '#F0BA91', justifyContent: 'center', alignItems: 'center', width: 64, flex: 1 }}>
-      <View>
-        <MaterialCommunityIcons name="note-plus" size={24} />
-        {/* <Text>Add Notes</Text> */}
-      </View>
-    </TouchableOpacity>,
-    <TouchableOpacity onPress={() => { alert("Delete") }} style={{ backgroundColor: '#F3206F', justifyContent: 'center', alignItems: 'center', width: 64, flex: 1 }}>
-      <View>
-        <MaterialCommunityIcons name="delete" size={24} color="white" />
-        {/* <Text>Delete</Text> */}
-      </View>
-    </TouchableOpacity>
-  ];
 
 
-  return (
-    <>
-
-      <Swipeable rightButtons={rightButtons}>
-        <LineItemWrapper >
-          <View style={{ flex: 1 }}>
-            <LineItemHeading>
-              {item}
-            </LineItemHeading>
-            <LineItemInputGroup>
-              {/* QTY */}
-              <LineItemInputText onPress={() => setOverlayVisible(true)}>Qty +</LineItemInputText>
-              {/* RATE */}
-              <LineItemInputText onPress={() => setOverlayVisible(true)}>Rate +</LineItemInputText>
-              {/* NOTES */}
-              <LineItemInputText onPress={() => setOverlayVisible(true)}>Notes +</LineItemInputText>
-            </LineItemInputGroup>
-          </View>
-          {/* Icon */}
-          <Ionicons name="camera" size={24} />
-
-        </LineItemWrapper>
-      </Swipeable>
-      <Overlay visible={overlayVisible} onClose={() => setOverlayVisible(false)} closeOnTouchOutside >
-
-        <LineItemHeading>
-          {item}
-        </LineItemHeading>
-
-        <StyledTextInputLabel>Quantity</StyledTextInputLabel>
-        <StyledTextInput placeholder="Qty" />
-
-        <StyledTextInputLabel>U/A</StyledTextInputLabel>
-        <StyledTextInput placeholder="U/A" />
-
-        <StyledTextInputLabel>Rate</StyledTextInputLabel>
-        <StyledTextInput placeholder="Rate" />
-
-        <StyledTextInputLabel>Total</StyledTextInputLabel>
-        <StyledTextInput editable={false} placeholder="Total" />
-
-        <StyledTextInputLabel>Scope Notes</StyledTextInputLabel>
-        <StyledTextInput placeholder="Scope Notes" />
-
-        <StyledSaveButton mode="contained">Save</StyledSaveButton>
-
-      </Overlay>
-    </>
-
-  )
-
-}
-
-const LineItemWrapper = styled.TouchableOpacity`
-background-color: #F1F4F8;
-padding: 16px 32px 8px;
-flex-direction: row;
-`;
-
-const LineItemHeading = styled.Text`
-font-size: 16px;
-font-family: 'URBAN_REGULAR';
-`;
-
-const LineItemInputGroup = styled.View`
-flex-direction: row;
-`;
-
-const LineItemInputText = styled.Text`
-font-family: 'URBAN_BOLD';
-font-size: 16px;
-color: #469869;
-flex: 1;
-
-`;
-
-const StyledTextInputLabel = styled.Text`
-font-size: 14px;
-font-family: 'URBAN_BOLD';
-align-self: flex-start;
-margin-bottom: 4px;
-`;
-
-const StyledTextInput = styled.TextInput`
-background-color: #d9d9d980;
-border-radius: 4px;
-width: 100%;
-padding:12px;
-margin-bottom: 8px;
-`;
-
-const StyledSaveButton = styled(Button)`
-margin: 8px 0;
-align-self: flex-end;
-`;
 
 
-const MenuWrapper = styled.View`
-margin:16px 0;
-background-color: #1E2429;
-flex-direction: row;
-padding:12px;
-justify-content: center;
-`;
 
-
-const MenuItem = styled.TouchableOpacity`
-margin: 0 16px;
-`;
-
-const CurrentFormHeading = styled.Text`
-font-family: 'URBAN_BOLD';
-text-transform: uppercase;
-font-size: 16px;
-margin-left: 16px;
-
-`;
 
 
 
