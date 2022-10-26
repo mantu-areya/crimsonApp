@@ -191,13 +191,6 @@ const SubCategoryTextInput = styled.TextInput`
     border-radius:4px;
     `;
 
-    const FormTextInput = styled.TextInput`
-    flex: 2;
-    font-family: SF_LIGHT;
-    text-align: center;
-    background-color:white;
-    border-radius:4px;
-    `;
 
     const FormTextInput = styled.TextInput`
     flex: 2;

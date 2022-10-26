@@ -1,10 +1,11 @@
 import { View, Text, TextInput } from 'react-native'
-import React from 'react'
+import React, {useContext} from 'react'
 import styled from 'styled-components/native'
 import { useSafeAreaInsets } from "react-native-safe-area-context"
 import { Button, IconButton } from 'react-native-paper'
-import { AuthContext } from '../../contexts/AuthContext'
+import { AuthenticationContext } from "../../services/authentication/authentication.context";
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
+import { Spacer } from '../../components/spacer/spacer.component';
 
 
 const shadowStyle = {
@@ -25,7 +26,7 @@ const Login = ({ navigation }) => {
     const [password, setPassword] = React.useState("");
     const [showPassword, setShowPassword] = React.useState(false);
 
-    const { handleLogin } = React.useContext(AuthContext);
+    const { onLogin, error } = useContext(AuthenticationContext);
 
 
     return (
@@ -69,6 +70,11 @@ const Login = ({ navigation }) => {
                     />
                     <MaterialCommunityIcons size={24} onPress={() => setShowPassword(!showPassword)} name={showPassword ? "eye" : "eye-off"} color="#7E8892" />
                 </InputWrapper>
+                {error && (
+          <Spacer size="large">
+            <Text  style={{color:'red'}}>{error}</Text>
+          </Spacer>
+        )}
 
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginVertical: 16 }}>
                     {/* Forgot Password */}
@@ -76,8 +82,8 @@ const Login = ({ navigation }) => {
                     {/* Login Button */}
                     <StyledLoginButton
                         onPress={() => {
-                            handleLogin();
-                            navigation.navigate("Home");
+                          onLogin(email, password)
+                            // navigation.navigate("Home");
                         }}
                         labelStyle={{
                             fontFamily: 'URBAN_BOLD',
