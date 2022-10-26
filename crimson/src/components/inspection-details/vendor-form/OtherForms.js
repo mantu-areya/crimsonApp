@@ -113,6 +113,11 @@ const OtherForms = ({ readOnly, inspectionData, navigation }) => {
 
     const menuItems = [
         {
+            title: 'Room Measurements',
+            icon: <MaterialCommunityIcons size={28} name='bed' color={"#FF6666"} />,
+            data: room_MeasurementData,
+        },
+        {
             title: 'General Rental Operations Scope',
             icon: <MaterialCommunityIcons size={28} name='home-city' color={"#DE9B67"} />,
             data: general_Rental,
@@ -234,7 +239,7 @@ const OtherForms = ({ readOnly, inspectionData, navigation }) => {
                     <FlatList
                         data={dataList}
                         keyExtractor={item => item.UniqueKey}
-                        renderItem={({ item }) => <FormLineItem   {...{item, onValueChange, navigation, readOnly,setShowAddButton }} />}
+                        renderItem={({ item }) => <FormLineItem   {...{item, onValueChange, navigation, readOnly,setShowAddButton }} isForRoomMeasurement={currentFormData.title === "Room Measurements"} />}
                     /> :
                     <View style={{ padding: 16 }}>
                         <ActivityIndicator />

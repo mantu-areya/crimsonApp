@@ -16,7 +16,7 @@ let requiredSubCategories = [
 ]
 
 
-export default function FormLineItem({ item, onValueChange, navigation, readOnly, setShowAddButton }) {
+export default function FormLineItem({ item, isForRoomMeasurement, onValueChange, navigation, readOnly, setShowAddButton }) {
   const [overlayVisible, setOverlayVisible] = React.useState(false)
 
 
@@ -44,9 +44,101 @@ export default function FormLineItem({ item, onValueChange, navigation, readOnly
   }, [])
 
 
+  if (isForRoomMeasurement) {
+
+    let length, width, misc;
+    const Sub_Category_List = ["Garage", "Foyed", "Family Room", "Breakfast Nook", "Kitchen", "Laundry Room", "Formal Living Room", "Hallway 1", "Hallway 2", "Half Bathroom", "Master Bathroom", "Bathroom 2", "Bathroom 3", "Master Bedroom", "Bedroom 2", "Bedroom 3", "Bedroom 4", "Gameroom", "Office/Study", "Basement", "master closet", "Dining Room",]
+
+
+    function getFormatedRowValues(value) {
+      if (value === undefined || value === null) {
+        return 0;
+      }
+      return value > 1 ? value.toString().replace(/^0+/, '') : value;
+    }
+
+    const handleDelete = (dvdId, inspId, UniqueKey) => {
+      deleteNewItem(dvdId, inspId, UniqueKey)
+    }
+
+    length = getFormatedRowValues(item.Room_Length);
+    width = getFormatedRowValues(item.Room_Width);
+    misc = getFormatedRowValues(item.Room_Misc_SF)
+
+
+    return (
+      <>
+        <Swipeable rightButtons={rightButtons}>
+          <LineItemWrapper >
+            <View style={{ flex: 1 }}>
+              {/* Room */}
+              {(Sub_Category_List.includes(item.Sub_Category) || readOnly)
+                ?
+                <StyledText>{item.Sub_Category}</StyledText>
+                :
+                <StyledTextInput
+                  onChangeText={val => onValueChange((val), "Sub_Category", item.UniqueKey)}
+                  value={`${item.Sub_Category}`}
+                />}
+              <LineItemInputGroup>
+                {/* Length */}
+                <LineItemInputText onPress={() => setOverlayVisible(true)}>Length +</LineItemInputText>
+                {/* Width */}
+                <LineItemInputText onPress={() => setOverlayVisible(true)}>Width +</LineItemInputText>
+                {/* Misc */}
+                <LineItemInputText onPress={() => setOverlayVisible(true)}>Misc +</LineItemInputText>
+              </LineItemInputGroup>
+            </View>
+            {/* Icon */}
+            <Ionicons name="camera" size={24} />
+
+          </LineItemWrapper>
+        </Swipeable>
+        <Overlay visible={overlayVisible} onClose={() => setOverlayVisible(false)} closeOnTouchOutside >
+          {(Sub_Category_List.includes(item.Sub_Category) || readOnly)
+            ?
+            <StyledText>{item.Sub_Category}</StyledText>
+            :
+            <StyledTextInput
+              onChangeText={val => onValueChange((val), "Sub_Category", item.UniqueKey)}
+              value={`${item.Sub_Category}`}
+            />}
+
+          <CustomFormInput
+            label="Length"
+            placeholder="Length"
+            onChangeText={val => onValueChange((val), "Room_Length", item.UniqueKey)}
+            readOnly={readOnly}
+            value={length}
+          />
+
+          <CustomFormInput
+            label="Width"
+            placeholder="Width"
+            onChangeText={val => onValueChange((val), "Room_Width", item.UniqueKey)}
+            readOnly={readOnly}
+            value={width}
+          />
+          <CustomFormInput
+            label="Misc"
+            placeholder="Misc"
+            onChangeText={val => onValueChange((val), "Room_Misc_SF", item.UniqueKey)}
+            readOnly={readOnly}
+            value={misc}
+          />
+
+          {!readOnly && <StyledSaveButton mode="contained">Save</StyledSaveButton>}
+
+        </Overlay>
+      </>
+
+    )
+
+  }
+
+
   return (
     <>
-
       <Swipeable rightButtons={rightButtons}>
         <LineItemWrapper >
           <View style={{ flex: 1 }}>
