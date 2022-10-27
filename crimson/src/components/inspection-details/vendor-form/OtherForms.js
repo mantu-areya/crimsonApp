@@ -87,6 +87,9 @@ const OtherForms = ({ readOnly, inspectionData, navigation }) => {
             }
             else {
                 GetDataByCategory(contexRecord)
+                contexRecord.map((item, i) => {
+                   item.newItem && console.log(item.newItem,"ITEME");
+                })
             }
         }
     }, [vendorFormDetails]);
@@ -148,15 +151,15 @@ const OtherForms = ({ readOnly, inspectionData, navigation }) => {
     const currentFormData = menuItems.filter((item) => item.title === currentForm)[0]
 
 
-    const [dataList, setDatalist] = React.useState(currentFormData.data)
+    const [dataList, setDatalist] = React.useState([]);
 
     const { updateVfContect, addNewItem } = React.useContext(VendorFormContext);
     const [NewItemAdded, setNewItemAdded] = React.useState(0);
     const [showAddButton, setShowAddButton] = React.useState(false)
 
-    React.useEffect(() => {
-        updateVfContect(dataList, "OTHRFM", inspectionData.Id);
-    }, [dataList]);
+    // React.useEffect(() => {
+    //     updateVfContect(dataList, "OTHRFM", inspectionData.Id);
+    // }, [dataList]);
 
     const onOtherFormValueChange = (value, field, key) => {
         console.log("changing", field, 'with', value);
@@ -177,14 +180,14 @@ const OtherForms = ({ readOnly, inspectionData, navigation }) => {
                 "Room_Width": null,
                 "Matrix_Price": Sub_Category && Sub_Category,
                 "Sequence": newSequence,
-                "UniqueKey": (inspId + '#' + newSequence.toFixed(3)),
+                "UniqueKey": (inspectionData.Id + '#' + newSequence.toFixed(3)),
                 "U_M": null,
                 "Total": 0.00,
                 "Scope_Notes": null,
                 "Rate": 0.00,
                 "Quantity": 0,
                 "Owner_Clarification": null,
-                "Lookup_To_Parent": inspId,
+                "Lookup_To_Parent": inspectionData.Id,
                 "line_item_images": null,
                 "Cost_Category": null,
                 "Contract_Type": null,
@@ -199,9 +202,9 @@ const OtherForms = ({ readOnly, inspectionData, navigation }) => {
             dataList.push(itemObject[0])
             newState = dataList
             setSequence(newSequence)
-            addNewItem(itemObject, inspId)
+            addNewItem(itemObject, inspectionData.Id)
             setNewItemAdded(NewItemAdded + 1)
-        } {
+        }  {
             newState = dataList.map(obj => {
                 if (obj.UniqueKey === key) { 
                     let formatedVal = ["U_M", "Scope_Notes"].includes(field) ? value : parseFloat(value)
@@ -214,6 +217,7 @@ const OtherForms = ({ readOnly, inspectionData, navigation }) => {
             });
         }
         setDatalist(newState)
+        updateVfContect(newState, "OTHRFM", inspectionData.Id);
     }
 
     const onRoomMeasurementValueChange =  async (value, field, key) => {
@@ -229,14 +233,14 @@ const OtherForms = ({ readOnly, inspectionData, navigation }) => {
             "Room_Width": null,
             "Matrix_Price": "",
             "Sequence": newSequence,
-            "UniqueKey": (inspId + '#' + newSequence.toFixed(3)),
+            "UniqueKey": (inspectionData.Id + '#' + newSequence.toFixed(3)),
             "U_M": null,
             "Total": 0.00,
             "Scope_Notes": null,
             "Rate": 0.00,
             "Quantity": 0,
             "Owner_Clarification": null,
-            "Lookup_To_Parent": inspId,
+            "Lookup_To_Parent": inspectionData.Id,
             "line_item_images": null,
             "Cost_Category": null,
             "Contract_Type": null,
@@ -248,13 +252,13 @@ const OtherForms = ({ readOnly, inspectionData, navigation }) => {
             "Adj_Quantity": 0,
             "newItem":true
           }]
-          room_measurementData.push(itemObject[0])
-          newData = room_measurementData
+          dataList.push(itemObject[0])
+          newData = dataList
           setSequence(newSequence)
-          addNewItem(itemObject,inspId)
+          addNewItem(itemObject,inspectionData.Id)
           setNewItemAdded(NewItemAdded + 1)
         } else if(field =="Sub_Category" ){
-          newData = room_Measurement.map(obj => {
+          newData = dataList.map(obj => {
             if (obj.UniqueKey === key) {
               return { ...obj, [field]: value };
             }
@@ -280,16 +284,23 @@ const OtherForms = ({ readOnly, inspectionData, navigation }) => {
     
         // console.log(newData);
         setDatalist(newData)
+        updateVfContect(newState, "RM", inspectionData.Id);
       }
     
 
     React.useEffect(() => {
+        // currentFormData.data.map(obj => {
+        //     console.log(obj.newItem, "TEST NEW ITEM");
+        // })
         setDatalist(currentFormData.data);
     }, [currentFormData.data])
 
     function handleAddNewItem() {
-        onValueChange(null, "newItem")
-        // alert("Add new item");
+        console.log("Adding New Item to",currentForm);
+        if (currentForm === "Room Measurements") {
+          return  onRoomMeasurementValueChange(null,"newItem");
+        }
+        onOtherFormValueChange(null,"newItem");
     }
 
     function handleOnSave(isForRoomMeasurement=false) {
