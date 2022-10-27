@@ -16,7 +16,7 @@ let requiredSubCategories = [
 ]
 
 
-export default function FormLineItem({ item, isForRoomMeasurement, onValueChange, navigation, readOnly, setShowAddButton }) {
+export default function FormLineItem({ item,onRoomMeasurementValueChange,onOtherFormValueChange, isForRoomMeasurement, onValueChange, navigation, readOnly, setShowAddButton, handleOnSave }) {
   const [overlayVisible, setOverlayVisible] = React.useState(false)
 
 
@@ -77,16 +77,16 @@ export default function FormLineItem({ item, isForRoomMeasurement, onValueChange
                 <StyledText>{item.Sub_Category}</StyledText>
                 :
                 <StyledTextInput
-                  onChangeText={val => onValueChange((val), "Sub_Category", item.UniqueKey)}
+                  onChangeText={val => onRoomMeasurementValueChange((val), "Sub_Category", item.UniqueKey)}
                   value={`${item.Sub_Category}`}
                 />}
               <LineItemInputGroup>
                 {/* Length */}
-                <LineItemInputText onPress={() => setOverlayVisible(true)}>Length +</LineItemInputText>
+                <LineItemInputText onPress={() => setOverlayVisible(true)}>Length {length}</LineItemInputText>
                 {/* Width */}
-                <LineItemInputText onPress={() => setOverlayVisible(true)}>Width +</LineItemInputText>
+                <LineItemInputText onPress={() => setOverlayVisible(true)}>Width {width}</LineItemInputText>
                 {/* Misc */}
-                <LineItemInputText onPress={() => setOverlayVisible(true)}>Misc +</LineItemInputText>
+                <LineItemInputText onPress={() => setOverlayVisible(true)}>Misc {misc}</LineItemInputText>
               </LineItemInputGroup>
             </View>
             {/* Icon */}
@@ -100,14 +100,14 @@ export default function FormLineItem({ item, isForRoomMeasurement, onValueChange
             <StyledText>{item.Sub_Category}</StyledText>
             :
             <StyledTextInput
-              onChangeText={val => onValueChange((val), "Sub_Category", item.UniqueKey)}
+              onChangeText={val => onRoomMeasurementValueChange((val), "Sub_Category", item.UniqueKey)}
               value={`${item.Sub_Category}`}
             />}
 
           <CustomFormInput
             label="Length"
             placeholder="Length"
-            onChangeText={val => onValueChange((val), "Room_Length", item.UniqueKey)}
+            onChangeText={val => onRoomMeasurementValueChange((val), "Room_Length", item.UniqueKey)}
             readOnly={readOnly}
             value={length}
           />
@@ -115,19 +115,21 @@ export default function FormLineItem({ item, isForRoomMeasurement, onValueChange
           <CustomFormInput
             label="Width"
             placeholder="Width"
-            onChangeText={val => onValueChange((val), "Room_Width", item.UniqueKey)}
+            onChangeText={val => onRoomMeasurementValueChange((val), "Room_Width", item.UniqueKey)}
             readOnly={readOnly}
             value={width}
           />
           <CustomFormInput
             label="Misc"
             placeholder="Misc"
-            onChangeText={val => onValueChange((val), "Room_Misc_SF", item.UniqueKey)}
+            onChangeText={val => onRoomMeasurementValueChange((val), "Room_Misc_SF", item.UniqueKey)}
             readOnly={readOnly}
             value={misc}
           />
 
-          {!readOnly && <StyledSaveButton mode="contained">Save</StyledSaveButton>}
+          {!readOnly && <StyledSaveButton onPress={() => {
+            handleOnSave(true); 
+            setOverlayVisible(false)}} mode="contained">Save</StyledSaveButton>}
 
         </Overlay>
       </>
@@ -146,7 +148,7 @@ export default function FormLineItem({ item, isForRoomMeasurement, onValueChange
               Sub_Category_Keys.includes(item?.Sub_Category)
                 ?
                 <StyledTextInput
-                  onChangeText={val => onValueChange((val), "Matrix_Price", item.UniqueKey)}
+                  onChangeText={val => onOtherFormValueChange((val), "Matrix_Price", item.UniqueKey)}
                   value={`${item?.Matrix_Price ?? 0}`}
                 />
                 :
@@ -156,11 +158,11 @@ export default function FormLineItem({ item, isForRoomMeasurement, onValueChange
             }
             <LineItemInputGroup>
               {/* QTY */}
-              <LineItemInputText onPress={() => setOverlayVisible(true)}>Qty +</LineItemInputText>
+              <LineItemInputText onPress={() => setOverlayVisible(true)}>Qty {item.Quantity}</LineItemInputText>
               {/* RATE */}
-              <LineItemInputText onPress={() => setOverlayVisible(true)}>Rate +</LineItemInputText>
+              <LineItemInputText onPress={() => setOverlayVisible(true)}>Rate ${item.Rate}</LineItemInputText>
               {/* NOTES */}
-              <LineItemInputText onPress={() => setOverlayVisible(true)}>Notes +</LineItemInputText>
+              <LineItemInputText onPress={() => setOverlayVisible(true)}>Total ${item.Total}</LineItemInputText>
             </LineItemInputGroup>
           </View>
           {/* Icon */}
@@ -174,7 +176,7 @@ export default function FormLineItem({ item, isForRoomMeasurement, onValueChange
           Sub_Category_Keys.includes(item?.Sub_Category)
             ?
             <StyledTextInput
-              onChangeText={val => onValueChange((val), "Matrix_Price", item.UniqueKey)}
+              onChangeText={val => onOtherFormValueChange((val), "Matrix_Price", item.UniqueKey)}
               value={`${item?.Matrix_Price ?? 0}`}
             />
             :
@@ -186,7 +188,7 @@ export default function FormLineItem({ item, isForRoomMeasurement, onValueChange
         <CustomFormInput
           label="Quantity"
           placeholder="QTY"
-          onChangeText={val => onValueChange((val), "Quantity", item.UniqueKey)}
+          onChangeText={val => onOtherFormValueChange((val), "Quantity", item.UniqueKey)}
           readOnly={readOnly}
           value={item.Quantity}
         />
@@ -194,7 +196,7 @@ export default function FormLineItem({ item, isForRoomMeasurement, onValueChange
         <CustomFormInput
           label="U/A"
           placeholder="U/A"
-          onChangeText={val => onValueChange((val), "U/A", item.UniqueKey)}
+          onChangeText={val => onOtherFormValueChange((val), "U_M", item.UniqueKey)}
           readOnly={readOnly}
           value={item.U_M}
         />
@@ -205,7 +207,7 @@ export default function FormLineItem({ item, isForRoomMeasurement, onValueChange
             <StyledTextInput
 
               onChangeText={val => {
-                onValueChange(Number((val.replace("$", ""))), "Rate", item.UniqueKey)
+                onOtherFormValueChange(Number((val.replace("$", ""))), "Rate", item.UniqueKey)
               }}
               value={`$${item.Rate}`}
               keyboardType="number-pad"
@@ -215,18 +217,18 @@ export default function FormLineItem({ item, isForRoomMeasurement, onValueChange
         }
         <CustomFormInput
           label="Total"
-          readOnly={readOnly}
+          readOnly={true}
           value={`$${item.Total}`}
         />
         <CustomFormInput
           label="Scope Notes"
           placeholder="Scope Notes"
-          onChangeText={val => onValueChange((val), "Scope_Notes", item.UniqueKey)}
+          onChangeText={val => onOtherFormValueChange((val), "Scope_Notes", item.UniqueKey)}
           readOnly={readOnly}
           value={item.Scope_Notes}
         />
 
-        {!readOnly && <StyledSaveButton mode="contained">Save</StyledSaveButton>}
+        {!readOnly && <StyledSaveButton onPress={() => { handleOnSave(); setOverlayVisible(false)}} mode="contained">Save</StyledSaveButton>}
 
       </Overlay>
     </>

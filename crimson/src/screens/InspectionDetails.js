@@ -85,9 +85,7 @@ const InspectionDetails = ({ route, navigation }) => {
     setIsNotesCollapsed(true)
   }
 
-  const inspectionName = inspectionData.Name
-
-
+console.log("CURRENT INSPECTION",inspectionData.Id);
 
 
   return (
@@ -100,14 +98,14 @@ const InspectionDetails = ({ route, navigation }) => {
             </Collapsible>}
         </Row>
         {/* Hero */}
-        <Hero />
+        <Hero data={inspectionData} />
         {/* CTA's */}
         <CTA handleOnChat={() => alert("Chat")} handleOnSubmit={handleSubmit} />
         {/* Forms */}
         <OtherForms readOnly={readOnly} inspectionData={inspectionData} navigation={navigation} />
       </ScrollView>
       {/* Call Now */}
-      {show && <CallNow />}
+      {show && <CallNow data={inspectionData} />}
     </SafeAreaView>
   )
 }

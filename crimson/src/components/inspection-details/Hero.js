@@ -2,6 +2,8 @@ import { View, Text, ImageBackground, Image } from 'react-native'
 import React from 'react'
 import styled from 'styled-components/native'
 import Ionicons from "react-native-vector-icons/Ionicons"
+import { differenceInDays } from 'date-fns'
+
 
 
 import { useNavigation } from '@react-navigation/native';
@@ -9,10 +11,33 @@ import Overlay from 'react-native-modal-overlay';
 
 const image = { uri: 'https://reactjs.org/logo-og.png' };
 
-const Hero = () => {
+const Hero = ({data,formStage}) => {
 
     const navigation = useNavigation()
     const [overlayVisible, setOverlayVisible] = React.useState(false)
+
+
+    const {
+        Property_Address__c,
+        Property_City__c,
+        Property_State__c,
+        Property_Zip_Code__c,
+        HHM_Field_PM__r,
+        Repair_Estimator_Email__c,
+        Repair_Estimator__r,
+        Inspection_Scheduled_Date__c,
+        Target_Rehab_Complete_Date__c,
+        HHM_Field_PM_Email__c,
+        GC_Inspection_Due_Date__c,
+        Inspection_Form_Stage__c,
+        Inspection_Stage__c
+    } = data;
+
+
+    const pendingDays = differenceInDays(
+        new Date(GC_Inspection_Due_Date__c),
+        new Date()
+      )
 
 
     return (
@@ -27,10 +52,10 @@ const Hero = () => {
                         {/* Back Icon */}
                         <GoBackButton handleGoBack={() => navigation.goBack()} />
                         {/* Meta Info */}
-                        <MetaInfo />
+                        <MetaInfo {...{pendingDays,Inspection_Stage__c}} />
                     </View>
                     {/* Short Summary */}
-                    <ShortSummary />
+                    <ShortSummary {...{Property_Address__c}} />
                 </InsideContentWrapper>
 
             </ImageBackgroundWrapper>
@@ -42,13 +67,14 @@ const Hero = () => {
             <DescriptionWrapper>
                 <Text style={{ color: 'black', fontFamily: 'URBAN_BOLD', fontSize: 16 }}>DESCRIPTION</Text>
                 <DescriptionText style={{ marginTop: 14 }}>
-                    2137 Janett Ln, Willingmington, WV 24921 is a 3 Bed Room Property with 4 Baths and 2400 Sq Ft. Built in 2022 this property is a New Construction.
+                   { Property_Address__c } is a 3 Bed Room Property with 4 Baths and 2400 Sq Ft. Built in 2022 this property is a New Construction.
                 </DescriptionText>
                 <DescriptionText style={{ marginTop: 16 }}>
-                    Inspection Schedule Date - 15.02.2022
+                    Inspection Schedule Date - {GC_Inspection_Due_Date__c}
                 </DescriptionText>
                 <DescriptionText>
-                    Target Rehab Complete Date - 20.02.2023
+                    Target Rehab Complete Date - {Target_Rehab_Complete_Date__c} 
+                    {/* // ! not getting this value */}
                 </DescriptionText>
             </DescriptionWrapper>
         </Container>
@@ -64,22 +90,22 @@ function GoBackButton({ handleGoBack }) {
     )
 }
 
-function MetaInfo({ }) {
+function MetaInfo({pendingDays, Inspection_Stage__c }) {
     return (
         <MetaInfoWrapper>
-            <MetaInfoText>Pending GC Inspection</MetaInfoText>
-            <MetaInfoText>7 days pending</MetaInfoText>
+            <MetaInfoText>{Inspection_Stage__c}</MetaInfoText>
+            <MetaInfoText>{pendingDays} days pending</MetaInfoText>
             <Ionicons style={{ marginTop: 16 }} name="cloud-download" size={32} color="white" />
         </MetaInfoWrapper>
     )
 }
 
-function ShortSummary({ }) {
+function ShortSummary({ Property_Address__c }) {
     return (
         <ShortSummaryWrapper>
             {/* Address */}
             <ShortSummaryAddress>
-                2137 Janett Ln
+               {Property_Address__c}
             </ShortSummaryAddress>
             {/* Bed | Bath | Sq Feet */}
             <BedBathSqftText>
@@ -129,12 +155,13 @@ color: white;
 
 const ShortSummaryWrapper = styled.View`
 margin-top: 150px;
-align-items: flex-end;
+margin-left: auto;
 `;
 
 const ShortSummaryAddress = styled.Text`
-font-size: 24px;
+font-size: 18px;
 color: white;
+width: 100%;
 font-family: 'URBAN_REGULAR';
 `;
 

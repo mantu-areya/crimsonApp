@@ -4,22 +4,27 @@ import styled from "styled-components/native"
 import  Ionicons  from "react-native-vector-icons/Ionicons"
 
 
-const CallNow = () => {
+const CallNow = ({data}) => {
+    const {
+        HHM_Field_PM__r,
+        HHM_Field_PM_Email__c,
+    } = data;
     return (
         <Container>
             {/* Text */}
             <TextWrapper>
                 {/* Name */}
                 <Title>
-                    John - Field PM
+                {HHM_Field_PM__r.Name}
                 </Title>
                 {/* Mobile No */}
                 <SubTitle>
-                    +12345678
+                    +12345678 
+                    {/* // ! need field for mobile */}
                 </SubTitle>
                 {/* Mobile No */}
                 <SubTitle>
-                    johnfield@gmail.com
+                    {HHM_Field_PM_Email__c}
                 </SubTitle>
             </TextWrapper>
             {/*  Button */}
