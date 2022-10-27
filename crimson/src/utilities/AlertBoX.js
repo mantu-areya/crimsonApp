@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { View, StyleSheet, Button, Alert } from "react-native";
 
-export const AlertBoX = () => {
+export const AlertBoX = (message,callback) => {
   const createAlert = () =>
     Alert.alert(
       "Alert Title",
