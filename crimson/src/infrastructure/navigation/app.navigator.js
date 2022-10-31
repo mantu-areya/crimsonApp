@@ -13,6 +13,7 @@ import { CameraScreen } from "../../utilities/camera/CameraScreen"
 import InspectionDetails from "../../screens/InspectionDetails";
 import Login from "../../screens/auth/Login";
 import { AuthContext } from "../../contexts/AuthContext";
+import { HomePage } from "../../screens/HomePage";
 export const AppNavigator = () => {
 
 
@@ -61,7 +62,7 @@ export const AppNavigator = () => {
     return (
       <Stack.Navigator>
         <Stack.Screen options={{ headerShown: false }}
-          name="HomeStack" component={HomeScreen} />
+          name="HomeStack" component={HomePage} />
         <Stack.Screen
           options={{ headerShown: false }}
           name="Inspections" component={InspectionsScreen} />
@@ -93,9 +94,10 @@ export const AppNavigator = () => {
           <Tab.Navigator screenOptions={screenOptions}>
             <Tab.Screen
               options={{
-                headerShown: false, tabBarStyle: {
-                  display: 'none'
-                }
+                headerShown: false, 
+                // tabBarStyle: {
+                //   display: 'none'
+                // }
               }}
               name="Home"
               component={HomeStackScreen}
@@ -104,11 +106,6 @@ export const AppNavigator = () => {
               options={{ headerShown: false }}
               name="Settings"
               component={Settings}
-            />
-            <Tab.Screen
-              options={{ headerShown: false }}
-              name="Map"
-              component={Maps}
             />
           </Tab.Navigator>
       }
