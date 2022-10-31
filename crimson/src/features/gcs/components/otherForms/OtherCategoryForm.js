@@ -59,7 +59,7 @@ export default function OtherCategoryForm({ currFormdata, inspId, navigation ,re
           setSequence(newSequence)
           addNewItem(itemObject,inspId)
           setNewItemAdded(NewItemAdded + 1)
-        } {
+        } else {
          newState = dataList.map(obj => {
           if (obj.UniqueKey === key) {
             let newValues = { ...obj, [field]: parseFloat(value) };
