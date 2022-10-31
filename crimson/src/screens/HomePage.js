@@ -36,8 +36,8 @@ export const HomePage = ({ navigation }) => {
   const [open, setOpen] = React.useState(false);
 
   const onChangeSearch = query => setSearchQuery(query);
+  const filterInspections = inspections?.filter((ins) => ins?.Name.includes(searchQuery) || ins?.Property_Address__c.includes(searchQuery) || ins?.Property_City__c?.includes(searchQuery));
 
-  const filterInspections = inspections?.filter((ins) => ins?.Name.includes(searchQuery))
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: 'black' }}>
@@ -56,7 +56,7 @@ export const HomePage = ({ navigation }) => {
         <View style={{ backgroundColor: '#F1F4F8', justifyContent: "space-between", alignItems: 'center', flexDirection: 'row', padding: 12, marginVertical: 8 }}>
           <View style={{ flexDirection: 'row', alignItems: 'center' }}>
             <Icon name="search" color="grey" size={18} />
-            <TextInput placeholder="Address, city, state.." style={{ fontFamily: "URBAN_BOLD", backgroundColor: "transparent", marginLeft: 16, fontSize: 18 }} />
+            <TextInput onChangeText={onChangeSearch} placeholder="Address, city, state.." style={{ fontFamily: "URBAN_BOLD", backgroundColor: "transparent", marginLeft: 16, fontSize: 18 }} />
           </View>
           <Button labelStyle={{ fontFamily: "URBAN_BOLD" }} style={{ backgroundColor: "#4B39EF", padding: 8 }} mode="contained">Search</Button>
         </View>
@@ -71,8 +71,8 @@ export const HomePage = ({ navigation }) => {
           </View> :
           <FlatList
             data={filterInspections ?? []}
-            keyExtractor={(item) => item.Name}
-            renderItem={(item) => (
+            keyExtractor={(item) => item.Id}
+            renderItem={({item}) => (
               <ListViewCard data={item} />
             )}
           />
@@ -88,15 +88,15 @@ export const HomePage = ({ navigation }) => {
 function ListViewCard({ data }) {
   const navigation = useNavigation()
   let w = Dimensions.get('window').width - 12
-  const inspectionData = data.item;
+  const inspectionData = data
 
   return (
     <Card onPress={() => navigation.navigate('InspectionsDetail', { inspectionData })} style={{ display: 'flex', alignItems: "center", flexDirection: "row", borderRadius: 8, marginBottom: 16 }}>
       <View style={{ display: 'flex', alignItems: "center", flexDirection: "row", padding: 16 }}>
         <View>
-          <Text style={{ color: 'black', fontFamily: 'URBAN_MEDIUM', fontSize: 18, marginBottom: 4 }}  >{data.item.Property_Address__c === '' ? 'Property Address NA' : data.item.Property_Address__c}</Text>
-          <Text style={{ color: '#A6AFB9', fontFamily: 'URBAN_REGULAR', fontSize: 16, marginBottom: 2 }} >GC SUBMITTED BID : {data.item?.Repair_Estimator__r?.Name}</Text>
-          <Text style={{ color: '#A6AFB9', fontFamily: 'URBAN_REGULAR', fontSize: 16, marginBottom: 2 }} >TARGET REHAB COMPLETE DATE : {data.item?.Target_Rehab_Complete_Date__c}</Text>
+          <Text style={{ color: 'black', fontFamily: 'URBAN_MEDIUM', fontSize: 18, marginBottom: 4 }}  >{data?.Property_Address__c === '' ? 'Property Address NA' : data?.Property_Address__c}</Text>
+          <Text style={{ color: '#A6AFB9', fontFamily: 'URBAN_REGULAR', fontSize: 16, marginBottom: 2 }} >GC SUBMITTED BID : {data?.Repair_Estimator__r?.Name}</Text>
+          <Text style={{ color: '#A6AFB9', fontFamily: 'URBAN_REGULAR', fontSize: 16, marginBottom: 2 }} >TARGET REHAB COMPLETE DATE : {data?.Target_Rehab_Complete_Date__c}</Text>
         </View>
        
       </View>
