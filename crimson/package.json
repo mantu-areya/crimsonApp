@@ -21,6 +21,7 @@
     "@react-navigation/native-stack": "^6.6.2",
     "@react-navigation/stack": "^6.2.1",
     "axios": "^0.27.2",
+    "date-fns": "^2.29.3",
     "deprecated-react-native-prop-types": "^2.3.0",
     "expo": "~45.0.0",
     "expo-background-fetch": "^10.2.0",
@@ -67,7 +68,7 @@
     "react-native-swipeable": "^0.6.0",
     "react-native-vector-icons": "^9.2.0",
     "react-native-web": "0.17.7",
-    "react-native-webview": "^11.23.0",
+    "react-native-webview": "^11.18.1",
     "styled-components": "^5.3.5"
   },
   "devDependencies": {
