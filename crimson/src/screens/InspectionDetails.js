@@ -87,7 +87,6 @@ const InspectionDetails = ({ route, navigation }) => {
 
 console.log("CURRENT INSPECTION",inspectionData.Id);
 
-
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <ScrollView onScroll={(e) => setOffSetY(e.nativeEvent.contentOffset.y)}>

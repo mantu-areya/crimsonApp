@@ -80,7 +80,10 @@ export const getInspectionsData = async () => {
       }
     },
   )
-    .then(response => response.data["Inspections"].Inspection )
+    .then(response => {
+      // console.log("ID",response.data);
+      return response.data["Inspections"].Inspection
+    } )
     .catch(err => {
       console.error(err);
       // throw err;

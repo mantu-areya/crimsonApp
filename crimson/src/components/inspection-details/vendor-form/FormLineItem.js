@@ -6,6 +6,7 @@ import Swipeable from 'react-native-swipeable';
 import { View, TouchableOpacity, Text } from 'react-native'
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import React from "react";
+import AntDesign from "react-native-vector-icons/AntDesign"
 
 
 let requiredSubCategories = [
@@ -16,7 +17,7 @@ let requiredSubCategories = [
 ]
 
 
-export default function FormLineItem({ item,onRoomMeasurementValueChange,onOtherFormValueChange, isForRoomMeasurement, onValueChange, navigation, readOnly, setShowAddButton, handleOnSave }) {
+export default function FormLineItem({ inspId, item, onRoomMeasurementValueChange, onOtherFormValueChange, isForRoomMeasurement, onValueChange, navigation, readOnly, setShowAddButton, handleOnSave }) {
   const [overlayVisible, setOverlayVisible] = React.useState(false)
 
 
@@ -128,8 +129,9 @@ export default function FormLineItem({ item,onRoomMeasurementValueChange,onOther
           />
 
           {!readOnly && <StyledSaveButton onPress={() => {
-            handleOnSave(true); 
-            setOverlayVisible(false)}} mode="contained">Save</StyledSaveButton>}
+            handleOnSave(true);
+            setOverlayVisible(false)
+          }} mode="contained">Save</StyledSaveButton>}
 
         </Overlay>
       </>
@@ -145,28 +147,21 @@ export default function FormLineItem({ item,onRoomMeasurementValueChange,onOther
         <LineItemWrapper >
           <View style={{ flex: 1 }}>
             {
-              Sub_Category_Keys.includes(item?.Sub_Category)
-                ?
-                <StyledTextInput
-                  onChangeText={val => onOtherFormValueChange((val), "Matrix_Price", item.UniqueKey)}
-                  value={`${item?.Matrix_Price ?? 0}`}
-                />
-                :
-                <LineItemHeading>
-                  {item?.Matrix_Price}
-                </LineItemHeading>
+              <LineItemHeading>
+                {item?.Matrix_Price}
+              </LineItemHeading>
             }
             <LineItemInputGroup>
               {/* QTY */}
               <LineItemInputText onPress={() => setOverlayVisible(true)}>Qty {item.Quantity}</LineItemInputText>
               {/* RATE */}
-              <LineItemInputText onPress={() => setOverlayVisible(true)}>Rate ${item.Rate}</LineItemInputText>
+              <LineItemInputText onPress={() => setOverlayVisible(true)}>Rate {getFormattedValue("Rate", item.Rate)}</LineItemInputText>
               {/* NOTES */}
-              <LineItemInputText onPress={() => setOverlayVisible(true)}>Total ${item.Total}</LineItemInputText>
+              <LineItemInputText onPress={() => setOverlayVisible(true)}>Total {getFormattedValue("Total", item.Total)}</LineItemInputText>
             </LineItemInputGroup>
           </View>
           {/* Icon */}
-          <Ionicons name="camera" size={24} />
+          <Ionicons name="camera" onPress={() => navigation.navigate("CameraScreen", { inspId: { inspId }, lineItemId: item.Id })} size={24} />
 
         </LineItemWrapper>
       </Swipeable>
@@ -175,60 +170,79 @@ export default function FormLineItem({ item,onRoomMeasurementValueChange,onOther
         {
           Sub_Category_Keys.includes(item?.Sub_Category)
             ?
-            <StyledTextInput
-              onChangeText={val => onOtherFormValueChange((val), "Matrix_Price", item.UniqueKey)}
-              value={`${item?.Matrix_Price ?? 0}`}
-            />
+            <>
+              <StyledTextInputLabel>Matrix Price</StyledTextInputLabel>
+              <StyledTextInput
+                onChangeText={val => onOtherFormValueChange((val), "Matrix_Price", item.UniqueKey)}
+                value={`${item?.Matrix_Price ?? 0}`}
+              />
+            </>
             :
             <LineItemHeading>
               {item?.Matrix_Price}
             </LineItemHeading>
         }
 
-        <CustomFormInput
-          label="Quantity"
-          placeholder="QTY"
-          onChangeText={val => onOtherFormValueChange((val), "Quantity", item.UniqueKey)}
-          readOnly={readOnly}
-          value={item.Quantity}
-        />
+        <View style={{ flexDirection: "row" }}>
 
-        <CustomFormInput
-          label="U/A"
-          placeholder="U/A"
-          onChangeText={val => onOtherFormValueChange((val), "U_M", item.UniqueKey)}
-          readOnly={readOnly}
-          value={item.U_M}
-        />
+          <CustomFormInput
+            label="Quantity"
+            placeholder="QTY"
+            onChangeText={val => onOtherFormValueChange((val), "Quantity", item.UniqueKey)}
+            readOnly={readOnly}
+            value={item.Quantity}
+          />
 
-        <StyledTextInputLabel>Rate</StyledTextInputLabel>
-        {readOnly ? <StyledText>${item.Rate ?? 0}</StyledText> :
-          requiredSubCategories.includes(item.Sub_Category) ?
-            <StyledTextInput
+          <CustomFormInput
+            label="U/A"
+            placeholder="U/A"
+            onChangeText={val => onOtherFormValueChange((val), "U_M", item.UniqueKey)}
+            readOnly={readOnly}
+            value={item.U_M}
+          />
 
-              onChangeText={val => {
-                onOtherFormValueChange(Number((val.replace("$", ""))), "Rate", item.UniqueKey)
-              }}
-              value={`$${item.Rate}`}
-              keyboardType="number-pad"
-            />
-            :
-            <StyledText>${item.Rate ?? 0}</StyledText>
-        }
-        <CustomFormInput
-          label="Total"
-          readOnly={true}
-          value={`$${item.Total}`}
-        />
-        <CustomFormInput
-          label="Scope Notes"
-          placeholder="Scope Notes"
-          onChangeText={val => onOtherFormValueChange((val), "Scope_Notes", item.UniqueKey)}
-          readOnly={readOnly}
-          value={item.Scope_Notes}
-        />
+        </View>
 
-        {!readOnly && <StyledSaveButton onPress={() => { handleOnSave(); setOverlayVisible(false)}} mode="contained">Save</StyledSaveButton>}
+        <View style={{ flexDirection: "row" }}>
+
+          <View style={{ width: '100%', flex: 1, marginHorizontal: 4 }}>
+            <StyledTextInputLabel>Rate</StyledTextInputLabel>
+            {
+                <StyledTextInput
+                  editable={!readOnly && requiredSubCategories.includes(item.Sub_Category) }
+                  onChangeText={val => {
+                    onOtherFormValueChange(Number((val.replace("$", ""))), "Rate", item.UniqueKey)
+                  }}
+                  value={getFormattedValue("Rate", item.Rate)}
+                  keyboardType="number-pad"
+                />
+            }
+          </View>
+
+          <CustomFormInput
+            label="Total"
+            readOnly={true}
+            value={item.Total}
+          />
+
+        </View>
+
+        <View style={{ flexDirection: "row" }}>
+          <CustomFormInput
+            label="Scope Notes"
+            placeholder="Scope Notes"
+            onChangeText={val => onOtherFormValueChange((val), "Scope_Notes", item.UniqueKey)}
+            readOnly={readOnly}
+            value={item.Scope_Notes}
+          />
+        </View>
+
+        {!readOnly &&
+          <StyledSaveButton onPress={() => { handleOnSave(); setOverlayVisible(false) }} mode="contained">
+            <Text style={{ color: 'white', fontWeight: 'bold', fontFamily: "URBAN_BOLD", fontSize: 18 }}>
+              SWIPE TO SAVE <AntDesign size={16} name="doubleright" />
+            </Text>
+          </StyledSaveButton>}
 
       </Overlay>
     </>
@@ -237,20 +251,37 @@ export default function FormLineItem({ item,onRoomMeasurementValueChange,onOther
 
 }
 
+
+function getFormattedValue(fieldName, value) {
+  if (fieldName === "Total" || fieldName === "Rate") {
+    if (value) {
+      return value.toLocaleString("en-IN", { style: "currency", currency: 'USD' });
+    } else {
+      return '0';
+    }
+  } else {
+    console.log("returing value");
+    return value;
+  }
+}
+
+
 function CustomFormInput({ readOnly = false, onChangeText = () => { }, value, label, placeholder }) {
+
+  const editable  = !readOnly;
+
   return (
-    <>
+    <View style={{ width: '100%', flex: 1, marginHorizontal: 4 }}>
       <StyledTextInputLabel>{`${label}`}</StyledTextInputLabel>
       {
-        readOnly ?
-          <StyledText>{value ?? 0}</StyledText> :
           <StyledTextInput
             onChangeText={onChangeText}
-            value={`${value ?? 0}`}
+            value={`${getFormattedValue(label, value) ?? 0}`}
             placeholder={placeholder}
+            editable={editable}
           />
       }
-    </>
+    </View>
 
   )
 }
@@ -264,6 +295,7 @@ flex-direction: row;
 
 const LineItemHeading = styled.Text`
 font-size: 16px;
+margin-bottom: 8px;
 font-family: 'URBAN_REGULAR';
 `;
 
@@ -275,7 +307,7 @@ const LineItemInputText = styled.Text`
 font-family: 'URBAN_BOLD';
 font-size: 16px;
 color: #469869;
-flex: 1;
+margin-left: 8px;
 
 `;
 
@@ -302,7 +334,13 @@ font-family: 'URBAN_MEDIUM';
 margin-bottom: 8px;
 `;
 
-const StyledSaveButton = styled(Button)`
+const StyledSaveButton = styled.TouchableOpacity`
 margin: 8px 0;
 align-self: flex-end;
+width: 100%;
+background-color: #8477EB;
+padding: 8px;
+border-radius: 32px;
+justify-content: center;
+align-items: center;
 `;

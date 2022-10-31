@@ -9,7 +9,7 @@ import { differenceInDays } from 'date-fns'
 import { useNavigation } from '@react-navigation/native';
 import Overlay from 'react-native-modal-overlay';
 
-const image = { uri: 'https://reactjs.org/logo-og.png' };
+const image = require("../../../assets/black-bg.jpeg");
 
 const Hero = ({data,formStage}) => {
 
@@ -30,8 +30,14 @@ const Hero = ({data,formStage}) => {
         HHM_Field_PM_Email__c,
         GC_Inspection_Due_Date__c,
         Inspection_Form_Stage__c,
-        Inspection_Stage__c
+        Inspection_Stage__c,
+        Prospect_ID__r,
+        Prospect_ID__r :  {Baths__c, Bed__c,Square_Feet__c}
     } = data;
+
+    console.log("Prospect_ID__r",Prospect_ID__r);
+    console.log({Baths__c, Bed__c,Square_Feet__c});
+
 
 
     const pendingDays = differenceInDays(
@@ -45,7 +51,7 @@ const Hero = ({data,formStage}) => {
             {/* Image Background */}
             <ImageBackgroundWrapper onPress={() => setOverlayVisible(true)} >
 
-                <Image  source={image} style={{ width: '100%', height: 320, borderRadius: 16 }} />
+                <Image  source={image} style={{ width: '100%', height: 360, borderRadius: 16 }} />
 
                 <InsideContentWrapper>
                     <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
@@ -55,7 +61,7 @@ const Hero = ({data,formStage}) => {
                         <MetaInfo {...{pendingDays,Inspection_Stage__c}} />
                     </View>
                     {/* Short Summary */}
-                    <ShortSummary {...{Property_Address__c}} />
+                    <ShortSummary {...{Property_Address__c, Baths__c, Bed__c,Square_Feet__c }} />
                 </InsideContentWrapper>
 
             </ImageBackgroundWrapper>
@@ -67,7 +73,7 @@ const Hero = ({data,formStage}) => {
             <DescriptionWrapper>
                 <Text style={{ color: 'black', fontFamily: 'URBAN_BOLD', fontSize: 16 }}>DESCRIPTION</Text>
                 <DescriptionText style={{ marginTop: 14 }}>
-                   { Property_Address__c } is a 3 Bed Room Property with 4 Baths and 2400 Sq Ft. Built in 2022 this property is a New Construction.
+                   { Property_Address__c } is a {Bed__c} Room Property with {Baths__c} Baths and {Square_Feet__c} Sq Ft. Built in 2022 this property is a New Construction.
                 </DescriptionText>
                 <DescriptionText style={{ marginTop: 16 }}>
                     Inspection Schedule Date - {GC_Inspection_Due_Date__c}
@@ -100,7 +106,7 @@ function MetaInfo({pendingDays, Inspection_Stage__c }) {
     )
 }
 
-function ShortSummary({ Property_Address__c }) {
+function ShortSummary({ Property_Address__c, Baths__c, Bed__c,Square_Feet__c }) {
     return (
         <ShortSummaryWrapper>
             {/* Address */}
@@ -109,7 +115,7 @@ function ShortSummary({ Property_Address__c }) {
             </ShortSummaryAddress>
             {/* Bed | Bath | Sq Feet */}
             <BedBathSqftText>
-                3 BEDS | 4 BATHS | 2400 SQFT
+                {Bed__c} BEDS | {Baths__c} BATHS | {Square_Feet__c} SQFT
             </BedBathSqftText>
         </ShortSummaryWrapper>
     )
@@ -154,7 +160,7 @@ color: white;
 `
 
 const ShortSummaryWrapper = styled.View`
-margin-top: 150px;
+margin-top: 200px;
 margin-left: auto;
 `;
 
