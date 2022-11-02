@@ -2,7 +2,6 @@ import React, { useEffect, } from "react";
 import { InspectionsContextProvider } from "../inspections/inspections.contex";
 import { VendorFormContextProvider } from "../context/VendorForm/vendorForm.contex";
 import { UploadOfflineData } from "../../utilities/UploadOfflineData"
-import { Navigation } from "../../infrastructure/navigation";
 import { AuthenticationContextProvider } from "./authentication.context";
 import * as LocalAuthentication from 'expo-local-authentication';
 import { AlertBoX } from '../../utilities/AlertBoX'
@@ -47,14 +46,14 @@ export const DeviceAuthentication = () => {
       {showImage && <Image style={{ width: '100%', height: '100%', borderRadius: 16 }} source={require("../../assets/images/splash.png")} />}
       {
         deviceauthenticated != undefined &&
-        (deviceauthenticated ? <AuthenticationContextProvider>
+        (deviceauthenticated ? 
           <InspectionsContextProvider>
             <VendorFormContextProvider>
               <UploadOfflineData />
               <AppNavigator />
             </VendorFormContextProvider>
           </InspectionsContextProvider>
-        </AuthenticationContextProvider>
+       
           : authenticationError == "user_cancel" && <AlertBoX message={"For your security, you can onlu use this app when it's unlocked"} callback={authenticate} />
         )
       }
