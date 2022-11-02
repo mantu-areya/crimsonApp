@@ -33,7 +33,6 @@ export const AuthenticationContextProvider = ({ children }) => {
   const onAppLoad =()=> {
     setIsLoading(true);
     AsyncStorage.getItem('FbAuth').then(data => {
-      console.log(JSON.parse(data),"uiui");
       setUser(JSON.parse(data));
       setIsLoading(false);
     })

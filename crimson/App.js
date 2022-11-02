@@ -10,7 +10,6 @@ import { useFonts } from 'expo-font';
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { AuthenticationContextProvider } from "./src/services/authentication/authentication.context";
 import * as firebase from "firebase";
-import { DeviceAuthentication } from "./DeviceAuthentication";
 
 const firebaseConfig = {
   apiKey: "AIzaSyCFLpOHzySZk_bngknbxy1jLOuaOZsY8pg",
@@ -44,9 +43,11 @@ export default function App() {
   return (
     <>
       <ThemeProvider theme={theme}>
+      <AuthenticationContextProvider>
         <SafeAreaProvider>
-          <DeviceAuthentication/>
+          <Navigation/>
         </SafeAreaProvider>
+        </AuthenticationContextProvider>
       </ThemeProvider>
       <ExpoStatusBar style={"inverted"} backgroundColor="#2B243E" />
     </>
