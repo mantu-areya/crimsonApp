@@ -8,7 +8,7 @@ import styled from "styled-components/native";
 
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { useNavigation } from "@react-navigation/native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 const backIcon = <Icon name="arrow-left" size={16} />;
 const rightArr = <Icon name="angle-right" size={48} color="white" />;
 const caretDown = <Icon name="caret-down" size={16} color="white" />;
@@ -38,9 +38,10 @@ export const HomePage = ({ navigation }) => {
   const onChangeSearch = query => setSearchQuery(query);
   const filterInspections = inspections?.filter((ins) => ins?.Name.includes(searchQuery) || ins?.Property_Address__c.includes(searchQuery) || ins?.Property_City__c?.includes(searchQuery));
 
+  const insets = useSafeAreaInsets();
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: 'black' }}>
+    <View style={{ flex: 1, paddingTop:insets.top, backgroundColor: 'black' }}>
       {/* Top */}
       <TopContainer>
         {/* Heading */}
@@ -48,9 +49,9 @@ export const HomePage = ({ navigation }) => {
         {/* Menu */}
         <Text style={{ fontSize: 18, color: "#94A1AC", fontFamily: "URBAN_MEDIUM" }} onPress={() => setOpen(!open)}>{selectedOption} {caretDown} </Text>
         <View style={{ backgroundColor: 'white', display: open ? 'flex' : 'none', margin: 8, maxWidth: 128 }}>
-          <Menu.Item leadingIcon="redo" onPress={() => { }} title="Redo" />
-          <Menu.Item leadingIcon="undo" onPress={() => { }} title="Undo" />
-          <Menu.Item leadingIcon="content-cut" onPress={() => { }} title="Cut" />
+          <Menu.Item titleStyle={{fontFamily: 'URBAN_BOLD'}} leadingIcon="redo" onPress={() => { setSelectedOption("Category 1"); setOpen(false) }} title="Category 1" />
+          <Menu.Item titleStyle={{fontFamily: 'URBAN_BOLD'}} leadingIcon="undo" onPress={() => {setSelectedOption("Category 2");setOpen(false) }} title="Category 2" />
+          <Menu.Item titleStyle={{fontFamily: 'URBAN_BOLD'}} leadingIcon="content-cut" onPress={() => {setSelectedOption("Category 3");setOpen(false) }} title="Category 3" />
         </View>
         {/* Searchbar */}
         <View style={{ backgroundColor: '#F1F4F8', justifyContent: "space-between", alignItems: 'center', flexDirection: 'row', padding: 12, marginVertical: 8 }}>
@@ -80,7 +81,7 @@ export const HomePage = ({ navigation }) => {
 
       </BottomContainer>
 
-    </SafeAreaView>
+    </View>
   )
 
 }
@@ -95,7 +96,7 @@ function ListViewCard({ data }) {
       <View style={{ display: 'flex', alignItems: "center", flexDirection: "row", padding: 16 }}>
         <View>
           <Text style={{ color: 'black', fontFamily: 'URBAN_MEDIUM', fontSize: 18, marginBottom: 4 }}  >{data?.Property_Address__c === '' ? 'Property Address NA' : data?.Property_Address__c}</Text>
-          <Text style={{ color: '#A6AFB9', fontFamily: 'URBAN_REGULAR', fontSize: 16, marginBottom: 2 }} >GC SUBMITTED BID : {data?.Repair_Estimator__r?.Name}</Text>
+          <Text style={{ color: '#A6AFB9', fontFamily: 'URBAN_REGULAR', fontSize: 16, marginBottom: 2 }} >GC SUBMITTED BID : {data?.Amount_Submitted_GC__c?.toLocaleString("en-IN", { style: "currency", currency: 'USD' })}</Text>
           <Text style={{ color: '#A6AFB9', fontFamily: 'URBAN_REGULAR', fontSize: 16, marginBottom: 2 }} >TARGET REHAB COMPLETE DATE : {data?.Target_Rehab_Complete_Date__c}</Text>
         </View>
        

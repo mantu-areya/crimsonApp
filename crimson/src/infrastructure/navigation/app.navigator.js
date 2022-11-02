@@ -14,13 +14,14 @@ import InspectionDetails from "../../screens/InspectionDetails";
 import Login from "../../screens/auth/Login";
 import { AuthContext } from "../../contexts/AuthContext";
 import { HomePage } from "../../screens/HomePage";
+import { getFocusedRouteNameFromRoute } from "@react-navigation/native";
 export const AppNavigator = () => {
 
 
   const TAB_ICON = {
     Home: "md-home",
     Map: "md-map",
-    Settings: "md-settings",
+    Schedule: "list-outline",
   };
 
   const screenOptions = ({ route }) => {
@@ -29,8 +30,8 @@ export const AppNavigator = () => {
       tabBarIcon: ({ size, color }) => (
         <Ionicons name={iconName} size={size} color={color} />
       ),
-      tabBarActiveTintColor: "tomato",
-      tabBarInactiveTintColor: "gray",
+      tabBarActiveTintColor: "#4B39EF",
+      tabBarInactiveTintColor: "#94A1AC",
     };
   };
 
@@ -40,17 +41,12 @@ export const AppNavigator = () => {
     </SafeArea>
   );
 
-  const Settings = () => (
+  const Schedule = () => (
     <SafeArea>
-      <Text>Settings</Text>
+      <Text>Schedule</Text>
     </SafeArea>
   );
 
-  const Home = () => (
-    <SafeArea>
-      <Text>Home</Text>
-    </SafeArea>
-  );
 
 
 
@@ -84,7 +80,17 @@ export const AppNavigator = () => {
   }
 
 
-  const {isAuth} = React.useContext(AuthContext);
+  const { isAuth } = React.useContext(AuthContext);
+
+
+  function getRouteName(route) {
+    const rName = getFocusedRouteNameFromRoute(route);
+    if (rName?.includes("Home")) {
+      return  "flex";
+    }
+    return "none";
+  }
+
 
   return (
     <>
@@ -93,19 +99,19 @@ export const AppNavigator = () => {
           <AuthStack /> :
           <Tab.Navigator screenOptions={screenOptions}>
             <Tab.Screen
-              options={{
-                headerShown: false, 
-                // tabBarStyle: {
-                //   display: 'none'
-                // }
-              }}
+              options={({ route }) => ({
+                headerShown: false,
+                tabBarStyle: {
+                  display: getRouteName(route)
+                }
+              })}
               name="Home"
               component={HomeStackScreen}
             />
             <Tab.Screen
               options={{ headerShown: false }}
-              name="Settings"
-              component={Settings}
+              name="Schedule"
+              component={Schedule}
             />
           </Tab.Navigator>
       }
