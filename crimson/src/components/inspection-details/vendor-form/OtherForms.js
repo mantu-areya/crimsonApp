@@ -9,7 +9,7 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
 import { Button } from 'react-native-paper';
 
 
-const OtherForms = ({ isForContractorView, readOnly, inspectionData, navigation }) => {
+const OtherForms = ({ isSubmitted, isForContractorView, readOnly, inspectionData, navigation }) => {
 
 
     let [general_Rental, setGeneral_Rental] = React.useState([])
@@ -23,7 +23,7 @@ const OtherForms = ({ isForContractorView, readOnly, inspectionData, navigation 
 
     const { vendorFormDetails, updateToSf } = React.useContext(VendorFormContext);
 
-    
+
 
     const isFocused = useIsFocused();
 
@@ -349,38 +349,72 @@ const OtherForms = ({ isForContractorView, readOnly, inspectionData, navigation 
 
     return (
         <View style={{ height: 720 }}>
-            {/* Menu */}
-            <MenuWrapper >
-                {menuItems.map((item, i) => <MenuItem isActive={item.title === currentForm} onPress={() => handleOnFormChange(item.title)} key={i}>{item.icon}</MenuItem>)}
-            </MenuWrapper>
-            <CurrentFormHeading>{currentForm}</CurrentFormHeading>
-            {
-                isForContractorView &&
-                    <View intensity={100} style={{ marginVertical: 8, flexDirection: 'row', alignItems: 'center' }}>
-                        <CurrentFormHeading style={{ fontSize: 22 }}>BID FOR REVIEW</CurrentFormHeading>
-                        <CurrentFormHeading style={{ fontSize: 18, textTransform: 'none' }}>Pending Approvals 7/18</CurrentFormHeading>
-                    </View>
-            }
-            {
-                dataList.length > 0 ?
-                    <FlatList
-                        data={dataList}
-                        keyExtractor={item => item.UniqueKey}
-                        renderItem={({ item }) => <FormLineItem   {...{ isForContractorView, item, inspId: inspectionData.Id, onRoomMeasurementValueChange, onOtherFormValueChange, navigation, readOnly, setShowAddButton, handleOnSave }} isForRoomMeasurement={currentFormData.title === "Room Measurements"} />}
-                    /> :
-                    <View style={{ padding: 16 }}>
-                        <ActivityIndicator />
-                    </View>
+            {!isSubmitted &&
+                <>
+                    {/* Menu */}
+                    <MenuWrapper >
+                        {menuItems.map((item, i) => <MenuItem isActive={item.title === currentForm} onPress={() => handleOnFormChange(item.title)} key={i}>{item.icon}</MenuItem>)}
+                    </MenuWrapper>
+                    <CurrentFormHeading>{currentForm}</CurrentFormHeading>
+                    {
+                        isForContractorView &&
+                        <View intensity={100} style={{ marginVertical: 8, flexDirection: 'row', alignItems: 'center' }}>
+                            <CurrentFormHeading style={{ fontSize: 22 }}>BID FOR REVIEW</CurrentFormHeading>
+                            <CurrentFormHeading style={{ fontSize: 18, textTransform: 'none' }}>Pending Approvals 7/18</CurrentFormHeading>
+                        </View>
+                    }
+                    {
+                        dataList.length > 0 ?
+                            <FlatList
+                                data={dataList}
+                                keyExtractor={item => item.UniqueKey}
+                                renderItem={({ item }) => <FormLineItem   {...{ isForContractorView, item, inspId: inspectionData.Id, onRoomMeasurementValueChange, onOtherFormValueChange, navigation, readOnly, setShowAddButton, handleOnSave }} isForRoomMeasurement={currentFormData.title === "Room Measurements"} />}
+                            /> :
+                            <View style={{ padding: 16 }}>
+                                <ActivityIndicator />
+                            </View>
 
+                    }
+                    {!readOnly && showAddButton &&
+                        <View>
+                            <AddNewLineItemButton mode="contained" onPress={handleAddNewItem} labelStyle={{
+                                fontFamily: 'URBAN_BOLD'
+                            }}>
+                                Add New Item
+                            </AddNewLineItemButton>
+                        </View>
+                    }
+
+                </>
             }
-            {!readOnly && showAddButton &&
-                <View>
-                    <AddNewLineItemButton mode="contained" onPress={handleAddNewItem} labelStyle={{
-                        fontFamily: 'URBAN_BOLD'
-                    }}>
-                        Add New Item
-                    </AddNewLineItemButton>
-                </View>
+            {
+                isSubmitted &&
+                <>
+                    <MenuWrapper style={{ justifyContent: "space-between" }}>
+                        <View style={{ flexDirection: "row" }}>
+                            <MaterialCommunityIcons size={28} name='home-city' color={"#DE9B67"} />
+                            <Text style={{ marginLeft: 8, color: '#C2CBD0', fontFamily: 'URBAN_BOLD', fontSize: 24 }}>Work Order</Text>
+                        </View>
+                        <View>
+                            <Text style={{ color: '#C2CBD0', fontFamily: 'URBAN_BOLD', fontSize: 24 }}>$14,999</Text>
+                        </View>
+                    </MenuWrapper>
+
+                    {
+                        dataList.length > 0 ?
+                            <FlatList
+                                data={[].concat(pools,exterior,interior,general_Rental,room_MeasurementData,mech_Elec_Plumb)}
+                                keyExtractor={item => item.UniqueKey}
+                                renderItem={({ item }) => <FormLineItem   {...{isSubmitted, isForContractorView, item, inspId: inspectionData.Id, onRoomMeasurementValueChange, onOtherFormValueChange, navigation, readOnly, setShowAddButton, handleOnSave }} isForRoomMeasurement={currentFormData.title === "Room Measurements"} />}
+                            /> :
+                            <View style={{ padding: 16 }}>
+                                <ActivityIndicator />
+                            </View>
+
+                    }
+
+
+                </>
             }
         </View>
     )

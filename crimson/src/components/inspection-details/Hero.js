@@ -11,7 +11,7 @@ import Overlay from 'react-native-modal-overlay';
 
 const image = require("../../../assets/black-bg.jpeg");
 
-const Hero = ({data,formStage}) => {
+const Hero = ({ data, isSubmitted }) => {
 
     const navigation = useNavigation()
     const [overlayVisible, setOverlayVisible] = React.useState(false)
@@ -19,70 +19,81 @@ const Hero = ({data,formStage}) => {
 
     const {
         Property_Address__c,
-        Property_City__c,
-        Property_State__c,
-        Property_Zip_Code__c,
-        HHM_Field_PM__r,
-        Repair_Estimator_Email__c,
-        Repair_Estimator__r,
-        Inspection_Scheduled_Date__c,
         Target_Rehab_Complete_Date__c,
-        HHM_Field_PM_Email__c,
         GC_Inspection_Due_Date__c,
-        Inspection_Form_Stage__c,
         Inspection_Stage__c,
-        Prospect_ID__r,
-        Prospect_ID__r :  {Baths__c, Bed__c,Square_Feet__c}
+        Prospect_ID__r: { Baths__c, Bed__c, Square_Feet__c }
     } = data;
-
-    console.log("Prospect_ID__r",Prospect_ID__r);
-    console.log({Baths__c, Bed__c,Square_Feet__c});
-
 
 
     const pendingDays = differenceInDays(
         new Date(GC_Inspection_Due_Date__c),
         new Date()
-      )
+    )
 
+    console.log({ isSubmitted });
 
     return (
         <Container>
             {/* Image Background */}
             <ImageBackgroundWrapper onPress={() => setOverlayVisible(true)} >
 
-                <Image  source={image} style={{ width: '100%', height: 360, borderRadius: 16 }} />
+                <Image source={image} style={{ width: '100%', height: 360, borderRadius: 16 }} />
 
                 <InsideContentWrapper>
                     <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
                         {/* Back Icon */}
                         <GoBackButton handleGoBack={() => navigation.goBack()} />
                         {/* Meta Info */}
-                        <MetaInfo {...{pendingDays,Inspection_Stage__c}} />
+                        <MetaInfo {...{ pendingDays, Inspection_Stage__c }} />
                     </View>
                     {/* Short Summary */}
-                    <ShortSummary {...{Property_Address__c, Baths__c, Bed__c,Square_Feet__c }} />
+                    <ShortSummary {...{ Property_Address__c, Baths__c, Bed__c, Square_Feet__c }} />
+
                 </InsideContentWrapper>
 
             </ImageBackgroundWrapper>
-            <Overlay childrenWrapperStyle={{backgroundColor: 'black'}} containerStyle={{ backgroundColor: 'black' }} visible={overlayVisible} onClose={() => setOverlayVisible(false)} closeOnTouchOutside >
+            <Overlay childrenWrapperStyle={{ backgroundColor: 'black' }} containerStyle={{ backgroundColor: 'black' }} visible={overlayVisible} onClose={() => setOverlayVisible(false)} closeOnTouchOutside >
                 <Ionicons onPress={() => setOverlayVisible(false)} name="close" color="white" size={32} />
                 <Image source={image} style={{ width: 320, height: 320, borderRadius: 16 }} />
             </Overlay>
             {/* Description */}
-            <DescriptionWrapper>
-                <Text style={{ color: 'black', fontFamily: 'URBAN_BOLD', fontSize: 16 }}>DESCRIPTION</Text>
-                <DescriptionText style={{ marginTop: 14 }}>
-                   { Property_Address__c } is a {Bed__c} Room Property with {Baths__c} Baths and {Square_Feet__c} Sq Ft. Built in 2022 this property is a New Construction.
-                </DescriptionText>
-                <DescriptionText style={{ marginTop: 16 }}>
-                    Inspection Schedule Date - {GC_Inspection_Due_Date__c}
-                </DescriptionText>
-                <DescriptionText>
-                    Target Rehab Complete Date - {Target_Rehab_Complete_Date__c} 
-                    {/* // ! not getting this value */}
-                </DescriptionText>
-            </DescriptionWrapper>
+            {
+                !isSubmitted && <DescriptionWrapper>
+                    <Text style={{ color: 'black', fontFamily: 'URBAN_BOLD', fontSize: 16 }}>DESCRIPTION</Text>
+                    <DescriptionText style={{ marginTop: 14 }}>
+                        {Property_Address__c} is a {Bed__c} Room Property with {Baths__c} Baths and {Square_Feet__c} Sq Ft. Built in 2022 this property is a New Construction.
+                    </DescriptionText>
+                    <DescriptionText style={{ marginTop: 16 }}>
+                        Inspection Schedule Date - {GC_Inspection_Due_Date__c}
+                    </DescriptionText>
+                    <DescriptionText>
+                        Target Rehab Complete Date - {Target_Rehab_Complete_Date__c}
+                        {/* // ! not getting this value */}
+                    </DescriptionText>
+                </DescriptionWrapper>
+            }
+            {
+                isSubmitted &&
+                <DescriptionWrapper>
+                    <Text style={{ color: 'black', fontFamily: 'URBAN_BOLD', fontSize: 16 }}>Section Breakdown</Text>
+                    <DescriptionText style={{ marginTop: 8 }}>
+                       General Rental Scopes - $1200
+                    </DescriptionText>
+                    <DescriptionText >
+                       Pools - $1200
+                    </DescriptionText>
+                    <DescriptionText >
+                       Exterior - $1200
+                    </DescriptionText>
+                    <DescriptionText >
+                       Interior - $1200
+                    </DescriptionText>
+                    <DescriptionText >
+                       MEP - $1200
+                    </DescriptionText>
+                </DescriptionWrapper>
+            }
         </Container>
     )
 }
@@ -96,7 +107,7 @@ function GoBackButton({ handleGoBack }) {
     )
 }
 
-function MetaInfo({pendingDays, Inspection_Stage__c }) {
+function MetaInfo({ pendingDays, Inspection_Stage__c }) {
     return (
         <MetaInfoWrapper>
             <MetaInfoText>{Inspection_Stage__c}</MetaInfoText>
@@ -106,12 +117,12 @@ function MetaInfo({pendingDays, Inspection_Stage__c }) {
     )
 }
 
-function ShortSummary({ Property_Address__c, Baths__c, Bed__c,Square_Feet__c }) {
+function ShortSummary({ Property_Address__c, Baths__c, Bed__c, Square_Feet__c }) {
     return (
         <ShortSummaryWrapper>
             {/* Address */}
             <ShortSummaryAddress>
-               {Property_Address__c}
+                {Property_Address__c}
             </ShortSummaryAddress>
             {/* Bed | Bath | Sq Feet */}
             <BedBathSqftText>

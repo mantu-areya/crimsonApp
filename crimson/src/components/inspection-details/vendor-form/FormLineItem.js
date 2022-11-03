@@ -17,7 +17,7 @@ let requiredSubCategories = [
 ]
 
 
-export default function FormLineItem({ isForContractorView, inspId, item, onRoomMeasurementValueChange, onOtherFormValueChange, isForRoomMeasurement, onValueChange, navigation, readOnly, setShowAddButton, handleOnSave }) {
+export default function FormLineItem({ isSubmitted, isForContractorView, inspId, item, onRoomMeasurementValueChange, onOtherFormValueChange, isForRoomMeasurement, onValueChange, navigation, readOnly, setShowAddButton, handleOnSave }) {
   const [overlayVisible, setOverlayVisible] = React.useState(false)
 
 
@@ -44,6 +44,9 @@ export default function FormLineItem({ isForContractorView, inspId, item, onRoom
     setShowAddButton(Category_Keys.includes(item?.Category) ? true : false)
   }, [])
 
+  if (isSubmitted) {
+    return <SubmittedFormLineItem {...{ title: item.Matrix_Price, rate: item.Rate, quantity: item.Quantity }} />
+  }
 
   if (isForRoomMeasurement) {
 
@@ -258,6 +261,29 @@ export default function FormLineItem({ isForContractorView, inspId, item, onRoom
 
 }
 
+
+function SubmittedFormLineItem({ title, rate, quantity, total }) {
+  return (
+    <Card style={{ padding: 16, backgroundColor: "white", borderBottomWidth: 2, borderColor: '#EEBC7B' }}>
+      <LineItemHeading>{title}</LineItemHeading>
+      <View >
+        {/* Details */}
+        <View style={{ flexDirection: 'row' }}>
+          <StyledContractorText style={{flex:1,fontSize:14}}>QTY: {quantity}</StyledContractorText>
+          <StyledContractorText style={{flex:1,fontSize:14}} >RATE: {rate ? rate?.toLocaleString("en-IN", { style: "currency", currency: 'USD' }) : 0}</StyledContractorText>
+          <StyledContractorText style={{flex:1,fontSize:14}}>TOTAL: {total ? total?.toLocaleString("en-IN", { style: "currency", currency: 'USD' }) : 0}</StyledContractorText>
+          <StyledContractorButton labelStyle={{ fontSize: 16, fontFamily: 'URBAN_BOLD' }} backgroundColor="#7CDD9B" mode="contained">A</StyledContractorButton>
+        </View>
+        <View style={{ flexDirection: 'row',marginTop:8}}>
+          <StyledContractorText style={{flex:1,fontSize:18}}>ADJ QTY: {quantity}</StyledContractorText>
+          <StyledContractorText style={{flex:1,fontSize:18}} >RATE: {rate ? rate?.toLocaleString("en-IN", { style: "currency", currency: 'USD' }) : 0}</StyledContractorText>
+          <StyledContractorText style={{flex:1,fontSize:18}}>TOTAL: {total ? total?.toLocaleString("en-IN", { style: "currency", currency: 'USD' }) : 0}</StyledContractorText>
+        </View>
+      </View>
+    </Card>
+  )
+}
+
 function ContractorViewLineItem({ title, rate, quantity, total }) {
 
   const [bgColor, setBgColor] = React.useState("default");
@@ -295,15 +321,15 @@ function ContractorViewLineItem({ title, rate, quantity, total }) {
           </View>
           <View style={{ flex: .8, flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
             <StyledContractorButton labelStyle={{ fontSize: 16, fontFamily: 'URBAN_BOLD' }} backgroundColor="#7CDD9B" mode="contained" onPress={() => acceptLineItem()}>A</StyledContractorButton>
-            <StyledContractorButton labelStyle={{ fontSize: 16, fontFamily: 'URBAN_BOLD' }}  backgroundColor="#3983EF" mode="contained" onPress={() => reviewLineItem()}>R</StyledContractorButton>
-            <StyledContractorButton labelStyle={{ fontSize: 16, fontFamily: 'URBAN_BOLD' }}  backgroundColor="#E02E2E" mode="contained" onPress={() => deleteLineItem()}>D</StyledContractorButton>
+            <StyledContractorButton labelStyle={{ fontSize: 16, fontFamily: 'URBAN_BOLD' }} backgroundColor="#3983EF" mode="contained" onPress={() => reviewLineItem()}>R</StyledContractorButton>
+            <StyledContractorButton labelStyle={{ fontSize: 16, fontFamily: 'URBAN_BOLD' }} backgroundColor="#E02E2E" mode="contained" onPress={() => deleteLineItem()}>D</StyledContractorButton>
           </View>
         </View>
       </Card>
       <Overlay childrenWrapperStyle={{ padding: 18 }} containerStyle={{ backgroundColor: '#dbdad960' }} visible={visible} onClose={() => setVisible(false)} closeOnTouchOutside >
-        <Ionicons onPress={() => hideModal()}name="close" size={24} style={{marginLeft:"auto"}}/>
+        <Ionicons onPress={() => hideModal()} name="close" size={24} style={{ marginLeft: "auto" }} />
         <View style={{ minHeight: 360, width: "100%", backgroundColor: "black" }} />
-        <Text style={{width:"100%", padding: 10, fontFamily: 'URBAN_MEDIUM', fontSize:16, color:"#BDC5CD"}}>{title}</Text>
+        <Text style={{ width: "100%", padding: 10, fontFamily: 'URBAN_MEDIUM', fontSize: 16, color: "#BDC5CD" }}>{title}</Text>
         <View style={{ padding: 16, flexDirection: 'row', justifyContent: 'space-even', width: "100%" }}>
           <StyledOverlayText >QTY: {quantity}</StyledOverlayText>
           <StyledOverlayText style={{ flex: 1 }}>RATE: {rate ?? 0}</StyledOverlayText>
@@ -326,12 +352,12 @@ function ContractorViewLineItem({ title, rate, quantity, total }) {
 
         <View style={{ width: "100%", marginVertical: 8 }}>
           <Text style={{ fontSize: 16, fontFamily: 'URBAN_BOLD', color: '#BDC5CD' }}>OWNER CLARIFICATIONS:</Text>
-          <TextInput 
-            style={{ padding: 10, fontFamily: 'URBAN_MEDIUM', fontSize:16, color:"#BDC5CD"}}
+          <TextInput
+            style={{ padding: 10, fontFamily: 'URBAN_MEDIUM', fontSize: 16, color: "#BDC5CD" }}
             multiline
             numberOfLines={4}
             value={"TextInput has by default a border at the bottom of its view. This border has its padding set by the background image provided by the system, and it cannot be changed. Solutions to avoid this are to either not set height explicitly, in which case the system will take care of displaying the border in the correct position, or to not display the border by setting underlineColorAndroid to transparent."}
-             />
+          />
         </View>
 
         <View style={{ flexDirection: "row" }}>

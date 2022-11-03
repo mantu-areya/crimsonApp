@@ -82,8 +82,15 @@ const InspectionDetails = ({ route, navigation }) => {
   }, [inspectionData])
 
   const handleSubmit = () => {
-    setIsNotesCollapsed(true)
+    // ! Uncomment when submitting a GC form
+    // setIsNotesCollapsed(true) 
+    setIsSubmitted(true);
   }
+
+  const handleSignature = () => {};
+  const handleViewImages = () => {}
+
+  const [isSubmitted, setIsSubmitted] = React.useState(false);
 
 console.log("CURRENT INSPECTION",inspectionData.Id);
 
@@ -97,11 +104,11 @@ console.log("CURRENT INSPECTION",inspectionData.Id);
             </Collapsible>}
         </Row>
         {/* Hero */}
-        <Hero data={inspectionData} />
+        <Hero data={inspectionData} isSubmitted={isSubmitted} />
         {/* CTA's */}
-        <CTA handleOnChat={() => alert("Chat")} handleOnSubmit={handleSubmit} />
+        <CTA handleOnChat={() => alert("Chat")} handleSignature={handleSignature} handleViewImages={handleViewImages}  isSubmitted={isSubmitted} handleOnSubmit={handleSubmit} />
         {/* Forms */}
-        <OtherForms readOnly={readOnly} isForContractorView={true} inspectionData={inspectionData} navigation={navigation} />
+        <OtherForms isSubmitted={isSubmitted} readOnly={readOnly} isForContractorView={true} inspectionData={inspectionData} navigation={navigation} />
       </ScrollView>
       {/* Call Now */}
       {show && <CallNow isForContractorView={true} data={inspectionData} />}
