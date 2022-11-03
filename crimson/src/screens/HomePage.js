@@ -32,7 +32,7 @@ background-color: #F1F4F8;
 export const HomePage = ({ navigation }) => {
   const { isLoading, inspections } = useContext(InspectionsContext);
   const [searchQuery, setSearchQuery] = React.useState('');
-  const [selectedOption, setSelectedOption] = React.useState('PENDING HM REVIEW');
+  const [selectedOption, setSelectedOption] = React.useState('Inspection/Rehab Bid Queue (Pending Vendor Submission)');
   const [open, setOpen] = React.useState(false);
 
   const onChangeSearch = query => setSearchQuery(query);
@@ -41,17 +41,26 @@ export const HomePage = ({ navigation }) => {
   const insets = useSafeAreaInsets();
 
   return (
-    <View style={{ flex: 1, paddingTop:insets.top, backgroundColor: 'black' }}>
+    <View style={{ flex: 1, paddingTop: insets.top, backgroundColor: 'black' }}>
       {/* Top */}
       <TopContainer>
         {/* Heading */}
         <Text style={{ fontSize: 24, color: "white", fontFamily: "URBAN_BOLD", marginBottom: 4 }}>Welcome!</Text>
         {/* Menu */}
         <Text style={{ fontSize: 18, color: "#94A1AC", fontFamily: "URBAN_MEDIUM" }} onPress={() => setOpen(!open)}>{selectedOption} {caretDown} </Text>
-        <View style={{ backgroundColor: 'white', display: open ? 'flex' : 'none', margin: 8, maxWidth: 128 }}>
-          <Menu.Item titleStyle={{fontFamily: 'URBAN_BOLD'}} leadingIcon="redo" onPress={() => { setSelectedOption("Category 1"); setOpen(false) }} title="Category 1" />
-          <Menu.Item titleStyle={{fontFamily: 'URBAN_BOLD'}} leadingIcon="undo" onPress={() => {setSelectedOption("Category 2");setOpen(false) }} title="Category 2" />
-          <Menu.Item titleStyle={{fontFamily: 'URBAN_BOLD'}} leadingIcon="content-cut" onPress={() => {setSelectedOption("Category 3");setOpen(false) }} title="Category 3" />
+        <View style={{borderRadius:8, backgroundColor: 'white', display: open ? 'flex' : 'none',marginTop:8,padding:8,width:"100%" }}>
+          {
+            [
+              "Inspection/Rehab Bid Queue (Pending Vendor Submission)",
+              "Inspection/Rehab Upcoming Preconstruction Look Ahead",
+              "Turn Bid Queue (Pending Vendor Submission)",
+              "Turn WAF Queue"
+            ].map((option, index) =>
+              <Text key={index} style={{padding:4,fontSize:18, fontFamily: 'URBAN_MEDIUM',width:"100%" }} onPress={() => { setSelectedOption(option); setOpen(false) }} >
+                {option}
+              </Text>
+            )
+          }
         </View>
         {/* Searchbar */}
         <View style={{ backgroundColor: '#F1F4F8', justifyContent: "space-between", alignItems: 'center', flexDirection: 'row', padding: 12, marginVertical: 8 }}>
@@ -73,7 +82,7 @@ export const HomePage = ({ navigation }) => {
           <FlatList
             data={filterInspections ?? []}
             keyExtractor={(item) => item.Id}
-            renderItem={({item}) => (
+            renderItem={({ item }) => (
               <ListViewCard data={item} />
             )}
           />
@@ -99,7 +108,7 @@ function ListViewCard({ data }) {
           <Text style={{ color: '#A6AFB9', fontFamily: 'URBAN_REGULAR', fontSize: 16, marginBottom: 2 }} >GC SUBMITTED BID : {data?.Amount_Submitted_GC__c?.toLocaleString("en-IN", { style: "currency", currency: 'USD' })}</Text>
           <Text style={{ color: '#A6AFB9', fontFamily: 'URBAN_REGULAR', fontSize: 16, marginBottom: 2 }} >TARGET REHAB COMPLETE DATE : {data?.Target_Rehab_Complete_Date__c}</Text>
         </View>
-       
+
       </View>
     </Card>
   )
