@@ -21,6 +21,7 @@
     "@react-navigation/native-stack": "^6.6.2",
     "@react-navigation/stack": "^6.2.1",
     "axios": "^0.27.2",
+    "babel-runtime": "^6.26.0",
     "date-fns": "^2.29.3",
     "deprecated-react-native-prop-types": "^2.3.0",
     "expo": "~45.0.0",

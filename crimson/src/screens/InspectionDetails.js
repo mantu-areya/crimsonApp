@@ -101,10 +101,10 @@ console.log("CURRENT INSPECTION",inspectionData.Id);
         {/* CTA's */}
         <CTA handleOnChat={() => alert("Chat")} handleOnSubmit={handleSubmit} />
         {/* Forms */}
-        <OtherForms readOnly={readOnly} inspectionData={inspectionData} navigation={navigation} />
+        <OtherForms readOnly={readOnly} isForContractorView={true} inspectionData={inspectionData} navigation={navigation} />
       </ScrollView>
       {/* Call Now */}
-      {show && <CallNow data={inspectionData} />}
+      {show && <CallNow isForContractorView={true} data={inspectionData} />}
     </SafeAreaView>
   )
 }

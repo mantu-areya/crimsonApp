@@ -8,7 +8,8 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
 import { Button } from 'react-native-paper';
 
-const OtherForms = ({ readOnly, inspectionData, navigation }) => {
+
+const OtherForms = ({ isForContractorView, readOnly, inspectionData, navigation }) => {
 
 
     let [general_Rental, setGeneral_Rental] = React.useState([])
@@ -22,6 +23,7 @@ const OtherForms = ({ readOnly, inspectionData, navigation }) => {
 
     const { vendorFormDetails, updateToSf } = React.useContext(VendorFormContext);
 
+    
 
     const isFocused = useIsFocused();
 
@@ -217,7 +219,7 @@ const OtherForms = ({ readOnly, inspectionData, navigation }) => {
             });
         }
         setDatalist(newState)
-        setUpdatedData(currentForm,newState);
+        setUpdatedData(currentForm, newState);
         updateVfContect(newState, "OTHRFM", inspectionData.Id);
     }
 
@@ -310,7 +312,7 @@ const OtherForms = ({ readOnly, inspectionData, navigation }) => {
 
         // console.log(newData);
         setDatalist(newData);
-        setUpdatedData(currentForm,newState);
+        setUpdatedData(currentForm, newState);
         updateVfContect(newState, "RM", inspectionData.Id);
     }
 
@@ -353,11 +355,18 @@ const OtherForms = ({ readOnly, inspectionData, navigation }) => {
             </MenuWrapper>
             <CurrentFormHeading>{currentForm}</CurrentFormHeading>
             {
+                isForContractorView &&
+                    <View intensity={100} style={{ marginVertical: 8, flexDirection: 'row', alignItems: 'center' }}>
+                        <CurrentFormHeading style={{ fontSize: 22 }}>BID FOR REVIEW</CurrentFormHeading>
+                        <CurrentFormHeading style={{ fontSize: 18, textTransform: 'none' }}>Pending Approvals 7/18</CurrentFormHeading>
+                    </View>
+            }
+            {
                 dataList.length > 0 ?
                     <FlatList
                         data={dataList}
                         keyExtractor={item => item.UniqueKey}
-                        renderItem={({ item }) => <FormLineItem   {...{ item,inspId:inspectionData.Id, onRoomMeasurementValueChange, onOtherFormValueChange, navigation, readOnly, setShowAddButton, handleOnSave }} isForRoomMeasurement={currentFormData.title === "Room Measurements"} />}
+                        renderItem={({ item }) => <FormLineItem   {...{ isForContractorView, item, inspId: inspectionData.Id, onRoomMeasurementValueChange, onOtherFormValueChange, navigation, readOnly, setShowAddButton, handleOnSave }} isForRoomMeasurement={currentFormData.title === "Room Measurements"} />}
                     /> :
                     <View style={{ padding: 16 }}>
                         <ActivityIndicator />

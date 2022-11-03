@@ -1,9 +1,9 @@
 import styled from "styled-components/native";
 import Overlay from 'react-native-modal-overlay';
 import Ionicons from "react-native-vector-icons/Ionicons";
-import { Button } from "react-native-paper";
+import { Button, Card, Modal, Portal, Provider } from "react-native-paper";
 import Swipeable from 'react-native-swipeable';
-import { View, TouchableOpacity, Text } from 'react-native'
+import { View, TouchableOpacity, Text, TextInput } from 'react-native'
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import React from "react";
 import AntDesign from "react-native-vector-icons/AntDesign"
@@ -17,7 +17,7 @@ let requiredSubCategories = [
 ]
 
 
-export default function FormLineItem({ inspId, item, onRoomMeasurementValueChange, onOtherFormValueChange, isForRoomMeasurement, onValueChange, navigation, readOnly, setShowAddButton, handleOnSave }) {
+export default function FormLineItem({ isForContractorView, inspId, item, onRoomMeasurementValueChange, onOtherFormValueChange, isForRoomMeasurement, onValueChange, navigation, readOnly, setShowAddButton, handleOnSave }) {
   const [overlayVisible, setOverlayVisible] = React.useState(false)
 
 
@@ -140,6 +140,13 @@ export default function FormLineItem({ inspId, item, onRoomMeasurementValueChang
 
   }
 
+  if (isForContractorView) {
+    return (
+      <ContractorViewLineItem {...{ title: item.Matrix_Price, rate: item.Rate, quantity: item.Quantity }} />
+    )
+
+  }
+
 
   return (
     <>
@@ -208,14 +215,14 @@ export default function FormLineItem({ inspId, item, onRoomMeasurementValueChang
           <View style={{ width: '100%', flex: 1, marginHorizontal: 4 }}>
             <StyledTextInputLabel>Rate</StyledTextInputLabel>
             {
-                <StyledTextInput
-                  editable={!readOnly && requiredSubCategories.includes(item.Sub_Category) }
-                  onChangeText={val => {
-                    onOtherFormValueChange(Number((val.replace("$", ""))), "Rate", item.UniqueKey)
-                  }}
-                  value={getFormattedValue("Rate", item.Rate)}
-                  keyboardType="number-pad"
-                />
+              <StyledTextInput
+                editable={!readOnly && requiredSubCategories.includes(item.Sub_Category)}
+                onChangeText={val => {
+                  onOtherFormValueChange(Number((val.replace("$", ""))), "Rate", item.UniqueKey)
+                }}
+                value={getFormattedValue("Rate", item.Rate)}
+                keyboardType="number-pad"
+              />
             }
           </View>
 
@@ -251,6 +258,123 @@ export default function FormLineItem({ inspId, item, onRoomMeasurementValueChang
 
 }
 
+function ContractorViewLineItem({ title, rate, quantity, total }) {
+
+  const [bgColor, setBgColor] = React.useState("default");
+
+  const [visible, setVisible] = React.useState(false);
+
+  const showModal = () => setVisible(true);
+  const hideModal = () => setVisible(false);
+
+  function acceptLineItem() {
+    setBgColor("#F7F4DE");
+  }
+
+  function reviewLineItem() {
+    showModal();
+  }
+
+  function deleteLineItem() {
+    setBgColor("#F8D9CF")
+  }
+
+
+
+
+  return (
+    <>
+      <Card style={{ padding: 16, backgroundColor: bgColor, borderBottomWidth: 2, borderColor: '#EEBC7B' }}>
+        <LineItemHeading>{title}</LineItemHeading>
+        <View style={{ flexDirection: 'row' }}>
+          {/* Details */}
+          <View style={{ flex: .2 }}>
+            <StyledContractorText>QTY: {quantity}</StyledContractorText>
+            <StyledContractorText>RATE: {rate ? rate?.toLocaleString("en-IN", { style: "currency", currency: 'USD' }) : 0}</StyledContractorText>
+            <StyledContractorText>TOTAL: {total ? total?.toLocaleString("en-IN", { style: "currency", currency: 'USD' }) : 0}</StyledContractorText>
+          </View>
+          <View style={{ flex: .8, flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
+            <StyledContractorButton labelStyle={{ fontSize: 16, fontFamily: 'URBAN_BOLD' }} backgroundColor="#7CDD9B" mode="contained" onPress={() => acceptLineItem()}>A</StyledContractorButton>
+            <StyledContractorButton labelStyle={{ fontSize: 16, fontFamily: 'URBAN_BOLD' }}  backgroundColor="#3983EF" mode="contained" onPress={() => reviewLineItem()}>R</StyledContractorButton>
+            <StyledContractorButton labelStyle={{ fontSize: 16, fontFamily: 'URBAN_BOLD' }}  backgroundColor="#E02E2E" mode="contained" onPress={() => deleteLineItem()}>D</StyledContractorButton>
+          </View>
+        </View>
+      </Card>
+      <Overlay childrenWrapperStyle={{ padding: 18 }} containerStyle={{ backgroundColor: '#dbdad960' }} visible={visible} onClose={() => setVisible(false)} closeOnTouchOutside >
+        <Ionicons onPress={() => hideModal()}name="close" size={24} style={{marginLeft:"auto"}}/>
+        <View style={{ minHeight: 360, width: "100%", backgroundColor: "black" }} />
+        <Text style={{width:"100%", padding: 10, fontFamily: 'URBAN_MEDIUM', fontSize:16, color:"#BDC5CD"}}>{title}</Text>
+        <View style={{ padding: 16, flexDirection: 'row', justifyContent: 'space-even', width: "100%" }}>
+          <StyledOverlayText >QTY: {quantity}</StyledOverlayText>
+          <StyledOverlayText style={{ flex: 1 }}>RATE: {rate ?? 0}</StyledOverlayText>
+          <StyledOverlayText style={{ flex: 1 }}>TOTAL: {total ?? 0}</StyledOverlayText>
+        </View>
+        <View style={{ flexDirection: 'row', justifyContent: 'space-even', width: "100%" }}>
+          <StyledOverlayInputWrapper style={{ flexDirection: 'row' }}>
+            <StyledOverlayInputLabel>ADJ QTY: </StyledOverlayInputLabel>
+            <StyledOverlayInput value={`${quantity}`} />
+          </StyledOverlayInputWrapper>
+          <StyledOverlayInputWrapper style={{ flexDirection: 'row' }}>
+            <StyledOverlayInputLabel>RATE: </StyledOverlayInputLabel>
+            <StyledOverlayInput value={`${rate ?? 0}`} />
+          </StyledOverlayInputWrapper>
+          <StyledOverlayInputWrapper style={{ flexDirection: 'row' }}>
+            <StyledOverlayInputLabel>TOTAL: </StyledOverlayInputLabel>
+            <StyledOverlayInput value={`${total ?? 0}`} />
+          </StyledOverlayInputWrapper>
+        </View>
+
+        <View style={{ width: "100%", marginVertical: 8 }}>
+          <Text style={{ fontSize: 16, fontFamily: 'URBAN_BOLD', color: '#BDC5CD' }}>OWNER CLARIFICATIONS:</Text>
+          <TextInput 
+            style={{ padding: 10, fontFamily: 'URBAN_MEDIUM', fontSize:16, color:"#BDC5CD"}}
+            multiline
+            numberOfLines={4}
+            value={"TextInput has by default a border at the bottom of its view. This border has its padding set by the background image provided by the system, and it cannot be changed. Solutions to avoid this are to either not set height explicitly, in which case the system will take care of displaying the border in the correct position, or to not display the border by setting underlineColorAndroid to transparent."}
+             />
+        </View>
+
+        <View style={{ flexDirection: "row" }}>
+          <Button onPress={() => hideModal()} mode="contained" labelStyle={{ fontSize: 18, fontFamily: 'URBAN_BOLD' }} style={{ backgroundColor: "#EF39A0", padding: 4 }}>Cancel</Button>
+          <Button mode="contained" labelStyle={{ fontSize: 18, fontFamily: 'URBAN_BOLD' }} style={{ backgroundColor: "#ABDF8C", padding: 4, marginLeft: 16 }}>Approve</Button>
+        </View>
+
+      </Overlay>
+    </>
+  )
+}
+
+
+const StyledOverlayText = styled.Text`
+flex:1;
+color: #EEC690;
+font-family: URBAN_BOLD;
+font-size: 16px;
+text-align: center;
+`;
+
+const StyledOverlayInputWrapper = styled.View`
+flex-direction: row;
+margin:0  8px;
+
+`
+
+const StyledOverlayInputLabel = styled.Text`
+color: #EEC690;
+font-family: URBAN_BOLD;
+font-size: 20px;
+`;
+const StyledOverlayInput = styled.TextInput`
+color: #EEC690;
+font-family: URBAN_BOLD;
+font-size: 20px;
+`;
+
+
+
+
+
+
 
 function getFormattedValue(fieldName, value) {
   if (fieldName === "Total" || fieldName === "Rate") {
@@ -268,18 +392,18 @@ function getFormattedValue(fieldName, value) {
 
 function CustomFormInput({ readOnly = false, onChangeText = () => { }, value, label, placeholder }) {
 
-  const editable  = !readOnly;
+  const editable = !readOnly;
 
   return (
     <View style={{ width: '100%', flex: 1, marginHorizontal: 4 }}>
       <StyledTextInputLabel>{`${label}`}</StyledTextInputLabel>
       {
-          <StyledTextInput
-            onChangeText={onChangeText}
-            value={`${getFormattedValue(label, value) ?? 0}`}
-            placeholder={placeholder}
-            editable={editable}
-          />
+        <StyledTextInput
+          onChangeText={onChangeText}
+          value={`${getFormattedValue(label, value) ?? 0}`}
+          placeholder={placeholder}
+          editable={editable}
+        />
       }
     </View>
 
@@ -343,4 +467,18 @@ padding: 8px;
 border-radius: 32px;
 justify-content: center;
 align-items: center;
+`;
+
+const StyledContractorButton = styled(Button)`
+background-color: ${props => props.backgroundColor};
+flex: 1;
+margin:0 4px;
+padding:6px;
+border-radius:100/2;
+`;
+
+const StyledContractorText = styled(LineItemInputText)`
+color: black;
+font-family: 'URBAN_REGULAR';
+font-size: 12px;
 `;
