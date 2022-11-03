@@ -18,20 +18,18 @@ const Hero = ({ data, isSubmitted }) => {
 
 
     const {
-        Property_Address__c,
+        Property_Street_Address__c,
         Target_Rehab_Complete_Date__c,
         GC_Inspection_Due_Date__c,
         Inspection_Stage__c,
-        Prospect_ID__r: { Baths__c, Bed__c, Square_Feet__c }
+        Prospect_ID__r: { Baths__c, Bed__c, Square_Feet__c,Year_Built__c }
     } = data;
-
 
     const pendingDays = differenceInDays(
         new Date(GC_Inspection_Due_Date__c),
         new Date()
     )
 
-    console.log({ isSubmitted });
 
     return (
         <Container>
@@ -48,7 +46,7 @@ const Hero = ({ data, isSubmitted }) => {
                         <MetaInfo {...{ pendingDays, Inspection_Stage__c }} />
                     </View>
                     {/* Short Summary */}
-                    <ShortSummary {...{ Property_Address__c, Baths__c, Bed__c, Square_Feet__c }} />
+                    <ShortSummary {...{ Property_Street_Address__c, Baths__c, Bed__c, Square_Feet__c }} />
 
                 </InsideContentWrapper>
 
@@ -62,7 +60,7 @@ const Hero = ({ data, isSubmitted }) => {
                 !isSubmitted && <DescriptionWrapper>
                     <Text style={{ color: 'black', fontFamily: 'URBAN_BOLD', fontSize: 16 }}>DESCRIPTION</Text>
                     <DescriptionText style={{ marginTop: 14 }}>
-                        {Property_Address__c} is a {Bed__c} Room Property with {Baths__c} Baths and {Square_Feet__c} Sq Ft. Built in 2022 this property is a New Construction.
+                        {Property_Street_Address__c} is a {Bed__c} Room Property with {Baths__c} Baths and {Square_Feet__c} Sq Ft. Built in {Year_Built__c} this property is a New Construction.
                     </DescriptionText>
                     <DescriptionText style={{ marginTop: 16 }}>
                         Inspection Schedule Date - {GC_Inspection_Due_Date__c}
@@ -117,12 +115,12 @@ function MetaInfo({ pendingDays, Inspection_Stage__c }) {
     )
 }
 
-function ShortSummary({ Property_Address__c, Baths__c, Bed__c, Square_Feet__c }) {
+function ShortSummary({ Property_Street_Address__c, Baths__c, Bed__c, Square_Feet__c }) {
     return (
         <ShortSummaryWrapper>
             {/* Address */}
             <ShortSummaryAddress>
-                {Property_Address__c}
+                {Property_Street_Address__c}
             </ShortSummaryAddress>
             {/* Bed | Bath | Sq Feet */}
             <BedBathSqftText>
