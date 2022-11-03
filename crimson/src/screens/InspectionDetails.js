@@ -15,6 +15,7 @@ import OtherForms from '../components/inspection-details/vendor-form/OtherForms'
 import { Row } from 'react-native-responsive-grid-system'
 import Collapsible from 'react-native-collapsible'
 import { SubmitReviewForm } from '../features/gcs/components/SubmitReviewForm'
+import Overlay from 'react-native-modal-overlay'
 
 
 
@@ -83,32 +84,33 @@ const InspectionDetails = ({ route, navigation }) => {
 
   const handleSubmit = () => {
     // ! Uncomment when submitting a GC form
-    // setIsNotesCollapsed(true) 
-    setIsSubmitted(true);
+    // console.log("CLICLING SUBMIT");
+    setIsSubmitModalOpen(true);
+    // setIsSubmitted(true);
   }
 
-  const handleSignature = () => {};
-  const handleViewImages = () => {}
+  const handleSignature = () => { };
+  const handleViewImages = () => { }
 
   const [isSubmitted, setIsSubmitted] = React.useState(false);
+  const [isSubmitModalOpen, setIsSubmitModalOpen] = React.useState(false);
 
-console.log("CURRENT INSPECTION",inspectionData.Id);
+  console.log("CURRENT INSPECTION", inspectionData.Id);
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <ScrollView onScroll={(e) => setOffSetY(e.nativeEvent.contentOffset.y)}>
-        <Row>
           {!readOnly &&
-            <Collapsible collapsed={!(isNotesCollapsed)}  >
-              <SubmitReviewForm setreadonly={setreadonly} inspVfDetails={vendorFormDetails[inspectionData.Id]} inspId={inspectionData.Id} navigation={navigation} setIsNotesCollapsed={setIsNotesCollapsed} />
-            </Collapsible>}
-        </Row>
-        {/* Hero */}
-        <Hero data={inspectionData} isSubmitted={isSubmitted} />
-        {/* CTA's */}
-        <CTA handleOnChat={() => alert("Chat")} handleSignature={handleSignature} handleViewImages={handleViewImages}  isSubmitted={isSubmitted} handleOnSubmit={handleSubmit} />
-        {/* Forms */}
-        <OtherForms isSubmitted={isSubmitted} readOnly={readOnly} isForContractorView={true} inspectionData={inspectionData} navigation={navigation} />
+            <Overlay visible={isSubmitModalOpen} onClose={() =>setIsSubmitModalOpen(false)}  >
+              <SubmitReviewForm handleCloseModal={() => setIsSubmitModalOpen(false)} setreadonly={setreadonly} inspVfDetails={vendorFormDetails[inspectionData.Id]} inspId={inspectionData.Id} navigation={navigation} setIsNotesCollapsed={setIsNotesCollapsed} />
+            </Overlay>
+          }
+          {/* Hero */}
+          <Hero data={inspectionData} isSubmitted={isSubmitted} />
+          {/* CTA's */}
+          <CTA handleOnChat={() => alert("Chat")} handleSignature={handleSignature} handleViewImages={handleViewImages} isSubmitted={isSubmitted} handleOnSubmit={handleSubmit} />
+          {/* Forms */}
+          <OtherForms isSubmitted={isSubmitted} readOnly={readOnly} isForContractorView={true} inspectionData={inspectionData} navigation={navigation} />
       </ScrollView>
       {/* Call Now */}
       {show && <CallNow isForContractorView={true} data={inspectionData} />}

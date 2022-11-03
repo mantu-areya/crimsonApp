@@ -5,9 +5,10 @@ import { Text } from "../../../components/typography/text.component";
 import { Pressable, View, } from 'react-native'
 import { Spacer } from "../../../components/spacer/spacer.component";
 import { updateSfVendorFormDetails } from "../../../services/inspections/inspections.service";
+import { Button } from "react-native-paper";
 
 
-export const SubmitReviewForm = ({ setreadonly, inspVfDetails, inspId, navigation, setIsNotesCollapsed }) => {
+export const SubmitReviewForm = ({ handleCloseModal, setreadonly, inspVfDetails, inspId, navigation, setIsNotesCollapsed }) => {
 
   const [checkList, setCheckList] = useState(checkListObj)
   const [textObj, setTextObj] = useState({ "Electric Meter #": '', "Water Meter #": '', "Gas Meter #": '', "Utility Notes": '' })
@@ -134,7 +135,7 @@ export const SubmitReviewForm = ({ setreadonly, inspVfDetails, inspId, navigatio
     }
 
     let hasNoError
-    let requiredFields = ["electric","water", "gas_fuel_tank","sewer","electric_meter","water_meter"]
+    let requiredFields = ["electric", "water", "gas_fuel_tank", "sewer", "electric_meter", "water_meter"]
     tempObject && Object.keys(tempObject).every(ele => {
       // console.log(ele,);
       if (requiredFields.includes(ele)) {
@@ -165,10 +166,10 @@ export const SubmitReviewForm = ({ setreadonly, inspVfDetails, inspId, navigatio
 
   const handleCancel = () => {
     setErrorState(false)
-    setIsNotesCollapsed(false)
+    handleCloseModal();
   }
 
-  const requiredLabel = ["Electric Meter #","Water Meter #"]
+  const requiredLabel = ["Electric Meter #", "Water Meter #"]
 
   return (
     <>
@@ -182,61 +183,60 @@ export const SubmitReviewForm = ({ setreadonly, inspVfDetails, inspId, navigatio
           </ErrorBanner>
           <Spacer position="bottom" size="large" />
         </Row>}
-        <Row>
+        <View style={{ flexDirection: "row", width: "100%", flexWrap: "wrap", padding: 2 }}>
           {checkList && Object.keys(checkList).map(ele => {
-            return <Col xs="4" key={ele}>
-              <Text> <RequireMarkText > *</RequireMarkText>{ele} : </Text>
-              {Object.keys(checkList[ele]).map((item, i) => {
-                return <CheckListbox key={ele + i}
-                  isChecked={checkList[ele][item] ? true : false}
-                  onClick={() => { handleIsChacked(ele, item, checkList[ele][item]) }
-                  }
-                  rightText={item}
-                />
+            return (
+              <View style={{ width: "50%", padding: 6 }} key={ele}>
+                <Text>*{ele}:</Text>
+                {
+                  Object.keys(checkList[ele]).map((item, i) => {
+                    return (
+                      <CheckListbox key={ele + i}
+                        isChecked={checkList[ele][item] ? true : false}
+                        onClick={() => { handleIsChacked(ele, item, checkList[ele][item]) }
+                        }
+                        rightText={item}
+                      />
+                    )
 
-              })}
-            </Col>
-          })
+                  })}
+              </View>
+            )
+          })}
 
-          }
-        </Row>
-        <Row>
+        </View>
+        <View style={{ flexDirection: "row", width: "100%", flexWrap: "wrap" }}>
           {
             textObj && Object.keys(textObj).map(ele => {
-              let showText = requiredLabel.includes(ele)?'*'+ele:ele
-              return <Col xs="4" key={ele}>
-
-                <InputField
-                  label={showText}
-                  value={textObj[ele]}
-                  onChangeText={text => { handleTextChange(ele, text) }}
-                />
-              </Col>
+              let showText = requiredLabel.includes(ele) ? '*' + ele : ele
+              return (
+                <View style={{ width: "50%", padding: 4 }} key={ele}>
+                  <InputField
+                    label={showText}
+                    value={textObj[ele]}
+                    onChangeText={text => { handleTextChange(ele, text) }}
+                  />
+                </View>
+              )
             })
           }
-        </Row>
+        </View>
         <Spacer position={'top'} size={"large"} />
-        <Row>
+        <View style={{ flexDirection: "row", width: "100%", flexWrap: "wrap" }}>
           {selectListObject && Object.keys(selectListObject).map(ele => {
             let key = String(ele)
-            return <View key={ele}><Row >
-              <Text>{ele} : </Text>
-              {customSelector(ele, selectListObject[ele])}
-              <Spacer position={'right'} size={"large"} />
-            </Row>
-              <Spacer position={'top'} size={"large"} />
-            </View>
+            return (
+              <View key={ele} style={{ width: "50%", flexDirection: "row" }} >
+                <Text>{ele} : </Text>
+                {customSelector(ele, selectListObject[ele])}
+              </View>
+            )
           })}
-        </Row>
-        <Row>
-          <View>
-            <Row>
-              <Pressable onPress={() => HnadleSubmitUtility()}><Text>Save</Text></Pressable>
-              <Spacer position={"right"} size="large" />
-              <Pressable onPress={() => handleCancel()}  ><Text>Cancel</Text></Pressable>
-            </Row>
-          </View>
-        </Row>
+        </View>
+        <View style={{flexDirection:"row", width:"100%",justifyContent:"flex-end"}}>
+          <Button onPress={() => HnadleSubmitUtility()} mode="contained" style={{backgroundColor:"#8477EB"}}>Save</Button>
+          <Button onPress={() => handleCancel()} labelStyle={{color:"#8477EB"}}>Cancel</Button>
+        </View>
       </ExpandSection>
     </>
   )
