@@ -14,6 +14,7 @@ import * as firebase from "firebase";
 const firebaseConfig = {
   apiKey: "AIzaSyCFLpOHzySZk_bngknbxy1jLOuaOZsY8pg",
   authDomain: "crimsonapp-9d439.firebaseapp.com",
+  databaseURL: "https://crimsonapp-9d439-default-rtdb.firebaseio.com",
   projectId: "crimsonapp-9d439",
   storageBucket: "crimsonapp-9d439.appspot.com",
   messagingSenderId: "219761954692",
