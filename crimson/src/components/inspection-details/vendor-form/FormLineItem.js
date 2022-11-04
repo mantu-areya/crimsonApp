@@ -17,7 +17,7 @@ let requiredSubCategories = [
 ]
 
 
-export default function FormLineItem({ isSubmitted, isForContractorView, inspId, item, onRoomMeasurementValueChange, onOtherFormValueChange, isForRoomMeasurement, onValueChange, navigation, readOnly, setShowAddButton, handleOnSave }) {
+export default function FormLineItem({handleAcceptLineItem, isSubmitted, isForContractorView, inspId, item, onRoomMeasurementValueChange, onOtherFormValueChange, isForRoomMeasurement, onValueChange, navigation, readOnly, setShowAddButton, handleOnSave }) {
   const [overlayVisible, setOverlayVisible] = React.useState(false)
 
 
@@ -145,7 +145,7 @@ export default function FormLineItem({ isSubmitted, isForContractorView, inspId,
 
   if (isForContractorView) {
     return (
-      <ContractorViewLineItem {...{ title: item.Matrix_Price, rate: item.Rate, quantity: item.Quantity }} />
+      <ContractorViewLineItem {...{handleAcceptLineItem,status:item?.Approval_Status,id:item?.Id || item?.UniqueKey , title: item.Matrix_Price, rate: item.Rate, quantity: item.Quantity }} />
     )
 
   }
@@ -284,9 +284,10 @@ function SubmittedFormLineItem({ title, rate, quantity, total }) {
   )
 }
 
-function ContractorViewLineItem({ title, rate, quantity, total }) {
+function ContractorViewLineItem({handleAcceptLineItem,id, status, title, rate, quantity, total }) {
 
   const [bgColor, setBgColor] = React.useState("default");
+
 
   const [visible, setVisible] = React.useState(false);
 
@@ -295,6 +296,7 @@ function ContractorViewLineItem({ title, rate, quantity, total }) {
 
   function acceptLineItem() {
     setBgColor("#F7F4DE");
+    handleAcceptLineItem(id,"Approved");
   }
 
   function reviewLineItem() {
@@ -302,9 +304,11 @@ function ContractorViewLineItem({ title, rate, quantity, total }) {
   }
 
   function deleteLineItem() {
-    setBgColor("#F8D9CF")
+    setBgColor("#F8D9CF");
+    handleAcceptLineItem(id,"Declined");
   }
 
+  console.log("STATUS",status);
 
 
 
@@ -312,6 +316,7 @@ function ContractorViewLineItem({ title, rate, quantity, total }) {
     <>
       <Card style={{ padding: 16, backgroundColor: bgColor, borderBottomWidth: 2, borderColor: '#EEBC7B' }}>
         <LineItemHeading>{title}</LineItemHeading>
+        <LineItemHeading>{status}</LineItemHeading>
         <View style={{ flexDirection: 'row' }}>
           {/* Details */}
           <View style={{ flex: .2 }}>

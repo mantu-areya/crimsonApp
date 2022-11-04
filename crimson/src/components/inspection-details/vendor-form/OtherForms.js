@@ -345,6 +345,20 @@ const OtherForms = ({ isSubmitted, isForContractorView, readOnly, inspectionData
         updateToSf(inspectionData.Id)
     }
 
+    function handleAcceptLineItem(lineItemId,status) {
+        console.log("CHNAGING ITEM: " + lineItemId);
+        let updatedData = dataList.map((data) => {
+            if (data.Id === lineItemId) {
+                console.log("DOING STTAUS CHANGE BEFORE",data.Approval_Status);
+                data.Approval_Status = status
+                console.log("AFTER DOING STTAUS CHANGE",data.Approval_Status);
+            }
+            return data;
+        });
+        setDatalist(updatedData);
+        updateVfContect(updatedData, "OTHRFM", inspectionData.Id);
+        updateToSf(inspectionData.Id);
+    }
 
 
     return (
@@ -368,7 +382,7 @@ const OtherForms = ({ isSubmitted, isForContractorView, readOnly, inspectionData
                             <FlatList
                                 data={dataList}
                                 keyExtractor={item => item.UniqueKey}
-                                renderItem={({ item }) => <FormLineItem   {...{ isForContractorView, item, inspId: inspectionData.Id, onRoomMeasurementValueChange, onOtherFormValueChange, navigation, readOnly, setShowAddButton, handleOnSave }} isForRoomMeasurement={currentFormData.title === "Room Measurements"} />}
+                                renderItem={({ item }) => <FormLineItem   {...{ handleAcceptLineItem, isForContractorView, item, inspId: inspectionData.Id, onRoomMeasurementValueChange, onOtherFormValueChange, navigation, readOnly, setShowAddButton, handleOnSave }} isForRoomMeasurement={currentFormData.title === "Room Measurements"} />}
                             /> :
                             <View style={{ padding: 16 }}>
                                 <ActivityIndicator />
@@ -403,9 +417,9 @@ const OtherForms = ({ isSubmitted, isForContractorView, readOnly, inspectionData
                     {
                         dataList.length > 0 ?
                             <FlatList
-                                data={[].concat(pools,exterior,interior,general_Rental,room_MeasurementData,mech_Elec_Plumb)}
+                                data={[].concat(pools, exterior, interior, general_Rental, room_MeasurementData, mech_Elec_Plumb)}
                                 keyExtractor={item => item.UniqueKey}
-                                renderItem={({ item }) => <FormLineItem   {...{isSubmitted, isForContractorView, item, inspId: inspectionData.Id, onRoomMeasurementValueChange, onOtherFormValueChange, navigation, readOnly, setShowAddButton, handleOnSave }} isForRoomMeasurement={currentFormData.title === "Room Measurements"} />}
+                                renderItem={({ item }) => <FormLineItem   {...{ isSubmitted, isForContractorView, item, inspId: inspectionData.Id, onRoomMeasurementValueChange, onOtherFormValueChange, navigation, readOnly, setShowAddButton, handleOnSave }} isForRoomMeasurement={currentFormData.title === "Room Measurements"} />}
                             /> :
                             <View style={{ padding: 16 }}>
                                 <ActivityIndicator />
