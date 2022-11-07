@@ -2,23 +2,20 @@ import React, { useContext } from "react";
 import { InspectionsContext } from "../services/inspections/inspections.contex"
 
 
-import { Searchbar as PaperSearchBar, Colors, IconButton, Menu, Button, Card } from 'react-native-paper';
-import { ActivityIndicator, Dimensions, FlatList, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { Card } from 'react-native-paper';
+import { ActivityIndicator, Dimensions, FlatList, Text, View } from "react-native";
 import styled from "styled-components/native";
 
-import Icon from 'react-native-vector-icons/FontAwesome';
 import { useNavigation } from "@react-navigation/native";
-import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
-const backIcon = <Icon name="arrow-left" size={16} />;
-const rightArr = <Icon name="angle-right" size={48} color="white" />;
-const caretDown = <Icon name="caret-down" size={16} color="white" />;
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { differenceInDays } from 'date-fns'
 
 
 const TopContainer = styled.View`
 background-color:#14181B;
 width: 100%;
 position: relative;
-padding: 24px 16px 12px;
+padding: 24px 0 0;
 `;
 
 
@@ -29,14 +26,31 @@ width: 100%;
 background-color: #F1F4F8;
 `;
 
-export default function Schedule({ navigation }){
-  const { isLoading, inspections } = useContext(InspectionsContext);
-  const [searchQuery, setSearchQuery] = React.useState('');
-  const [selectedOption, setSelectedOption] = React.useState('Inspection/Rehab Bid Queue (Pending Vendor Submission)');
-  const [open, setOpen] = React.useState(false);
 
-  const onChangeSearch = query => setSearchQuery(query);
-  const filterInspections = inspections?.filter((ins) => ins?.Name.includes(searchQuery) || ins?.Property_Address__c.includes(searchQuery) || ins?.Property_City__c?.includes(searchQuery));
+const TabMenuItemWrapper = styled.TouchableOpacity`
+flex: 1;
+border-bottom-width: ${props => props.isActive ? "5px" : 0} ;
+border-bottom-color: #3AD2C0;
+padding-bottom:16px;
+`;
+
+const TabMenuItemLabel = styled.Text`
+font-family: 'URBAN_BOLD';
+font-size: 18px;
+text-align: center;
+color: ${props => props.isActive ? "#3AD2C0" : "#94A1AC"} ;
+`;
+
+export default function Schedule({ navigation }) {
+  const { isLoading, inspections } = useContext(InspectionsContext);
+  const [currentSection, setCurrentSection] = React.useState("Upcoming");
+
+  const completedInspections = inspections.filter((item) => item?.doCreateWAF__c); // TODO UPDATE LOGIC FOR COMPLETED
+  const upcomingInspections = inspections.filter((item) => {
+    return differenceInDays(new Date(item.GC_Inspection_Due_Date__c), new Date()) >= 2;
+  })
+
+
 
   const insets = useSafeAreaInsets();
 
@@ -45,32 +59,21 @@ export default function Schedule({ navigation }){
       {/* Top */}
       <TopContainer>
         {/* Heading */}
-        <Text style={{ fontSize: 24, color: "white", fontFamily: "URBAN_BOLD", marginBottom: 4 }}>Welcome!</Text>
-        {/* Menu */}
-        <Text style={{ fontSize: 18, color: "#94A1AC", fontFamily: "URBAN_MEDIUM" }} onPress={() => setOpen(!open)}>{selectedOption} {caretDown} </Text>
-        <View style={{borderRadius:8, backgroundColor: 'white', display: open ? 'flex' : 'none',marginTop:8,padding:16,width:"100%" }}>
+        <Text style={{ fontSize: 24, paddingLeft: 16, color: "white", fontFamily: "URBAN_BOLD", marginBottom: 4 }}>SCHEDULE</Text>
+        <View style={{ flexDirection: 'row', marginTop: 8 }}>
           {
-            [
-              "Inspection/Rehab Bid Queue (Pending Vendor Submission)",
-              "Inspection/Rehab Upcoming Preconstruction Look Ahead",
-              // "Turn Bid Queue (Pending Vendor Submission)",
-              // "Turn WAF Queue"
-            ].map((option, index) =>
-              <Text key={index} style={{padding:4,fontSize:18, fontFamily: 'URBAN_MEDIUM',width:"100%" }} onPress={() => { setSelectedOption(option); setOpen(false) }} >
-                {option}
-              </Text>
+            ["Upcoming", "Completed"].map((item, i) =>
+              <TabMenuItemWrapper
+                onPress={() => setCurrentSection(item)}
+                isActive={currentSection === item}
+                key={i}>
+                <TabMenuItemLabel isActive={currentSection === item}>
+                  {item}
+                </TabMenuItemLabel>
+              </TabMenuItemWrapper>
             )
           }
         </View>
-        {/* Searchbar */}
-        <View style={{ backgroundColor: '#F1F4F8', justifyContent: "space-between", alignItems: 'center', flexDirection: 'row', padding: 12, marginVertical: 8 }}>
-          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-            <Icon name="search" color="grey" size={18} />
-            <TextInput onChangeText={onChangeSearch} placeholder="Address, city, state.." style={{ fontFamily: "URBAN_BOLD", backgroundColor: "transparent", marginLeft: 16, fontSize: 18 }} />
-          </View>
-          <Button labelStyle={{ fontFamily: "URBAN_BOLD" }} style={{ backgroundColor: "#4B39EF", padding: 8 }} mode="contained">Search</Button>
-        </View>
-
       </TopContainer>
       {/*  Bottom */}
       <BottomContainer>
@@ -80,7 +83,7 @@ export default function Schedule({ navigation }){
             <ActivityIndicator />
           </View> :
           <FlatList
-            data={filterInspections ?? []}
+            data={currentSection === "Upcoming" ? upcomingInspections : completedInspections}
             keyExtractor={(item) => item.Id}
             renderItem={({ item }) => (
               <ListViewCard data={item} />
