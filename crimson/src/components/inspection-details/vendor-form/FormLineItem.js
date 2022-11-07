@@ -550,7 +550,7 @@ background-color: ${props => props.backgroundColor};
 flex: 1;
 margin:0 4px;
 padding:6px;
-border-radius:100/2;
+border-radius:50px;
 `;
 
 const StyledContractorText = styled(LineItemInputText)`
