@@ -45,7 +45,7 @@ export default function FormLineItem({handleAcceptLineItem, isSubmitted, isForCo
   }, [])
 
   if (isSubmitted) {
-    return <SubmittedFormLineItem {...{ title: item.Matrix_Price, rate: item.Rate, quantity: item.Quantity }} />
+    return <SubmittedFormLineItem {...{ status:item?.Approval_Status,title: item.Matrix_Price, rate: item.Rate, quantity: item.Quantity }} />
   }
 
   if (isForRoomMeasurement) {
@@ -262,22 +262,40 @@ export default function FormLineItem({handleAcceptLineItem, isSubmitted, isForCo
 }
 
 
-function SubmittedFormLineItem({ title, rate, quantity, total }) {
+function SubmittedFormLineItem({ status,title, rate, quantity, total }) {
+  function getBackgroundColor(){
+    if (status === "Approved") {
+      return "#7CDD9B";
+    } else if (status === "Declined"){
+      return "#E02E2E";
+    } else {
+      return "#3983EF";
+    }
+  }
+  function getCardBackgroundColor(){
+    if (status === "Approved") {
+      return "#E7F5CE";
+    } else if (status === "Declined"){
+      return "#F9DAD4";
+    } else {
+      return "#FDF2BF";
+    }
+  }
   return (
-    <Card style={{ padding: 16, backgroundColor: "white", borderBottomWidth: 2, borderColor: '#EEBC7B' }}>
-      <LineItemHeading>{title}</LineItemHeading>
+    <Card style={{ padding: 16, backgroundColor:getCardBackgroundColor() , borderBottomWidth: 2, borderColor: '#EEBC7B' }}>
+      <LineItemHeading style={{}}>{title}</LineItemHeading>
       <View >
         {/* Details */}
         <View style={{ flexDirection: 'row' }}>
-          <StyledContractorText style={{flex:1,fontSize:14}}>QTY: {quantity}</StyledContractorText>
-          <StyledContractorText style={{flex:1,fontSize:14}} >RATE: {rate ? rate?.toLocaleString("en-IN", { style: "currency", currency: 'USD' }) : 0}</StyledContractorText>
-          <StyledContractorText style={{flex:1,fontSize:14}}>TOTAL: {total ? total?.toLocaleString("en-IN", { style: "currency", currency: 'USD' }) : 0}</StyledContractorText>
-          <StyledContractorButton labelStyle={{ fontSize: 16, fontFamily: 'URBAN_BOLD' }} backgroundColor="#7CDD9B" mode="contained">A</StyledContractorButton>
+          <StyledContractorText style={{flex:1,fontSize:14,}}>QTY: {quantity}</StyledContractorText>
+          <StyledContractorText style={{flex:1,fontSize:14,}} >RATE: {rate ? rate?.toLocaleString("en-IN", { style: "currency", currency: 'USD' }) : 0}</StyledContractorText>
+          <StyledContractorText style={{flex:1,fontSize:14,}}>TOTAL: {total ? total?.toLocaleString("en-IN", { style: "currency", currency: 'USD' }) : 0}</StyledContractorText>
+          <StyledContractorButton style={{ fontSize: 16, fontFamily: 'URBAN_BOLD',backgroundColor:getBackgroundColor(),padding:4 }} mode="contained">{status}</StyledContractorButton>
         </View>
         <View style={{ flexDirection: 'row',marginTop:8}}>
-          <StyledContractorText style={{flex:1,fontSize:18}}>ADJ QTY: {quantity}</StyledContractorText>
-          <StyledContractorText style={{flex:1,fontSize:18}} >RATE: {rate ? rate?.toLocaleString("en-IN", { style: "currency", currency: 'USD' }) : 0}</StyledContractorText>
-          <StyledContractorText style={{flex:1,fontSize:18}}>TOTAL: {total ? total?.toLocaleString("en-IN", { style: "currency", currency: 'USD' }) : 0}</StyledContractorText>
+          <StyledContractorText style={{flex:1,fontSize:18,}}>ADJ QTY: {quantity}</StyledContractorText>
+          <StyledContractorText style={{flex:1,fontSize:18,}} >RATE: {rate ? rate?.toLocaleString("en-IN", { style: "currency", currency: 'USD' }) : 0}</StyledContractorText>
+          <StyledContractorText style={{flex:1,fontSize:18,}}>TOTAL: {total ? total?.toLocaleString("en-IN", { style: "currency", currency: 'USD' }) : 0}</StyledContractorText>
         </View>
       </View>
     </Card>

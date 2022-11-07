@@ -417,7 +417,7 @@ const OtherForms = ({ isSubmitted, isForContractorView, readOnly, inspectionData
                     {
                         dataList.length > 0 ?
                             <FlatList
-                                data={[].concat(pools, exterior, interior, general_Rental, room_MeasurementData, mech_Elec_Plumb)}
+                                data={[].concat(pools, exterior, interior, general_Rental, room_MeasurementData, mech_Elec_Plumb).filter(item => item.Approval_Status === "Approved" || item.Approval_Status === "Declined" || item.Approval_Status === "Approved as Noted")}
                                 keyExtractor={item => item.UniqueKey}
                                 renderItem={({ item }) => <FormLineItem   {...{ isSubmitted, isForContractorView, item, inspId: inspectionData.Id, onRoomMeasurementValueChange, onOtherFormValueChange, navigation, readOnly, setShowAddButton, handleOnSave }} isForRoomMeasurement={currentFormData.title === "Room Measurements"} />}
                             /> :
