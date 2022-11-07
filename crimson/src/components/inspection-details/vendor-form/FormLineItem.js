@@ -350,7 +350,6 @@ function ContractorViewLineItem({ handleAcceptLineItem, item, onOtherFormValueCh
     <>
       <Card style={{ padding: 16, backgroundColor: bgColor, borderBottomWidth: 2, borderColor: '#EEBC7B' }}>
         <LineItemHeading>{title}</LineItemHeading>
-        <LineItemHeading>{item.Approval_Status}</LineItemHeading>
         <View style={{ flexDirection: 'row' }}>
           {/* Details */}
           <View style={{ flex: .2 }}>

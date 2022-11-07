@@ -360,6 +360,9 @@ const OtherForms = ({ isSubmitted, isForContractorView, readOnly, inspectionData
         updateToSf(inspectionData.Id);
     }
 
+    function getPendingApprovalCount() {
+      return  dataList.filter(item => item.Approval_Status === null ).length
+    }
 
 
     return (
@@ -375,7 +378,7 @@ const OtherForms = ({ isSubmitted, isForContractorView, readOnly, inspectionData
                         isForContractorView &&
                         <View intensity={100} style={{ marginVertical: 8, flexDirection: 'row', alignItems: 'center' }}>
                             <CurrentFormHeading style={{ fontSize: 22 }}>BID FOR REVIEW</CurrentFormHeading>
-                            <CurrentFormHeading style={{ fontSize: 18, textTransform: 'none' }}>Pending Approvals 7/18</CurrentFormHeading>
+                            <CurrentFormHeading style={{ fontSize: 18, textTransform: 'none' }}>Pending Approvals {getPendingApprovalCount()}/{dataList.length}</CurrentFormHeading>
                         </View>
                     }
                     {
