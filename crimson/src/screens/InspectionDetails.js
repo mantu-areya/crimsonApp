@@ -86,7 +86,7 @@ const InspectionDetails = ({ route, navigation }) => {
     // ! Uncomment when submitting a GC form
     // console.log("CLICLING SUBMIT");
     setIsSubmitModalOpen(true);
-    // setIsSubmitted(true);
+    setIsSubmitted(true);
   }
 
   const handleSignature = () => { };
