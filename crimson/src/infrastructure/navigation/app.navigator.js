@@ -15,6 +15,7 @@ import Login from "../../screens/auth/Login";
 import { AuthContext } from "../../contexts/AuthContext";
 import { HomePage } from "../../screens/HomePage";
 import { getFocusedRouteNameFromRoute } from "@react-navigation/native";
+import Schedule from "../../screens/Schedule";
 export const AppNavigator = () => {
 
 
@@ -35,17 +36,6 @@ export const AppNavigator = () => {
     };
   };
 
-  const Maps = () => (
-    <SafeArea>
-      <Text>Maps</Text>
-    </SafeArea>
-  );
-
-  const Schedule = () => (
-    <SafeArea>
-      <Text>Schedule</Text>
-    </SafeArea>
-  );
 
 
 
@@ -85,7 +75,8 @@ export const AppNavigator = () => {
 
   function getRouteName(route) {
     const rName = getFocusedRouteNameFromRoute(route);
-    if (rName?.includes("HomeStack")) {
+    console.log({rName,route});
+    if (rName === "Home" || rName === "HomeStack"|| rName === undefined) {
       return  "flex";
     }
     return "none";
