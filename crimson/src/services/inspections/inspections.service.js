@@ -68,12 +68,12 @@ let getStoredToken = () => {
   })
 }
 
-export const getInspectionsData = async () => {
+export const getInspectionsData = async (userEmail) => {
 
   const token = await getStoredToken();
-
+  console.log(userEmail,"email");
   return apiGet(
-    `https://hudsonhomesmgmt--uat.sandbox.my.salesforce.com/services/apexrest/crimson/inspection`,
+    `https://hudsonhomesmgmt--uat.sandbox.my.salesforce.com/services/apexrest/crimson/${userEmail}`,
     {
       headers: {
         'Authorization': `Bearer ${token}`,

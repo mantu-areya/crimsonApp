@@ -1,18 +1,18 @@
 import React, { useState } from "react";
 import { View, StyleSheet, Button, Alert } from "react-native";
 
-export const AlertBoX = () => {
+export const AlertBoX = ({message,callback}) => {
   const createAlert = () =>
     Alert.alert(
       "Alert Title",
-      "My Alert Msg",
+      message&& message,
       [
         {
           text: "Cancel",
           onPress: () => console.log("Cancel Pressed"),
           style: "cancel"
         },
-        { text: "OK", onPress: () => console.log("OK Pressed") }
+        { text: "OK", onPress: () => {callback()} }
       ]
     );
 

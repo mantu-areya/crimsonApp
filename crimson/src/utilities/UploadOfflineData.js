@@ -62,7 +62,7 @@ export const UploadOfflineData = () => {
 
   const offlineDataToSalesForce = () =>{
     let keyString =  deletedLineItems.length>0 && deletedLineItems.join(',')
-    deleteLineItem(keyString).catch(error=>{
+    keyString && deleteLineItem(keyString).catch(error=>{
       setOfflineUploadStar("END")
     })
     let vFData = []
