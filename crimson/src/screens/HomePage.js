@@ -48,13 +48,13 @@ export const HomePage = ({ navigation }) => {
         <Text style={{ fontSize: 24, color: "white", fontFamily: "URBAN_BOLD", marginBottom: 4 }}>Welcome!</Text>
         {/* Menu */}
         <Text style={{ fontSize: 18, color: "#94A1AC", fontFamily: "URBAN_MEDIUM" }} onPress={() => setOpen(!open)}>{selectedOption} {caretDown} </Text>
-        <View style={{borderRadius:8, backgroundColor: 'white', display: open ? 'flex' : 'none',marginTop:8,padding:8,width:"100%" }}>
+        <View style={{borderRadius:8, backgroundColor: 'white', display: open ? 'flex' : 'none',marginTop:8,padding:16,width:"100%" }}>
           {
             [
               "Inspection/Rehab Bid Queue (Pending Vendor Submission)",
               "Inspection/Rehab Upcoming Preconstruction Look Ahead",
-              "Turn Bid Queue (Pending Vendor Submission)",
-              "Turn WAF Queue"
+              // "Turn Bid Queue (Pending Vendor Submission)",
+              // "Turn WAF Queue"
             ].map((option, index) =>
               <Text key={index} style={{padding:4,fontSize:18, fontFamily: 'URBAN_MEDIUM',width:"100%" }} onPress={() => { setSelectedOption(option); setOpen(false) }} >
                 {option}
