@@ -49,9 +49,6 @@ export const AppNavigator = () => {
       <Stack.Navigator>
         <Stack.Screen options={{ headerShown: false }}
           name="HomeStack" component={HomePage} />
-        <Stack.Screen
-          options={{ headerShown: false }}
-          name="Inspections" component={InspectionsScreen} />
         <Stack.Screen options={{ headerShown: false, }}
           name="InspectionsDetail" component={InspectionDetails} />
         <Stack.Screen options={{ headerShown: false, }}
