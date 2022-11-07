@@ -354,8 +354,8 @@ function ContractorViewLineItem({ handleAcceptLineItem, item, onOtherFormValueCh
           {/* Details */}
           <View style={{ flex: .2 }}>
             <StyledContractorText>QTY: {quantity}</StyledContractorText>
-            <StyledContractorText>RATE: {rate ? rate?.toLocaleString("en-IN", { style: "currency", currency: 'USD' }) : 0}</StyledContractorText>
-            <StyledContractorText>TOTAL: {total ? total?.toLocaleString("en-IN", { style: "currency", currency: 'USD' }) : 0}</StyledContractorText>
+            <StyledContractorText>RATE: {getCurrencyFormattedValue(rate)}</StyledContractorText>
+            <StyledContractorText>TOTAL: {getCurrencyFormattedValue(total)}</StyledContractorText>
           </View>
           <View style={{ flex: .8, flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
             <StyledContractorButton labelStyle={{ fontSize: 16, fontFamily: 'URBAN_BOLD' }} backgroundColor="#7CDD9B" mode="contained" onPress={() => acceptLineItem()}>A</StyledContractorButton>
@@ -366,14 +366,14 @@ function ContractorViewLineItem({ handleAcceptLineItem, item, onOtherFormValueCh
       </Card>
       <Overlay childrenWrapperStyle={{ padding: 18 }} containerStyle={{ backgroundColor: '#dbdad960' }} visible={visible} onClose={() => setVisible(false)} closeOnTouchOutside >
         <Ionicons onPress={() => hideModal()} name="close" size={24} style={{ marginLeft: "auto" }} />
-        <View style={{ minHeight: 360, width: "100%", backgroundColor: "black" }} />
+        <View style={{ minHeight: 280, width: "100%", backgroundColor: "black" }} />
         <Text style={{ width: "100%", padding: 10, fontFamily: 'URBAN_MEDIUM', fontSize: 16, color: "#BDC5CD" }}>{title}</Text>
-        <View style={{ padding: 16, flexDirection: 'row', justifyContent: 'space-even', width: "100%" }}>
+        <View style={{ padding: 16, flexDirection: 'row', justifyContent:"space-evenly", width: "100%" }}>
           <StyledOverlayText >QTY: {quantity}</StyledOverlayText>
           <StyledOverlayText style={{ flex: 1 }}>RATE: {getCurrencyFormattedValue(rate)}</StyledOverlayText>
           <StyledOverlayText style={{ flex: 1 }}>TOTAL: {getCurrencyFormattedValue(total)}</StyledOverlayText>
         </View>
-        <View style={{ flexDirection: 'row', justifyContent: 'space-even', width: "100%", flexWrap: "wrap" }}>
+        <View style={{ flexDirection: 'row', justifyContent: 'space-evenly', width: "100%", flexWrap: "wrap" }}>
           <StyledOverlayInputWrapper style={{ flexDirection: 'row' }}>
             <StyledOverlayInputLabel>ADJ QTY: </StyledOverlayInputLabel>
             <StyledOverlayInput
@@ -395,7 +395,7 @@ function ContractorViewLineItem({ handleAcceptLineItem, item, onOtherFormValueCh
         <View style={{ width: "100%", marginVertical: 8 }}>
           <Text style={{ fontSize: 16, fontFamily: 'URBAN_BOLD', color: '#BDC5CD', marginVertical: 8 }}>OWNER CLARIFICATIONS:</Text>
           <TextInput
-            style={{ padding: 64, paddingLeft: 16, borderRadius: 4, backgroundColor: "#d4d4d470", fontFamily: 'URBAN_MEDIUM', fontSize: 16, color: "#BDC5CD" }}
+            style={{ padding: 16, paddingLeft: 16, borderRadius: 4, backgroundColor: "#d4d4d470", fontFamily: 'URBAN_MEDIUM', fontSize: 16, color: "#BDC5CD" }}
             multiline
             numberOfLines={4}
             onChangeText={text => {
