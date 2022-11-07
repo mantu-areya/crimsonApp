@@ -85,7 +85,7 @@ export const AppNavigator = () => {
 
   function getRouteName(route) {
     const rName = getFocusedRouteNameFromRoute(route);
-    if (rName?.includes("Home")) {
+    if (rName?.includes("HomeStack")) {
       return  "flex";
     }
     return "none";
