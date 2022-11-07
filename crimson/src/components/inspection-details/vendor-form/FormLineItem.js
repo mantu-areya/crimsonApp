@@ -17,7 +17,7 @@ let requiredSubCategories = [
 ]
 
 
-export default function FormLineItem({handleAcceptLineItem, isSubmitted, isForContractorView, inspId, item, onRoomMeasurementValueChange, onOtherFormValueChange, isForRoomMeasurement, onValueChange, navigation, readOnly, setShowAddButton, handleOnSave }) {
+export default function FormLineItem({ handleAcceptLineItem, isSubmitted, isForContractorView, inspId, item, onRoomMeasurementValueChange, onOtherFormValueChange, isForRoomMeasurement, onValueChange, navigation, readOnly, setShowAddButton, handleOnSave }) {
   const [overlayVisible, setOverlayVisible] = React.useState(false)
 
 
@@ -45,7 +45,7 @@ export default function FormLineItem({handleAcceptLineItem, isSubmitted, isForCo
   }, [])
 
   if (isSubmitted) {
-    return <SubmittedFormLineItem {...{ status:item?.Approval_Status,title: item.Matrix_Price, rate: item.Rate, quantity: item.Quantity }} />
+    return <SubmittedFormLineItem {...{ status: item?.Approval_Status, title: item.Matrix_Price, rate: item.Rate, quantity: item.Quantity }} />
   }
 
   if (isForRoomMeasurement) {
@@ -145,7 +145,7 @@ export default function FormLineItem({handleAcceptLineItem, isSubmitted, isForCo
 
   if (isForContractorView) {
     return (
-      <ContractorViewLineItem {...{handleAcceptLineItem,status:item?.Approval_Status,id:item?.Id || item?.UniqueKey , title: item.Matrix_Price, rate: item.Rate, quantity: item.Quantity }} />
+      <ContractorViewLineItem {...{ handleAcceptLineItem, item, onOtherFormValueChange }} />
     )
 
   }
@@ -262,47 +262,59 @@ export default function FormLineItem({handleAcceptLineItem, isSubmitted, isForCo
 }
 
 
-function SubmittedFormLineItem({ status,title, rate, quantity, total }) {
-  function getBackgroundColor(){
+function SubmittedFormLineItem({ status, title, rate, quantity, total }) {
+  function getBackgroundColor() {
     if (status === "Approved") {
       return "#7CDD9B";
-    } else if (status === "Declined"){
+    } else if (status === "Declined") {
       return "#E02E2E";
     } else {
       return "#3983EF";
     }
   }
-  function getCardBackgroundColor(){
+  function getCardBackgroundColor() {
     if (status === "Approved") {
       return "#E7F5CE";
-    } else if (status === "Declined"){
+    } else if (status === "Declined") {
       return "#F9DAD4";
     } else {
       return "#FDF2BF";
     }
   }
   return (
-    <Card style={{ padding: 16, backgroundColor:getCardBackgroundColor() , borderBottomWidth: 2, borderColor: '#EEBC7B' }}>
+    <Card style={{ padding: 16, backgroundColor: getCardBackgroundColor(), borderBottomWidth: 2, borderColor: '#EEBC7B' }}>
       <LineItemHeading style={{}}>{title}</LineItemHeading>
       <View >
         {/* Details */}
         <View style={{ flexDirection: 'row' }}>
-          <StyledContractorText style={{flex:1,fontSize:14,}}>QTY: {quantity}</StyledContractorText>
-          <StyledContractorText style={{flex:1,fontSize:14,}} >RATE: {rate ? rate?.toLocaleString("en-IN", { style: "currency", currency: 'USD' }) : 0}</StyledContractorText>
-          <StyledContractorText style={{flex:1,fontSize:14,}}>TOTAL: {total ? total?.toLocaleString("en-IN", { style: "currency", currency: 'USD' }) : 0}</StyledContractorText>
-          <StyledContractorButton style={{ fontSize: 16, fontFamily: 'URBAN_BOLD',backgroundColor:getBackgroundColor(),padding:4 }} mode="contained">{status}</StyledContractorButton>
+          <StyledContractorText style={{ flex: 1, fontSize: 14, }}>QTY: {quantity}</StyledContractorText>
+          <StyledContractorText style={{ flex: 1, fontSize: 14, }} >RATE: {rate ? rate?.toLocaleString("en-IN", { style: "currency", currency: 'USD' }) : 0}</StyledContractorText>
+          <StyledContractorText style={{ flex: 1, fontSize: 14, }}>TOTAL: {total ? total?.toLocaleString("en-IN", { style: "currency", currency: 'USD' }) : 0}</StyledContractorText>
+          <StyledContractorButton style={{ fontSize: 16, fontFamily: 'URBAN_BOLD', backgroundColor: getBackgroundColor(), padding: 4 }} mode="contained">{status}</StyledContractorButton>
         </View>
-        <View style={{ flexDirection: 'row',marginTop:8}}>
-          <StyledContractorText style={{flex:1,fontSize:18,}}>ADJ QTY: {quantity}</StyledContractorText>
-          <StyledContractorText style={{flex:1,fontSize:18,}} >RATE: {rate ? rate?.toLocaleString("en-IN", { style: "currency", currency: 'USD' }) : 0}</StyledContractorText>
-          <StyledContractorText style={{flex:1,fontSize:18,}}>TOTAL: {total ? total?.toLocaleString("en-IN", { style: "currency", currency: 'USD' }) : 0}</StyledContractorText>
+        <View style={{ flexDirection: 'row', marginTop: 8 }}>
+          <StyledContractorText style={{ flex: 1, fontSize: 18, }}>ADJ QTY: {quantity}</StyledContractorText>
+          <StyledContractorText style={{ flex: 1, fontSize: 18, }} >RATE: {rate ? rate?.toLocaleString("en-IN", { style: "currency", currency: 'USD' }) : 0}</StyledContractorText>
+          <StyledContractorText style={{ flex: 1, fontSize: 18, }}>TOTAL: {total ? total?.toLocaleString("en-IN", { style: "currency", currency: 'USD' }) : 0}</StyledContractorText>
         </View>
       </View>
     </Card>
   )
 }
 
-function ContractorViewLineItem({handleAcceptLineItem,id, status, title, rate, quantity, total }) {
+function ContractorViewLineItem({ handleAcceptLineItem, item, onOtherFormValueChange }) {
+
+  const {
+    UniqueKey,
+    Adj_Quantity,
+    Adj_Rate,
+    Owner_Clarification,
+    Id: id,
+    Matrix_Price: title,
+    Rate: rate,
+    Quantity: quantity,
+    Total: total
+  } = item
 
   const [bgColor, setBgColor] = React.useState("default");
 
@@ -314,7 +326,7 @@ function ContractorViewLineItem({handleAcceptLineItem,id, status, title, rate, q
 
   function acceptLineItem() {
     setBgColor("#F7F4DE");
-    handleAcceptLineItem(id,"Approved");
+    handleAcceptLineItem(id, "Approved");
   }
 
   function reviewLineItem() {
@@ -323,10 +335,14 @@ function ContractorViewLineItem({handleAcceptLineItem,id, status, title, rate, q
 
   function deleteLineItem() {
     setBgColor("#F8D9CF");
-    handleAcceptLineItem(id,"Declined");
+    handleAcceptLineItem(id, "Declined");
   }
 
-  console.log("STATUS",status);
+  function handleApproveAsNoted(){
+    setBgColor("#3983EF60")
+    handleAcceptLineItem(id, "Approved as Noted");
+    hideModal();
+  }
 
 
 
@@ -334,7 +350,7 @@ function ContractorViewLineItem({handleAcceptLineItem,id, status, title, rate, q
     <>
       <Card style={{ padding: 16, backgroundColor: bgColor, borderBottomWidth: 2, borderColor: '#EEBC7B' }}>
         <LineItemHeading>{title}</LineItemHeading>
-        <LineItemHeading>{status}</LineItemHeading>
+        <LineItemHeading>{item.Approval_Status}</LineItemHeading>
         <View style={{ flexDirection: 'row' }}>
           {/* Details */}
           <View style={{ flex: .2 }}>
@@ -355,37 +371,45 @@ function ContractorViewLineItem({handleAcceptLineItem,id, status, title, rate, q
         <Text style={{ width: "100%", padding: 10, fontFamily: 'URBAN_MEDIUM', fontSize: 16, color: "#BDC5CD" }}>{title}</Text>
         <View style={{ padding: 16, flexDirection: 'row', justifyContent: 'space-even', width: "100%" }}>
           <StyledOverlayText >QTY: {quantity}</StyledOverlayText>
-          <StyledOverlayText style={{ flex: 1 }}>RATE: {rate ?? 0}</StyledOverlayText>
-          <StyledOverlayText style={{ flex: 1 }}>TOTAL: {total ?? 0}</StyledOverlayText>
+          <StyledOverlayText style={{ flex: 1 }}>RATE: {getCurrencyFormattedValue(rate)}</StyledOverlayText>
+          <StyledOverlayText style={{ flex: 1 }}>TOTAL: {getCurrencyFormattedValue(total)}</StyledOverlayText>
         </View>
-        <View style={{ flexDirection: 'row', justifyContent: 'space-even', width: "100%" }}>
+        <View style={{ flexDirection: 'row', justifyContent: 'space-even', width: "100%", flexWrap: "wrap" }}>
           <StyledOverlayInputWrapper style={{ flexDirection: 'row' }}>
             <StyledOverlayInputLabel>ADJ QTY: </StyledOverlayInputLabel>
-            <StyledOverlayInput value={`${quantity}`} />
+            <StyledOverlayInput
+              onChangeText={text => onOtherFormValueChange(text, "Adj_Quantity", UniqueKey)}
+              value={`${Adj_Quantity ?? 0}`} />
           </StyledOverlayInputWrapper>
           <StyledOverlayInputWrapper style={{ flexDirection: 'row' }}>
             <StyledOverlayInputLabel>RATE: </StyledOverlayInputLabel>
-            <StyledOverlayInput value={`${rate ?? 0}`} />
+            <StyledOverlayInput
+              onChangeText={text => onOtherFormValueChange(text, "Adj_Rate", UniqueKey)}
+              value={`${getCurrencyFormattedValue(Adj_Rate) ?? 0}`} />
           </StyledOverlayInputWrapper>
           <StyledOverlayInputWrapper style={{ flexDirection: 'row' }}>
             <StyledOverlayInputLabel>TOTAL: </StyledOverlayInputLabel>
-            <StyledOverlayInput value={`${total ?? 0}`} />
+            <StyledOverlayInput editable={false} value={`${getCurrencyFormattedValue(total) ?? 0}`} />
           </StyledOverlayInputWrapper>
         </View>
 
         <View style={{ width: "100%", marginVertical: 8 }}>
-          <Text style={{ fontSize: 16, fontFamily: 'URBAN_BOLD', color: '#BDC5CD' }}>OWNER CLARIFICATIONS:</Text>
+          <Text style={{ fontSize: 16, fontFamily: 'URBAN_BOLD', color: '#BDC5CD', marginVertical: 8 }}>OWNER CLARIFICATIONS:</Text>
           <TextInput
-            style={{ padding: 10, fontFamily: 'URBAN_MEDIUM', fontSize: 16, color: "#BDC5CD" }}
+            style={{ padding: 64, paddingLeft: 16, borderRadius: 4, backgroundColor: "#d4d4d470", fontFamily: 'URBAN_MEDIUM', fontSize: 16, color: "#BDC5CD" }}
             multiline
             numberOfLines={4}
-            value={"TextInput has by default a border at the bottom of its view. This border has its padding set by the background image provided by the system, and it cannot be changed. Solutions to avoid this are to either not set height explicitly, in which case the system will take care of displaying the border in the correct position, or to not display the border by setting underlineColorAndroid to transparent."}
+            onChangeText={text => {
+              console.log("TEXT: " + text);
+              onOtherFormValueChange(text, "Owner_Clarification", UniqueKey)
+            }}
+            value={`${Owner_Clarification ?? ""}`}
           />
         </View>
 
         <View style={{ flexDirection: "row" }}>
           <Button onPress={() => hideModal()} mode="contained" labelStyle={{ fontSize: 18, fontFamily: 'URBAN_BOLD' }} style={{ backgroundColor: "#EF39A0", padding: 4 }}>Cancel</Button>
-          <Button mode="contained" labelStyle={{ fontSize: 18, fontFamily: 'URBAN_BOLD' }} style={{ backgroundColor: "#ABDF8C", padding: 4, marginLeft: 16 }}>Approve</Button>
+          <Button onPress={handleApproveAsNoted} mode="contained" labelStyle={{ fontSize: 18, fontFamily: 'URBAN_BOLD' }} style={{ backgroundColor: "#ABDF8C", padding: 4, marginLeft: 16 }}>Approve</Button>
         </View>
 
       </Overlay>
@@ -393,6 +417,10 @@ function ContractorViewLineItem({handleAcceptLineItem,id, status, title, rate, q
   )
 }
 
+
+function getCurrencyFormattedValue(value) {
+  return value ? value?.toLocaleString("en-IN", { style: "currency", currency: 'USD' }) : 0
+}
 
 const StyledOverlayText = styled.Text`
 flex:1;

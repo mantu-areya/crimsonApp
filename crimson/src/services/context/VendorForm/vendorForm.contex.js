@@ -103,7 +103,10 @@ export const VendorFormContextProvider = ({ children }) => {
             ele['Scope_Notes'] = obj.Scope_Notes;
             ele['U_M'] = obj.U_M;
             ele['Matrix_Price'] = obj.Matrix_Price;
-
+            ele['Approval_Status'] = obj.Approval_Status;
+            ele['Adj_Rate'] = obj.Adj_Rate;
+            ele['Adj_Quantity'] = obj.Adj_Quantity;
+            ele['Owner_Clarifications'] = obj.Owner_Clarifications;
           }
           return obj
         });

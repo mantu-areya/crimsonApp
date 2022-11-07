@@ -209,7 +209,7 @@ const OtherForms = ({ isSubmitted, isForContractorView, readOnly, inspectionData
         } {
             newState = dataList.map(obj => {
                 if (obj.UniqueKey === key) {
-                    let formatedVal = ["U_M", "Scope_Notes"].includes(field) ? value : parseFloat(value)
+                    let formatedVal = ["U_M", "Scope_Notes","Owner_Clarification"].includes(field) ? value : parseFloat(value)
                     let newValues = { ...obj, [field]: formatedVal };
                     let newTotal = (newValues.Quantity * newValues.Rate)
                     return { ...obj, [field]: formatedVal, ["Total"]: newTotal };
@@ -349,9 +349,9 @@ const OtherForms = ({ isSubmitted, isForContractorView, readOnly, inspectionData
         console.log("CHNAGING ITEM: " + lineItemId);
         let updatedData = dataList.map((data) => {
             if (data.Id === lineItemId) {
-                console.log("DOING STTAUS CHANGE BEFORE",data.Approval_Status);
+                console.log("data of line item",data);
                 data.Approval_Status = status
-                console.log("AFTER DOING STTAUS CHANGE",data.Approval_Status);
+                console.log("after data of line item",data);
             }
             return data;
         });
@@ -359,6 +359,7 @@ const OtherForms = ({ isSubmitted, isForContractorView, readOnly, inspectionData
         updateVfContect(updatedData, "OTHRFM", inspectionData.Id);
         updateToSf(inspectionData.Id);
     }
+
 
 
     return (
