@@ -460,7 +460,6 @@ function getFormattedValue(fieldName, value) {
       return '0';
     }
   } else {
-    console.log("returing value");
     return value;
   }
 }

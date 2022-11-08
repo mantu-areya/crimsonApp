@@ -12,7 +12,6 @@ const CallNow = ({isForContractorView,data}) => {
         General_Contractor__r
 
     } = data;
-    console.log({data});
     return (
         <Container>
             {/* Text */}
