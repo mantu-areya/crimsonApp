@@ -1,12 +1,12 @@
 import { View, Text, TextInput } from 'react-native'
-import React, {useContext} from 'react'
+import React, {useContext, useEffect} from 'react'
 import styled from 'styled-components/native'
 import { useSafeAreaInsets } from "react-native-safe-area-context"
 import { Button, IconButton } from 'react-native-paper'
 import { AuthenticationContext } from "../../services/authentication/authentication.context";
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import { Spacer } from '../../components/spacer/spacer.component';
-
+import { sendOtp } from '../../services/api/authentication/auth.services'
 
 const shadowStyle = {
     shadowColor: "#000",
@@ -26,8 +26,16 @@ const Login = ({ navigation }) => {
     const [password, setPassword] = React.useState("");
     const [showPassword, setShowPassword] = React.useState(false);
 
-    const { onLogin, error } = useContext(AuthenticationContext);
+    const { onLogin, error,fBLoginData } = useContext(AuthenticationContext);
 
+    
+  useEffect(()=>{
+    const userData = {
+      EmailId: fBLoginData && fBLoginData.user.email,
+      SendOTP:true
+    }
+    fBLoginData && sendOtp(userData) && navigation.navigate("OtpScreen",{})
+  },[fBLoginData])
 
     return (
         <Wrapper style={{ paddingTop: insets.top }}>
@@ -83,7 +91,7 @@ const Login = ({ navigation }) => {
                     <StyledLoginButton
                         onPress={() => {
                           onLogin(email, password)
-                            // navigation.navigate("Home");
+                            // navigation.navigate("OtpScreen");
                         }}
                         labelStyle={{
                             fontFamily: 'URBAN_BOLD',

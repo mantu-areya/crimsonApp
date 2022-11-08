@@ -10,18 +10,13 @@ export const AuthenticationContextProvider = ({ children }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [user, setUser] = useState(null);
   const [error, setError] = useState(null);
+  const [fBLoginData, setFbLoginData] = useState(null)
 
   const onLogin = (email, password) => {
     loginRequest(email, password)
       .then((u) => {
-        setUser(u);
-        AsyncStorage.setItem('FbAuth', JSON.stringify(u)).then(data => {
-          return setIsLoading(false);
-          // console.log(data,"settingtk");
-        })
-          .catch(err => {
-            console.log(err);
-          })
+        setFbLoginData(u);
+        setError(null)
 
       })
       .catch((e) => {
@@ -40,14 +35,32 @@ export const AuthenticationContextProvider = ({ children }) => {
 
   const onLogout = () => {
     setUser(null);
-    AsyncStorage.setItem('FbAuth', null).then(data => {
-      return setIsLoading(false);
-    })
+    AsyncStorage.removeItem('FbAuth').then()
       .catch(err => {
         console.log(err);
       })
   }
-  
+
+  const onOtpVerified = (orgToken) => {
+    const token = orgToken
+    token && setUser(fBLoginData && fBLoginData) 
+    AsyncStorage.setItem('FbAuth', JSON.stringify(fBLoginData)).then(data => {
+        console.log("added",fBLoginData);
+        return setIsLoading(false);
+        // console.log(data,"settingtk");
+      })
+        .catch(err => {
+          console.log(err);
+        })
+    return AsyncStorage.removeItem('Token').then(
+      AsyncStorage.setItem('Token', token).then()
+        .catch(err => {
+          console.log(err);
+        })
+    ).catch(err => {
+      console.log(err);
+    })
+  }
   useEffect(() => {
     onAppLoad()
   }, [])
@@ -61,7 +74,9 @@ export const AuthenticationContextProvider = ({ children }) => {
         error,
         onLogin,
         onAppLoad,
-        onLogout
+        onLogout,
+        fBLoginData,
+        onOtpVerified
       }}
     >
       {children}
