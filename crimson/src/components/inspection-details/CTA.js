@@ -3,7 +3,7 @@ import styled from 'styled-components/native'
 import Ionicons from "react-native-vector-icons/Ionicons"
 
 
-const CTA = ({ handleOnSubmit, handleOnChat,handleViewImages,handleSignature, isSubmitted }) => {
+const CTA = ({ handleOnSubmit, isReadOnly, handleOnChat, handleViewImages, handleSignature, isSubmitted }) => {
     const shadowStyle = {
         shadowColor: "#000",
         shadowOffset: {
@@ -15,15 +15,26 @@ const CTA = ({ handleOnSubmit, handleOnChat,handleViewImages,handleSignature, is
 
         elevation: 5,
     }
+
+
     return (
         <Wrapper>
             {
                 !isSubmitted && <>
-                    <SubmitButtonWrapper style={shadowStyle} onPress={handleOnSubmit}>
-                        <ButtonText color="white">
-                            Submit for Review
-                        </ButtonText>
-                    </SubmitButtonWrapper>
+                    {
+                        !isReadOnly ?
+                            <SubmitButtonWrapper style={shadowStyle} onPress={handleOnSubmit}>
+                                <ButtonText color="white">
+                                    Submit for Review
+                                </ButtonText>
+                            </SubmitButtonWrapper>
+                            :
+                            <SubmitButtonWrapper style={shadowStyle}>
+                                <ButtonText style={{textAlign:"center"}} color="white">
+                                    Submitted
+                                </ButtonText>
+                            </SubmitButtonWrapper>
+                    }
                     <ChatButtonWrapper style={shadowStyle} onPress={handleOnChat}>
                         <Ionicons name="chatbubbles-sharp" size={24} color="black" />
                         <ButtonText marginLeft={8} >
@@ -35,8 +46,8 @@ const CTA = ({ handleOnSubmit, handleOnChat,handleViewImages,handleSignature, is
             {
                 isSubmitted && <>
                     <SubmitButtonWrapper style={shadowStyle} onPress={handleSignature}>
-                        <ButtonText style={{textAlign: 'center'}} color="white">
-                           Sign
+                        <ButtonText style={{ textAlign: 'center' }} color="white">
+                            Sign
                         </ButtonText>
                     </SubmitButtonWrapper>
                     <ChatButtonWrapper style={shadowStyle} onPress={handleViewImages}>

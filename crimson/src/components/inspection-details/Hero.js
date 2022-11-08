@@ -21,7 +21,7 @@ const Hero = ({ data, isSubmitted }) => {
         Property_Street_Address__c,
         Target_Rehab_Complete_Date__c,
         GC_Inspection_Due_Date__c,
-        Inspection_Stage__c,
+        Inspection_Form_Stage__c,
         Prospect_ID__r: { Baths__c, Bed__c, Square_Feet__c,Year_Built__c }
     } = data;
 
@@ -43,7 +43,7 @@ const Hero = ({ data, isSubmitted }) => {
                         {/* Back Icon */}
                         <GoBackButton handleGoBack={() => navigation.goBack()} />
                         {/* Meta Info */}
-                        <MetaInfo {...{ pendingDays, Inspection_Stage__c }} />
+                        <MetaInfo {...{ pendingDays, Inspection_Form_Stage__c }} />
                     </View>
                     {/* Short Summary */}
                     <ShortSummary {...{ Property_Street_Address__c, Baths__c, Bed__c, Square_Feet__c }} />
@@ -105,10 +105,10 @@ function GoBackButton({ handleGoBack }) {
     )
 }
 
-function MetaInfo({ pendingDays, Inspection_Stage__c }) {
+function MetaInfo({ pendingDays, Inspection_Form_Stage__c }) {
     return (
         <MetaInfoWrapper>
-            <MetaInfoText>{Inspection_Stage__c}</MetaInfoText>
+            <MetaInfoText>{Inspection_Form_Stage__c}</MetaInfoText>
             <MetaInfoText>{pendingDays} days pending</MetaInfoText>
             <Ionicons style={{ marginTop: 16 }} name="cloud-download" size={32} color="white" />
         </MetaInfoWrapper>

@@ -18,33 +18,6 @@ import { SubmitReviewForm } from '../features/gcs/components/SubmitReviewForm'
 import Overlay from 'react-native-modal-overlay'
 
 
-
-const menuItems = [
-  {
-    title: 'General Rental Operations Scope',
-    icon: <MaterialCommunityIcons size={28} name='home-city' color={"#DE9B67"} />
-  },
-  {
-    title: 'Interior',
-    icon: <MaterialCommunityIcons size={28} name='home-account' color={"#36905C"} />
-
-  },
-  {
-    title: 'Exterior',
-    icon: <MaterialCommunityIcons size={28} name='home' color={"#7A8AE7"} />
-
-  },
-  {
-    title: 'Pools',
-    icon: <MaterialIcons size={28} name='pool' color={"#DE9B67"} />
-
-  },
-  {
-    title: 'Mechianical',
-    icon: <MaterialIcons size={28} name='handyman' color={"#F1A8AC"} />
-  },
-]
-
 const InspectionDetails = ({ route, navigation }) => {
 
   const [show, setShow] = React.useState(false);
@@ -61,7 +34,6 @@ const InspectionDetails = ({ route, navigation }) => {
 
 
   const [isNotesCollapsed, setIsNotesCollapsed] = React.useState(false);
-  const [readOnly, setreadonly] = React.useState(false)
   const { inspectionData } = route.params;
   const { vendorFormDetails, addToVfContex, addImagesToContex } = React.useContext(VendorFormContext);
   const setVendorFormData = async () => getVendorFormDetails(inspectionData.Id)
@@ -82,12 +54,22 @@ const InspectionDetails = ({ route, navigation }) => {
     stagesArray.includes(inspectionData.Inspection_Form_Stage__c) && setreadonly(true)
   }, [inspectionData])
 
+
+  const [readOnly, setreadonly] = React.useState(inspectionData.Inspection_Form_Stage__c === "Vendor Form Completed")
+  console.log("Setting Form ReadOnly to",readOnly);
+
+  const role = "GC";
+
   const handleSubmit = () => {
-    // ! Uncomment when submitting a GC form
-    // console.log("CLICLING SUBMIT");
-    setIsSubmitModalOpen(true);
-    setIsSubmitted(true);
+    if (role === "HHM") {
+      console.log("Submitting for REVIEWER");
+        setIsSubmitted(true); // TODO: Handle Submit for Reviewer
+    }
+    console.log("Submitting for GC");
+    setIsSubmitModalOpen(true); // handle  Submit for GC
   }
+
+  
 
   const handleSignature = () => { };
   const handleViewImages = () => { }
@@ -108,9 +90,9 @@ const InspectionDetails = ({ route, navigation }) => {
           {/* Hero */}
           <Hero data={inspectionData} isSubmitted={isSubmitted} />
           {/* CTA's */}
-          <CTA handleOnChat={() => alert("Chat")} handleSignature={handleSignature} handleViewImages={handleViewImages} isSubmitted={isSubmitted} handleOnSubmit={handleSubmit} />
+          <CTA handleOnChat={() => alert("Chat")} isReadOnly={readOnly} handleSignature={handleSignature} handleViewImages={handleViewImages} isSubmitted={isSubmitted} handleOnSubmit={handleSubmit} />
           {/* Forms */}
-          <OtherForms isSubmitted={isSubmitted} readOnly={readOnly} isForContractorView={true} inspectionData={inspectionData} navigation={navigation} />
+          <OtherForms isSubmitted={isSubmitted} readOnly={readOnly} isForContractorView={false} inspectionData={inspectionData} navigation={navigation} />
       </ScrollView>
       {/* Call Now */}
       {show && <CallNow isForContractorView={true} data={inspectionData} />}
