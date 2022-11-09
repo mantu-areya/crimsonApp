@@ -45,7 +45,6 @@ export const AuthenticationContextProvider = ({ children }) => {
     const token = orgToken
     token && setUser(fBLoginData && fBLoginData) 
     AsyncStorage.setItem('FbAuth', JSON.stringify(fBLoginData)).then(data => {
-        console.log("added",fBLoginData);
         return setIsLoading(false);
         // console.log(data,"settingtk");
       })

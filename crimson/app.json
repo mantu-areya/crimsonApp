@@ -19,7 +19,7 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "CrimsonIosApp",
-      "buildNumber":"5"
+      "buildNumber":"6"
     },
     "android": {
       "adaptiveIcon": {

@@ -26,7 +26,6 @@ export const DeviceAuthentication = () => {
         setDeviceauthenticated(false)
         // setOverlayVisible(true)
       }
-      console.log(data, "ddd")
     })
   }
 
@@ -35,7 +34,6 @@ export const DeviceAuthentication = () => {
 
   useEffect(() => {
     authenticate()
-    console.log("opopop");
   }, [])
 
 
