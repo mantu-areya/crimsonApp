@@ -357,7 +357,7 @@ const OtherForms = ({gTotal, isSubmitted, isForReviewerView, readOnly, inspectio
         });
         setDatalist(updatedData);
         updateVfContect(updatedData, "OTHRFM", inspectionData.Id);
-        updateToSf(inspectionData.Id);
+        updateToSf(inspectionData.Id,false);
     }
 
     function getPendingApprovalCount() {

@@ -20,6 +20,7 @@ export const InspectionsContextProvider = ({ children }) => {
   const [stateChnage, setStaeChange] = useState(true);
   const [isOnline, setIsOnline] = useState(null)
   const [userRole,setUserRole]= useState(null)
+  const [userId,setUserId]= useState(null)
   const { user } = useContext(AuthenticationContext);
 
 
@@ -31,6 +32,7 @@ export const InspectionsContextProvider = ({ children }) => {
       .then(results => {
         setIsLoading(false);
         setUserRole(results["Role"])
+        setUserId(results["UserId"])
         setInspections(results["Inspections"].Inspection)
 
       })
@@ -119,7 +121,8 @@ export const InspectionsContextProvider = ({ children }) => {
         isOnline,
         changeState,
         reloadInspectionContext,
-        userRole
+        userRole,
+        userId
       }}
     >
       {children}

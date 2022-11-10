@@ -21,7 +21,17 @@ const CTA = ({ handleOnSubmit, isReadOnly, handleOnChat, handleViewImages, handl
         <Wrapper>
             {
                 !isSubmitted && <>
+                    {/* FOR GC */}
                     {
+                        // !isReadOnly &&
+                        <SubmitButtonWrapper style={shadowStyle} onPress={handleOnSubmit}>
+                            <ButtonText color="white">
+                                Submit for Review
+                            </ButtonText>
+                        </SubmitButtonWrapper>
+
+                    }
+                    {/* {
                         !isReadOnly ?
                             <SubmitButtonWrapper style={shadowStyle} onPress={handleOnSubmit}>
                                 <ButtonText color="white">
@@ -29,12 +39,12 @@ const CTA = ({ handleOnSubmit, isReadOnly, handleOnChat, handleViewImages, handl
                                 </ButtonText>
                             </SubmitButtonWrapper>
                             :
-                            <SubmitButtonWrapper  style={[shadowStyle, {backgroundColor:"grey"}]}>
-                                <ButtonText style={{textAlign:"center",}} color="white">
+                            <SubmitButtonWrapper style={[shadowStyle, { backgroundColor: "grey" }]}>
+                                <ButtonText style={{ textAlign: "center", }} color="white">
                                     Submitted
                                 </ButtonText>
                             </SubmitButtonWrapper>
-                    }
+                    } */}
                     <ChatButtonWrapper style={shadowStyle} onPress={handleOnChat}>
                         <Ionicons name="chatbubbles-sharp" size={24} color="black" />
                         <ButtonText marginLeft={8} >

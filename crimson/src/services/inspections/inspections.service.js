@@ -71,7 +71,7 @@ let getStoredToken = () => {
 export const getInspectionsData = async (userEmail) => {
 
   const token = await getStoredToken();
-  console.log(userEmail,"email");
+  console.log(userEmail, "email");
   return apiGet(
     `https://hudsonhomesmgmt--uat.sandbox.my.salesforce.com/services/apexrest/crimson/${userEmail}`,
     {
@@ -134,10 +134,10 @@ export const getVendorFormDetails = async (inspId) => {
   // return mockedVendorFormDetails
 }
 
-export const updateSfVendorFormDetails = async (data, inspId, submitStatus = false) => {
+export const updateSfVendorFormDetails = async (data, inspId, submitStatus = false, role = "Contractor") => {
   const token = await getStoredToken();
   console.log(inspId);
-
+  // console.log("SUBMIT DTATA", data);
   console.log("start", "upload");
 
   // console.log("Upload Data",data);
@@ -146,7 +146,7 @@ export const updateSfVendorFormDetails = async (data, inspId, submitStatus = fal
   //  ele.Sub_Category=="Garage" && console.log(ele);
   // })
   return apiPost(
-    `https://hudsonhomesmgmt--uat.sandbox.my.salesforce.com/services/apexrest/crimson?InspectionId=${inspId}&Submit=${submitStatus}`,
+    `https://hudsonhomesmgmt--uat.sandbox.my.salesforce.com/services/apexrest/crimson?InspectionId=${inspId}&Submit=${submitStatus}&Role=${role}`,
     data,
     {
       headers: {
@@ -182,11 +182,13 @@ export const uploadSignImage = async (data, inspId) => {
     },
   )
     .then(response => {
-      console.log(response.data)
+      // console.log(response.data)
+      console.log("IMG UPLOAD",response.data);
       return response.data
     })
     .catch(err => {
       console.error(JSON.stringify(err.request));
+      console.log("IMG UPLOAD",err);
       // throw err;
     });
 }
@@ -233,7 +235,7 @@ export const getInspectionsChat = async (recordId) => {
       return response.data.elements
     })
     .catch(err => {
-      console.error("GETTING CHAT ERR",err);
+      console.error("GETTING CHAT ERR", err);
     });
 
 }

@@ -5,7 +5,7 @@ import CallNow from '../components/inspection-details/CallNow'
 import Hero from '../components/inspection-details/Hero'
 import CTA from '../components/inspection-details/CTA'
 import { VendorFormContext } from '../services/context/VendorForm/vendorForm.contex'
-import { getVendorFormDetails } from '../services/inspections/inspections.service'
+import { getVendorFormDetails, updateSfVendorFormDetails } from '../services/inspections/inspections.service'
 import NetInfo from "@react-native-community/netinfo";
 import OtherForms from '../components/inspection-details/vendor-form/OtherForms'
 import { SubmitReviewForm } from '../features/gcs/components/SubmitReviewForm'
@@ -25,6 +25,8 @@ const InspectionDetails = ({ route, navigation }) => {
 
   const { user } = React.useContext(AuthenticationContext);
 
+
+
   console.log("USER", user);
 
   React.useEffect(() => {
@@ -39,6 +41,8 @@ const InspectionDetails = ({ route, navigation }) => {
 
   const [isNotesCollapsed, setIsNotesCollapsed] = React.useState(false);
   const { inspectionData } = route.params;
+
+  console.log("FLSLDL",inspectionData.Amount_Submitted_GC);
   const { vendorFormDetails, addToVfContex, addImagesToContex } = React.useContext(VendorFormContext);
   const { userRole } = React.useContext(InspectionsContext);
   const setVendorFormData = async () => getVendorFormDetails(inspectionData.Id)
@@ -65,13 +69,11 @@ const InspectionDetails = ({ route, navigation }) => {
 
 
   const handleSubmit = () => {
-    if (userRole === "Reviewer") {
-      console.log("Submitting for REVIEWER");
-      setIsSubmitted(true); // TODO: Handle Submit for Reviewer
-    }
-    console.log("Submitting for GC");
-    setIsSubmitModalOpen(true); // handle  Submit for GC
+    console.log("Submitting for", userRole);
+    setIsSubmitModalOpen(true);
   }
+
+  console.log({userRole});
 
 
 
@@ -91,7 +93,7 @@ const InspectionDetails = ({ route, navigation }) => {
 
   let currentRecord = vendorFormDetails[inspectionData.Id];
 
-  function getFormTotal(formCategory) {
+  function getFormTotal(formCategory, formatted = true) {
     let total = 0;
     if (formCategory === "all") {
       currentRecord && currentRecord.forEach(ele => {
@@ -99,15 +101,14 @@ const InspectionDetails = ({ route, navigation }) => {
           total += ele.Total;
         }
       });
-      return total.toLocaleString("en-IN", { style: "currency", currency: 'USD' });
+      return formatted ? total.toLocaleString("en-IN", { style: "currency", currency: 'USD' }) : total;
     }
     currentRecord && currentRecord.forEach(ele => {
       if (ele.Category === formCategory && (ele.Approval_Status === "Approved" || ele.Approval_Status === "Approved as Noted")) {
         total += ele.Total;
       }
     });
-
-    return total.toLocaleString("en-IN", { style: "currency", currency: 'USD' });
+    return formatted ? total.toLocaleString("en-IN", { style: "currency", currency: 'USD' }) : total;
   }
 
   let sectionTotals = {
@@ -118,22 +119,25 @@ const InspectionDetails = ({ route, navigation }) => {
     mep: getFormTotal("Mechanical, Electrical and Plumbing Systems"),
   }
   let gTotal = getFormTotal("all");
+  let bidApprovalVal = getFormTotal("all", false);
 
   console.log("IS WORK AUTH CREATED", inspectionData?.doCreateWAF__c);
+
+  const initalEstimateRehab = "0"
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <ScrollView onScroll={(e) => setOffSetY(e.nativeEvent.contentOffset.y)}>
-        {!readOnly &&
+        {/* {!readOnly && */}
           <Overlay visible={isSubmitModalOpen} onClose={() => setIsSubmitModalOpen(false)}  >
             {
               !(userRole === "Reviewer") ?
                 <SubmitReviewForm handleCloseModal={() => setIsSubmitModalOpen(false)} setreadonly={setreadonly} inspVfDetails={vendorFormDetails[inspectionData.Id]} inspId={inspectionData.Id} navigation={navigation} setIsNotesCollapsed={setIsNotesCollapsed} />
                 :
-                <ReviewerSubmitModal handleCloseModal={() => setIsSubmitModalOpen(false)} />
+                <ReviewerSubmitModal inspId={inspectionData.Id} initalEstimateRehab={initalEstimateRehab} handleCloseModal={() => setIsSubmitModalOpen(false)} bidApprovalVal={bidApprovalVal} navigation={navigation} />
             }
           </Overlay>
-        }
+        {/* } */}
         {/* Hero */}
         <Hero data={inspectionData} sectionTotals={sectionTotals} isSubmitted={isSubmitted} />
         {/* CTA's */}
@@ -150,22 +154,41 @@ const InspectionDetails = ({ route, navigation }) => {
 }
 
 
-function ReviewerSubmitModal({ handleCloseModal }) {
+function ReviewerSubmitModal({inspId, handleCloseModal, navigation, bidApprovalVal = 0, initalEstimateRehab }) {
+
+  const handleSave = async () => {
+  const res =  await updateSfVendorFormDetails({
+      "Bid_Recommendation": bidApprovalVal,
+      "Bid_Contingency": parseFloat(bidContingency),
+      "Final_Rehab_Scope_Notes": rehabScopeNotes,
+      "Form_Stage": "Reviewer Form Completed",
+      "Submit_for_Bid_Approval": true
+    },inspId,true,"Reviewer");
+
+    console.log("SAVE",res);
+    handleCloseModal();
+    navigation.goBack();
+  }
+
+  const [bidContingency, setBidContingency] = React.useState(0);
+  const [rehabScopeNotes, setRehabScopeNotes] = React.useState("");
+
+
   return (
     <View style={{ padding: 8, width: "100%" }}>
       <Text style={{ fontFamily: "URBAN_BOLD", fontSize: 18, marginBottom: 16, textAlign: "center" }}>
         Submit for Approval Details
       </Text>
       <Text style={{ fontFamily: "URBAN_BOLD", fontSize: 14, marginBottom: 2 }}>HHM BID RECOMMENDATION</Text>
-      <TextInput editable={false} style={{ fontFamily: "URBAN_BOLD", fontSize: 16, backgroundColor: "#d9d9d9", padding: 8, marginBottom: 16 }} />
+      <TextInput value={bidApprovalVal?.toLocaleString("en-IN", { style: "currency", currency: 'USD' })} editable={false} style={{ fontFamily: "URBAN_BOLD", fontSize: 16, backgroundColor: "#d9d9d9", padding: 8, marginBottom: 16 }} />
       <Text style={{ fontFamily: "URBAN_BOLD", fontSize: 14, marginBottom: 2 }}>Initial Rehab Estimate</Text>
-      <TextInput editable={false} style={{ fontFamily: "URBAN_BOLD", fontSize: 16, backgroundColor: "#d9d9d9", padding: 8, marginBottom: 16 }} />
+      <TextInput value={initalEstimateRehab} editable={false} style={{ fontFamily: "URBAN_BOLD", fontSize: 16, backgroundColor: "#d9d9d9", padding: 8, marginBottom: 16 }} />
       <Text style={{ fontFamily: "URBAN_BOLD", fontSize: 14, marginBottom: 2 }}>HHM BID Contingency</Text>
-      <TextInput style={{ fontFamily: "URBAN_BOLD", fontSize: 16, backgroundColor: "#d9d9d980", padding: 8, marginBottom: 16 }} />
+      <TextInput onChangeText={text => setBidContingency(text)} value={`${bidContingency}`} style={{ fontFamily: "URBAN_BOLD", fontSize: 16, backgroundColor: "#d9d9d980", padding: 8, marginBottom: 16 }} />
       <Text style={{ fontFamily: "URBAN_BOLD", fontSize: 14, marginBottom: 2 }}>Final Rehab Scope Notes</Text>
-      <TextInput style={{ fontFamily: "URBAN_BOLD", fontSize: 16, backgroundColor: "#d9d9d980", padding: 8, marginBottom: 16 }} />
+      <TextInput onChangeText={text => setRehabScopeNotes(text)} value={rehabScopeNotes} style={{ fontFamily: "URBAN_BOLD", fontSize: 16, backgroundColor: "#d9d9d980", padding: 8, marginBottom: 16 }} />
       <View style={{ flexDirection: "row", justifyContent: "flex-end" }}>
-        <Button mode="contained" style={{ backgroundColor: "#8477eb" }}>Save</Button>
+        <Button onPress={handleSave} mode="contained" style={{ backgroundColor: "#8477eb" }}>Save</Button>
         <Button onPress={() => handleCloseModal()}>Cancel</Button>
       </View>
     </View>
@@ -177,7 +200,7 @@ function Signatures({ inspId, role }) {
 
 
   const updateSignToContext = (image) => {
-    addSignature(inspId, image,role)
+    addSignature(inspId, image, role)
   }
 
   React.useEffect(() => {
@@ -185,14 +208,14 @@ function Signatures({ inspId, role }) {
       let string = ele.file_name;
       let substring1 = "Company_Signature";
       let substring2 = "Contractor_Signature";
-      console.log("FILEE",string);
+      console.log("FILEE", string);
       if (string.includes(substring1)) {
         // console.log(ele.file_public_url, "vfvfvfv");
         console.log("string1");
         setReviewerSignDate(ele.file_name.split(/["Company_Signature_  " .jpg]+/)[1])
         setReviewerImg(ele.file_public_url)
         return
-      } else if(string.includes(substring2)) {
+      } else if (string.includes(substring2)) {
         console.log("string2");
         setSignDate(ele.file_name.split(/["Contractor_Signature_  " .jpg]+/)[1])
         setImg(ele.file_public_url)
@@ -229,7 +252,7 @@ function Signatures({ inspId, role }) {
 
       if (result) {
         console.log(result, "kkk");
-        // setImg(result);
+      role === "Reviewer" ?   setReviewerImg(result) : setImg(result);
         updateSignToContext(result)
         setIsLoading(false);
       }
@@ -249,7 +272,7 @@ function Signatures({ inspId, role }) {
     return (
       <View style={{ flexDirection: "row" }}>
         {/* Contractor Signature */}
-        <View style={{ padding: 16, flex: 1,  }}>
+        <View style={{ padding: 16, flex: 1, }}>
           <Text style={{ fontSize: 12, fontFamily: 'URBAN_BOLD', color: 'black' }}>Contractor Signature</Text>
           {img &&
             <>
@@ -377,20 +400,20 @@ function Signatures({ inspId, role }) {
         <Text style={{ fontSize: 12, fontFamily: 'URBAN_BOLD', color: 'black' }}>Date: {signDate && signDate}</Text>
       </View>
       {/* HHM Signature */}
-      <View style={{ padding: 16, flex: 1,  }}>
-          <Text style={{ fontSize: 12, fontFamily: 'URBAN_BOLD', color: 'black' }}>HHM Signature</Text>
-          {reviewerImg &&
-            <>
-              <View style={{ justifyContent: 'center', alignItems: 'flex-end', marginVertical: 8, padding: 4 }}>
-                <Image style={{
-                  width: 80,
-                  height: 80
-                }} source={{ uri: reviewerImg }} />
-              </View>
-              <Text style={{ fontSize: 12, fontFamily: 'URBAN_BOLD', color: 'black' }}>Date : {reviewerSignDate}</Text>
-            </>
-          }
-        </View>
+      <View style={{ padding: 16, flex: 1, }}>
+        <Text style={{ fontSize: 12, fontFamily: 'URBAN_BOLD', color: 'black' }}>HHM Signature</Text>
+        {reviewerImg &&
+          <>
+            <View style={{ justifyContent: 'center', alignItems: 'flex-end', marginVertical: 8, padding: 4 }}>
+              <Image style={{
+                width: 80,
+                height: 80
+              }} source={{ uri: reviewerImg }} />
+            </View>
+            <Text style={{ fontSize: 12, fontFamily: 'URBAN_BOLD', color: 'black' }}>Date : {reviewerSignDate}</Text>
+          </>
+        }
+      </View>
     </View>
   )
 }

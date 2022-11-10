@@ -318,6 +318,25 @@ function ContractorViewLineItem({ handleAcceptLineItem, item, onOtherFormValueCh
 
   const [bgColor, setBgColor] = React.useState("default");
 
+  function getBackgroundColor() {
+    if (item.Approval_Status === "Approved") {
+      return "#E7F5CE";
+    } else if (item.Approval_Status === "Declined") {
+      return "#F9DAD4";
+    } else {
+      return "white";
+    }
+  }
+  function getCardBackgroundColor() {
+    if (item.Approval_Status === "Approved") {
+      return "#E7F5CE";
+    } else if (item.Approval_Status === "Declined") {
+      return "#F9DAD4";
+    } else {
+      return "#FDF2BF";
+    }
+  }
+
 
   const [visible, setVisible] = React.useState(false);
 
@@ -348,8 +367,9 @@ function ContractorViewLineItem({ handleAcceptLineItem, item, onOtherFormValueCh
 
   return (
     <>
-      <Card style={{ padding: 16, backgroundColor: bgColor, borderBottomWidth: 2, borderColor: '#EEBC7B' }}>
+      <Card style={{ padding: 16, backgroundColor: getBackgroundColor(), borderBottomWidth: 2, borderColor: '#EEBC7B' }}>
         <LineItemHeading>{title}</LineItemHeading>
+        <LineItemHeading>{item.Approval_Status}</LineItemHeading>
         <View style={{ flexDirection: 'row' }}>
           {/* Details */}
           <View style={{ flex: .2 }}>

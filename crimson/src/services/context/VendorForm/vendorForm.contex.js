@@ -135,10 +135,10 @@ export const VendorFormContextProvider = ({ children }) => {
     setVendorFormDetails([]);
   };
 
-  const updateToSF = (inspId) => {
+  const updateToSF = (inspId,submitStatus=false,role="Contractor") => {
     NetInfo.fetch().then(networkState => {
       if (networkState.isConnected) {
-        vendorFormDetails[inspId] && updateSfVendorFormDetails(vendorFormDetails[inspId], inspId)
+        vendorFormDetails[inspId] && updateSfVendorFormDetails(vendorFormDetails[inspId], inspId,submitStatus,role)
       }
     })
   }

@@ -8,10 +8,15 @@ import { ActivityIndicator, Avatar } from 'react-native-paper';
 import { GiftedChat } from 'react-native-gifted-chat'
 import { getInspectionsChat, postInspectionsChat } from '../services/inspections/inspections.service';
 import { v4 as uuidv4 } from 'uuid';
+import { InspectionsContext } from '../services/inspections/inspections.contex';
 
 const Chat = ({ route, navigation }) => {
     const insets = useSafeAreaInsets();
     const [messages, setMessages] = React.useState([]);
+    const { userId,userRole } = React.useContext(InspectionsContext);
+
+    console.log("USER ID",userId);
+    console.log("USER ROLE",userRole);
 
     const { inspId } = route.params;
 
@@ -29,7 +34,7 @@ const Chat = ({ route, navigation }) => {
                         name: actor.displayName,
                         avatar: actor.photo.smallPhotoUrl,
                     },
-                    isSenderText: actor.firstName === "CRIMSON" // ! NEED TO ADD AUTH HERE
+                    isSenderText: actor.id === userId // ! NEED TO ADD AUTH HERE
                 }
             });
             setMessages(temp)
