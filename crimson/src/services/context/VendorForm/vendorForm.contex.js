@@ -1,78 +1,84 @@
 import React, { createContext, useEffect, useState, useContext } from "react";
-import { updateSfVendorFormDetails,uploadSignImage, getVendorFormDetails } from "../../inspections/inspections.service";
+import { updateSfVendorFormDetails, uploadSignImage, getVendorFormDetails } from "../../inspections/inspections.service";
 import { InspectionsContext } from "../../inspections/inspections.contex"
-import AsyncStorage  from "@react-native-async-storage/async-storage"
+import AsyncStorage from "@react-native-async-storage/async-storage"
 import NetInfo from "@react-native-community/netinfo";
-import {deleteLineItem} from "../../inspections/inspections.service"
+import { deleteLineItem } from "../../inspections/inspections.service"
 
 export const VendorFormContext = createContext();
 export const VendorFormContextProvider = ({ children }) => {
   const [vendorFormDetails, setVendorFormDetails] = useState({});
   const [deletedLineItems, setDeletedLineItems] = useState([])
-  const [contextImages , setContextImages] = useState({});
-  const add = (dataset, inspData) => inspData?setVendorFormDetails({ ...vendorFormDetails, [inspData.Id]: dataset.length > 0 ? dataset : "NA" })
-  :setVendorFormDetails(dataset)
+  const [contextImages, setContextImages] = useState({});
+  const add = (dataset, inspData) => inspData ? setVendorFormDetails({ ...vendorFormDetails, [inspData.Id]: dataset.length > 0 ? dataset : "NA" })
+    : setVendorFormDetails(dataset)
 
-  const addImagesToContex = (inspId) =>{
+  const addImagesToContex = (inspId) => {
     getVendorFormDetails(inspId)
-    .then(data => setContextImages({...contextImages, [inspId]:data["Images"]}));
+      .then(data => {
+        setContextImages({ ...contextImages, [inspId]: data["Images"] })
+      });
   }
 
-  const addSignature = (inspId,img) => {
-   //backup code for adding to the context 
-  // let vfData = vendorFormDetails[inspId]
-  // vfData && vfData.push({
-  //   "images":{
-  //     "file_name":"Contractor signature",
-  //     "image_data": img,
-  //     "parent_record_id":inspId,
-  //     "image_type":"sign_item",
-  //     "line_item_id":inspId,
-  //   }
-  // })
+  const addSignature = (inspId, img, role) => {
+    //backup code for adding to the context 
+    // let vfData = vendorFormDetails[inspId]
+    // vfData && vfData.push({
+    //   "images":{
+    //     "file_name":"Contractor signature",
+    //     "image_data": img,
+    //     "parent_record_id":inspId,
+    //     "image_type":"sign_item",
+    //     "line_item_id":inspId,
+    //   }
+    // })
+
+    let file_name = role === "Reviewer" ? "Company_Signature_" : "Contractor_Signature_"
+
     let date = new Date().toLocaleDateString()
+
     let formatedDate = date.split('/')
-  const data = [{
-      "file_name":"Contractor_Signature_"+new Date().toISOString().slice(0, 10),
+    const data = [{
+      "file_name": file_name + new Date().toISOString().slice(0, 10),
       "image_data": img,
-      "parent_record_id":inspId,
-      "image_type":"sign_item",
-      "line_item_id":inspId,
+      "parent_record_id": inspId,
+      "image_type": "sign_item",
+      "line_item_id": inspId,
     }]
-    console.log(data.file_name);
-  uploadSignImage(data,inspId).then(result=>{
-    addImagesToContex(inspId)
-    return result
-  })
+    console.log("UPLOADING",role,"Signature",data.file_name);
+    uploadSignImage(data, inspId).then(result => {
+      addImagesToContex(inspId)
+      return result
+    })
 
-  // vfData.map(ele=>{
-  //   if (ele.images){
-  //     console.log(JSON.stringify(ele, null, 4)); 
-  //     // console.log(ele);
-  //   }
-  // })
+    // vfData.map(ele=>{
+    //   if (ele.images){
+    //     console.log(JSON.stringify(ele, null, 4)); 
+    //     // console.log(ele);
+    //   }
+    // })
 
-  // vfData.length > 0 && console.log(vfData,"ccc");
-  // img && vfData && setVendorFormDetails({...vendorFormDetails,[inspId]: vfData.length > 0 ? vfData : "NA"})
+    // vfData.length > 0 && console.log(vfData,"ccc");
+    // img && vfData && setVendorFormDetails({...vendorFormDetails,[inspId]: vfData.length > 0 ? vfData : "NA"})
 
-}
-  const addNewItem = (newData,inspId)=>{
+  }
+  const addNewItem = (newData, inspId) => {
     let newVfDataArray = vendorFormDetails[inspId]
     newVfDataArray.push(newData[0])
-    setVendorFormDetails({ ...vendorFormDetails, [inspId]: newVfDataArray})
+    setVendorFormDetails({ ...vendorFormDetails, [inspId]: newVfDataArray })
   }
 
-  const deleteNewItem = (dvdId,inspId,UniqueKey)=>{
-    let newVfDataArray = vendorFormDetails[inspId].filter(ele=>{
-      return dvdId?ele.Id != dvdId:ele.UniqueKey!=UniqueKey;
+  const deleteNewItem = (dvdId, inspId, UniqueKey) => {
+    let newVfDataArray = vendorFormDetails[inspId].filter(ele => {
+      return dvdId ? ele.Id != dvdId : ele.UniqueKey != UniqueKey;
     })
-    setVendorFormDetails({ ...vendorFormDetails, [inspId]: newVfDataArray})
+    setVendorFormDetails({ ...vendorFormDetails, [inspId]: newVfDataArray })
     NetInfo.fetch().then(networkState => {
-      if(networkState.isConnected){
-        deleteLineItem(dvdId).catch(err=>{
-          console.log(" error in deleting :",err);
+      if (networkState.isConnected) {
+        deleteLineItem(dvdId).catch(err => {
+          console.log(" error in deleting :", err);
         })
-      }else{
+      } else {
         deletedLineItems.push(dvdId)
         setDeletedLineItems(deletedLineItems)
       }
@@ -80,7 +86,7 @@ export const VendorFormContextProvider = ({ children }) => {
   }
 
   const update = (modifiedData, formType, inspId) => {
-    Object.keys(vendorFormDetails).length > 0 && vendorFormDetails[inspId]&&vendorFormDetails[inspId].map(ele => {
+    Object.keys(vendorFormDetails).length > 0 && vendorFormDetails[inspId] && vendorFormDetails[inspId].map(ele => {
       if (formType === "RM") {
         modifiedData.map(obj => {
           if (obj.UniqueKey === ele.UniqueKey) {
@@ -116,12 +122,12 @@ export const VendorFormContextProvider = ({ children }) => {
     return
   };
 
-const setAscynDataToApp =async () =>{
-  await AsyncStorage.getItem('vendorForm').then(data => {
-    console.log(data,"d->A");
-    JSON.parse(data)!==null && setVendorFormDetails(JSON.parse(data))
-  });
-}
+  const setAscynDataToApp = async () => {
+    await AsyncStorage.getItem('vendorForm').then(data => {
+      console.log(data, "d->A");
+      JSON.parse(data) !== null && setVendorFormDetails(JSON.parse(data))
+    });
+  }
 
 
 
@@ -131,10 +137,10 @@ const setAscynDataToApp =async () =>{
 
   const updateToSF = (inspId) => {
     NetInfo.fetch().then(networkState => {
-    if(networkState.isConnected){
-      vendorFormDetails[inspId] && updateSfVendorFormDetails(vendorFormDetails[inspId],inspId)
-    }
-  })
+      if (networkState.isConnected) {
+        vendorFormDetails[inspId] && updateSfVendorFormDetails(vendorFormDetails[inspId], inspId)
+      }
+    })
   }
 
 
@@ -148,7 +154,7 @@ const setAscynDataToApp =async () =>{
         updateVfContect: update,
         updateToSf: updateToSF,
         setAscynDataToApp,
-        addSignature:addSignature,
+        addSignature: addSignature,
         addImagesToContex,
         contextImages,
         addNewItem,
