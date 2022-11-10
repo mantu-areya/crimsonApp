@@ -9,7 +9,7 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
 import { Button } from 'react-native-paper';
 
 
-const OtherForms = ({ isSubmitted, isForContractorView, readOnly, inspectionData, navigation }) => {
+const OtherForms = ({gTotal, isSubmitted, isForReviewerView, readOnly, inspectionData, navigation }) => {
 
 
     let [general_Rental, setGeneral_Rental] = React.useState([])
@@ -375,7 +375,7 @@ const OtherForms = ({ isSubmitted, isForContractorView, readOnly, inspectionData
                     </MenuWrapper>
                     <CurrentFormHeading>{currentForm}</CurrentFormHeading>
                     {
-                        isForContractorView &&
+                        isForReviewerView &&
                         <View intensity={100} style={{ marginVertical: 8, flexDirection: 'row', alignItems: 'center' }}>
                             <CurrentFormHeading style={{ fontSize: 22 }}>BID FOR REVIEW</CurrentFormHeading>
                             <CurrentFormHeading style={{ fontSize: 18, textTransform: 'none' }}>Pending Approvals {getPendingApprovalCount()}/{dataList.length}</CurrentFormHeading>
@@ -386,7 +386,7 @@ const OtherForms = ({ isSubmitted, isForContractorView, readOnly, inspectionData
                             <FlatList
                                 data={dataList}
                                 keyExtractor={item => item.UniqueKey}
-                                renderItem={({ item }) => <FormLineItem   {...{ handleAcceptLineItem, isForContractorView, item, inspId: inspectionData.Id, onRoomMeasurementValueChange, onOtherFormValueChange, navigation, readOnly, setShowAddButton, handleOnSave }} isForRoomMeasurement={currentFormData.title === "Room Measurements"} />}
+                                renderItem={({ item }) => <FormLineItem   {...{ handleAcceptLineItem, isForReviewerView, item, inspId: inspectionData.Id, onRoomMeasurementValueChange, onOtherFormValueChange, navigation, readOnly, setShowAddButton, handleOnSave }} isForRoomMeasurement={currentFormData.title === "Room Measurements"} />}
                             /> :
                             <View style={{ padding: 16 }}>
                                 <ActivityIndicator />
@@ -414,7 +414,7 @@ const OtherForms = ({ isSubmitted, isForContractorView, readOnly, inspectionData
                             <Text style={{ marginLeft: 8, color: '#C2CBD0', fontFamily: 'URBAN_BOLD', fontSize: 24 }}>Work Order</Text>
                         </View>
                         <View>
-                            <Text style={{ color: '#C2CBD0', fontFamily: 'URBAN_BOLD', fontSize: 24 }}>$14,999</Text>
+                            <Text style={{ color: '#C2CBD0', fontFamily: 'URBAN_BOLD', fontSize: 24 }}>{gTotal}</Text>
                         </View>
                     </MenuWrapper>
 
@@ -423,7 +423,7 @@ const OtherForms = ({ isSubmitted, isForContractorView, readOnly, inspectionData
                             <FlatList
                                 data={[].concat(pools, exterior, interior, general_Rental, room_MeasurementData, mech_Elec_Plumb).filter(item => item.Approval_Status === "Approved" || item.Approval_Status === "Declined" || item.Approval_Status === "Approved as Noted")}
                                 keyExtractor={item => item.UniqueKey}
-                                renderItem={({ item }) => <FormLineItem   {...{ isSubmitted, isForContractorView, item, inspId: inspectionData.Id, onRoomMeasurementValueChange, onOtherFormValueChange, navigation, readOnly, setShowAddButton, handleOnSave }} isForRoomMeasurement={currentFormData.title === "Room Measurements"} />}
+                                renderItem={({ item }) => <FormLineItem   {...{ isSubmitted, isForReviewerView, item, inspId: inspectionData.Id, onRoomMeasurementValueChange, onOtherFormValueChange, navigation, readOnly, setShowAddButton, handleOnSave }} isForRoomMeasurement={currentFormData.title === "Room Measurements"} />}
                             /> :
                             <View style={{ padding: 16 }}>
                                 <ActivityIndicator />

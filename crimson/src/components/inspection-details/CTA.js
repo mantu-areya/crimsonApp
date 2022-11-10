@@ -29,8 +29,8 @@ const CTA = ({ handleOnSubmit, isReadOnly, handleOnChat, handleViewImages, handl
                                 </ButtonText>
                             </SubmitButtonWrapper>
                             :
-                            <SubmitButtonWrapper style={shadowStyle}>
-                                <ButtonText style={{textAlign:"center"}} color="white">
+                            <SubmitButtonWrapper  style={[shadowStyle, {backgroundColor:"grey"}]}>
+                                <ButtonText style={{textAlign:"center",}} color="white">
                                     Submitted
                                 </ButtonText>
                             </SubmitButtonWrapper>

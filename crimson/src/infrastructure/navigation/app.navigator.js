@@ -16,6 +16,8 @@ import { AuthContext } from "../../contexts/AuthContext";
 import { HomePage } from "../../screens/HomePage";
 import { getFocusedRouteNameFromRoute } from "@react-navigation/native";
 import Schedule from "../../screens/Schedule";
+import Chat from "../../screens/Chat";
+import ImageGallery from "../../screens/auth/ImageGallery";
 export const AppNavigator = () => {
 
 
@@ -53,6 +55,10 @@ export const AppNavigator = () => {
           name="InspectionsDetail" component={InspectionDetails} />
         <Stack.Screen options={{ headerShown: false, }}
           name="CameraScreen" component={CameraScreen} />
+        <Stack.Screen options={{ headerShown: false, }}
+          name="Chat" component={Chat} />
+           <Stack.Screen options={{ headerShown: false, }}
+          name="ImageGallery" component={ImageGallery} />
       </Stack.Navigator>
 
     );

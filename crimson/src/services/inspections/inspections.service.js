@@ -82,8 +82,8 @@ export const getInspectionsData = async () => {
   )
     .then(response => {
       // console.log("ID",response.data);
-      return response.data["Inspections"].Inspection
-    } )
+      return response.data;
+    })
     .catch(err => {
       console.error(err);
       // throw err;
@@ -114,7 +114,7 @@ export const getPendingInspections = async () => {
 
 export const getVendorFormDetails = async (inspId) => {
   const token = await getStoredToken();
-  console.log("start","get VFDetails");
+  console.log("start", "get VFDetails");
   return apiGet(
     `https://hudsonhomesmgmt--uat.sandbox.my.salesforce.com/services/apexrest/crimson/${inspId}`,
     {
@@ -123,7 +123,7 @@ export const getVendorFormDetails = async (inspId) => {
       }
     },
   )
-    .then(response => response.data )
+    .then(response => response.data)
     .catch(err => {
       console.log(err);
       console.error(JSON.stringify(err.request));
@@ -134,11 +134,11 @@ export const getVendorFormDetails = async (inspId) => {
   // return mockedVendorFormDetails
 }
 
-export const updateSfVendorFormDetails = async (data,inspId,submitStatus=false) => {
+export const updateSfVendorFormDetails = async (data, inspId, submitStatus = false) => {
   const token = await getStoredToken();
   console.log(inspId);
 
-  console.log("start","upload");
+  console.log("start", "upload");
 
   // console.log("Upload Data",data);
 
@@ -148,18 +148,18 @@ export const updateSfVendorFormDetails = async (data,inspId,submitStatus=false) 
   return apiPost(
     `https://hudsonhomesmgmt--uat.sandbox.my.salesforce.com/services/apexrest/crimson?InspectionId=${inspId}&Submit=${submitStatus}`,
     data,
-    {      
+    {
       headers: {
         'Authorization': `Bearer ${token}`,
       },
     },
   )
-    .then(response =>{
-      console.log("Upload :",response.data.Status);
-     return submitStatus?response.data.Status:response.data["DynamicVendorTemplates"].DynamicVendorTemplate 
+    .then(response => {
+      console.log("Upload :", response.data.Status);
+      return submitStatus ? response.data.Status : response.data["DynamicVendorTemplates"].DynamicVendorTemplate
     })
     .catch(err => {
-      console.error("Upload :",err.message);
+      console.error("Upload :", err.message);
       console.error(JSON.stringify(err.request));
 
       // throw err;
@@ -167,7 +167,7 @@ export const updateSfVendorFormDetails = async (data,inspId,submitStatus=false) 
 }
 
 
-export const uploadSignImage = async (data,inspId) => {
+export const uploadSignImage = async (data, inspId) => {
   const token = await getStoredToken();
   console.log("uploading Sign Image");
   console.log(data.parent_record_id > "1.txt");
@@ -175,15 +175,15 @@ export const uploadSignImage = async (data,inspId) => {
   return apiPut(
     `https://hudsonhomesmgmt--uat.sandbox.my.salesforce.com/services/apexrest/crimson/insertImages?recordId=${inspId}`,
     data,
-    {      
+    {
       headers: {
         'Authorization': `Bearer ${token}`,
       },
     },
   )
     .then(response => {
-       console.log(response.data) 
-       return response.data
+      console.log(response.data)
+      return response.data
     })
     .catch(err => {
       console.error(JSON.stringify(err.request));
@@ -194,21 +194,83 @@ export const uploadSignImage = async (data,inspId) => {
 export const deleteLineItem = async (dvdId) => {
   const token = await getStoredToken();
   console.log("deleting Line Item");
-  let data={}
+  let data = {}
   return apiPatch(
     `https://hudsonhomesmgmt--uat.sandbox.my.salesforce.com/services/apexrest/crimson/deleteItems?recordId=${dvdId}`,
     data,
-    {      
+    {
       headers: {
         'Authorization': `Bearer ${token}`,
       },
     },
   )
     .then(response => {
-       return response.data
+      return response.data
     })
     .catch(err => {
       console.error(JSON.stringify(err.request));
       // throw err;
     });
+}
+
+
+
+export const getInspectionsChat = async (recordId) => {
+
+  const token = await getStoredToken();
+
+  const url = `https://hudsonhomesmgmt--uat.sandbox.my.salesforce.com/services/data/v50.0/chatter/feeds/record/${recordId}/feed-elements`;
+
+  return apiGet(
+    url,
+    {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      }
+    },
+  )
+    .then(response => {
+      return response.data.elements
+    })
+    .catch(err => {
+      console.error("GETTING CHAT ERR",err);
+    });
+
+}
+
+
+export const postInspectionsChat = async (recordId, message) => {
+
+  const token = await getStoredToken();
+
+  const url = "https://hudsonhomesmgmt--uat.sandbox.my.salesforce.com/services/data/v50.0/chatter/feed-elements";
+
+  return apiPost(
+    url,
+    {
+      "feedElementType": "FeedItem",
+      "subjectId": recordId,
+      "body": {
+        "messageSegments": [
+          {
+            "type": "Text",
+            "text": message
+          }
+        ]
+      }
+    }
+    ,
+    {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      }
+    },
+  )
+    .then(response => {
+      return response
+    })
+    .catch(err => {
+      console.error(err);
+    });
+
 }

@@ -17,7 +17,7 @@ let requiredSubCategories = [
 ]
 
 
-export default function FormLineItem({ handleAcceptLineItem, isSubmitted, isForContractorView, inspId, item, onRoomMeasurementValueChange, onOtherFormValueChange, isForRoomMeasurement, onValueChange, navigation, readOnly, setShowAddButton, handleOnSave }) {
+export default function FormLineItem({ handleAcceptLineItem, isSubmitted, isForReviewerView, inspId, item, onRoomMeasurementValueChange, onOtherFormValueChange, isForRoomMeasurement, onValueChange, navigation, readOnly, setShowAddButton, handleOnSave }) {
   const [overlayVisible, setOverlayVisible] = React.useState(false)
 
 
@@ -143,7 +143,7 @@ export default function FormLineItem({ handleAcceptLineItem, isSubmitted, isForC
 
   }
 
-  if (isForContractorView) {
+  if (isForReviewerView) {
     return (
       <ContractorViewLineItem {...{ handleAcceptLineItem, item, onOtherFormValueChange }} />
     )

@@ -18,6 +18,7 @@ export const InspectionsContextProvider = ({ children }) => {
   const [error, setError] = useState(null);
   const [stateChnage, setStaeChange] = useState(true);
   const [isOnline, setIsOnline] = useState(null)
+  const [userRole,setUserRole]= useState(null)
 
 
   const retrieveInspections = () => {
@@ -25,7 +26,9 @@ export const InspectionsContextProvider = ({ children }) => {
     getInspectionsData()
       .then(results => {
         setIsLoading(false);
-        setInspections(results)
+        setUserRole(results["Role"])
+        setInspections(results["Inspections"].Inspection)
+
       })
       .catch((err) => {
         setIsLoading(false);
@@ -111,7 +114,8 @@ export const InspectionsContextProvider = ({ children }) => {
         setVendorFormData,
         isOnline,
         changeState,
-        reloadInspectionContext
+        reloadInspectionContext,
+        userRole
       }}
     >
       {children}

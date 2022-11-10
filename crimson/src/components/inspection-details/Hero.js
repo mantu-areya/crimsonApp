@@ -3,18 +3,16 @@ import React from 'react'
 import styled from 'styled-components/native'
 import Ionicons from "react-native-vector-icons/Ionicons"
 import { differenceInDays } from 'date-fns'
-
-
-
 import { useNavigation } from '@react-navigation/native';
 import Overlay from 'react-native-modal-overlay';
 
+
 const image = require("../../../assets/black-bg.jpeg");
 
-const Hero = ({ data, isSubmitted }) => {
+const Hero = ({ data, isSubmitted, sectionTotals }) => {
 
     const navigation = useNavigation()
-    const [overlayVisible, setOverlayVisible] = React.useState(false)
+    const [overlayVisible, setOverlayVisible] = React.useState(false);
 
 
     const {
@@ -29,6 +27,9 @@ const Hero = ({ data, isSubmitted }) => {
         new Date(GC_Inspection_Due_Date__c),
         new Date()
     )
+
+
+
 
 
     return (
@@ -76,19 +77,19 @@ const Hero = ({ data, isSubmitted }) => {
                 <DescriptionWrapper>
                     <Text style={{ color: 'black', fontFamily: 'URBAN_BOLD', fontSize: 16 }}>Section Breakdown</Text>
                     <DescriptionText style={{ marginTop: 8 }}>
-                       General Rental Scopes - $1200
+                       General Rental Scopes - {sectionTotals.grs}
                     </DescriptionText>
                     <DescriptionText >
-                       Pools - $1200
+                       Pools - {sectionTotals.pools}
                     </DescriptionText>
                     <DescriptionText >
-                       Exterior - $1200
+                       Exterior - {sectionTotals.exterior}
                     </DescriptionText>
                     <DescriptionText >
-                       Interior - $1200
+                       Interior - {sectionTotals.interior}
                     </DescriptionText>
                     <DescriptionText >
-                       MEP - $1200
+                       MEP - {sectionTotals.mep}
                     </DescriptionText>
                 </DescriptionWrapper>
             }
