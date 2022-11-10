@@ -18,6 +18,8 @@ import {getInspectionsData} from "../../../services/inspections/inspections.serv
 import NetInfo from "@react-native-community/netinfo";
 import InternetConnectionAlert from "react-native-internet-connection-alert";
 import { VendorFormContext } from "../../../services/context/VendorForm/vendorForm.contex";
+import Icon from 'react-native-vector-icons/MaterialIcons';
+import { AuthenticationContext } from "../../../services/authentication/authentication.context";
 
 const SearchContainer = styled(Searchbar)`
   margin-top:${(props) => props.theme.space[4]};
@@ -93,6 +95,7 @@ const AppBody = styled.View`
 export const HomeScreen = ({ navigation }) => {
   const { isLoading,pendingInspection,isOnline,changeState,reloadInspectionContext } = useContext(InspectionsContext);
   const {vendorFormDetails} = useContext(VendorFormContext)
+  const {onLogout} = useContext(AuthenticationContext)
   const [newState,setNewState]= useState(null)
   const [online,setonline] = useState(isOnline)
 
@@ -143,6 +146,8 @@ useEffect(()=>{
                         requirePicture={require("../../../assets/images/ProfilePic.png")}
                         shape='rounded'
                       />
+                      <Spacer  position ={'right'} size={'small'}/>
+                      <Icon name="logout" size={30} onPress={()=>{onLogout()}} color="white" />
                     </SectionEnd>
                   </Row>
                   <Spacer position="top" size="large">

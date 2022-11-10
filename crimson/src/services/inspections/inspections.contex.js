@@ -2,6 +2,7 @@ import React, { useState, createContext, useEffect, useContext } from "react";
 import { getInspectionsData, getPendingInspections, setToken } from "./inspections.service";
 import NetInfo from "@react-native-community/netinfo";
 import AsyncStorage from "@react-native-async-storage/async-storage"
+import { AuthenticationContext } from "../../services/authentication/authentication.context";
 
 // imports for mocking results
 // import { mockedinspections } from "../../mocks/inspections";
@@ -19,11 +20,14 @@ export const InspectionsContextProvider = ({ children }) => {
   const [stateChnage, setStaeChange] = useState(true);
   const [isOnline, setIsOnline] = useState(null)
   const [userRole,setUserRole]= useState(null)
+  const { user } = useContext(AuthenticationContext);
+
 
 
   const retrieveInspections = () => {
+    let userEmail = user && user.user.email
     setIsLoading(true);
-    getInspectionsData()
+    getInspectionsData(userEmail)
       .then(results => {
         setIsLoading(false);
         setUserRole(results["Role"])

@@ -64,13 +64,13 @@ export const AppNavigator = () => {
     );
   }
 
-  function AuthStack() {
-    return (
-      <Stack.Navigator>
-        <Stack.Screen options={{ headerShown: false }} name="Login" component={Login} />
-      </Stack.Navigator>
-    )
-  }
+  // function AuthStack() {
+  //   return (
+  //     <Stack.Navigator>
+  //       <Stack.Screen options={{ headerShown: false }} name="Login" component={Login} />
+  //     </Stack.Navigator>
+  //   )
+  // }
 
 
   const { isAuth } = React.useContext(AuthContext);
@@ -87,9 +87,9 @@ export const AppNavigator = () => {
 
   return (
     <>
-      {
+      {/* {
         !isAuth ?
-          <AuthStack /> :
+          <AuthStack /> : */}
           <Tab.Navigator screenOptions={screenOptions}>
             <Tab.Screen
               options={({ route }) => ({
@@ -107,7 +107,7 @@ export const AppNavigator = () => {
               component={Schedule}
             />
           </Tab.Navigator>
-      }
+      {/* } */}
     </>
   );
 }

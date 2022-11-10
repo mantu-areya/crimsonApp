@@ -2,7 +2,7 @@
   "expo": {
     "name": "crimson",
     "slug": "crimson",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
     "splash": {
@@ -18,7 +18,8 @@
     ],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "CrimsonIosApp"
+      "bundleIdentifier": "CrimsonIosApp",
+      "buildNumber":"6"
     },
     "android": {
       "adaptiveIcon": {
@@ -30,6 +31,11 @@
     "web": {
       "favicon": "./assets/favicon.png"
     },
-    "orientation": "portrait"
+    "orientation": "portrait",
+    "extra": {
+      "eas": {
+        "projectId": "b363509b-9576-4725-be60-b082537f5b0e"
+      }
+    }
   }
 }
