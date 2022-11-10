@@ -73,8 +73,6 @@ export const AppNavigator = () => {
   // }
 
 
-  const { isAuth } = React.useContext(AuthContext);
-
 
   function getRouteName(route) {
     const rName = getFocusedRouteNameFromRoute(route);
