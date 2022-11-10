@@ -5,15 +5,24 @@ import { VendorFormContext } from '../../services/context/VendorForm/vendorForm.
 import styled from 'styled-components/native';
 import Ionicons from "react-native-vector-icons/Ionicons"
 import Overlay from 'react-native-modal-overlay';
+import { getVendorFormDetails } from '../../services/inspections/inspections.service';
 
 const ImageGallery = ({ route, navigation }) => {
     const insets = useSafeAreaInsets();
 
     const { inspId } = route.params;
 
-    const { vendorFormDetails } = React.useContext(VendorFormContext);
+    const [allImages, setAllImages] = React.useState([]);
 
-    const inspData = vendorFormDetails[inspId]; // ! GET LINE ITMES IMAGS ARRAY
+    async function getLineItemImages() {
+        const data = await getVendorFormDetails(inspId);
+        setAllImages(data.Images)
+    }
+
+    React.useEffect(() => {
+        getLineItemImages();
+    }, [inspId])
+
 
 
     return (
@@ -27,11 +36,19 @@ const ImageGallery = ({ route, navigation }) => {
             <GalleryWrapper>
                 <View style={{ flexDirection: "row", flexWrap: "wrap" }}>
                     {
-                        [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((item, i) =>
-                            <GalleryImageItem key={i} />
+                        allImages.length > 0 && allImages.map((item, i) =>
+                            <GalleryImageItem key={i} img={item} />
                         )
                     }
+
                 </View>
+
+                {
+                    allImages.length <= 0 &&
+                    <View style={{ padding: 16 }}>
+                        <Text style={{ fontFamily: 'URBAN_BOLD', fontSize:24 }}>No images to Show</Text>
+                    </View>
+                }
 
             </GalleryWrapper>
         </View>
@@ -39,19 +56,19 @@ const ImageGallery = ({ route, navigation }) => {
 }
 
 
-function GalleryImageItem() {
+function GalleryImageItem({ img }) {
 
     const [showPreview, setShowPreview] = React.useState(false);
 
     return (
         <TouchableOpacity onPress={() => setShowPreview(true)}>
-            <Image  style={{
+            <Image style={{
                 width: Dimensions.get("window").width / 3,
                 height: 128
-            }} source={require("../../assets/images/Background.png")} />
+            }} source={{ uri: img.file_public_url }} />
             <Overlay childrenWrapperStyle={{ backgroundColor: 'black' }} containerStyle={{ backgroundColor: 'black' }} visible={showPreview} onClose={() => setShowPreview(false)} closeOnTouchOutside >
                 <Ionicons onPress={() => setShowPreview(false)} name="close" color="white" size={32} />
-                <Image source={require("../../assets/images/Background.png")} style={{ width: 480, height: 480, borderRadius: 16 }} />
+                <Image source={{ uri: img.file_public_url }} style={{ width: 480, height: 480, borderRadius: 16 }} />
             </Overlay>
         </TouchableOpacity>
     )
