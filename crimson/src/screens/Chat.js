@@ -13,10 +13,7 @@ import { InspectionsContext } from '../services/inspections/inspections.contex';
 const Chat = ({ route, navigation }) => {
     const insets = useSafeAreaInsets();
     const [messages, setMessages] = React.useState([]);
-    const { userId,userRole } = React.useContext(InspectionsContext);
-
-    console.log("USER ID",userId);
-    console.log("USER ROLE",userRole);
+    const { userId, userRole } = React.useContext(InspectionsContext);
 
     const { inspId } = route.params;
 
@@ -40,6 +37,20 @@ const Chat = ({ route, navigation }) => {
             setMessages(temp)
         }
     }
+
+
+    React.useEffect(() => {
+
+            let refreshIntervalId = setInterval(() => {
+                console.log("CHAT REFRESH");
+                InspectionsChat();
+            }, 5000);
+
+        return () => {
+            clearInterval(refreshIntervalId);
+            console.log("CHAT REFRESH STOPPED");
+        }
+    }, [])
 
 
     React.useEffect(() => {
