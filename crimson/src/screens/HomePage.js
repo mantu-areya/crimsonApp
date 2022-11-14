@@ -35,8 +35,10 @@ export const HomePage = ({ navigation }) => {
   const [selectedOption, setSelectedOption] = React.useState('Inspection/Rehab Bid Queue (Pending Vendor Submission)');
   const [open, setOpen] = React.useState(false);
 
-  const onChangeSearch = query => setSearchQuery(query);
-  const filterInspections = inspections?.filter((ins) => ins?.Name.includes(searchQuery) || ins?.Property_Address__c.includes(searchQuery) || ins?.Property_City__c?.includes(searchQuery));
+  const onChangeSearch = query => {
+    setSearchQuery(query);
+  }
+  const filterInspections = inspections?.filter((ins) => ins?.Name.toLowerCase().includes(searchQuery.toLowerCase()) || ins?.Property_Address__c.toLowerCase().includes(searchQuery.toLowerCase()) || ins?.Property_City__c?.toLowerCase()?.includes(searchQuery.toLowerCase()));
 
   const insets = useSafeAreaInsets();
 
