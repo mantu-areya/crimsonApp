@@ -287,7 +287,7 @@ function Signatures({ inspId, role }) {
             <>
               <View style={{ justifyContent: 'center', alignItems: 'flex-end', marginVertical: 8, padding: 4 }}>
                 <Image style={{
-                  width: 80,
+                  width: 180,
                   height: 80
                 }} source={{ uri: img }} />
               </View>
@@ -301,7 +301,7 @@ function Signatures({ inspId, role }) {
           {reviewerImg &&
             <View style={{ justifyContent: 'center', marginVertical: 8, padding: 4 }}>
               <Image style={{
-                width: 80,
+                width: 180,
                 height: 80
               }} source={{ uri: reviewerImg }} />
             </View>}
@@ -361,7 +361,7 @@ function Signatures({ inspId, role }) {
         {img &&
           <View style={{ justifyContent: 'center', marginVertical: 8, padding: 4 }}>
             <Image style={{
-              width: 80,
+              width: 180,
               height: 80
             }} source={{ uri: img }} />
           </View>}
@@ -415,7 +415,7 @@ function Signatures({ inspId, role }) {
           <>
             <View style={{ justifyContent: 'center', alignItems: 'flex-end', marginVertical: 8, padding: 4 }}>
               <Image style={{
-                width: 80,
+                width: 180,
                 height: 80
               }} source={{ uri: reviewerImg }} />
             </View>
