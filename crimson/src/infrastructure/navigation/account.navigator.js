@@ -10,6 +10,6 @@ const Stack = createStackNavigator();
 export const AccountNavigator = () => (
   <Stack.Navigator>
     <Stack.Screen name="Login" options={{ headerShown: false }} component={Login} />
-    <Stack.Screen name="OtpScreen" component={OtpScreen} />
+    <Stack.Screen name="OtpScreen" options={{ headerShown: false }} component={OtpScreen} />
   </Stack.Navigator>
 );
