@@ -170,7 +170,7 @@ function ReviewerSubmitModal({inspId, handleCloseModal, navigation, bidApprovalV
     navigation.goBack();
   }
 
-  const [bidContingency, setBidContingency] = React.useState(0);
+  const [bidContingency, setBidContingency] = React.useState(10);
   const [rehabScopeNotes, setRehabScopeNotes] = React.useState("");
 
 
@@ -183,7 +183,7 @@ function ReviewerSubmitModal({inspId, handleCloseModal, navigation, bidApprovalV
       <TextInput value={bidApprovalVal?.toLocaleString("en-IN", { style: "currency", currency: 'USD' })} editable={false} style={{ fontFamily: "URBAN_BOLD", fontSize: 16, backgroundColor: "#d9d9d9", padding: 8, marginBottom: 16 }} />
       <Text style={{ fontFamily: "URBAN_BOLD", fontSize: 14, marginBottom: 2 }}>Initial Rehab Estimate</Text>
       <TextInput value={initalEstimateRehab} editable={false} style={{ fontFamily: "URBAN_BOLD", fontSize: 16, backgroundColor: "#d9d9d9", padding: 8, marginBottom: 16 }} />
-      <Text style={{ fontFamily: "URBAN_BOLD", fontSize: 14, marginBottom: 2 }}>HHM BID Contingency</Text>
+      <Text style={{ fontFamily: "URBAN_BOLD", fontSize: 14, marginBottom: 2 }}>HHM BID Contingency %</Text>
       <TextInput onChangeText={text => setBidContingency(text)} value={`${bidContingency}`} style={{ fontFamily: "URBAN_BOLD", fontSize: 16, backgroundColor: "#d9d9d980", padding: 8, marginBottom: 16 }} />
       <Text style={{ fontFamily: "URBAN_BOLD", fontSize: 14, marginBottom: 2 }}>Final Rehab Scope Notes</Text>
       <TextInput onChangeText={text => setRehabScopeNotes(text)} value={rehabScopeNotes} style={{ fontFamily: "URBAN_BOLD", fontSize: 16, backgroundColor: "#d9d9d980", padding: 8, marginBottom: 16 }} />
