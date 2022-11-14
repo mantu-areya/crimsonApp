@@ -128,9 +128,9 @@ const OtherForms = ({gTotal, isSubmitted, isForReviewerView, readOnly, inspectio
             data: general_Rental,
         },
         {
-            title: 'Interior',
-            icon: <MaterialCommunityIcons size={28} name='home-account' color={"#36905C"} />,
-            data: interior
+            title: 'Pools',
+            icon: <MaterialIcons size={28} name='pool' color={"#DE9B67"} />
+            , data: pools
         },
         {
             title: 'Exterior',
@@ -138,9 +138,9 @@ const OtherForms = ({gTotal, isSubmitted, isForReviewerView, readOnly, inspectio
             , data: exterior
         },
         {
-            title: 'Pools',
-            icon: <MaterialIcons size={28} name='pool' color={"#DE9B67"} />
-            , data: pools
+            title: 'Interior',
+            icon: <MaterialCommunityIcons size={28} name='home-account' color={"#36905C"} />,
+            data: interior
         },
         {
             title: 'Mechanical, Electrical and Plumbing Systems',
