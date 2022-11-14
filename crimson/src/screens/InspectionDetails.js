@@ -42,8 +42,7 @@ const InspectionDetails = ({ route, navigation }) => {
   const [isNotesCollapsed, setIsNotesCollapsed] = React.useState(false);
   const { inspectionData } = route.params;
 
-  console.log("FLSLDL",inspectionData.Amount_Submitted_GC);
-  const { vendorFormDetails, addToVfContex, addImagesToContex } = React.useContext(VendorFormContext);
+  const { vendorFormDetails, addToVfContex, addImagesToContex, contextImages } = React.useContext(VendorFormContext);
   const { userRole } = React.useContext(InspectionsContext);
   const setVendorFormData = async () => getVendorFormDetails(inspectionData.Id)
     .then(data => addToVfContex(data["DynamicVendorTemplates"].DynamicVendorTemplate, inspectionData));
@@ -73,7 +72,7 @@ const InspectionDetails = ({ route, navigation }) => {
     setIsSubmitModalOpen(true);
   }
 
-  console.log({userRole});
+  console.log({ userRole });
 
 
 
@@ -89,6 +88,15 @@ const InspectionDetails = ({ route, navigation }) => {
   const [showSiganturesView, setShowSiganturesView] = React.useState(false);
 
   console.log("CURRENT INSPECTION", inspectionData.Id);
+
+
+  React.useEffect(() => {
+    if (contextImages[inspectionData.Id]?.length > 0) {
+      const index = contextImages[inspectionData.Id].findIndex( file => file.file_name.includes("Signature"))
+      setShowSiganturesView(index > -1);
+    }
+  },[contextImages[inspectionData.Id]?.length])
+
 
 
   let currentRecord = vendorFormDetails[inspectionData.Id];
@@ -122,6 +130,7 @@ const InspectionDetails = ({ route, navigation }) => {
   let bidApprovalVal = getFormTotal("all", false);
 
   console.log("IS WORK AUTH CREATED", inspectionData?.doCreateWAF__c);
+  console.log("CURR INSP ID", inspectionData?.Name);
 
   const initalEstimateRehab = "0"
 
@@ -129,14 +138,14 @@ const InspectionDetails = ({ route, navigation }) => {
     <SafeAreaView style={{ flex: 1 }}>
       <ScrollView onScroll={(e) => setOffSetY(e.nativeEvent.contentOffset.y)}>
         {/* {!readOnly && */}
-          <Overlay visible={isSubmitModalOpen} onClose={() => setIsSubmitModalOpen(false)}  >
-            {
-              !(userRole === "Reviewer") ?
-                <SubmitReviewForm handleCloseModal={() => setIsSubmitModalOpen(false)} setreadonly={setreadonly} inspVfDetails={vendorFormDetails[inspectionData.Id]} inspId={inspectionData.Id} navigation={navigation} setIsNotesCollapsed={setIsNotesCollapsed} />
-                :
-                <ReviewerSubmitModal inspId={inspectionData.Id} initalEstimateRehab={initalEstimateRehab} handleCloseModal={() => setIsSubmitModalOpen(false)} bidApprovalVal={bidApprovalVal} navigation={navigation} />
-            }
-          </Overlay>
+        <Overlay visible={isSubmitModalOpen} onClose={() => setIsSubmitModalOpen(false)}  >
+          {
+            !(userRole === "Reviewer") ?
+              <SubmitReviewForm handleCloseModal={() => setIsSubmitModalOpen(false)} setreadonly={setreadonly} inspVfDetails={vendorFormDetails[inspectionData.Id]} inspId={inspectionData.Id} navigation={navigation} setIsNotesCollapsed={setIsNotesCollapsed} />
+              :
+              <ReviewerSubmitModal inspId={inspectionData.Id} initalEstimateRehab={initalEstimateRehab} handleCloseModal={() => setIsSubmitModalOpen(false)} bidApprovalVal={bidApprovalVal} navigation={navigation} />
+          }
+        </Overlay>
         {/* } */}
         {/* Hero */}
         <Hero data={inspectionData} sectionTotals={sectionTotals} isSubmitted={isSubmitted} />
@@ -154,18 +163,18 @@ const InspectionDetails = ({ route, navigation }) => {
 }
 
 
-function ReviewerSubmitModal({inspId, handleCloseModal, navigation, bidApprovalVal = 0, initalEstimateRehab }) {
+function ReviewerSubmitModal({ inspId, handleCloseModal, navigation, bidApprovalVal = 0, initalEstimateRehab }) {
 
   const handleSave = async () => {
-  const res =  await updateSfVendorFormDetails({
+    const res = await updateSfVendorFormDetails({
       "Bid_Recommendation": bidApprovalVal,
       "Bid_Contingency": parseFloat(bidContingency),
       "Final_Rehab_Scope_Notes": rehabScopeNotes,
       "Form_Stage": "Reviewer Form Completed",
       "Submit_for_Bid_Approval": true
-    },inspId,true,"Reviewer");
+    }, inspId, true, "Reviewer");
 
-    console.log("SAVE",res);
+    console.log("SAVE", res);
     handleCloseModal();
     navigation.goBack();
   }
@@ -252,7 +261,7 @@ function Signatures({ inspId, role }) {
 
       if (result) {
         console.log(result, "kkk");
-      role === "Reviewer" ?   setReviewerImg(result) : setImg(result);
+        role === "Reviewer" ? setReviewerImg(result) : setImg(result);
         updateSignToContext(result)
         setIsLoading(false);
       }
