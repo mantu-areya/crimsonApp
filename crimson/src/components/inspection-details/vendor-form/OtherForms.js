@@ -9,7 +9,7 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
 import { Button } from 'react-native-paper';
 
 
-const OtherForms = ({gTotal, isSubmitted, isForReviewerView, readOnly, inspectionData, navigation }) => {
+const OtherForms = ({ gTotal, isSubmitted, isForReviewerView, readOnly, inspectionData, navigation }) => {
 
 
     let [general_Rental, setGeneral_Rental] = React.useState([])
@@ -164,7 +164,7 @@ const OtherForms = ({gTotal, isSubmitted, isForReviewerView, readOnly, inspectio
     // }, [dataList]);
 
     const onOtherFormValueChange = (value, field, key) => {
-        console.log("changing", field, 'with', value);
+        console.log("changing", field, 'with', value, "KEY", key);
         let newState, Sub_Category;
         let newSequence = sequence + 1
         let Category = currentFormData && currentFormData.data[0].Category
@@ -209,12 +209,18 @@ const OtherForms = ({gTotal, isSubmitted, isForReviewerView, readOnly, inspectio
         } {
             newState = dataList.map(obj => {
                 if (obj.UniqueKey === key) {
-                    let formatedVal = ["U_M", "Scope_Notes","Owner_Clarification"].includes(field) ? value : parseFloat(value)
+                    let formatedVal = ["U_M", "Scope_Notes", "Owner_Clarification"].includes(field) ? value : parseFloat(value)
                     let newValues = { ...obj, [field]: formatedVal };
-                    let newTotal = (newValues.Quantity * newValues.Rate)
+                    let newTotal;
+
+                    if (field === "Adj_Quantity" || field === "Adj_Rate") {
+                        newTotal = (newValues.Adj_Quantity * newValues.Adj_Rate)
+                    } else {
+                        newTotal = (newValues.Quantity * newValues.Rate)
+                    }
+
                     return { ...obj, [field]: formatedVal, ["Total"]: newTotal };
                 }
-                //   obj.UniqueKey === key && 
                 return obj;
             });
         }
@@ -345,23 +351,23 @@ const OtherForms = ({gTotal, isSubmitted, isForReviewerView, readOnly, inspectio
         updateToSf(inspectionData.Id)
     }
 
-    function handleAcceptLineItem(lineItemId,status) {
+    function handleAcceptLineItem(lineItemId, status) {
         console.log("CHNAGING ITEM: " + lineItemId);
         let updatedData = dataList.map((data) => {
             if (data.Id === lineItemId) {
-                console.log("data of line item",data);
+                console.log("data of line item", data);
                 data.Approval_Status = status
-                console.log("after data of line item",data);
+                console.log("after data of line item", data);
             }
             return data;
         });
         setDatalist(updatedData);
         updateVfContect(updatedData, "OTHRFM", inspectionData.Id);
-        updateToSf(inspectionData.Id,false);
+        updateToSf(inspectionData.Id, false);
     }
 
     function getPendingApprovalCount() {
-      return  dataList.filter(item => item.Approval_Status === null ).length
+        return dataList.filter(item => item.Approval_Status === null).length
     }
 
 
