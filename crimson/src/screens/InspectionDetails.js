@@ -25,10 +25,6 @@ const InspectionDetails = ({ route, navigation }) => {
 
   const { user } = React.useContext(AuthenticationContext);
 
-
-
-  console.log("USER", user);
-
   React.useEffect(() => {
     if (offSetY < 200) {
       console.log("Hiding Call");
@@ -297,7 +293,7 @@ function Signatures({ inspId, role }) {
         </View>
         {/* Company Signature */}
         <View style={{ padding: 16, flex: 1, alignItems: "flex-end" }}>
-          <Text style={{ fontSize: 12, fontFamily: 'URBAN_BOLD', color: 'black' }}>Company Signature</Text>
+          <Text style={{ fontSize: 12, fontFamily: 'URBAN_BOLD', color: 'black' }}>HHM Signature</Text>
           {reviewerImg &&
             <View style={{ justifyContent: 'center', marginVertical: 8, padding: 4 }}>
               <Image style={{
@@ -340,7 +336,7 @@ function Signatures({ inspId, role }) {
               setModalVisible(!modalVisible);
               updateSignToContext(bs64dataArray[1])
               setIsLoading(true);
-            }} text='Company Signature' />
+            }} text='HHM Signature' />
 
 
           </Modal>
@@ -402,7 +398,7 @@ function Signatures({ inspId, role }) {
             setModalVisible(!modalVisible);
             updateSignToContext(bs64dataArray[1])
             setIsLoading(true);
-          }} text='Contractor Sign' />
+          }} text='Contractor Signature' />
 
 
         </Modal>
