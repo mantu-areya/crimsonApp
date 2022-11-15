@@ -94,7 +94,7 @@ export default function FormLineItem({ handleAcceptLineItem, isSubmitted, isForR
               </LineItemInputGroup>
             </View>
             {/* Icon */}
-            <Ionicons name="camera" size={24} />
+            {!isForReviewerView && <Ionicons name="camera" onPress={() => navigation.navigate("CameraScreen", { inspId: { inspId }, lineItemId: item.Id })} size={24} />}
 
           </LineItemWrapper>
         </Swipeable>
@@ -357,7 +357,7 @@ function ContractorViewLineItem({ handleAcceptLineItem, item, onOtherFormValueCh
     handleAcceptLineItem(id, "Declined");
   }
 
-  function handleApproveAsNoted(){
+  function handleApproveAsNoted() {
     setBgColor("#3983EF60")
     handleAcceptLineItem(id, "Approved as Noted");
     hideModal();
@@ -388,7 +388,7 @@ function ContractorViewLineItem({ handleAcceptLineItem, item, onOtherFormValueCh
         <Ionicons onPress={() => hideModal()} name="close" size={24} style={{ marginLeft: "auto" }} />
         <View style={{ minHeight: 280, width: "100%", backgroundColor: "black" }} />
         <Text style={{ width: "100%", padding: 10, fontFamily: 'URBAN_MEDIUM', fontSize: 16, color: "#BDC5CD" }}>{title}</Text>
-        <View style={{ padding: 16, flexDirection: 'row', justifyContent:"space-evenly", width: "100%" }}>
+        <View style={{ padding: 16, flexDirection: 'row', justifyContent: "space-evenly", width: "100%" }}>
           <StyledOverlayText >QTY: {quantity}</StyledOverlayText>
           <StyledOverlayText style={{ flex: 1 }}>RATE: {getCurrencyFormattedValue(rate)}</StyledOverlayText>
           <StyledOverlayText style={{ flex: 1 }}>TOTAL: {getCurrencyFormattedValue(total)}</StyledOverlayText>

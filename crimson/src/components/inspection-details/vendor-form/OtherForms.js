@@ -381,7 +381,7 @@ const OtherForms = ({ gTotal, isSubmitted, isForReviewerView, readOnly, inspecti
                     </MenuWrapper>
                     <CurrentFormHeading>{currentForm}</CurrentFormHeading>
                     {
-                        isForReviewerView &&
+                       ( isForReviewerView && currentForm !== "Room Measurements") &&
                         <View intensity={100} style={{ marginVertical: 8, flexDirection: 'row', alignItems: 'center' }}>
                             <CurrentFormHeading style={{ fontSize: 22 }}>BID FOR REVIEW</CurrentFormHeading>
                             <CurrentFormHeading style={{ fontSize: 18, textTransform: 'none' }}>Pending Approvals {getPendingApprovalCount()}/{dataList.length}</CurrentFormHeading>
