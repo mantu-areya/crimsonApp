@@ -355,9 +355,7 @@ const OtherForms = ({ gTotal, isSubmitted, isForReviewerView, readOnly, inspecti
         console.log("CHNAGING ITEM: " + lineItemId);
         let updatedData = dataList.map((data) => {
             if (data.Id === lineItemId) {
-                console.log("data of line item", data);
                 data.Approval_Status = status
-                console.log("after data of line item", data);
             }
             return data;
         });

@@ -316,24 +316,17 @@ function ContractorViewLineItem({ handleAcceptLineItem, item, onOtherFormValueCh
     Total: total
   } = item
 
-  const [bgColor, setBgColor] = React.useState("default");
 
   function getBackgroundColor() {
     if (item.Approval_Status === "Approved") {
       return "#E7F5CE";
     } else if (item.Approval_Status === "Declined") {
       return "#F9DAD4";
-    } else {
-      return "white";
+    } else if (item.Approval_Status === "Approved as Noted") {
+      return "#FCFBF3";
     }
-  }
-  function getCardBackgroundColor() {
-    if (item.Approval_Status === "Approved") {
-      return "#E7F5CE";
-    } else if (item.Approval_Status === "Declined") {
-      return "#F9DAD4";
-    } else {
-      return "#FDF2BF";
+     else {
+      return "white";
     }
   }
 
@@ -344,7 +337,6 @@ function ContractorViewLineItem({ handleAcceptLineItem, item, onOtherFormValueCh
   const hideModal = () => setVisible(false);
 
   function acceptLineItem() {
-    setBgColor("#F7F4DE");
     handleAcceptLineItem(id, "Approved");
   }
 
@@ -353,12 +345,10 @@ function ContractorViewLineItem({ handleAcceptLineItem, item, onOtherFormValueCh
   }
 
   function deleteLineItem() {
-    setBgColor("#F8D9CF");
     handleAcceptLineItem(id, "Declined");
   }
 
   function handleApproveAsNoted() {
-    setBgColor("#3983EF60")
     handleAcceptLineItem(id, "Approved as Noted");
     hideModal();
   }
