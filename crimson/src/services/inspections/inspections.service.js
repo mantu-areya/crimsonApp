@@ -82,7 +82,7 @@ export const getInspectionsData = async (userEmail) => {
   )
     .then(response => {
       // console.log("ID",response.data);
-      return response.data["Inspections"].Inspection
+      return response.data
     } )
     .catch(err => {
       console.error(err);

@@ -15,6 +15,7 @@ import OtherForms from '../components/inspection-details/vendor-form/OtherForms'
 import { Row } from 'react-native-responsive-grid-system'
 import Collapsible from 'react-native-collapsible'
 import { SubmitReviewForm } from '../features/gcs/components/SubmitReviewForm'
+import { MapScreen } from '../components/maps/MapScreen'
 
 
 
@@ -89,6 +90,7 @@ console.log("CURRENT INSPECTION",inspectionData.Id);
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
+      <MapScreen inspections={inspectionData}/>
       <ScrollView onScroll={(e) => setOffSetY(e.nativeEvent.contentOffset.y)}>
         <Row>
           {!readOnly &&

@@ -11,7 +11,10 @@ export const getFbToken = () => {
       } else {
         reject("errorfromFB");
       }
-    })
+    },
+    error => {
+      console.error(error);
+  })
   });
   return fBtoken
 }
