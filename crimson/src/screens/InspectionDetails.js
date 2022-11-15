@@ -88,10 +88,10 @@ const InspectionDetails = ({ route, navigation }) => {
 
   React.useEffect(() => {
     if (contextImages[inspectionData.Id]?.length > 0) {
-      const index = contextImages[inspectionData.Id].findIndex( file => file.file_name.includes("Signature"))
+      const index = contextImages[inspectionData.Id].findIndex(file => file.file_name.includes("Signature"))
       setShowSiganturesView(index > -1);
     }
-  },[contextImages[inspectionData.Id]?.length])
+  }, [contextImages[inspectionData.Id]?.length])
 
 
 
@@ -189,7 +189,11 @@ function ReviewerSubmitModal({ inspId, handleCloseModal, navigation, bidApproval
       <Text style={{ fontFamily: "URBAN_BOLD", fontSize: 14, marginBottom: 2 }}>Initial Rehab Estimate</Text>
       <TextInput value={initalEstimateRehab} editable={false} style={{ fontFamily: "URBAN_BOLD", fontSize: 16, backgroundColor: "#d9d9d9", padding: 8, marginBottom: 16 }} />
       <Text style={{ fontFamily: "URBAN_BOLD", fontSize: 14, marginBottom: 2 }}>HHM BID Contingency %</Text>
-      <TextInput onChangeText={text => setBidContingency(text)} value={`${bidContingency}`} style={{ fontFamily: "URBAN_BOLD", fontSize: 16, backgroundColor: "#d9d9d980", padding: 8, marginBottom: 16 }} />
+      <View style={{flexDirection: "row",alignItems:"center",backgroundColor: "#d9d9d980", padding: 8, marginBottom: 16}}>
+        <TextInput onChangeText={text => setBidContingency(text)} value={`${bidContingency}`} style={{ fontFamily: "URBAN_BOLD", fontSize: 16 }} />
+        <Text>%</Text>
+      </View>
+      {/* <TextInput onChangeText={text => setBidContingency(text)} value={`${bidContingency}`} style={{ fontFamily: "URBAN_BOLD", fontSize: 16, backgroundColor: "#d9d9d980", padding: 8, marginBottom: 16 }} /> */}
       <Text style={{ fontFamily: "URBAN_BOLD", fontSize: 14, marginBottom: 2 }}>Final Rehab Scope Notes</Text>
       <TextInput onChangeText={text => setRehabScopeNotes(text)} value={rehabScopeNotes} style={{ fontFamily: "URBAN_BOLD", fontSize: 16, backgroundColor: "#d9d9d980", padding: 8, marginBottom: 16 }} />
       <View style={{ flexDirection: "row", justifyContent: "flex-end" }}>
