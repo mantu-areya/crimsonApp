@@ -1,7 +1,8 @@
 import React, { useState, createContext, useEffect } from "react";
 import * as firebase from "firebase";
 
-import { loginRequest } from "./authentication.service";
+
+import { loginRequest,setOrgToken } from "./authentication.service";
 import AsyncStorage from "@react-native-async-storage/async-storage"
 
 export const AuthenticationContext = createContext();
@@ -13,10 +14,22 @@ export const AuthenticationContextProvider = ({ children }) => {
   const [fBLoginData, setFbLoginData] = useState(null)
 
   const onLogin = (email, password) => {
-    loginRequest(email, password)
-      .then((u) => {
-        setFbLoginData(u);
+    let data = {
+      userName:email,
+      password:password
+    }
+    loginRequest(data)
+      .then((userData) => {
+        userData && setUser(userData.userName)
         setError(null)
+        return userData &&  AsyncStorage.removeItem('userData').then(
+          AsyncStorage.setItem('userData', JSON.stringify(userData)).then()
+            .catch(err => {
+              console.log(err);
+            })
+        ).catch(err => {
+          console.log(err);
+        })
 
       })
       .catch((e) => {
@@ -26,40 +39,42 @@ export const AuthenticationContextProvider = ({ children }) => {
   };
 
   const onAppLoad = () => {
+    setOrgToken()
     setIsLoading(true);
-    AsyncStorage.getItem('FbAuth').then(data => {
-      setUser(JSON.parse(data));
+    AsyncStorage.getItem('userData').then(data => {
+      let userData = JSON.parse(data)
+      userData && setUser(userData.userName);
       setIsLoading(false);
     })
   }
 
   const onLogout = () => {
     setUser(null);
-    AsyncStorage.removeItem('FbAuth').then()
+    AsyncStorage.removeItem('userData').then()
       .catch(err => {
         console.log(err);
       })
   }
 
-  const onOtpVerified = (orgToken) => {
-    const token = orgToken
-    token && setUser(fBLoginData && fBLoginData) 
-    AsyncStorage.setItem('FbAuth', JSON.stringify(fBLoginData)).then(data => {
-        return setIsLoading(false);
-        // console.log(data,"settingtk");
-      })
-        .catch(err => {
-          console.log(err);
-        })
-    return AsyncStorage.removeItem('Token').then(
-      AsyncStorage.setItem('Token', token).then()
-        .catch(err => {
-          console.log(err);
-        })
-    ).catch(err => {
-      console.log(err);
-    })
-  }
+  // const setOrgToken = (orgToken) => {
+  //   const token = orgToken
+  //   token && setUser(fBLoginData && fBLoginData) 
+  //   AsyncStorage.setItem('FbAuth', JSON.stringify(fBLoginData)).then(data => {
+  //       return setIsLoading(false);
+  //       // console.log(data,"settingtk");
+  //     })
+  //       .catch(err => {
+  //         console.log(err);
+  //       })
+  //   return AsyncStorage.removeItem('Token').then(
+  //     AsyncStorage.setItem('Token', token).then()
+  //       .catch(err => {
+  //         console.log(err);
+  //       })
+  //   ).catch(err => {
+  //     console.log(err);
+  //   })
+  // }
   useEffect(() => {
     onAppLoad()
   }, [])
@@ -75,7 +90,7 @@ export const AuthenticationContextProvider = ({ children }) => {
         onAppLoad,
         onLogout,
         fBLoginData,
-        onOtpVerified
+        // onOtpVerified
       }}
     >
       {children}

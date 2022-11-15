@@ -6,57 +6,64 @@ import NetInfo, { useNetInfo } from "@react-native-community/netinfo";
 //imports for mock Data
 // import { mockedVendorFormDetails } from "../../mocks/vendorFormDetails";
 
-
-export const getToken = (username, password, apiKeyAuthInfo) => {
-  var qs = require('qs');
-  var data = qs.stringify({
-    'grant_type': 'password',
-    'client_id': '3MVG9S6qnsIUe5wCpVvuUrA_3HWCcmCNiTsimddyoHUtYNepSZ47B85lSvFdBZkXJd6fmdvpTRbpgNeiELukB',
-    'client_secret': '99178E587F5BFD5AB0CEC5091E38823E9D2F529FC942DF34FE161A58DD3ED482',
-    'username': 'mahantesh.pyati@areya.tech',
-    'password': 'Crimson@123FPSlsl2gGEj62stJpSJlxZ8H'
-  });
-  return apiPost('https://test.salesforce.com/services/oauth2/token', data
-  )
-    .then(response => {
-      return response.data.access_token;
-    })
-    .catch(err => {
-      console.error(err);
-      // throw err;
-    });
-}
+// function to get AccessToken remove after final App dev
+// export const getToken = (username, password, apiKeyAuthInfo) => {
+//   var qs = require('qs');
+//   var data = qs.stringify({
+//     'grant_type': 'password',
+//     'client_id': '3MVG9wt4IL4O5wvI4PySmNNrBLXwBZingrtj_Jy5Nc_X3UKaSqftCpTXb70a46VTpE7rBcj.zm_dLqm0Vuwm5',
+//     'client_secret': 'A552CB01650BB01A983E836E1644F3D2707CEB46B3D2CAB8E0C395E84BE37835',
+//     'username': 'bhupendra.singh@areya.tech.dev',
+//     'password': 'Areya@2001gMmBKQzT8yObHlhHxD680LmQJ'
+//   });
+//   return apiPost('https://test.salesforce.com/services/oauth2/token', data
+//   )
+//     .then(response => {
+//       return response.data.access_token;
+//     })
+//     .catch(err => {
+//       console.error(err);
+//       // throw err;
+//     });
+// }
 
 
 
 export let setToken = async () => {
 
-  const token = await getToken();
-  // const token = await getStoredToken();
-  return AsyncStorage.removeItem('Token').then(
-    AsyncStorage.setItem('Token', token).then(data => {
-      return
-      // console.log(data,"settingtk");
-    })
-      .catch(err => {
+  return AsyncStorage.getItem('userData').then(
+    (value) => {
+       let LocalToken =  JSON.parse(value)
+      return LocalToken && AsyncStorage.removeItem('Token').then(datq=>{
+        console.log("tkn,",LocalToken.access_token);
+        AsyncStorage.setItem('Token', LocalToken.access_token).then(data => {
+          return
+          // console.log(data,"settingtk");
+        })
+          .catch(err => {
+            console.log(err);
+          })
+        }
+      ).catch(err => {
         console.log(err);
       })
+    }
   ).catch(err => {
-    console.log(err);
+    console.log("error in getting Token", err);
   })
 }
 
-const setTokenoninterval = () => setInterval(() => {
-  return NetInfo.fetch().then(networkState => {
-    // console.log("Is connected? - in settoken", networkState.isConnected);
-    if (networkState.isConnected) {
-      setToken()
-      return
-    }
-  })
-}, 500000);
+// const setTokenoninterval = () => setInterval(() => {
+//   return NetInfo.fetch().then(networkState => {
+//     // console.log("Is connected? - in settoken", networkState.isConnected);
+//     if (networkState.isConnected) {
+//       setToken()
+//       return
+//     }
+//   })
+// }, 500000);
 
-setTokenoninterval();
+// setTokenoninterval();
 
 let getStoredToken = () => {
   return AsyncStorage.getItem('Token').then(

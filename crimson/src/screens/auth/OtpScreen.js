@@ -24,7 +24,7 @@ export const OtpScreen = ({ navigation }) => {
       "OTP": otp && Number(otp)
     }
     verifyOtp(otpData).then(Response => {
-      onOtpVerified(Response.data.access_token)
+      // onOtpVerified(Response.data.access_token)
     }).catch(error => {
       console.log(JSON.stringify(error));
       setOtpError("invalid Otp")
