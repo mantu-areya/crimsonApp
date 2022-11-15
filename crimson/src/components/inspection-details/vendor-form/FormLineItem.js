@@ -45,7 +45,7 @@ export default function FormLineItem({ handleAcceptLineItem, isSubmitted, isForR
   }, [])
 
   if (isSubmitted) {
-    return <SubmittedFormLineItem {...{ status: item?.Approval_Status, title: item.Matrix_Price, rate: item.Rate, quantity: item.Quantity }} />
+    return <SubmittedFormLineItem {...{ status: item?.Approval_Status, title: item.Matrix_Price, rate: item.Rate, quantity: item.Quantity,notes:item.Scope_Notes }} />
   }
 
   if (isForRoomMeasurement) {
@@ -262,7 +262,7 @@ export default function FormLineItem({ handleAcceptLineItem, isSubmitted, isForR
 }
 
 
-function SubmittedFormLineItem({ status, title, rate, quantity, total }) {
+function SubmittedFormLineItem({ status, title, rate, quantity, total,notes }) {
   function getBackgroundColor() {
     if (status === "Approved") {
       return "#7CDD9B";
@@ -284,6 +284,7 @@ function SubmittedFormLineItem({ status, title, rate, quantity, total }) {
   return (
     <Card style={{ padding: 16, backgroundColor: getCardBackgroundColor(), borderBottomWidth: 2, borderColor: '#EEBC7B' }}>
       <LineItemHeading style={{}}>{title}</LineItemHeading>
+      <LineItemHeading style={{}}>Scope Notes : {notes}</LineItemHeading>
       <View >
         {/* Details */}
         <View style={{ flexDirection: 'row' }}>
