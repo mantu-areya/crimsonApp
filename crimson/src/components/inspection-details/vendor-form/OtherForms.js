@@ -1,4 +1,4 @@
-import { View, Text, FlatList, ActivityIndicator } from 'react-native'
+import { View, Text, FlatList, ActivityIndicator, Dimensions, Platform } from 'react-native'
 import React from 'react'
 import styled from 'styled-components/native';
 import FormLineItem from './FormLineItem';
@@ -370,7 +370,7 @@ const OtherForms = ({ gTotal, isSubmitted, isForReviewerView, readOnly, inspecti
 
 
     return (
-        <View style={{ height: 720 }}>
+        <View>
             {!isSubmitted &&
                 <>
                     {/* Menu */}
@@ -379,10 +379,10 @@ const OtherForms = ({ gTotal, isSubmitted, isForReviewerView, readOnly, inspecti
                     </MenuWrapper>
                     <CurrentFormHeading>{currentForm}</CurrentFormHeading>
                     {
-                       ( isForReviewerView && currentForm !== "Room Measurements") &&
+                        (isForReviewerView && currentForm !== "Room Measurements") &&
                         <View intensity={100} style={{ marginVertical: 8, flexDirection: 'row', alignItems: 'center' }}>
-                            <CurrentFormHeading style={{ fontSize: 22 }}>BID FOR REVIEW</CurrentFormHeading>
-                            <CurrentFormHeading style={{ fontSize: 18, textTransform: 'none' }}>Pending Approvals {getPendingApprovalCount()}/{dataList.length}</CurrentFormHeading>
+                            <CurrentFormHeading style={{fontSize: Platform.OS === "android" ? 18 : 22}}>BID FOR REVIEW</CurrentFormHeading>
+                            <CurrentFormHeading style={{fontSize: Platform.OS === "android" ? 16 : 18, textTransform: 'none' }}>Pending Approvals {getPendingApprovalCount()}/{dataList.length}</CurrentFormHeading>
                         </View>
                     }
                     {
@@ -442,17 +442,20 @@ const OtherForms = ({ gTotal, isSubmitted, isForReviewerView, readOnly, inspecti
     )
 }
 
+const windowWidth = Dimensions.get('window').width;
+
 const MenuWrapper = styled.View`
 margin:16px 0;
 background-color: #1E2429;
 flex-direction: row;
 padding:12px;
 justify-content: center;
+width: ${windowWidth}px ;
 `;
 
 
 const MenuItem = styled.TouchableOpacity`
-margin: 0 16px;
+margin: 0 ${Platform.OS === "android" ? 12 : 16}px;
 border: ${props => props.isActive ? "2px solid red" : "none"};
 border-radius: 4px;
 padding:4px;
@@ -461,7 +464,7 @@ padding:4px;
 const CurrentFormHeading = styled.Text`
 font-family: 'URBAN_BOLD';
 text-transform: uppercase;
-font-size: 16px;
+font-size: ${Platform.OS === "android" ? 12 : 16}px;
 margin-left: 16px;
 
 `;

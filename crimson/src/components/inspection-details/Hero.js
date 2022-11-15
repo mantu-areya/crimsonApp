@@ -1,4 +1,4 @@
-import { View, Text, ImageBackground, Image } from 'react-native'
+import { View, Text, ImageBackground, Image, Dimensions } from 'react-native'
 import React from 'react'
 import styled from 'styled-components/native'
 import Ionicons from "react-native-vector-icons/Ionicons"
@@ -76,6 +76,7 @@ const Hero = ({ data, isSubmitted, sectionTotals }) => {
         )
     }
 
+    const width = Dimensions.get("screen").width - 64
 
 
 
@@ -88,8 +89,8 @@ const Hero = ({ data, isSubmitted, sectionTotals }) => {
                     ref={isCarousel}
                     data={[1, 2]}
                     renderItem={({item,index}) => <CarouselCardItem {...{item,index}} />}
-                    sliderWidth={360}
-                    itemWidth={360}
+                    sliderWidth={width}
+                    itemWidth={width}
                     inactiveSlideShift={0}
                     removeClippedSubviews={false}
                     useScrollView={false}

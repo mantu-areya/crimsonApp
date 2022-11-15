@@ -1,6 +1,7 @@
 import React from 'react'
 import styled from 'styled-components/native'
 import Ionicons from "react-native-vector-icons/Ionicons"
+import { Platform } from 'react-native'
 
 
 const CTA = ({ handleOnSubmit, isReadOnly, handleOnChat, handleViewImages, handleSignature, isSubmitted }) => {
@@ -85,7 +86,7 @@ flex: 1;
 const ChatButtonWrapper = styled.TouchableOpacity`
 background-color: #E2F1DE;
 flex: 1;
-padding: 8px 16px;
+padding: ${Platform.OS === "android" ? 4 : 8}px ${Platform.OS === "android" ? 9 : 16}px;
 flex-direction: row;
 justify-content: center;
 align-items: center;
@@ -93,7 +94,7 @@ align-items: center;
 `;
 
 const ButtonText = styled.Text`
-font-size:18px;
+font-size:${Platform.OS === "android" ? 16 : 18}px;
 font-family: 'URBAN_BOLD';
 text-transform: uppercase;
 color: ${props => props.color || 'black'};
