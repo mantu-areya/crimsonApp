@@ -5,6 +5,9 @@ import Ionicons from "react-native-vector-icons/Ionicons"
 import { differenceInDays } from 'date-fns'
 import { useNavigation } from '@react-navigation/native';
 import Overlay from 'react-native-modal-overlay';
+import { postSendFileEmail } from '../../services/inspections/inspections.service';
+import Carousel from 'react-native-snap-carousel'
+
 
 
 const image = require("../../../assets/black-bg.jpeg");
@@ -14,13 +17,18 @@ const Hero = ({ data, isSubmitted, sectionTotals }) => {
     const navigation = useNavigation()
     const [overlayVisible, setOverlayVisible] = React.useState(false);
 
+    async function handleFileDownload() {
+        const res = await postSendFileEmail(data.Id, GC_Email__c);
+        console.log("FILE EMAIl SEND", res);
+    }
 
     const {
         Property_Street_Address__c,
         Target_Rehab_Complete_Date__c,
         GC_Inspection_Due_Date__c,
         Inspection_Form_Stage__c,
-        Prospect_ID__r: { Baths__c, Bed__c, Square_Feet__c,Year_Built__c }
+        GC_Email__c,
+        Prospect_ID__r: { Baths__c, Bed__c, Square_Feet__c, Year_Built__c }
     } = data;
 
     const pendingDays = differenceInDays(
@@ -29,29 +37,67 @@ const Hero = ({ data, isSubmitted, sectionTotals }) => {
     )
 
 
+    const isCarousel = React.useRef(null)
+
+
+
+    function CarouselCardItem({ item, index }) {
+        if (index == 0) {
+            return (
+                <ImageBackgroundWrapper onPress={() => setOverlayVisible(true)} >
+
+                    <Image source={image} style={{ width: '100%', height: 360, borderRadius: 16 }} />
+
+                    <InsideContentWrapper>
+                        <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                            {/* Back Icon */}
+                            <GoBackButton handleGoBack={() => navigation.goBack()} />
+                            {/* Meta Info */}
+                            <MetaInfo {...{ pendingDays, Inspection_Form_Stage__c, handleFileDownload }} />
+                        </View>
+                        {/* Short Summary */}
+                        <ShortSummary {...{ Property_Street_Address__c, Baths__c, Bed__c, Square_Feet__c }} />
+
+                    </InsideContentWrapper>
+
+                </ImageBackgroundWrapper>
+            )
+        }
+        return (
+            <MapBackgroundWrapper>
+                    <Image source={{ uri: "https://www.cityviewtrolleys.com/Images/Parking-Stop4.jpeg"}} style={{ width: '100%', height: 360, borderRadius: 8 }} />
+            </MapBackgroundWrapper>
+        )
+    }
+
 
 
 
     return (
         <Container>
             {/* Image Background */}
-            <ImageBackgroundWrapper onPress={() => setOverlayVisible(true)} >
 
-                <Image source={image} style={{ width: '100%', height: 360, borderRadius: 16 }} />
 
-                <InsideContentWrapper>
-                    <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                        {/* Back Icon */}
-                        <GoBackButton handleGoBack={() => navigation.goBack()} />
-                        {/* Meta Info */}
-                        <MetaInfo {...{ pendingDays, Inspection_Form_Stage__c }} />
-                    </View>
-                    {/* Short Summary */}
-                    <ShortSummary {...{ Property_Street_Address__c, Baths__c, Bed__c, Square_Feet__c }} />
 
-                </InsideContentWrapper>
+            <View>
+                <Carousel
+                    layout="default"
+                    layoutCardOffset={9}
+                    ref={isCarousel}
+                    data={[1, 2]}
+                    renderItem={CarouselCardItem}
+                    sliderWidth={360}
+                    itemWidth={360}
+                    inactiveSlideShift={0}
+                    useScrollView={false}
+                />
 
-            </ImageBackgroundWrapper>
+            </View>
+
+
+
+
+
             <Overlay childrenWrapperStyle={{ backgroundColor: 'black' }} containerStyle={{ backgroundColor: 'black' }} visible={overlayVisible} onClose={() => setOverlayVisible(false)} closeOnTouchOutside >
                 <Ionicons onPress={() => setOverlayVisible(false)} name="close" color="white" size={32} />
                 <Image source={image} style={{ width: 320, height: 320, borderRadius: 16 }} />
@@ -77,25 +123,27 @@ const Hero = ({ data, isSubmitted, sectionTotals }) => {
                 <DescriptionWrapper>
                     <Text style={{ color: 'black', fontFamily: 'URBAN_BOLD', fontSize: 16 }}>Section Breakdown</Text>
                     <DescriptionText style={{ marginTop: 8 }}>
-                       General Rental Scopes - {sectionTotals.grs}
+                        General Rental Scopes - {sectionTotals.grs}
                     </DescriptionText>
                     <DescriptionText >
-                       Pools - {sectionTotals.pools}
+                        Pools - {sectionTotals.pools}
                     </DescriptionText>
                     <DescriptionText >
-                       Exterior - {sectionTotals.exterior}
+                        Exterior - {sectionTotals.exterior}
                     </DescriptionText>
                     <DescriptionText >
-                       Interior - {sectionTotals.interior}
+                        Interior - {sectionTotals.interior}
                     </DescriptionText>
                     <DescriptionText >
-                       MEP - {sectionTotals.mep}
+                        MEP - {sectionTotals.mep}
                     </DescriptionText>
                 </DescriptionWrapper>
             }
         </Container>
     )
 }
+
+
 
 
 function GoBackButton({ handleGoBack }) {
@@ -106,12 +154,12 @@ function GoBackButton({ handleGoBack }) {
     )
 }
 
-function MetaInfo({ pendingDays, Inspection_Form_Stage__c }) {
+function MetaInfo({ pendingDays, Inspection_Form_Stage__c, handleFileDownload }) {
     return (
         <MetaInfoWrapper>
             <MetaInfoText>{Inspection_Form_Stage__c}</MetaInfoText>
             <MetaInfoText>{pendingDays} days pending</MetaInfoText>
-            <Ionicons style={{ marginTop: 16 }} name="cloud-download" size={32} color="white" />
+            <Ionicons onPress={handleFileDownload} style={{ marginTop: 16 }} name="cloud-download" size={32} color="white" />
         </MetaInfoWrapper>
     )
 }
@@ -139,6 +187,10 @@ width: 100%;
 `;
 
 const ImageBackgroundWrapper = styled.TouchableOpacity`
+
+`;
+
+const MapBackgroundWrapper = styled.TouchableOpacity`
 
 `;
 

@@ -183,12 +183,12 @@ export const uploadSignImage = async (data, inspId) => {
   )
     .then(response => {
       // console.log(response.data)
-      console.log("IMG UPLOAD",response.data);
+      console.log("IMG UPLOAD", response.data);
       return response.data
     })
     .catch(err => {
       console.error(JSON.stringify(err.request));
-      console.log("IMG UPLOAD",err);
+      console.log("IMG UPLOAD", err);
       // throw err;
     });
 }
@@ -270,6 +270,38 @@ export const postInspectionsChat = async (recordId, message) => {
   )
     .then(response => {
       return response
+    })
+    .catch(err => {
+      console.error(err);
+    });
+
+}
+
+
+export const postSendFileEmail = async (inspId, email) => {
+
+  const token = await getStoredToken();
+
+  const url = `https://hudsonhomesmgmt--uat.sandbox.my.salesforce.com/services/apexrest/Download/WorkAuth`;
+
+  console.log("EMAIL: " , email);
+
+  return apiPost(
+    url,
+    {
+      "EmailId":email, // ! CONFIRM FALLBACK FOR UNDEFINED EMAILS
+      "RecordId": inspId
+    }
+    ,
+    {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        "Content-Type": 'application/json'
+      }
+    },
+  )
+    .then(response => {
+      return response.data
     })
     .catch(err => {
       console.error(err);
