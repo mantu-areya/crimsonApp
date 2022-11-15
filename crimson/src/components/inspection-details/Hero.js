@@ -6,7 +6,7 @@ import { differenceInDays } from 'date-fns'
 import { useNavigation } from '@react-navigation/native';
 import Overlay from 'react-native-modal-overlay';
 import { postSendFileEmail } from '../../services/inspections/inspections.service';
-import Carousel from 'react-native-snap-carousel'
+import Carousel, { Pagination } from 'react-native-snap-carousel'
 import { Map } from './maps/Map'
 
 
@@ -41,7 +41,7 @@ const Hero = ({ data, isSubmitted, sectionTotals }) => {
 
     const isCarousel = React.useRef(null);
 
-
+    const [index, setIndex] = React.useState(0)
 
 
     function CarouselCardItem({ index }) {
@@ -68,7 +68,7 @@ const Hero = ({ data, isSubmitted, sectionTotals }) => {
         }
         return (
             <MapBackgroundWrapper>
-                <BackButtonWrapper style={{position: 'absolute',top:16,left:16,zIndex:9, backgroundColor: "#23252645"}} onPress={() => navigation.goBack()}>
+                <BackButtonWrapper style={{ position: 'absolute', top: 16, left: 16, zIndex: 9, backgroundColor: "#23252645" }} onPress={() => navigation.goBack()}>
                     <Ionicons name="arrow-back" size={32} color="white" />
                 </BackButtonWrapper>
                 <Map inspections={data} />
@@ -81,27 +81,37 @@ const Hero = ({ data, isSubmitted, sectionTotals }) => {
 
     return (
         <Container>
-            {/* Image Background */}
-
-
-
             <View>
                 <Carousel
                     layout="default"
-                    layoutCardOffset={9}
+                    layoutCardOffset={2}
                     ref={isCarousel}
                     data={[1, 2]}
-                    renderItem={CarouselCardItem}
+                    renderItem={({item,index}) => <CarouselCardItem {...{item,index}} />}
                     sliderWidth={360}
                     itemWidth={360}
                     inactiveSlideShift={0}
+                    removeClippedSubviews={false}
                     useScrollView={false}
+                    onSnapToItem={(index) => setIndex(index)}
+                />
+                <Pagination
+                    dotsLength={[1, 2].length}
+                    activeDotIndex={index}
+                    carouselRef={isCarousel}
+                    dotStyle={{
+                        width: 10,
+                        height: 10,
+                        borderRadius: 5,
+                        marginHorizontal: 0,
+                        backgroundColor: 'rgba(0, 0, 0, 0.92)'
+                    }}
+                    inactiveDotOpacity={0.4}
+                    inactiveDotScale={0.6}
+                    tappableDots={true}
                 />
 
             </View>
-
-
-
 
 
             <Overlay childrenWrapperStyle={{ backgroundColor: 'black' }} containerStyle={{ backgroundColor: 'black' }} visible={overlayVisible} onClose={() => setOverlayVisible(false)} closeOnTouchOutside >
