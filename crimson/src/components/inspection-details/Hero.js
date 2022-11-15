@@ -28,7 +28,8 @@ const Hero = ({ data, isSubmitted, sectionTotals }) => {
         GC_Inspection_Due_Date__c,
         Inspection_Form_Stage__c,
         GC_Email__c,
-        Prospect_ID__r: { Baths__c, Bed__c, Square_Feet__c, Year_Built__c }
+        Prospect_ID__r: { Baths__c, Bed__c, Square_Feet__c, Year_Built__c },
+        doCreateWAF__c
     } = data;
 
     const pendingDays = differenceInDays(
@@ -37,7 +38,8 @@ const Hero = ({ data, isSubmitted, sectionTotals }) => {
     )
 
 
-    const isCarousel = React.useRef(null)
+    const isCarousel = React.useRef(null);
+
 
 
 
@@ -53,7 +55,7 @@ const Hero = ({ data, isSubmitted, sectionTotals }) => {
                             {/* Back Icon */}
                             <GoBackButton handleGoBack={() => navigation.goBack()} />
                             {/* Meta Info */}
-                            <MetaInfo {...{ pendingDays, Inspection_Form_Stage__c, handleFileDownload }} />
+                            <MetaInfo {...{ pendingDays, Inspection_Form_Stage__c, handleFileDownload, doCreateWAF__c }} />
                         </View>
                         {/* Short Summary */}
                         <ShortSummary {...{ Property_Street_Address__c, Baths__c, Bed__c, Square_Feet__c }} />
@@ -65,7 +67,7 @@ const Hero = ({ data, isSubmitted, sectionTotals }) => {
         }
         return (
             <MapBackgroundWrapper>
-                    <Image source={{ uri: "https://www.cityviewtrolleys.com/Images/Parking-Stop4.jpeg"}} style={{ width: '100%', height: 360, borderRadius: 8 }} />
+                <Image source={{ uri: "https://www.cityviewtrolleys.com/Images/Parking-Stop4.jpeg" }} style={{ width: '100%', height: 360, borderRadius: 8 }} />
             </MapBackgroundWrapper>
         )
     }
@@ -154,12 +156,12 @@ function GoBackButton({ handleGoBack }) {
     )
 }
 
-function MetaInfo({ pendingDays, Inspection_Form_Stage__c, handleFileDownload }) {
+function MetaInfo({ pendingDays, Inspection_Form_Stage__c, handleFileDownload, doCreateWAF__c }) {
     return (
         <MetaInfoWrapper>
             <MetaInfoText>{Inspection_Form_Stage__c}</MetaInfoText>
             <MetaInfoText>{pendingDays} days pending</MetaInfoText>
-            <Ionicons onPress={handleFileDownload} style={{ marginTop: 16 }} name="cloud-download" size={32} color="white" />
+            {doCreateWAF__c && <Ionicons onPress={handleFileDownload} style={{ marginTop: 16 }} name="cloud-download" size={32} color="white" />}
         </MetaInfoWrapper>
     )
 }
