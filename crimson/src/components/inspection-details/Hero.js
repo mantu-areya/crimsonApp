@@ -7,6 +7,7 @@ import { useNavigation } from '@react-navigation/native';
 import Overlay from 'react-native-modal-overlay';
 import { postSendFileEmail } from '../../services/inspections/inspections.service';
 import Carousel from 'react-native-snap-carousel'
+import { Map } from './maps/Map'
 
 
 
@@ -43,7 +44,7 @@ const Hero = ({ data, isSubmitted, sectionTotals }) => {
 
 
 
-    function CarouselCardItem({ item, index }) {
+    function CarouselCardItem({ index }) {
         if (index == 0) {
             return (
                 <ImageBackgroundWrapper onPress={() => setOverlayVisible(true)} >
@@ -67,7 +68,10 @@ const Hero = ({ data, isSubmitted, sectionTotals }) => {
         }
         return (
             <MapBackgroundWrapper>
-                <Image source={{ uri: "https://www.cityviewtrolleys.com/Images/Parking-Stop4.jpeg" }} style={{ width: '100%', height: 360, borderRadius: 8 }} />
+                <BackButtonWrapper style={{position: 'absolute',top:16,left:16,zIndex:9, backgroundColor: "#23252645"}} onPress={() => navigation.goBack()}>
+                    <Ionicons name="arrow-back" size={32} color="white" />
+                </BackButtonWrapper>
+                <Map inspections={data} />
             </MapBackgroundWrapper>
         )
     }
