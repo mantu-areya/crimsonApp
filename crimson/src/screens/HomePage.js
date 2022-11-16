@@ -2,7 +2,7 @@ import React, { useContext } from "react";
 import { InspectionsContext } from "../services/inspections/inspections.contex"
 
 
-import { Searchbar as PaperSearchBar, Colors, IconButton, Menu, Button, Card } from 'react-native-paper';
+import { Searchbar as PaperSearchBar, Colors, IconButton, Menu, Button, Card, Provider, Avatar } from 'react-native-paper';
 import { ActivityIndicator, Dimensions, FlatList, Text, TextInput, TouchableOpacity, View } from "react-native";
 import styled from "styled-components/native";
 
@@ -32,8 +32,7 @@ background-color: #F1F4F8;
 export const HomePage = ({ navigation }) => {
   const { isLoading, inspections } = useContext(InspectionsContext);
   const [searchQuery, setSearchQuery] = React.useState('');
-  const [selectedOption, setSelectedOption] = React.useState('Inspection/Rehab Bid Queue (Pending Vendor Submission)');
-  const [open, setOpen] = React.useState(false);
+  const [selectedOption, setSelectedOption] = React.useState('Pending Vendor Submission');
 
   const onChangeSearch = query => {
     setSearchQuery(query);
@@ -42,28 +41,44 @@ export const HomePage = ({ navigation }) => {
 
   const insets = useSafeAreaInsets();
 
+  const [showUserMenu, setShowUserMenu] = React.useState(false);
+  const [showInspectionsMenu, setShowInspectionsMenu] = React.useState(false);
+
   return (
     <View style={{ flex: 1, paddingTop: insets.top, backgroundColor: 'black' }}>
       {/* Top */}
       <TopContainer>
         {/* Heading */}
-        <Text style={{ fontSize: 24, color: "white", fontFamily: "URBAN_BOLD", marginBottom: 4 }}>Welcome!</Text>
+        <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
+          <Text style={{ fontSize: 24, color: "white", fontFamily: "URBAN_BOLD", marginBottom: 4 }}>Welcome!</Text>
+          <Menu
+            visible={showUserMenu}
+            onDismiss={() => setShowUserMenu(false)}
+            anchor={
+              <TouchableOpacity onPress={() => setShowUserMenu(true)}>
+                <Avatar.Image size={36} source={require('../assets/images/ProfilePic.png')} />
+              </TouchableOpacity>}>
+            <Menu.Item onPress={() => setShowUserMenu(false)} title="Profile" />
+            <Menu.Item onPress={() => setShowUserMenu(false)} title="Logout" />
+          </Menu>
+        </View>
         {/* Menu */}
-        <Text style={{ fontSize: 18, color: "#94A1AC", fontFamily: "URBAN_MEDIUM" }} onPress={() => setOpen(!open)}>{selectedOption} {caretDown} </Text>
-        <View style={{borderRadius:8, backgroundColor: 'white', display: open ? 'flex' : 'none',marginTop:8,padding:16,width:"100%" }}>
+        <Menu
+          visible={showInspectionsMenu}
+          onDismiss={() => setShowInspectionsMenu(false)}
+          anchor={
+            <Text style={{ fontSize: 18, color: "#94A1AC", fontFamily: "URBAN_MEDIUM" }} onPress={() => setShowInspectionsMenu(true)}>{selectedOption} {caretDown} </Text>
+          }
+        >
           {
             [
-              "Inspection/Rehab Bid Queue (Pending Vendor Submission)",
-              "Inspection/Rehab Upcoming Preconstruction Look Ahead",
-              // "Turn Bid Queue (Pending Vendor Submission)",
-              // "Turn WAF Queue"
+              "Pending Vendor Submission",
+              "Upcoming Preconstruction Look Ahead",
             ].map((option, index) =>
-              <Text key={index} style={{padding:4,fontSize:18, fontFamily: 'URBAN_MEDIUM',width:"100%" }} onPress={() => { setSelectedOption(option); setOpen(false) }} >
-                {option}
-              </Text>
+              <Menu.Item key={index} onPress={() => { setSelectedOption(option); setShowInspectionsMenu(false) }} title={option} />
             )
           }
-        </View>
+        </Menu>
         {/* Searchbar */}
         <View style={{ backgroundColor: '#F1F4F8', justifyContent: "space-between", alignItems: 'center', flexDirection: 'row', padding: 12, marginVertical: 8 }}>
           <View style={{ flexDirection: 'row', alignItems: 'center' }}>
