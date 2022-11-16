@@ -102,14 +102,14 @@ const InspectionDetails = ({ route, navigation }) => {
     if (formCategory === "all") {
       currentRecord && currentRecord.forEach(ele => {
         if (ele.Approval_Status === "Approved" || ele.Approval_Status === "Approved as Noted") {
-          total += ele.Total;
+          total += ele.Approved_Amount;
         }
       });
       return formatted ? total.toLocaleString("en-IN", { style: "currency", currency: 'USD' }) : total;
     }
     currentRecord && currentRecord.forEach(ele => {
       if (ele.Category === formCategory && (ele.Approval_Status === "Approved" || ele.Approval_Status === "Approved as Noted")) {
-        total += ele.Total;
+        total += ele.Approved_Amount;
       }
     });
     return formatted ? total.toLocaleString("en-IN", { style: "currency", currency: 'USD' }) : total;
