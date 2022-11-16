@@ -1,4 +1,4 @@
-import { View, Text, ImageBackground, Image, Dimensions } from 'react-native'
+import { View, Text, ImageBackground, Image, Dimensions, Platform } from 'react-native'
 import React from 'react'
 import styled from 'styled-components/native'
 import Ionicons from "react-native-vector-icons/Ionicons"
@@ -8,6 +8,7 @@ import Overlay from 'react-native-modal-overlay';
 import { postSendFileEmail } from '../../services/inspections/inspections.service';
 import Carousel, { Pagination } from 'react-native-snap-carousel'
 import { Map } from './maps/Map'
+import * as Linking from "expo-linking";
 
 
 
@@ -71,6 +72,10 @@ const Hero = ({ data, isSubmitted, sectionTotals }) => {
                 <BackButtonWrapper style={{ position: 'absolute', top: 16, left: 16, zIndex: 9, backgroundColor: "#23252645" }} onPress={() => navigation.goBack()}>
                     <Ionicons name="arrow-back" size={32} color="white" />
                 </BackButtonWrapper>
+                <BackButtonWrapper onPress={handleOpenMap} style={{ width: 148, flexDirection: "row", position: 'absolute', bottom: 10, right: 16, zIndex: 9, backgroundColor: "#23252685" }}>
+                    <Ionicons name="navigate" size={18} color="white" />
+                    <Text style={{ fontFamily: "URBAN_BOLD", fontSize: 14, color: "white" }}>Get Directions</Text>
+                </BackButtonWrapper>
                 <Map inspections={data} />
             </MapBackgroundWrapper>
         )
@@ -78,86 +83,101 @@ const Hero = ({ data, isSubmitted, sectionTotals }) => {
 
     const width = Dimensions.get("screen").width - 64
 
+    const { Property_Latitude__c, Property_Longitude__c } = data;
 
 
-    return (
-        <Container>
-            <View>
-                <Carousel
-                    layout="default"
-                    layoutCardOffset={2}
-                    ref={isCarousel}
-                    data={[1, 2]}
-                    renderItem={({item,index}) => <CarouselCardItem {...{item,index}} />}
-                    sliderWidth={width}
-                    itemWidth={width}
-                    inactiveSlideShift={0}
-                    removeClippedSubviews={false}
-                    useScrollView={false}
-                    onSnapToItem={(index) => setIndex(index)}
-                />
-                <Pagination
-                    dotsLength={[1, 2].length}
-                    activeDotIndex={index}
-                    carouselRef={isCarousel}
-                    dotStyle={{
-                        width: 10,
-                        height: 10,
-                        borderRadius: 5,
-                        marginHorizontal: 0,
-                        backgroundColor: 'rgba(0, 0, 0, 0.92)'
-                    }}
-                    inactiveDotOpacity={0.4}
-                    inactiveDotScale={0.6}
-                    tappableDots={true}
-                />
-
-            </View>
-
-
-            <Overlay childrenWrapperStyle={{ backgroundColor: 'black' }} containerStyle={{ backgroundColor: 'black' }} visible={overlayVisible} onClose={() => setOverlayVisible(false)} closeOnTouchOutside >
-                <Ionicons onPress={() => setOverlayVisible(false)} name="close" color="white" size={32} />
-                <Image source={image} style={{ width: 320, height: 320, borderRadius: 16 }} />
-            </Overlay>
-            {/* Description */}
-            {
-                !isSubmitted && <DescriptionWrapper>
-                    <Text style={{ color: 'black', fontFamily: 'URBAN_BOLD', fontSize: 16 }}>DESCRIPTION</Text>
-                    <DescriptionText style={{ marginTop: 14 }}>
-                        {Property_Street_Address__c} is a {Bed__c} Room Property with {Baths__c} Baths and {Square_Feet__c} Sq Ft. Built in {Year_Built__c} this property is a New Construction.
-                    </DescriptionText>
-                    <DescriptionText style={{ marginTop: 16 }}>
-                        Inspection Schedule Date - {GC_Inspection_Due_Date__c}
-                    </DescriptionText>
-                    <DescriptionText>
-                        Target Rehab Complete Date - {Target_Rehab_Complete_Date__c}
-                        {/* // ! not getting this value */}
-                    </DescriptionText>
-                </DescriptionWrapper>
+    const handleOpenMap = () => {
+        Platform.select({
+            ios: () => {
+                Linking.openURL("http://maps.apple.com/maps?daddr=" + Property_Latitude__c + "," + Property_Longitude__c + "&dirflg=d&t=m");
+            },
+            android: () => {
+                Linking.openURL("http://maps.google.com/maps?daddr=" + Property_Latitude__c + "," + Property_Longitude__c);
             }
-            {
-                isSubmitted &&
-                <DescriptionWrapper>
-                    <Text style={{ color: 'black', fontFamily: 'URBAN_BOLD', fontSize: 16 }}>Section Breakdown</Text>
-                    <DescriptionText style={{ marginTop: 8 }}>
-                        General Rental Scopes - {sectionTotals.grs}
-                    </DescriptionText>
-                    <DescriptionText >
-                        Pools - {sectionTotals.pools}
-                    </DescriptionText>
-                    <DescriptionText >
-                        Exterior - {sectionTotals.exterior}
-                    </DescriptionText>
-                    <DescriptionText >
-                        Interior - {sectionTotals.interior}
-                    </DescriptionText>
-                    <DescriptionText >
-                        MEP - {sectionTotals.mep}
-                    </DescriptionText>
-                </DescriptionWrapper>
-            }
-        </Container>
-    )
+        })();
+    }
+
+
+
+
+return (
+    <Container>
+        <View>
+            <Carousel
+                layout="default"
+                layoutCardOffset={2}
+                ref={isCarousel}
+                data={[1, 2]}
+                renderItem={({ item, index }) => <CarouselCardItem {...{ item, index }} />}
+                sliderWidth={width}
+                itemWidth={width}
+                inactiveSlideShift={0}
+                removeClippedSubviews={false}
+                useScrollView={false}
+                onSnapToItem={(index) => setIndex(index)}
+            />
+            <Pagination
+                dotsLength={[1, 2].length}
+                activeDotIndex={index}
+                carouselRef={isCarousel}
+                dotStyle={{
+                    width: 10,
+                    height: 10,
+                    borderRadius: 5,
+                    marginHorizontal: 0,
+                    backgroundColor: 'rgba(0, 0, 0, 0.92)'
+                }}
+                inactiveDotOpacity={0.4}
+                inactiveDotScale={0.6}
+                tappableDots={true}
+            />
+
+        </View>
+
+
+        <Overlay childrenWrapperStyle={{ backgroundColor: 'black' }} containerStyle={{ backgroundColor: 'black' }} visible={overlayVisible} onClose={() => setOverlayVisible(false)} closeOnTouchOutside >
+            <Ionicons onPress={() => setOverlayVisible(false)} name="close" color="white" size={32} />
+            <Image source={image} style={{ width: 320, height: 320, borderRadius: 16 }} />
+        </Overlay>
+        {/* Description */}
+        {
+            !isSubmitted && <DescriptionWrapper>
+                <Text style={{ color: 'black', fontFamily: 'URBAN_BOLD', fontSize: 16 }}>DESCRIPTION</Text>
+                <DescriptionText style={{ marginTop: 14 }}>
+                    {Property_Street_Address__c} is a {Bed__c} Room Property with {Baths__c} Baths and {Square_Feet__c} Sq Ft. Built in {Year_Built__c} this property is a New Construction.
+                </DescriptionText>
+                <DescriptionText style={{ marginTop: 16 }}>
+                    Inspection Schedule Date - {GC_Inspection_Due_Date__c}
+                </DescriptionText>
+                <DescriptionText>
+                    Target Rehab Complete Date - {Target_Rehab_Complete_Date__c}
+                    {/* // ! not getting this value */}
+                </DescriptionText>
+            </DescriptionWrapper>
+        }
+        {
+            isSubmitted &&
+            <DescriptionWrapper>
+                <Text style={{ color: 'black', fontFamily: 'URBAN_BOLD', fontSize: 16 }}>Section Breakdown</Text>
+                <DescriptionText style={{ marginTop: 8 }}>
+                    General Rental Scopes - {sectionTotals.grs}
+                </DescriptionText>
+                <DescriptionText >
+                    Pools - {sectionTotals.pools}
+                </DescriptionText>
+                <DescriptionText >
+                    Exterior - {sectionTotals.exterior}
+                </DescriptionText>
+                <DescriptionText >
+                    Interior - {sectionTotals.interior}
+                </DescriptionText>
+                <DescriptionText >
+                    MEP - {sectionTotals.mep}
+                </DescriptionText>
+            </DescriptionWrapper>
+        }
+    </Container>
+)
 }
 
 
