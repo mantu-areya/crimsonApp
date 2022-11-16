@@ -4,13 +4,13 @@ import styled from 'styled-components/native'
 import { Button } from 'react-native-paper'
 import { AuthenticationContext } from "../../services/authentication/authentication.context";
 import OTPTextInput from 'react-native-otp-textinput'
-import { verifyOtp } from '../../services/api/authentication/auth.services'
+import { verifyOtp } from '../../services/authentication/authentication.service';
 
 
-export const OtpScreen = ({ navigation }) => {
+export const OtpScreen = ({ navigation, route }) => {
   const otpInput = useRef(null);
   const [otp, setOtp] = useState(null)
-  const { fBLoginData, onOtpVerified } = useContext(AuthenticationContext);
+  const { onOtpVerified } = useContext(AuthenticationContext);
   const [otpError, setOtpError] = useState(null)
 
   const clearText = () => {
@@ -20,11 +20,11 @@ export const OtpScreen = ({ navigation }) => {
 
   const verifyText = () => {
     const otpData = {
-      "EmailId": fBLoginData && fBLoginData.user.email,
+      "userName": route.params["userName"] && route.params["userName"],
       "OTP": otp && Number(otp)
     }
     verifyOtp(otpData).then(Response => {
-      // onOtpVerified(Response.data.access_token)
+      onOtpVerified(Response.data.userdata)
     }).catch(error => {
       console.log(JSON.stringify(error));
       setOtpError("invalid Otp")

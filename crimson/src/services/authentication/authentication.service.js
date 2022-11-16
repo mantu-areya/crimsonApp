@@ -51,30 +51,69 @@ let getStoredAuthToken = () => {
   })
 }
 
-export const loginRequest = async (data) => {
-  
+// send Otp
+export const sendOtp = async (data) => {
   const adminToken = await getStoredAuthToken();
-  console.log("runin",`Bearer ${adminToken && adminToken.replace('"','')}`);
-
-  return apiPost(
-    `https://areyatechnology7-dev-ed.my.salesforce.com/services/apexrest/AuthCrimson`,
-    data,
-    {      
-      headers: {
-        'Authorization': `Bearer ${adminToken && adminToken.replace(/"/g, "")}`,
+      return apiPost(
+      `https://areyatechnology7-dev-ed.my.salesforce.com/services/apexrest/AuthCrimson?OTPStatus=send`,
+      data,
+      {
+        headers: {
+          'Authorization': `Bearer ${adminToken && adminToken.replace(/"/g, "")}`,
+        },
       },
-    },
-  )
-    .then(response => {
-      return response.data.userdata
-    })
-    .catch(err => {
-      console.log(JSON.stringify(err), "error in connecting org");
-      console.error(err);
-      // throw err;
-    });
-
+    )
+    .then(
+      response=>{
+        console.log(response.data);
+       return  response.data.message
+      }
+    )
 }
+
+
+//Verify Otp
+
+export const verifyOtp = async (data) => {
+  const adminToken = await getStoredAuthToken();
+    return apiPost(
+      `https://areyatechnology7-dev-ed.my.salesforce.com/services/apexrest/AuthCrimson?OTPStatus=validate`,
+      data,
+      {
+        headers: {
+          'Authorization': `Bearer ${adminToken && adminToken.replace(/"/g, "")}`,
+        },
+      },
+    )
+}
+
+
+
+
+// export const loginRequest = async (data) => {
+  
+//   const adminToken = await getStoredAuthToken();
+//   console.log("runin",`Bearer ${adminToken && adminToken.replace('"','')}`);
+
+//   return apiPost(
+//     `https://areyatechnology7-dev-ed.my.salesforce.com/services/apexrest/AuthCrimson`,
+//     data,
+//     {      
+//       headers: {
+//         'Authorization': `Bearer ${adminToken && adminToken.replace(/"/g, "")}`,
+//       },
+//     },
+//   )
+//     .then(response => {
+//       return response.data.userdata
+//     })
+//     .catch(err => {
+//       console.log(JSON.stringify(err), "error in connecting org");
+//       console.error(err);
+//       // throw err;
+//     });
+
+// }
 
 
 

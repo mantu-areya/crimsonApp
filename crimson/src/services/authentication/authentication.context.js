@@ -2,7 +2,7 @@ import React, { useState, createContext, useEffect } from "react";
 import * as firebase from "firebase";
 
 
-import { loginRequest,setOrgToken } from "./authentication.service";
+import { setOrgToken } from "./authentication.service";
 import AsyncStorage from "@react-native-async-storage/async-storage"
 
 export const AuthenticationContext = createContext();
@@ -10,47 +10,54 @@ export const AuthenticationContext = createContext();
 export const AuthenticationContextProvider = ({ children }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [user, setUser] = useState(null);
-  const [error, setError] = useState(null);
-  const [fBLoginData, setFbLoginData] = useState(null)
+  // const [error, setError] = useState(null);
+  // const [fBLoginData, setFbLoginData] = useState(null)
 
-  const onLogin = (email, password) => {
-    let data = {
-      userName:email,
-      password:password
-    }
-    loginRequest(data)
-      .then((userData) => {
-        userData && setUser(userData.userName)
-        setError(null)
-        return userData &&  AsyncStorage.removeItem('userData').then(
-          AsyncStorage.setItem('userData', JSON.stringify(userData)).then()
-            .catch(err => {
-              console.log(err);
-            })
-        ).catch(err => {
+  // const onLogin = (email, password) => {
+  //   let data = {
+  //     userName:email,
+  //     password:password
+  //   }
+  //   loginRequest(data)
+  //     .then((userData) => {
+  //       userData && setUser(userData.userName)
+  //       setError(null)
+  //       return userData &&  AsyncStorage.removeItem('userData').then(
+  //         AsyncStorage.setItem('userData', JSON.stringify(userData)).then()
+  //           .catch(err => {
+  //             console.log(err);
+  //           })
+  //       ).catch(err => {
+  //         console.log(err);
+  //       })
+
+
+  const onOtpVerified = (userOrgData) => {
+    console.log(userOrgData, "org");
+    return userOrgData && AsyncStorage.removeItem('userData').then(
+      AsyncStorage.setItem('userData', JSON.stringify(userOrgData)).then(data => {
+        setUser(userOrgData.userName)
+      })
+        .catch(err => {
           console.log(err);
         })
-
-      })
-      .catch((e) => {
-        setIsLoading(false);
-        setError(e.toString());
-      });
-  };
+    ).catch(err => {
+      console.log(err);
+    })
+  }
 
   const onAppLoad = () => {
     setOrgToken()
     setIsLoading(true);
     AsyncStorage.getItem('userData').then(data => {
-      let userData = JSON.parse(data)
-      userData && setUser(userData.userName);
+      data && setUser(JSON.parse(data).userName);
       setIsLoading(false);
     })
   }
 
   const onLogout = () => {
     setUser(null);
-    AsyncStorage.removeItem('userData').then()
+    return AsyncStorage.removeItem('userData').then()
       .catch(err => {
         console.log(err);
       })
@@ -85,12 +92,12 @@ export const AuthenticationContextProvider = ({ children }) => {
         isAuthenticated: !!user,
         user,
         isLoading,
-        error,
-        onLogin,
+        // error,
+        // onLogin,
         onAppLoad,
         onLogout,
-        fBLoginData,
-        // onOtpVerified
+        // fBLoginData,
+        onOtpVerified,
       }}
     >
       {children}

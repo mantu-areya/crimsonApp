@@ -1,69 +1,74 @@
 import { View, Text, TextInput } from 'react-native'
-import React, {useContext, useEffect} from 'react'
+import React, { useContext, useEffect } from 'react'
 import styled from 'styled-components/native'
 import { useSafeAreaInsets } from "react-native-safe-area-context"
 import { Button, IconButton } from 'react-native-paper'
-import { AuthenticationContext } from "../../services/authentication/authentication.context";
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
+// import { AuthenticationContext } from "../../services/authentication/authentication.context";
+// import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import { Spacer } from '../../components/spacer/spacer.component';
-import { sendOtp } from '../../services/api/authentication/auth.services'
+import { sendOtp } from "../../services/authentication/authentication.service"
 
 const shadowStyle = {
-    shadowColor: "#000",
-    shadowOffset: {
-        width: 0,
-        height: 1,
-    },
-    shadowOpacity: 0.22,
-    shadowRadius: 2.22,
+  shadowColor: "#000",
+  shadowOffset: {
+    width: 0,
+    height: 1,
+  },
+  shadowOpacity: 0.22,
+  shadowRadius: 2.22,
 
-    elevation: 3,
+  elevation: 3,
 }
 
 const Login = ({ navigation }) => {
-    const insets = useSafeAreaInsets()
-    const [email, setEmail] = React.useState("");
-    const [password, setPassword] = React.useState("");
-    const [showPassword, setShowPassword] = React.useState(false);
+  const insets = useSafeAreaInsets()
+  const [userName, setEmail] = React.useState("");
+  // const [password, setPassword] = React.useState("");
+  // const [showPassword, setShowPassword] = React.useState(false);
+  const [error, setError] = React.useState(null)
 
-    const { onLogin, error,fBLoginData } = useContext(AuthenticationContext);
+  // const { onLogin, error,fBLoginData,otpSent } = useContext(AuthenticationContext);
 
-    
-  useEffect(()=>{
-    const userData = {
-      EmailId: fBLoginData && fBLoginData.user.email,
-      SendOTP:true
+  const handleLogin = (userName) => {
+    let data = {
+      userName: userName
     }
-    fBLoginData && sendOtp(userData) && navigation.navigate("OtpScreen",{})
-  },[fBLoginData])
+    data && sendOtp(data).then(data => {
+      setError(null)
+      data == "OTP Send" && navigation.navigate("OtpScreen", { userName })
+    }).catch(error => {
+      setError(JSON.parse(error.request._response)[0].message)
+    })
+  }
 
-    return (
-        <Wrapper style={{ paddingTop: insets.top }}>
-            <FormWrapper style={[shadowStyle]}>
-                {/* Title */}
-                <Title>
-                    CRIMSON
-                </Title>
-                {/* Email */}
-                <Text style={{ paddingHorizontal: 16, marginBottom: 4, color: 'white', fontSize: 16, fontFamily: 'URBAN_BOLD' }}>Email Address</Text>
-                <InputWrapper
-                >
-                    <TextInput
-                        style={{
-                            color: 'white',
-                            fontSize: 16,
-                            fontFamily: 'URBAN_BOLD'
-                        }}
-                        onChangeText={email => setEmail(email)}
-                        value={email}
-                        placeholderTextColor={"#7E8892"}
-                        placeholder="Enter your email here"
-                    />
-                </InputWrapper>
 
-                {/* Passowrd */}
-                <Text style={{ paddingHorizontal: 16, marginBottom: 4, color: 'white', fontSize: 16, fontFamily: 'URBAN_BOLD' }}>Password</Text>
-                <InputWrapper>
+  return (
+    <Wrapper style={{ paddingTop: insets.top }}>
+      <FormWrapper style={[shadowStyle]}>
+        {/* Title */}
+        <Title>
+          CRIMSON
+        </Title>
+        {/* Email */}
+        <Text style={{ paddingHorizontal: 16, marginBottom: 4, color: 'white', fontSize: 16, fontFamily: 'URBAN_BOLD' }}>Email Address</Text>
+        <InputWrapper
+        >
+          <TextInput
+            style={{
+              color: 'white',
+              fontSize: 16,
+              fontFamily: 'URBAN_BOLD'
+            }}
+            onChangeText={userName => setEmail(userName)}
+            value={userName}
+            placeholderTextColor={"#7E8892"}
+            placeholder="Enter your userName here"
+          />
+        </InputWrapper>
+
+        {/* Passowrd */}
+        {/* <Text style={{ paddingHorizontal: 16, marginBottom: 4, color: 'white', fontSize: 16, fontFamily: 'URBAN_BOLD' }}>Password</Text> */}
+        {/* <InputWrapper>
                     <TextInput
                         style={{
                             color: 'white',
@@ -77,32 +82,29 @@ const Login = ({ navigation }) => {
                         placeholder="Enter your Password here"
                     />
                     <MaterialCommunityIcons size={24} onPress={() => setShowPassword(!showPassword)} name={showPassword ? "eye" : "eye-off"} color="#7E8892" />
-                </InputWrapper>
-                {error && (
+                </InputWrapper> */}
+        {error && (
           <Spacer size="large">
-            <Text  style={{color:'red'}}>{error}</Text>
+            <Text style={{ color: 'red' }}>{error}</Text>
           </Spacer>
         )}
 
-                <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginVertical: 16 }}>
-                    {/* Forgot Password */}
-                    <ForgotPasswordLink>Forgot Password?</ForgotPasswordLink>
-                    {/* Login Button */}
-                    <StyledLoginButton
-                        onPress={() => {
-                          onLogin(email, password)
-                            // navigation.navigate("OtpScreen");
-                        }}
-                        labelStyle={{
-                            fontFamily: 'URBAN_BOLD',
-                            fontSize: 18
-                        }} mode="contained">
-                        Login
-                    </StyledLoginButton>
-                </View>
-            </FormWrapper>
-        </Wrapper>
-    )
+        <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center', marginVertical: 16 }}>
+          {/* Forgot Password */}
+          {/* <ForgotPasswordLink>Forgot Password?</ForgotPasswordLink> */}
+          {/* Login Button */}
+          <StyledLoginButton
+            onPress={() => handleLogin(userName)}
+            labelStyle={{
+              fontFamily: 'URBAN_BOLD',
+              fontSize: 18
+            }} mode="contained">
+            Login
+          </StyledLoginButton>
+        </View>
+      </FormWrapper>
+    </Wrapper>
+  )
 }
 
 export default Login
