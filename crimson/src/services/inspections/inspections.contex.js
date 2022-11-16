@@ -24,7 +24,8 @@ export const InspectionsContextProvider = ({ children }) => {
 
 
   const retrieveInspections = () => {
-    let userEmail = user && user.user.email
+    // console.log(user,"usr");
+    let userEmail = user && user
     setIsLoading(true);
     getInspectionsData(userEmail)
       .then(results => {
