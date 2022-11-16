@@ -425,7 +425,7 @@ const OtherForms = ({ gTotal, isSubmitted, isForReviewerView, readOnly, inspecti
                     {
                         dataList.length > 0 ?
                             <FlatList
-                                data={[].concat(pools, exterior, interior, general_Rental, room_MeasurementData, mech_Elec_Plumb).filter(item => item.Approval_Status === "Approved" || item.Approval_Status === "Approved as Noted")}
+                                data={[].concat(general_Rental,pools, exterior, interior,  mech_Elec_Plumb).filter(item => item.Approval_Status === "Approved" || item.Approval_Status === "Approved as Noted")}
                                 keyExtractor={item => item.UniqueKey}
                                 renderItem={({ item }) => <FormLineItem   {...{ isSubmitted, isForReviewerView, item, inspId: inspectionData.Id, onRoomMeasurementValueChange, onOtherFormValueChange, navigation, readOnly, setShowAddButton, handleOnSave }} isForRoomMeasurement={currentFormData.title === "Room Measurements"} />}
                             /> :
