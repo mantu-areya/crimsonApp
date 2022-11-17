@@ -1,5 +1,5 @@
 import React, { useState, createContext, useEffect, useContext } from "react";
-import { getInspectionsData, getPendingInspections, setToken } from "./inspections.service";
+import { getInspectionsData, getPendingInspections, setToken,setTokenoninterval } from "./inspections.service";
 import NetInfo from "@react-native-community/netinfo";
 import AsyncStorage from "@react-native-async-storage/async-storage"
 import { AuthenticationContext } from "../../services/authentication/authentication.context";
@@ -111,6 +111,7 @@ export const InspectionsContextProvider = ({ children }) => {
         return
       });
   }
+  user && setTokenoninterval(user);
 
   return (
     <InspectionsContext.Provider

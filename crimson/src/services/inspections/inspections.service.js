@@ -33,9 +33,8 @@ export let setToken = async () => {
 
   return AsyncStorage.getItem('userData').then(
     (value) => {
-       let LocalToken =  JSON.parse(value)
-      return LocalToken && AsyncStorage.removeItem('Token').then(datq=>{
-        console.log("tkn,",LocalToken.access_token);
+      let LocalToken = JSON.parse(value)
+      return LocalToken && AsyncStorage.removeItem('Token').then(datq => {
         AsyncStorage.setItem('Token', LocalToken.access_token).then(data => {
           return
           // console.log(data,"settingtk");
@@ -43,7 +42,7 @@ export let setToken = async () => {
           .catch(err => {
             console.log(err);
           })
-        }
+      }
       ).catch(err => {
         console.log(err);
       })
@@ -53,17 +52,51 @@ export let setToken = async () => {
   })
 }
 
-// const setTokenoninterval = () => setInterval(() => {
-//   return NetInfo.fetch().then(networkState => {
-//     // console.log("Is connected? - in settoken", networkState.isConnected);
-//     if (networkState.isConnected) {
-//       setToken()
-//       return
-//     }
-//   })
-// }, 500000);
 
-// setTokenoninterval();
+
+
+export const setTokenoninterval = (userName) => setInterval(() => {
+  return NetInfo.fetch().then(networkState => {
+    // console.log("Is connected? - in settoken", networkState.isConnected);
+    if (networkState.isConnected) {
+      return AsyncStorage.getItem('SfAdminToken').then(
+        (value) => {
+          let adminToken = JSON.parse(value)
+          return userName &&  apiGet(
+            `https://areyatechnology7-dev-ed.my.salesforce.com/services/apexrest/AuthCrimson/${userName}`,
+            {
+              headers: {
+                'Authorization': `Bearer ${adminToken && adminToken.replace(/"/g, "")}`,
+              }
+            }
+          )
+            .then(response => {
+              return response.data && AsyncStorage.removeItem('userData').then(data => {
+                return AsyncStorage.setItem('userData',JSON.stringify( response.data.userdata)).then(data => {
+                  // console.log("updated new Org Token to local");
+                  return
+                })
+                  .catch(err => {
+                    console.log(err);
+                  })
+              }
+              ).catch(err => {
+                console.log(err);
+              })
+            })
+            .catch(err => {
+              console.error(JSON.stringify(err.request));
+              // throw err;
+            });
+        }
+      ).catch(err => {
+        console.log("error in getting Token", err);
+      })
+    }
+  })
+}, 50000);
+
+
 
 let getStoredToken = () => {
   return AsyncStorage.getItem('Token').then(
@@ -78,7 +111,7 @@ let getStoredToken = () => {
 export const getInspectionsData = async (userEmail) => {
 
   const token = await getStoredToken();
-  console.log(userEmail,"email");
+  console.log(userEmail, "email");
   return apiGet(
     `https://hudsonhomesmgmt--uat.sandbox.my.salesforce.com/services/apexrest/crimson/${userEmail}`,
     {
@@ -129,10 +162,7 @@ export const getVendorFormDetails = async (inspId) => {
       }
     },
   )
-    .then(response => {
-      console.log("VF DETAT",response.data);
-     return response.data
-    })
+    .then(response => response.data)
     .catch(err => {
       console.log(err);
       console.error(JSON.stringify(err.request));
