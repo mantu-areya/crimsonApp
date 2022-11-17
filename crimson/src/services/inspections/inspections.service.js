@@ -33,9 +33,8 @@ export let setToken = async () => {
 
   return AsyncStorage.getItem('userData').then(
     (value) => {
-       let LocalToken =  JSON.parse(value)
-      return LocalToken && AsyncStorage.removeItem('Token').then(datq=>{
-        console.log("tkn,",LocalToken.access_token);
+      let LocalToken = JSON.parse(value)
+      return LocalToken && AsyncStorage.removeItem('Token').then(datq => {
         AsyncStorage.setItem('Token', LocalToken.access_token).then(data => {
           return
           // console.log(data,"settingtk");
@@ -43,7 +42,7 @@ export let setToken = async () => {
           .catch(err => {
             console.log(err);
           })
-        }
+      }
       ).catch(err => {
         console.log(err);
       })
@@ -53,17 +52,51 @@ export let setToken = async () => {
   })
 }
 
-// const setTokenoninterval = () => setInterval(() => {
-//   return NetInfo.fetch().then(networkState => {
-//     // console.log("Is connected? - in settoken", networkState.isConnected);
-//     if (networkState.isConnected) {
-//       setToken()
-//       return
-//     }
-//   })
-// }, 500000);
 
-// setTokenoninterval();
+
+
+export const setTokenoninterval = (userName) => setInterval(() => {
+  return NetInfo.fetch().then(networkState => {
+    // console.log("Is connected? - in settoken", networkState.isConnected);
+    if (networkState.isConnected) {
+      return AsyncStorage.getItem('SfAdminToken').then(
+        (value) => {
+          let adminToken = JSON.parse(value)
+          return userName &&  apiGet(
+            `https://areyatechnology7-dev-ed.my.salesforce.com/services/apexrest/AuthCrimson/${userName}`,
+            {
+              headers: {
+                'Authorization': `Bearer ${adminToken && adminToken.replace(/"/g, "")}`,
+              }
+            }
+          )
+            .then(response => {
+              return response.data && AsyncStorage.removeItem('userData').then(data => {
+                return AsyncStorage.setItem('userData',JSON.stringify( response.data.userdata)).then(data => {
+                  // console.log("updated new Org Token to local");
+                  return
+                })
+                  .catch(err => {
+                    console.log(err);
+                  })
+              }
+              ).catch(err => {
+                console.log(err);
+              })
+            })
+            .catch(err => {
+              console.error(JSON.stringify(err.request));
+              // throw err;
+            });
+        }
+      ).catch(err => {
+        console.log("error in getting Token", err);
+      })
+    }
+  })
+}, 50000);
+
+
 
 let getStoredToken = () => {
   return AsyncStorage.getItem('Token').then(
@@ -78,7 +111,7 @@ let getStoredToken = () => {
 export const getInspectionsData = async (userEmail) => {
 
   const token = await getStoredToken();
-  console.log(userEmail,"email");
+  console.log(userEmail, "email");
   return apiGet(
     `https://hudsonhomesmgmt--uat.sandbox.my.salesforce.com/services/apexrest/crimson/${userEmail}`,
     {
@@ -90,7 +123,7 @@ export const getInspectionsData = async (userEmail) => {
     .then(response => {
       // console.log("ID",response.data);
       return response.data["Inspections"].Inspection
-    } )
+    })
     .catch(err => {
       console.error(err);
       // throw err;
@@ -121,7 +154,7 @@ export const getPendingInspections = async () => {
 
 export const getVendorFormDetails = async (inspId) => {
   const token = await getStoredToken();
-  console.log("start","get VFDetails");
+  console.log("start", "get VFDetails");
   return apiGet(
     `https://hudsonhomesmgmt--uat.sandbox.my.salesforce.com/services/apexrest/crimson/${inspId}`,
     {
@@ -130,7 +163,7 @@ export const getVendorFormDetails = async (inspId) => {
       }
     },
   )
-    .then(response => response.data )
+    .then(response => response.data)
     .catch(err => {
       console.log(err);
       console.error(JSON.stringify(err.request));
@@ -141,11 +174,11 @@ export const getVendorFormDetails = async (inspId) => {
   // return mockedVendorFormDetails
 }
 
-export const updateSfVendorFormDetails = async (data,inspId,submitStatus=false) => {
+export const updateSfVendorFormDetails = async (data, inspId, submitStatus = false) => {
   const token = await getStoredToken();
   console.log(inspId);
 
-  console.log("start","upload");
+  console.log("start", "upload");
 
   // console.log("Upload Data",data);
 
@@ -155,18 +188,18 @@ export const updateSfVendorFormDetails = async (data,inspId,submitStatus=false) 
   return apiPost(
     `https://hudsonhomesmgmt--uat.sandbox.my.salesforce.com/services/apexrest/crimson?InspectionId=${inspId}&Submit=${submitStatus}`,
     data,
-    {      
+    {
       headers: {
         'Authorization': `Bearer ${token}`,
       },
     },
   )
-    .then(response =>{
-      console.log("Upload :",response.data.Status);
-     return submitStatus?response.data.Status:response.data["DynamicVendorTemplates"].DynamicVendorTemplate 
+    .then(response => {
+      console.log("Upload :", response.data.Status);
+      return submitStatus ? response.data.Status : response.data["DynamicVendorTemplates"].DynamicVendorTemplate
     })
     .catch(err => {
-      console.error("Upload :",err.message);
+      console.error("Upload :", err.message);
       console.error(JSON.stringify(err.request));
 
       // throw err;
@@ -174,7 +207,7 @@ export const updateSfVendorFormDetails = async (data,inspId,submitStatus=false) 
 }
 
 
-export const uploadSignImage = async (data,inspId) => {
+export const uploadSignImage = async (data, inspId) => {
   const token = await getStoredToken();
   console.log("uploading Sign Image");
   console.log(data.parent_record_id > "1.txt");
@@ -182,15 +215,15 @@ export const uploadSignImage = async (data,inspId) => {
   return apiPut(
     `https://hudsonhomesmgmt--uat.sandbox.my.salesforce.com/services/apexrest/crimson/insertImages?recordId=${inspId}`,
     data,
-    {      
+    {
       headers: {
         'Authorization': `Bearer ${token}`,
       },
     },
   )
     .then(response => {
-       console.log(response.data) 
-       return response.data
+      console.log(response.data)
+      return response.data
     })
     .catch(err => {
       console.error(JSON.stringify(err.request));
@@ -201,18 +234,18 @@ export const uploadSignImage = async (data,inspId) => {
 export const deleteLineItem = async (dvdId) => {
   const token = await getStoredToken();
   console.log("deleting Line Item");
-  let data={}
+  let data = {}
   return apiPatch(
     `https://hudsonhomesmgmt--uat.sandbox.my.salesforce.com/services/apexrest/crimson/deleteItems?recordId=${dvdId}`,
     data,
-    {      
+    {
       headers: {
         'Authorization': `Bearer ${token}`,
       },
     },
   )
     .then(response => {
-       return response.data
+      return response.data
     })
     .catch(err => {
       console.error(JSON.stringify(err.request));
