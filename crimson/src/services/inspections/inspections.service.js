@@ -88,7 +88,6 @@ export const getInspectionsData = async (userEmail) => {
     },
   )
     .then(response => {
-      // console.log("ID",response.data);
       return response.data;
     })
     .catch(err => {
@@ -130,7 +129,10 @@ export const getVendorFormDetails = async (inspId) => {
       }
     },
   )
-    .then(response => response.data)
+    .then(response => {
+      console.log("VF DETAT",response.data);
+     return response.data
+    })
     .catch(err => {
       console.log(err);
       console.error(JSON.stringify(err.request));

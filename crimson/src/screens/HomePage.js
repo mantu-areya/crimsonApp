@@ -12,6 +12,7 @@ import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context"
 const backIcon = <Icon name="arrow-left" size={16} />;
 const rightArr = <Icon name="angle-right" size={48} color="white" />;
 const caretDown = <Icon name="caret-down" size={16} color="white" />;
+import { AuthenticationContext } from "../services/authentication/authentication.context";
 
 
 const TopContainer = styled.View`
@@ -34,12 +35,16 @@ export const HomePage = ({ navigation }) => {
   const [searchQuery, setSearchQuery] = React.useState('');
   const [selectedOption, setSelectedOption] = React.useState('Pending Vendor Submission');
 
+  console.log("ins",inspections);
+
   const onChangeSearch = query => {
     setSearchQuery(query);
   }
   const filterInspections = inspections?.filter((ins) => ins?.Name.toLowerCase().includes(searchQuery.toLowerCase()) || ins?.Property_Address__c.toLowerCase().includes(searchQuery.toLowerCase()) || ins?.Property_City__c?.toLowerCase()?.includes(searchQuery.toLowerCase()));
 
   const insets = useSafeAreaInsets();
+
+  const {onLogout} = React.useContext(AuthenticationContext);
 
   const [showUserMenu, setShowUserMenu] = React.useState(false);
   const [showInspectionsMenu, setShowInspectionsMenu] = React.useState(false);
@@ -59,7 +64,10 @@ export const HomePage = ({ navigation }) => {
                 <Avatar.Image size={36} source={require('../assets/images/ProfilePic.png')} />
               </TouchableOpacity>}>
             <Menu.Item onPress={() => setShowUserMenu(false)} title="Profile" />
-            <Menu.Item onPress={() => setShowUserMenu(false)} title="Logout" />
+            <Menu.Item onPress={() => {
+              setShowUserMenu(false)
+              onLogout();
+            }} title="Logout" />
           </Menu>
         </View>
         {/* Menu */}

@@ -27,6 +27,7 @@ export const InspectionsContextProvider = ({ children }) => {
 
   const retrieveInspections = () => {
     // console.log(user,"usr");
+    console.log("BEFORE GETTING INS");
     let userEmail = user && user
     setIsLoading(true);
     getInspectionsData(userEmail)
@@ -34,8 +35,8 @@ export const InspectionsContextProvider = ({ children }) => {
         setIsLoading(false);
         setUserRole(results["Role"])
         setUserId(results["UserId"])
-        setInspections(results)
-
+        console.log("Role",results["Role"]);
+        setInspections(results["Inspections"].Inspection)
       })
       .catch((err) => {
         setIsLoading(false);

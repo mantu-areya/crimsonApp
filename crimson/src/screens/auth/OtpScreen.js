@@ -24,6 +24,7 @@ export const OtpScreen = ({ navigation, route }) => {
       "OTP": otp && Number(otp)
     }
     verifyOtp(otpData).then(Response => {
+      console.log("RESPOMSE",Response.data);
       onOtpVerified(Response.data.userdata)
     }).catch(error => {
       console.log(JSON.stringify(error));
