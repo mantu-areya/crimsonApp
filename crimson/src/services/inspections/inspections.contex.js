@@ -19,6 +19,8 @@ export const InspectionsContextProvider = ({ children }) => {
   const [error, setError] = useState(null);
   const [stateChnage, setStaeChange] = useState(true);
   const [isOnline, setIsOnline] = useState(null)
+  const [userRole,setUserRole]= useState(null)
+  const [userId,setUserId]= useState(null)
   const { user } = useContext(AuthenticationContext);
 
 
@@ -30,7 +32,10 @@ export const InspectionsContextProvider = ({ children }) => {
     getInspectionsData(userEmail)
       .then(results => {
         setIsLoading(false);
+        setUserRole(results["Role"])
+        setUserId(results["UserId"])
         setInspections(results)
+
       })
       .catch((err) => {
         setIsLoading(false);
@@ -116,7 +121,9 @@ export const InspectionsContextProvider = ({ children }) => {
         setVendorFormData,
         isOnline,
         changeState,
-        reloadInspectionContext
+        reloadInspectionContext,
+        userRole,
+        userId
       }}
     >
       {children}

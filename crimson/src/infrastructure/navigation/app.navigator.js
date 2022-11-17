@@ -13,13 +13,18 @@ import { CameraScreen } from "../../utilities/camera/CameraScreen"
 import InspectionDetails from "../../screens/InspectionDetails";
 import Login from "../../screens/auth/Login";
 import { AuthContext } from "../../contexts/AuthContext";
+import { HomePage } from "../../screens/HomePage";
+import { getFocusedRouteNameFromRoute } from "@react-navigation/native";
+import Schedule from "../../screens/Schedule";
+import Chat from "../../screens/Chat";
+import ImageGallery from "../../screens/auth/ImageGallery";
 export const AppNavigator = () => {
 
 
   const TAB_ICON = {
     Home: "md-home",
     Map: "md-map",
-    Settings: "md-settings",
+    Schedule: "list-outline",
   };
 
   const screenOptions = ({ route }) => {
@@ -28,28 +33,12 @@ export const AppNavigator = () => {
       tabBarIcon: ({ size, color }) => (
         <Ionicons name={iconName} size={size} color={color} />
       ),
-      tabBarActiveTintColor: "tomato",
-      tabBarInactiveTintColor: "gray",
+      tabBarActiveTintColor: "#4B39EF",
+      tabBarInactiveTintColor: "#94A1AC",
     };
   };
 
-  const Maps = () => (
-    <SafeArea>
-      <Text>Maps</Text>
-    </SafeArea>
-  );
 
-  const Settings = () => (
-    <SafeArea>
-      <Text>Settings</Text>
-    </SafeArea>
-  );
-
-  const Home = () => (
-    <SafeArea>
-      <Text>Home</Text>
-    </SafeArea>
-  );
 
 
 
@@ -61,14 +50,15 @@ export const AppNavigator = () => {
     return (
       <Stack.Navigator>
         <Stack.Screen options={{ headerShown: false }}
-          name="HomeStack" component={HomeScreen} />
-        <Stack.Screen
-          options={{ headerShown: false }}
-          name="Inspections" component={InspectionsScreen} />
+          name="HomeStack" component={HomePage} />
         <Stack.Screen options={{ headerShown: false, }}
           name="InspectionsDetail" component={InspectionDetails} />
         <Stack.Screen options={{ headerShown: false, }}
           name="CameraScreen" component={CameraScreen} />
+        <Stack.Screen options={{ headerShown: false, }}
+          name="Chat" component={Chat} />
+           <Stack.Screen options={{ headerShown: false, }}
+          name="ImageGallery" component={ImageGallery} />
       </Stack.Navigator>
 
     );
@@ -84,6 +74,15 @@ export const AppNavigator = () => {
 
 
 
+  function getRouteName(route) {
+    const rName = getFocusedRouteNameFromRoute(route);
+    if (rName === "Home" || rName === "HomeStack"|| rName === undefined) {
+      return  "flex";
+    }
+    return "none";
+  }
+
+
   return (
     <>
       {/* {
@@ -91,23 +90,19 @@ export const AppNavigator = () => {
           <AuthStack /> : */}
           <Tab.Navigator screenOptions={screenOptions}>
             <Tab.Screen
-              options={{
-                headerShown: false, tabBarStyle: {
-                  display: 'none'
+              options={({ route }) => ({
+                headerShown: false,
+                tabBarStyle: {
+                  display: getRouteName(route)
                 }
-              }}
+              })}
               name="Home"
               component={HomeStackScreen}
             />
             <Tab.Screen
               options={{ headerShown: false }}
-              name="Settings"
-              component={Settings}
-            />
-            <Tab.Screen
-              options={{ headerShown: false }}
-              name="Map"
-              component={Maps}
+              name="Schedule"
+              component={Schedule}
             />
           </Tab.Navigator>
       {/* } */}

@@ -1,9 +1,10 @@
 import React from 'react'
 import styled from 'styled-components/native'
 import Ionicons from "react-native-vector-icons/Ionicons"
+import { Platform } from 'react-native'
 
 
-const CTA = ({ handleOnSubmit, handleOnChat }) => {
+const CTA = ({ handleOnSubmit, isReadOnly, handleOnChat, handleViewImages, handleSignature, isSubmitted }) => {
     const shadowStyle = {
         shadowColor: "#000",
         shadowOffset: {
@@ -15,19 +16,59 @@ const CTA = ({ handleOnSubmit, handleOnChat }) => {
 
         elevation: 5,
     }
+
+
     return (
         <Wrapper>
-            <SubmitButtonWrapper style={shadowStyle} onPress={handleOnSubmit}>
-                <ButtonText color="white">
-                    Submit for Review
-                </ButtonText>
-            </SubmitButtonWrapper>
-            <ChatButtonWrapper style={shadowStyle} onPress={handleOnChat}>
-                <Ionicons name="chatbubbles-sharp" size={24} color="black" />
-                <ButtonText marginLeft={8} >
-                    Chat
-                </ButtonText>
-            </ChatButtonWrapper>
+            {
+                !isSubmitted && <>
+                    {/* FOR GC */}
+                    {
+                        // !isReadOnly &&
+                        <SubmitButtonWrapper style={shadowStyle} onPress={handleOnSubmit}>
+                            <ButtonText color="white">
+                                Submit for Review
+                            </ButtonText>
+                        </SubmitButtonWrapper>
+
+                    }
+                    {/* {
+                        !isReadOnly ?
+                            <SubmitButtonWrapper style={shadowStyle} onPress={handleOnSubmit}>
+                                <ButtonText color="white">
+                                    Submit for Review
+                                </ButtonText>
+                            </SubmitButtonWrapper>
+                            :
+                            <SubmitButtonWrapper style={[shadowStyle, { backgroundColor: "grey" }]}>
+                                <ButtonText style={{ textAlign: "center", }} color="white">
+                                    Submitted
+                                </ButtonText>
+                            </SubmitButtonWrapper>
+                    } */}
+                    <ChatButtonWrapper style={shadowStyle} onPress={handleOnChat}>
+                        <Ionicons name="chatbubbles-sharp" size={24} color="black" />
+                        <ButtonText marginLeft={8} >
+                            Chat
+                        </ButtonText>
+                    </ChatButtonWrapper>
+                </>
+            }
+            {
+                isSubmitted && <>
+                    <SubmitButtonWrapper style={shadowStyle} onPress={handleSignature}>
+                        <ButtonText style={{ textAlign: 'center' }} color="white">
+                            Sign
+                        </ButtonText>
+                    </SubmitButtonWrapper>
+                    <ChatButtonWrapper style={shadowStyle} onPress={handleViewImages}>
+                        <Ionicons name="list" size={24} color="black" />
+                        <ButtonText marginLeft={8} >
+                            View Images
+                        </ButtonText>
+                    </ChatButtonWrapper>
+                </>
+            }
         </Wrapper>
     )
 }
@@ -45,7 +86,7 @@ flex: 1;
 const ChatButtonWrapper = styled.TouchableOpacity`
 background-color: #E2F1DE;
 flex: 1;
-padding: 8px 16px;
+padding: ${Platform.OS === "android" ? 4 : 8}px ${Platform.OS === "android" ? 9 : 16}px;
 flex-direction: row;
 justify-content: center;
 align-items: center;
@@ -53,7 +94,7 @@ align-items: center;
 `;
 
 const ButtonText = styled.Text`
-font-size:18px;
+font-size:${Platform.OS === "android" ? 16 : 18}px;
 font-family: 'URBAN_BOLD';
 text-transform: uppercase;
 color: ${props => props.color || 'black'};

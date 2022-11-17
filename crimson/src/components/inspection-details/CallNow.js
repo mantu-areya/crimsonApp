@@ -4,10 +4,13 @@ import styled from "styled-components/native"
 import  Ionicons  from "react-native-vector-icons/Ionicons"
 
 
-const CallNow = ({data}) => {
+const CallNow = ({isForReviewerView,data}) => {
     const {
         HHM_Field_PM__r,
         HHM_Field_PM_Email__c,
+        GC_Email__c,
+        General_Contractor__r
+
     } = data;
     return (
         <Container>
@@ -15,7 +18,7 @@ const CallNow = ({data}) => {
             <TextWrapper>
                 {/* Name */}
                 <Title>
-                {HHM_Field_PM__r.Name}
+                {!isForReviewerView ? HHM_Field_PM__r.Name : `${General_Contractor__r?.Name} GC Contractor`}
                 </Title>
                 {/* Mobile No */}
                 <SubTitle>
@@ -24,7 +27,7 @@ const CallNow = ({data}) => {
                 </SubTitle>
                 {/* Mobile No */}
                 <SubTitle>
-                    {HHM_Field_PM_Email__c}
+                    {!isForReviewerView ? HHM_Field_PM_Email__c : GC_Email__c}
                 </SubTitle>
             </TextWrapper>
             {/*  Button */}

@@ -1,8 +1,12 @@
 import { View, Text, TextInput } from 'react-native'
-import React, { useContext, useEffect } from 'react'
+import React, {useContext, useEffect} from 'react'
 import styled from 'styled-components/native'
 import { useSafeAreaInsets } from "react-native-safe-area-context"
 import { Button, IconButton } from 'react-native-paper'
+import { AuthenticationContext } from "../../services/authentication/authentication.context";
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
+import { Spacer } from '../../components/spacer/spacer.component';
+import { sendOtp } from '../../services/api/authentication/auth.services'
 // import { AuthenticationContext } from "../../services/authentication/authentication.context";
 // import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import { Spacer } from '../../components/spacer/spacer.component';

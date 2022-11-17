@@ -1,4 +1,4 @@
-import { View, Text, FlatList, ActivityIndicator } from 'react-native'
+import { View, Text, FlatList, ActivityIndicator, Dimensions, Platform } from 'react-native'
 import React from 'react'
 import styled from 'styled-components/native';
 import FormLineItem from './FormLineItem';
@@ -8,7 +8,8 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
 import { Button } from 'react-native-paper';
 
-const OtherForms = ({ readOnly, inspectionData, navigation }) => {
+
+const OtherForms = ({ gTotal, isSubmitted, isForReviewerView, readOnly, inspectionData, navigation }) => {
 
 
     let [general_Rental, setGeneral_Rental] = React.useState([])
@@ -21,6 +22,7 @@ const OtherForms = ({ readOnly, inspectionData, navigation }) => {
     const [sequence, setSequence] = React.useState();
 
     const { vendorFormDetails, updateToSf } = React.useContext(VendorFormContext);
+
 
 
     const isFocused = useIsFocused();
@@ -126,9 +128,9 @@ const OtherForms = ({ readOnly, inspectionData, navigation }) => {
             data: general_Rental,
         },
         {
-            title: 'Interior',
-            icon: <MaterialCommunityIcons size={28} name='home-account' color={"#36905C"} />,
-            data: interior
+            title: 'Pools',
+            icon: <MaterialIcons size={28} name='pool' color={"#DE9B67"} />
+            , data: pools
         },
         {
             title: 'Exterior',
@@ -136,9 +138,9 @@ const OtherForms = ({ readOnly, inspectionData, navigation }) => {
             , data: exterior
         },
         {
-            title: 'Pools',
-            icon: <MaterialIcons size={28} name='pool' color={"#DE9B67"} />
-            , data: pools
+            title: 'Interior',
+            icon: <MaterialCommunityIcons size={28} name='home-account' color={"#36905C"} />,
+            data: interior
         },
         {
             title: 'Mechanical, Electrical and Plumbing Systems',
@@ -162,7 +164,7 @@ const OtherForms = ({ readOnly, inspectionData, navigation }) => {
     // }, [dataList]);
 
     const onOtherFormValueChange = (value, field, key) => {
-        console.log("changing", field, 'with', value);
+        console.log("changing", field, 'with', value, "KEY", key);
         let newState, Sub_Category;
         let newSequence = sequence + 1
         let Category = currentFormData && currentFormData.data[0].Category
@@ -207,17 +209,23 @@ const OtherForms = ({ readOnly, inspectionData, navigation }) => {
         } {
             newState = dataList.map(obj => {
                 if (obj.UniqueKey === key) {
-                    let formatedVal = ["U_M", "Scope_Notes"].includes(field) ? value : parseFloat(value)
+                    let formatedVal = ["U_M", "Scope_Notes", "Owner_Clarification"].includes(field) ? value : parseFloat(value)
                     let newValues = { ...obj, [field]: formatedVal };
-                    let newTotal = (newValues.Quantity * newValues.Rate)
+                    let newTotal;
+
+                    if (field === "Adj_Quantity" || field === "Adj_Rate") {
+                        newTotal = (newValues.Adj_Quantity * newValues.Adj_Rate)
+                    } else {
+                        newTotal = (newValues.Quantity * newValues.Rate)
+                    }
+
                     return { ...obj, [field]: formatedVal, ["Total"]: newTotal };
                 }
-                //   obj.UniqueKey === key && 
                 return obj;
             });
         }
         setDatalist(newState)
-        setUpdatedData(currentForm,newState);
+        setUpdatedData(currentForm, newState);
         updateVfContect(newState, "OTHRFM", inspectionData.Id);
     }
 
@@ -310,7 +318,7 @@ const OtherForms = ({ readOnly, inspectionData, navigation }) => {
 
         // console.log(newData);
         setDatalist(newData);
-        setUpdatedData(currentForm,newState);
+        setUpdatedData(currentForm, newState);
         updateVfContect(newState, "RM", inspectionData.Id);
     }
 
@@ -343,39 +351,98 @@ const OtherForms = ({ readOnly, inspectionData, navigation }) => {
         updateToSf(inspectionData.Id)
     }
 
+    function handleAcceptLineItem(lineItemId, status) {
+        console.log("CHNAGING ITEM: " + lineItemId);
+        let updatedData = dataList.map((data) => {
+            if (data.Id === lineItemId) {
+                data.Approval_Status = status
+            }
+            return data;
+        });
+        setDatalist(updatedData);
+        updateVfContect(updatedData, "OTHRFM", inspectionData.Id);
+        updateToSf(inspectionData.Id, false);
+    }
+
+    function getPendingApprovalCount() {
+        return dataList.filter(item => item.Approval_Status === null).length
+    }
 
 
     return (
-        <View style={{ height: 720 }}>
-            {/* Menu */}
-            <MenuWrapper >
-                {menuItems.map((item, i) => <MenuItem isActive={item.title === currentForm} onPress={() => handleOnFormChange(item.title)} key={i}>{item.icon}</MenuItem>)}
-            </MenuWrapper>
-            <CurrentFormHeading>{currentForm}</CurrentFormHeading>
-            {
-                dataList.length > 0 ?
-                    <FlatList
-                        data={dataList}
-                        keyExtractor={item => item.UniqueKey}
-                        renderItem={({ item }) => <FormLineItem   {...{ item,inspId:inspectionData.Id, onRoomMeasurementValueChange, onOtherFormValueChange, navigation, readOnly, setShowAddButton, handleOnSave }} isForRoomMeasurement={currentFormData.title === "Room Measurements"} />}
-                    /> :
-                    <View style={{ padding: 16 }}>
-                        <ActivityIndicator />
-                    </View>
+        <View>
+            {!isSubmitted &&
+                <>
+                    {/* Menu */}
+                    <MenuWrapper >
+                        {menuItems.map((item, i) => <MenuItem isActive={item.title === currentForm} onPress={() => handleOnFormChange(item.title)} key={i}>{item.icon}</MenuItem>)}
+                    </MenuWrapper>
+                    <CurrentFormHeading>{currentForm}</CurrentFormHeading>
+                    {
+                        (isForReviewerView && currentForm !== "Room Measurements") &&
+                        <View intensity={100} style={{ marginVertical: 8, flexDirection: 'row', alignItems: 'center' }}>
+                            <CurrentFormHeading style={{fontSize: Platform.OS === "android" ? 18 : 22}}>BID FOR REVIEW</CurrentFormHeading>
+                            <CurrentFormHeading style={{fontSize: Platform.OS === "android" ? 16 : 18, textTransform: 'none' }}>Pending Approvals {getPendingApprovalCount()}/{dataList.length}</CurrentFormHeading>
+                        </View>
+                    }
+                    {
+                        dataList.length > 0 ?
+                            <FlatList
+                                data={dataList}
+                                keyExtractor={item => item.UniqueKey}
+                                renderItem={({ item }) => <FormLineItem   {...{ handleAcceptLineItem, isForReviewerView, item, inspId: inspectionData.Id, onRoomMeasurementValueChange, onOtherFormValueChange, navigation, readOnly, setShowAddButton, handleOnSave }} isForRoomMeasurement={currentFormData.title === "Room Measurements"} />}
+                            /> :
+                            <View style={{ padding: 16 }}>
+                                <ActivityIndicator />
+                            </View>
 
+                    }
+                    {!readOnly && showAddButton &&
+                        <View>
+                            <AddNewLineItemButton mode="contained" onPress={handleAddNewItem} labelStyle={{
+                                fontFamily: 'URBAN_BOLD'
+                            }}>
+                                Add New Item
+                            </AddNewLineItemButton>
+                        </View>
+                    }
+
+                </>
             }
-            {!readOnly && showAddButton &&
-                <View>
-                    <AddNewLineItemButton mode="contained" onPress={handleAddNewItem} labelStyle={{
-                        fontFamily: 'URBAN_BOLD'
-                    }}>
-                        Add New Item
-                    </AddNewLineItemButton>
-                </View>
+            {
+                isSubmitted &&
+                <>
+                    <MenuWrapper style={{ justifyContent: "space-between" }}>
+                        <View style={{ flexDirection: "row" }}>
+                            <MaterialCommunityIcons size={28} name='home-city' color={"#DE9B67"} />
+                            <Text style={{ marginLeft: 8, color: '#C2CBD0', fontFamily: 'URBAN_BOLD', fontSize: 24 }}>Work Order</Text>
+                        </View>
+                        <View>
+                            <Text style={{ color: '#C2CBD0', fontFamily: 'URBAN_BOLD', fontSize: 24 }}>{gTotal}</Text>
+                        </View>
+                    </MenuWrapper>
+
+                    {
+                        dataList.length > 0 ?
+                            <FlatList
+                                data={[].concat(general_Rental,pools, exterior, interior,  mech_Elec_Plumb).filter(item => item.Approval_Status === "Approved" || item.Approval_Status === "Approved as Noted")}
+                                keyExtractor={item => item.UniqueKey}
+                                renderItem={({ item }) => <FormLineItem   {...{ isSubmitted, isForReviewerView, item, inspId: inspectionData.Id, onRoomMeasurementValueChange, onOtherFormValueChange, navigation, readOnly, setShowAddButton, handleOnSave }} isForRoomMeasurement={currentFormData.title === "Room Measurements"} />}
+                            /> :
+                            <View style={{ padding: 16 }}>
+                                <ActivityIndicator />
+                            </View>
+
+                    }
+
+
+                </>
             }
         </View>
     )
 }
+
+const windowWidth = Dimensions.get('window').width;
 
 const MenuWrapper = styled.View`
 margin:16px 0;
@@ -383,11 +450,12 @@ background-color: #1E2429;
 flex-direction: row;
 padding:12px;
 justify-content: center;
+width: ${windowWidth}px ;
 `;
 
 
 const MenuItem = styled.TouchableOpacity`
-margin: 0 16px;
+margin: 0 ${Platform.OS === "android" ? 12 : 16}px;
 border: ${props => props.isActive ? "2px solid red" : "none"};
 border-radius: 4px;
 padding:4px;
@@ -396,7 +464,7 @@ padding:4px;
 const CurrentFormHeading = styled.Text`
 font-family: 'URBAN_BOLD';
 text-transform: uppercase;
-font-size: 16px;
+font-size: ${Platform.OS === "android" ? 12 : 16}px;
 margin-left: 16px;
 
 `;

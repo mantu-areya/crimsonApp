@@ -1,91 +1,186 @@
-import { View, Text, ImageBackground, Image } from 'react-native'
+import { View, Text, ImageBackground, Image, Dimensions, Platform } from 'react-native'
 import React from 'react'
 import styled from 'styled-components/native'
 import Ionicons from "react-native-vector-icons/Ionicons"
 import { differenceInDays } from 'date-fns'
-
-
-
 import { useNavigation } from '@react-navigation/native';
 import Overlay from 'react-native-modal-overlay';
+import { postSendFileEmail } from '../../services/inspections/inspections.service';
+import Carousel, { Pagination } from 'react-native-snap-carousel'
+import { Map } from './maps/Map'
+import * as Linking from "expo-linking";
+
+
 
 const image = require("../../../assets/black-bg.jpeg");
 
-const Hero = ({data,formStage}) => {
+const Hero = ({ data, isSubmitted, sectionTotals }) => {
 
     const navigation = useNavigation()
-    const [overlayVisible, setOverlayVisible] = React.useState(false)
+    const [overlayVisible, setOverlayVisible] = React.useState(false);
 
+    async function handleFileDownload() {
+        const res = await postSendFileEmail(data.Id, GC_Email__c);
+        console.log("FILE EMAIl SEND", res);
+    }
 
     const {
-        Property_Address__c,
-        Property_City__c,
-        Property_State__c,
-        Property_Zip_Code__c,
-        HHM_Field_PM__r,
-        Repair_Estimator_Email__c,
-        Repair_Estimator__r,
-        Inspection_Scheduled_Date__c,
+        Property_Street_Address__c,
         Target_Rehab_Complete_Date__c,
-        HHM_Field_PM_Email__c,
         GC_Inspection_Due_Date__c,
         Inspection_Form_Stage__c,
-        Inspection_Stage__c,
-        Prospect_ID__r,
-        Prospect_ID__r :  {Baths__c, Bed__c,Square_Feet__c}
+        GC_Email__c,
+        Prospect_ID__r: { Baths__c, Bed__c, Square_Feet__c, Year_Built__c },
+        doCreateWAF__c
     } = data;
-
-    console.log("Prospect_ID__r",Prospect_ID__r);
-    console.log({Baths__c, Bed__c,Square_Feet__c});
-
-
 
     const pendingDays = differenceInDays(
         new Date(GC_Inspection_Due_Date__c),
         new Date()
-      )
+    )
 
 
-    return (
-        <Container>
-            {/* Image Background */}
-            <ImageBackgroundWrapper onPress={() => setOverlayVisible(true)} >
+    const isCarousel = React.useRef(null);
 
-                <Image  source={image} style={{ width: '100%', height: 360, borderRadius: 16 }} />
+    const [index, setIndex] = React.useState(0)
 
-                <InsideContentWrapper>
-                    <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                        {/* Back Icon */}
-                        <GoBackButton handleGoBack={() => navigation.goBack()} />
-                        {/* Meta Info */}
-                        <MetaInfo {...{pendingDays,Inspection_Stage__c}} />
-                    </View>
-                    {/* Short Summary */}
-                    <ShortSummary {...{Property_Address__c, Baths__c, Bed__c,Square_Feet__c }} />
-                </InsideContentWrapper>
 
-            </ImageBackgroundWrapper>
-            <Overlay childrenWrapperStyle={{backgroundColor: 'black'}} containerStyle={{ backgroundColor: 'black' }} visible={overlayVisible} onClose={() => setOverlayVisible(false)} closeOnTouchOutside >
-                <Ionicons onPress={() => setOverlayVisible(false)} name="close" color="white" size={32} />
-                <Image source={image} style={{ width: 320, height: 320, borderRadius: 16 }} />
-            </Overlay>
-            {/* Description */}
-            <DescriptionWrapper>
+    function CarouselCardItem({ index }) {
+        if (index == 0) {
+            return (
+                <ImageBackgroundWrapper onPress={() => setOverlayVisible(true)} >
+
+                    <Image source={image} style={{ width: '100%', height: 360, borderRadius: 16 }} />
+
+                    <InsideContentWrapper>
+                        <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                            {/* Back Icon */}
+                            <GoBackButton handleGoBack={() => navigation.goBack()} />
+                            {/* Meta Info */}
+                            <MetaInfo {...{ pendingDays, Inspection_Form_Stage__c, handleFileDownload, doCreateWAF__c }} />
+                        </View>
+                        {/* Short Summary */}
+                        <ShortSummary {...{ Property_Street_Address__c, Baths__c, Bed__c, Square_Feet__c }} />
+
+                    </InsideContentWrapper>
+
+                </ImageBackgroundWrapper>
+            )
+        }
+        return (
+            <MapBackgroundWrapper>
+                <BackButtonWrapper style={{ position: 'absolute', top: 16, left: 16, zIndex: 9, backgroundColor: "#23252645" }} onPress={() => navigation.goBack()}>
+                    <Ionicons name="arrow-back" size={32} color="white" />
+                </BackButtonWrapper>
+                <BackButtonWrapper onPress={handleOpenMap} style={{ width: 148, flexDirection: "row", position: 'absolute', bottom: 10, right: 16, zIndex: 9, backgroundColor: "#23252685" }}>
+                    <Ionicons name="navigate" size={18} color="white" />
+                    <Text style={{ fontFamily: "URBAN_BOLD", fontSize: 14, color: "white" }}>Get Directions</Text>
+                </BackButtonWrapper>
+                <Map inspections={data} />
+            </MapBackgroundWrapper>
+        )
+    }
+
+    const width = Dimensions.get("screen").width - 64
+
+    const { Property_Latitude__c, Property_Longitude__c } = data;
+
+
+    const handleOpenMap = () => {
+        Platform.select({
+            ios: () => {
+                Linking.openURL("http://maps.apple.com/maps?daddr=" + Property_Latitude__c + "," + Property_Longitude__c + "&dirflg=d&t=m");
+            },
+            android: () => {
+                Linking.openURL("http://maps.google.com/maps?daddr=" + Property_Latitude__c + "," + Property_Longitude__c);
+            }
+        })();
+    }
+
+
+
+
+return (
+    <Container>
+        <View>
+            <Carousel
+                layout="default"
+                layoutCardOffset={2}
+                ref={isCarousel}
+                data={[1, 2]}
+                renderItem={({ item, index }) => <CarouselCardItem {...{ item, index }} />}
+                sliderWidth={width}
+                itemWidth={width}
+                inactiveSlideShift={0}
+                removeClippedSubviews={false}
+                useScrollView={false}
+                onSnapToItem={(index) => setIndex(index)}
+            />
+            <Pagination
+                dotsLength={[1, 2].length}
+                activeDotIndex={index}
+                carouselRef={isCarousel}
+                dotStyle={{
+                    width: 10,
+                    height: 10,
+                    borderRadius: 5,
+                    marginHorizontal: 0,
+                    backgroundColor: 'rgba(0, 0, 0, 0.92)'
+                }}
+                inactiveDotOpacity={0.4}
+                inactiveDotScale={0.6}
+                tappableDots={true}
+            />
+
+        </View>
+
+
+        <Overlay childrenWrapperStyle={{ backgroundColor: 'black' }} containerStyle={{ backgroundColor: 'black' }} visible={overlayVisible} onClose={() => setOverlayVisible(false)} closeOnTouchOutside >
+            <Ionicons onPress={() => setOverlayVisible(false)} name="close" color="white" size={32} />
+            <Image source={image} style={{ width: 320, height: 320, borderRadius: 16 }} />
+        </Overlay>
+        {/* Description */}
+        {
+            !isSubmitted && <DescriptionWrapper>
                 <Text style={{ color: 'black', fontFamily: 'URBAN_BOLD', fontSize: 16 }}>DESCRIPTION</Text>
                 <DescriptionText style={{ marginTop: 14 }}>
-                   { Property_Address__c } is a {Bed__c} Room Property with {Baths__c} Baths and {Square_Feet__c} Sq Ft. Built in 2022 this property is a New Construction.
+                    {Property_Street_Address__c} is a {Bed__c} Room Property with {Baths__c} Baths and {Square_Feet__c} Sq Ft. Built in {Year_Built__c} this property is a New Construction.
                 </DescriptionText>
                 <DescriptionText style={{ marginTop: 16 }}>
                     Inspection Schedule Date - {GC_Inspection_Due_Date__c}
                 </DescriptionText>
                 <DescriptionText>
-                    Target Rehab Complete Date - {Target_Rehab_Complete_Date__c} 
+                    Target Rehab Complete Date - {Target_Rehab_Complete_Date__c}
                     {/* // ! not getting this value */}
                 </DescriptionText>
             </DescriptionWrapper>
-        </Container>
-    )
+        }
+        {
+            isSubmitted &&
+            <DescriptionWrapper>
+                <Text style={{ color: 'black', fontFamily: 'URBAN_BOLD', fontSize: 16 }}>Section Breakdown</Text>
+                <DescriptionText style={{ marginTop: 8 }}>
+                    General Rental Scopes - {sectionTotals.grs}
+                </DescriptionText>
+                <DescriptionText >
+                    Pools - {sectionTotals.pools}
+                </DescriptionText>
+                <DescriptionText >
+                    Exterior - {sectionTotals.exterior}
+                </DescriptionText>
+                <DescriptionText >
+                    Interior - {sectionTotals.interior}
+                </DescriptionText>
+                <DescriptionText >
+                    MEP - {sectionTotals.mep}
+                </DescriptionText>
+            </DescriptionWrapper>
+        }
+    </Container>
+)
 }
+
+
 
 
 function GoBackButton({ handleGoBack }) {
@@ -96,22 +191,22 @@ function GoBackButton({ handleGoBack }) {
     )
 }
 
-function MetaInfo({pendingDays, Inspection_Stage__c }) {
+function MetaInfo({ pendingDays, Inspection_Form_Stage__c, handleFileDownload, doCreateWAF__c }) {
     return (
         <MetaInfoWrapper>
-            <MetaInfoText>{Inspection_Stage__c}</MetaInfoText>
+            <MetaInfoText>{Inspection_Form_Stage__c}</MetaInfoText>
             <MetaInfoText>{pendingDays} days pending</MetaInfoText>
-            <Ionicons style={{ marginTop: 16 }} name="cloud-download" size={32} color="white" />
+            {doCreateWAF__c && <Ionicons onPress={handleFileDownload} style={{ marginTop: 16 }} name="cloud-download" size={32} color="white" />}
         </MetaInfoWrapper>
     )
 }
 
-function ShortSummary({ Property_Address__c, Baths__c, Bed__c,Square_Feet__c }) {
+function ShortSummary({ Property_Street_Address__c, Baths__c, Bed__c, Square_Feet__c }) {
     return (
         <ShortSummaryWrapper>
             {/* Address */}
             <ShortSummaryAddress>
-               {Property_Address__c}
+                {Property_Street_Address__c}
             </ShortSummaryAddress>
             {/* Bed | Bath | Sq Feet */}
             <BedBathSqftText>
@@ -129,6 +224,10 @@ width: 100%;
 `;
 
 const ImageBackgroundWrapper = styled.TouchableOpacity`
+
+`;
+
+const MapBackgroundWrapper = styled.TouchableOpacity`
 
 `;
 
