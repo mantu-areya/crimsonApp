@@ -10,8 +10,8 @@ export const setOrgToken = () => {
     'grant_type': 'password',
     "client_Id" : "3MVG9tSqyyAXNH5I41Ba9xU4GIhGUJC6d1QtX8zg7ACKLRRnioJ68LkvJUQ3QVCeG0WnHhqK47Spx3gkWDY9g",
     "client_scret" :"01F7EDE48EAE99BA55B06A0204EE6ED222865744E41BBB5E4FEB0A46F6D828B9",
-    "userName" : "bhupendra.singh@areya.tech",
-    "password" :"Areya@2011mJq4JajvPLvCfZ0LN93FVFl78"
+    "userName" : "crimson.mobile@areya.tech",
+    "password" :"Areya@2001xnNPh415vKHd0MpqIfRK1oln"
   });
   return apiPost('https://login.salesforce.com/services/oauth2/token?', data
   )
@@ -22,6 +22,7 @@ export const setOrgToken = () => {
       })
     })
     .catch(err => {
+      console.log("error in setOrgToken ",JSON.stringify(err));
       console.error(err);
       // throw err;
     });
