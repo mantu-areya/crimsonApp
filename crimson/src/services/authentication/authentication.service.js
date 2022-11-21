@@ -38,7 +38,7 @@ const setTokenoninterval = () => setInterval(() => {
       return
     }
   })
-}, 50000);
+}, 18000000);
 
 setTokenoninterval();
 
