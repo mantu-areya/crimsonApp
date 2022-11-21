@@ -1,4 +1,4 @@
-import { View, Text, FlatList, ActivityIndicator, Dimensions, Platform } from 'react-native'
+import { View, Text, FlatList, ActivityIndicator, Dimensions, Platform, ScrollView } from 'react-native'
 import React from 'react'
 import styled from 'styled-components/native';
 import FormLineItem from './FormLineItem';
@@ -381,17 +381,18 @@ const OtherForms = ({ gTotal, isSubmitted, isForReviewerView, readOnly, inspecti
                     {
                         (isForReviewerView && currentForm !== "Room Measurements") &&
                         <View intensity={100} style={{ marginVertical: 8, flexDirection: 'row', alignItems: 'center' }}>
-                            <CurrentFormHeading style={{fontSize: Platform.OS === "android" ? 18 : 22}}>BID FOR REVIEW</CurrentFormHeading>
-                            <CurrentFormHeading style={{fontSize: Platform.OS === "android" ? 16 : 18, textTransform: 'none' }}>Pending Approvals {getPendingApprovalCount()}/{dataList.length}</CurrentFormHeading>
+                            <CurrentFormHeading style={{ fontSize: Platform.OS === "android" ? 18 : 22 }}>BID FOR REVIEW</CurrentFormHeading>
+                            <CurrentFormHeading style={{ fontSize: Platform.OS === "android" ? 16 : 18, textTransform: 'none' }}>Pending Approvals {getPendingApprovalCount()}/{dataList.length}</CurrentFormHeading>
                         </View>
                     }
                     {
                         dataList.length > 0 ?
-                            <FlatList
-                                data={dataList}
-                                keyExtractor={item => item.UniqueKey}
-                                renderItem={({ item }) => <FormLineItem   {...{ handleAcceptLineItem, isForReviewerView, item, inspId: inspectionData.Id, onRoomMeasurementValueChange, onOtherFormValueChange, navigation, readOnly, setShowAddButton, handleOnSave }} isForRoomMeasurement={currentFormData.title === "Room Measurements"} />}
-                            /> :
+                            <ScrollView>
+                                {
+                                    dataList.map((item, i) => <FormLineItem key={i}   {...{ handleAcceptLineItem, isForReviewerView, item, inspId: inspectionData.Id, onRoomMeasurementValueChange, onOtherFormValueChange, navigation, readOnly, setShowAddButton, handleOnSave }} isForRoomMeasurement={currentFormData.title === "Room Measurements"} />)
+                                }
+                            </ScrollView>
+                            :
                             <View style={{ padding: 16 }}>
                                 <ActivityIndicator />
                             </View>
@@ -424,11 +425,11 @@ const OtherForms = ({ gTotal, isSubmitted, isForReviewerView, readOnly, inspecti
 
                     {
                         dataList.length > 0 ?
-                            <FlatList
-                                data={[].concat(general_Rental,pools, exterior, interior,  mech_Elec_Plumb).filter(item => item.Approval_Status === "Approved" || item.Approval_Status === "Approved as Noted")}
-                                keyExtractor={item => item.UniqueKey}
-                                renderItem={({ item }) => <FormLineItem   {...{ isSubmitted, isForReviewerView, item, inspId: inspectionData.Id, onRoomMeasurementValueChange, onOtherFormValueChange, navigation, readOnly, setShowAddButton, handleOnSave }} isForRoomMeasurement={currentFormData.title === "Room Measurements"} />}
-                            /> :
+                            <ScrollView>
+                                {
+                                    dataList.map((item, i) => <FormLineItem key={i}   {...{ handleAcceptLineItem, isForReviewerView, item, inspId: inspectionData.Id, onRoomMeasurementValueChange, onOtherFormValueChange, navigation, readOnly, setShowAddButton, handleOnSave }} isForRoomMeasurement={currentFormData.title === "Room Measurements"} />)
+                                }
+                            </ScrollView> :
                             <View style={{ padding: 16 }}>
                                 <ActivityIndicator />
                             </View>

@@ -8,10 +8,10 @@ export const setOrgToken = () => {
   var qs = require('qs');
   var data = qs.stringify({
     'grant_type': 'password',
-    'client_id': '3MVG9wt4IL4O5wvI4PySmNNrBLXwBZingrtj_Jy5Nc_X3UKaSqftCpTXb70a46VTpE7rBcj.zm_dLqm0Vuwm5',
-    'client_secret': 'A552CB01650BB01A983E836E1644F3D2707CEB46B3D2CAB8E0C395E84BE37835',
-    'username': 'bhupendra.singh@areya.tech.dev',
-    'password': 'Areya@2001gMmBKQzT8yObHlhHxD680LmQJ'
+    "client_Id" : "3MVG9tSqyyAXNH5I41Ba9xU4GIhGUJC6d1QtX8zg7ACKLRRnioJ68LkvJUQ3QVCeG0WnHhqK47Spx3gkWDY9g",
+    "client_scret" :"01F7EDE48EAE99BA55B06A0204EE6ED222865744E41BBB5E4FEB0A46F6D828B9",
+    "userName" : "bhupendra.singh@areya.tech",
+    "password" :"Areya@2011mJq4JajvPLvCfZ0LN93FVFl78"
   });
   return apiPost('https://login.salesforce.com/services/oauth2/token?', data
   )
