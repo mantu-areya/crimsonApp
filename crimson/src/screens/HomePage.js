@@ -14,6 +14,7 @@ const rightArr = <Icon name="angle-right" size={48} color="white" />;
 const caretDown = <Icon name="caret-down" size={16} color="white" />;
 import { AuthenticationContext } from "../services/authentication/authentication.context";
 
+import { useIsFocused } from '@react-navigation/native';
 
 const TopContainer = styled.View`
 background-color:#14181B;
@@ -31,7 +32,7 @@ background-color: #F1F4F8;
 `;
 
 export const HomePage = ({ navigation }) => {
-  const { isLoading, inspections } = useContext(InspectionsContext);
+  const { isLoading, inspections, reloadInspectionContext } = useContext(InspectionsContext);
   const [searchQuery, setSearchQuery] = React.useState('');
   const [selectedOption, setSelectedOption] = React.useState('Pending Vendor Submission');
 
@@ -44,10 +45,19 @@ export const HomePage = ({ navigation }) => {
 
   const insets = useSafeAreaInsets();
 
-  const {onLogout} = React.useContext(AuthenticationContext);
+  const { onLogout } = React.useContext(AuthenticationContext);
 
   const [showUserMenu, setShowUserMenu] = React.useState(false);
   const [showInspectionsMenu, setShowInspectionsMenu] = React.useState(false);
+
+  const isFocused = useIsFocused();
+
+  React.useEffect(() => {
+    if (isFocused) {
+      console.log("GETTING LATEST INSPECTION");
+      reloadInspectionContext();
+    }
+  }, [isFocused])
 
   return (
     <View style={{ flex: 1, paddingTop: insets.top, backgroundColor: 'black' }}>

@@ -97,6 +97,14 @@ const InspectionDetails = ({ route, navigation }) => {
 
   let currentRecord = vendorFormDetails[inspectionData.Id];
 
+  console.log("currentRecord", currentRecord);
+
+  if (currentRecord === "NA") {
+    return <View>
+      <Text>NOT AVAILABLE</Text>
+    </View>
+  }
+
   function getFormTotal(formCategory, formatted = true) {
     let total = 0;
     if (formCategory === "all") {
@@ -126,7 +134,8 @@ const InspectionDetails = ({ route, navigation }) => {
   let bidApprovalVal = getFormTotal("all", false);
 
   console.log("IS WORK AUTH CREATED", inspectionData?.doCreateWAF__c);
-  console.log("CURR INSP ID", inspectionData?.Name);
+  console.log("CURR INSP NAME", inspectionData?.Name);
+  console.log("CURR INSP ID", inspectionData?.Id);
 
   const initalEstimateRehab = "0"
 
@@ -146,7 +155,7 @@ const InspectionDetails = ({ route, navigation }) => {
         {/* Hero */}
         <Hero data={inspectionData} sectionTotals={sectionTotals} isSubmitted={isSubmitted} />
         {/* CTA's */}
-        <CTA handleOnChat={() => navigation.navigate("Chat", { inspId: inspectionData.Id })} isReadOnly={readOnly} isForReviewerView={userRole === "Reviewer"} handleSignature={handleSignature} handleViewImages={handleViewImages} isSubmitted={isSubmitted} handleOnSubmit={handleSubmit} />
+        <CTA formStatus={inspectionData?.Inspection_Form_Stage__c} role={userRole} handleOnChat={() => navigation.navigate("Chat", { inspId: inspectionData.Id })} isReadOnly={readOnly} isForReviewerView={userRole === "Reviewer"} handleSignature={handleSignature} handleViewImages={handleViewImages} isSubmitted={isSubmitted} handleOnSubmit={handleSubmit} />
         {/* Sigantures */}
         {(isSubmitted && showSiganturesView) && <Signatures inspId={inspectionData.Id} role={userRole} />}
         {/* Forms */}
@@ -161,18 +170,28 @@ const InspectionDetails = ({ route, navigation }) => {
 
 function ReviewerSubmitModal({ inspId, handleCloseModal, navigation, bidApprovalVal = 0, initalEstimateRehab }) {
 
-  const handleSave = async () => {
-    const res = await updateSfVendorFormDetails({
-      "Bid_Recommendation": bidApprovalVal,
-      "Bid_Contingency": parseFloat(bidContingency),
-      "Final_Rehab_Scope_Notes": rehabScopeNotes,
-      "Form_Stage": "Reviewer Form Completed",
-      "Submit_for_Bid_Approval": true
-    }, inspId, true, "Reviewer");
+  const [isSubmitting, setIsSubmitting] = React.useState(false);
 
-    console.log("SAVE", res);
-    handleCloseModal();
-    navigation.goBack();
+  const handleSave = async () => {
+    setIsSubmitting(true);
+    try {
+      const res = await updateSfVendorFormDetails({
+        "Bid_Recommendation": bidApprovalVal,
+        "Bid_Contingency": parseFloat(bidContingency),
+        "Final_Rehab_Scope_Notes": rehabScopeNotes,
+        "Form_Stage": "Reviewer Form Completed",
+        "Submit_for_Bid_Approval": true
+      }, inspId, true, "Reviewer");
+
+      console.log("SAVE", res);
+      handleCloseModal();
+      navigation.goBack();
+      alert("Submitted Successfully")
+    } catch (error) {
+      console.log("REVIEWER SUBMIT ERR", err.message);
+    } finally {
+      setIsSubmitting(false);
+    }
   }
 
   const [bidContingency, setBidContingency] = React.useState(10);
@@ -189,16 +208,16 @@ function ReviewerSubmitModal({ inspId, handleCloseModal, navigation, bidApproval
       <Text style={{ fontFamily: "URBAN_BOLD", fontSize: 14, marginBottom: 2 }}>Initial Rehab Estimate</Text>
       <TextInput value={initalEstimateRehab} editable={false} style={{ fontFamily: "URBAN_BOLD", fontSize: 16, backgroundColor: "#d9d9d9", padding: 8, marginBottom: 16 }} />
       <Text style={{ fontFamily: "URBAN_BOLD", fontSize: 14, marginBottom: 2 }}>HHM BID Contingency %</Text>
-      <View style={{flexDirection: "row",alignItems:"center",backgroundColor: "#d9d9d980", padding: 8, marginBottom: 16}}>
-        <TextInput onChangeText={text => setBidContingency(text)} value={`${bidContingency}`} style={{ fontFamily: "URBAN_BOLD", fontSize: 16 }} />
+      <View style={{ flexDirection: "row", alignItems: "center", backgroundColor: "#d9d9d980", padding: 8, marginBottom: 16 }}>
+        <TextInput editable={!isSubmitting} onChangeText={text => setBidContingency(text)} value={`${bidContingency}`} style={{ fontFamily: "URBAN_BOLD", fontSize: 16 }} />
         <Text>%</Text>
       </View>
       {/* <TextInput onChangeText={text => setBidContingency(text)} value={`${bidContingency}`} style={{ fontFamily: "URBAN_BOLD", fontSize: 16, backgroundColor: "#d9d9d980", padding: 8, marginBottom: 16 }} /> */}
       <Text style={{ fontFamily: "URBAN_BOLD", fontSize: 14, marginBottom: 2 }}>Final Rehab Scope Notes</Text>
-      <TextInput onChangeText={text => setRehabScopeNotes(text)} value={rehabScopeNotes} style={{ fontFamily: "URBAN_BOLD", fontSize: 16, backgroundColor: "#d9d9d980", padding: 8, marginBottom: 16 }} />
+      <TextInput editable={!isSubmitting} onChangeText={text => setRehabScopeNotes(text)} value={rehabScopeNotes} style={{ fontFamily: "URBAN_BOLD", fontSize: 16, backgroundColor: "#d9d9d980", padding: 8, marginBottom: 16 }} />
       <View style={{ flexDirection: "row", justifyContent: "flex-end" }}>
-        <Button onPress={handleSave} mode="contained" style={{ backgroundColor: "#8477eb" }}>Save</Button>
-        <Button onPress={() => handleCloseModal()}>Cancel</Button>
+        <Button disabled={isSubmitting} loading={isSubmitting} onPress={handleSave} mode="contained">{isSubmitting ? "Saving..." : "Save"}</Button>
+        <Button disabled={isSubmitting} onPress={() => handleCloseModal()}>Cancel</Button>
       </View>
     </View>
   )

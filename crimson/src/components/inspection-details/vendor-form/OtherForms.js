@@ -165,6 +165,7 @@ const OtherForms = ({ gTotal, isSubmitted, isForReviewerView, readOnly, inspecti
 
     const onOtherFormValueChange = (value, field, key) => {
         console.log("changing", field, 'with', value, "KEY", key);
+        console.log(isNaN(value));
         let newState, Sub_Category;
         let newSequence = sequence + 1
         let Category = currentFormData && currentFormData.data[0].Category

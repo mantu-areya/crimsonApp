@@ -12,7 +12,7 @@ import * as Linking from "expo-linking";
 
 
 
-const image = require("../../../assets/black-bg.jpeg");
+const image = require("../../../assets/black-bg.jpg");
 
 const Hero = ({ data, isSubmitted, sectionTotals }) => {
 
@@ -81,7 +81,7 @@ const Hero = ({ data, isSubmitted, sectionTotals }) => {
         )
     }
 
-    const width = Dimensions.get("screen").width - 64
+    const width = Dimensions.get("screen").width - 30
 
     const { Property_Latitude__c, Property_Longitude__c } = data;
 
@@ -112,7 +112,7 @@ return (
                 sliderWidth={width}
                 itemWidth={width}
                 inactiveSlideShift={0}
-                removeClippedSubviews={false}
+                // removeClippedSubviews={false}
                 useScrollView={false}
                 onSnapToItem={(index) => setIndex(index)}
             />
@@ -218,7 +218,7 @@ function ShortSummary({ Property_Street_Address__c, Baths__c, Bed__c, Square_Fee
 
 
 const Container = styled.View`
-padding:32px;
+padding:15px;
 background-color:white;
 width: 100%;
 `;

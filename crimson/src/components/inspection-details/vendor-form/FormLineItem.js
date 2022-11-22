@@ -45,7 +45,7 @@ export default function FormLineItem({ handleAcceptLineItem, isSubmitted, isForR
   }, [])
 
   if (isSubmitted) {
-    return <SubmittedFormLineItem {...{ status: item?.Approval_Status, title: item.Matrix_Price, rate: item.Rate, quantity: item.Quantity,notes:item.Scope_Notes }} />
+    return <SubmittedFormLineItem {...{ status: item?.Approval_Status, title: item.Matrix_Price, rate: item.Rate, quantity: item.Quantity, notes: item.Scope_Notes }} />
   }
 
   if (isForRoomMeasurement) {
@@ -262,7 +262,7 @@ export default function FormLineItem({ handleAcceptLineItem, isSubmitted, isForR
 }
 
 
-function SubmittedFormLineItem({ status, title, rate, quantity, total,notes }) {
+function SubmittedFormLineItem({ status, title, rate, quantity, total, notes }) {
   function getBackgroundColor() {
     if (status === "Approved") {
       return "#7CDD9B";
@@ -326,7 +326,7 @@ function ContractorViewLineItem({ handleAcceptLineItem, item, onOtherFormValueCh
     } else if (item.Approval_Status === "Approved as Noted") {
       return "#FCFBF3";
     }
-     else {
+    else {
       return "white";
     }
   }
@@ -364,12 +364,12 @@ function ContractorViewLineItem({ handleAcceptLineItem, item, onOtherFormValueCh
         <LineItemHeading>Scope Notes : {item.Scope_Notes}</LineItemHeading>
         <View style={{ flexDirection: 'row' }}>
           {/* Details */}
-          <View style={{ flex: .2 }}>
+          <View style={{ flex: .4 }}>
             <StyledContractorText>QTY: {quantity}</StyledContractorText>
             <StyledContractorText>RATE: {getCurrencyFormattedValue(rate)}</StyledContractorText>
             <StyledContractorText>TOTAL: {getCurrencyFormattedValue(total)}</StyledContractorText>
           </View>
-          <View style={{ flex: .8, flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
+          <View style={{ flex: .6, flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
             <StyledContractorButton labelStyle={{ fontSize: 16, fontFamily: 'URBAN_BOLD' }} backgroundColor="#7CDD9B" mode="contained" onPress={() => acceptLineItem()}>A</StyledContractorButton>
             <StyledContractorButton labelStyle={{ fontSize: 16, fontFamily: 'URBAN_BOLD' }} backgroundColor="#3983EF" mode="contained" onPress={() => reviewLineItem()}>R</StyledContractorButton>
             <StyledContractorButton labelStyle={{ fontSize: 16, fontFamily: 'URBAN_BOLD' }} backgroundColor="#E02E2E" mode="contained" onPress={() => deleteLineItem()}>D</StyledContractorButton>
@@ -389,7 +389,13 @@ function ContractorViewLineItem({ handleAcceptLineItem, item, onOtherFormValueCh
           <StyledOverlayInputWrapper style={{ flexDirection: 'row' }}>
             <StyledOverlayInputLabel>ADJ QTY: </StyledOverlayInputLabel>
             <StyledOverlayInput
-              onChangeText={text => onOtherFormValueChange(text, "Adj_Quantity", UniqueKey)}
+              keyboardType="number-pad"
+              onChangeText={text => {
+                if (text === "") { // * for negative numbers
+                  return onOtherFormValueChange(0, "Adj_Quantity", UniqueKey)
+                }
+                onOtherFormValueChange(text, "Adj_Quantity", UniqueKey)
+              }}
               value={`${Adj_Quantity ?? 0}`} />
           </StyledOverlayInputWrapper>
           <StyledOverlayInputWrapper style={{ flexDirection: 'row' }}>
