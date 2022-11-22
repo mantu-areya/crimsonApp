@@ -1,8 +1,9 @@
 import { View, Text, TextInput } from 'react-native'
-import React, {useContext, useEffect} from 'react'
+import React, { useContext, useEffect } from 'react'
 import styled from 'styled-components/native'
 import { useSafeAreaInsets } from "react-native-safe-area-context"
 import { Button, IconButton } from 'react-native-paper'
+import Ionicons from "react-native-vector-icons/Ionicons"
 import { AuthenticationContext } from "../../services/authentication/authentication.context";
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 
@@ -51,58 +52,31 @@ const Login = ({ navigation }) => {
           CRIMSON
         </Title>
         {/* Email */}
-        <Text style={{ paddingHorizontal: 16, marginBottom: 4, color: 'white', fontSize: 16, fontFamily: 'URBAN_BOLD' }}>Email Address</Text>
+        <Text style={{ paddingHorizontal: 16, marginBottom: 4, color: 'white', fontSize: 16, fontFamily: 'URBAN_BOLD' }}>Username</Text>
         <InputWrapper
         >
           <TextInput
             style={{
               color: 'white',
               fontSize: 16,
+              padding:16,
+              width:"100%",
+              flex:.9,
               fontFamily: 'URBAN_BOLD'
             }}
             onChangeText={userName => setEmail(userName)}
             value={userName}
             placeholderTextColor={"#7E8892"}
-            placeholder="Enter your userName here"
+            placeholder="Enter your Username here"
           />
+          <Ionicons style={{ flex:.1}} onPress={() => handleLogin(userName)} size={36} color="#E45679" name="arrow-forward-circle" />
         </InputWrapper>
 
-        {/* Passowrd */}
-        {/* <Text style={{ paddingHorizontal: 16, marginBottom: 4, color: 'white', fontSize: 16, fontFamily: 'URBAN_BOLD' }}>Password</Text> */}
-        {/* <InputWrapper>
-                    <TextInput
-                        style={{
-                            color: 'white',
-                            fontSize: 16,
-                            fontFamily: 'URBAN_BOLD'
-                        }}
-                        value={password}
-                        onChangeText={password => setPassword(password)}
-                        secureTextEntry={showPassword}
-                        placeholderTextColor={"#7E8892"}
-                        placeholder="Enter your Password here"
-                    />
-                    <MaterialCommunityIcons size={24} onPress={() => setShowPassword(!showPassword)} name={showPassword ? "eye" : "eye-off"} color="#7E8892" />
-                </InputWrapper> */}
         {error && (
           <Spacer size="large">
             <Text style={{ color: 'red' }}>{error}</Text>
           </Spacer>
         )}
-
-        <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center', marginVertical: 16 }}>
-          {/* Forgot Password */}
-          {/* <ForgotPasswordLink>Forgot Password?</ForgotPasswordLink> */}
-          {/* Login Button */}
-          <StyledLoginButton
-            onPress={() => handleLogin(userName)}
-            labelStyle={{
-              fontFamily: 'URBAN_BOLD',
-              fontSize: 18
-            }} mode="contained">
-            Login
-          </StyledLoginButton>
-        </View>
       </FormWrapper>
     </Wrapper>
   )
@@ -139,15 +113,13 @@ text-align: center;
 const InputWrapper = styled.View`
 width: 100%;
 flex-direction: row;
-padding: 24px;
+padding: 6px 0;
 justify-content: space-between;
 align-items: center;
 margin-bottom: 16px;
 border-width: 1px;
 border-radius: 8px;
 border-color: #14181B;
-
-
 `
 
 
