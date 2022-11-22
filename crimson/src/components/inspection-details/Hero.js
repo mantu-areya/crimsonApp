@@ -100,84 +100,84 @@ const Hero = ({ data, isSubmitted, sectionTotals }) => {
 
 
 
-return (
-    <Container>
-        <View>
-            <Carousel
-                layout="default"
-                layoutCardOffset={2}
-                ref={isCarousel}
-                data={[1, 2]}
-                renderItem={({ item, index }) => <CarouselCardItem {...{ item, index }} />}
-                sliderWidth={width}
-                itemWidth={width}
-                inactiveSlideShift={0}
-                // removeClippedSubviews={false}
-                useScrollView={false}
-                onSnapToItem={(index) => setIndex(index)}
-            />
-            <Pagination
-                dotsLength={[1, 2].length}
-                activeDotIndex={index}
-                carouselRef={isCarousel}
-                dotStyle={{
-                    width: 10,
-                    height: 10,
-                    borderRadius: 5,
-                    marginHorizontal: 0,
-                    backgroundColor: 'rgba(0, 0, 0, 0.92)'
-                }}
-                inactiveDotOpacity={0.4}
-                inactiveDotScale={0.6}
-                tappableDots={true}
-            />
+    return (
+        <Container>
+            <View>
+                <Carousel
+                    layout="default"
+                    layoutCardOffset={2}
+                    ref={isCarousel}
+                    data={[1, 2]}
+                    renderItem={({ item, index }) => <CarouselCardItem {...{ item, index }} />}
+                    sliderWidth={width}
+                    itemWidth={width}
+                    inactiveSlideShift={0}
+                    // removeClippedSubviews={false}
+                    useScrollView={false}
+                    onSnapToItem={(index) => setIndex(index)}
+                />
+                <Pagination
+                    dotsLength={[1, 2].length}
+                    activeDotIndex={index}
+                    carouselRef={isCarousel}
+                    dotStyle={{
+                        width: 10,
+                        height: 10,
+                        borderRadius: 5,
+                        marginHorizontal: 0,
+                        backgroundColor: 'rgba(0, 0, 0, 0.92)'
+                    }}
+                    inactiveDotOpacity={0.4}
+                    inactiveDotScale={0.6}
+                    tappableDots={true}
+                />
 
-        </View>
+            </View>
 
 
-        <Overlay childrenWrapperStyle={{ backgroundColor: 'black' }} containerStyle={{ backgroundColor: 'black' }} visible={overlayVisible} onClose={() => setOverlayVisible(false)} closeOnTouchOutside >
-            <Ionicons onPress={() => setOverlayVisible(false)} name="close" color="white" size={32} />
-            <Image source={image} style={{ width: 320, height: 320, borderRadius: 16 }} />
-        </Overlay>
-        {/* Description */}
-        {
-            !isSubmitted && <DescriptionWrapper>
-                <Text style={{ color: 'black', fontFamily: 'URBAN_BOLD', fontSize: 16 }}>DESCRIPTION</Text>
-                <DescriptionText style={{ marginTop: 14 }}>
-                    {Property_Street_Address__c} is a {Bed__c} Room Property with {Baths__c} Baths and {Square_Feet__c} Sq Ft. Built in {Year_Built__c} this property is a New Construction.
-                </DescriptionText>
-                <DescriptionText style={{ marginTop: 16 }}>
-                    Inspection Schedule Date - {GC_Inspection_Due_Date__c}
-                </DescriptionText>
-                <DescriptionText>
-                    Target Rehab Complete Date - {Target_Rehab_Complete_Date__c}
-                    {/* // ! not getting this value */}
-                </DescriptionText>
-            </DescriptionWrapper>
-        }
-        {
-            isSubmitted &&
-            <DescriptionWrapper>
-                <Text style={{ color: 'black', fontFamily: 'URBAN_BOLD', fontSize: 16 }}>Section Breakdown</Text>
-                <DescriptionText style={{ marginTop: 8 }}>
-                    General Rental Scopes - {sectionTotals.grs}
-                </DescriptionText>
-                <DescriptionText >
-                    Pools - {sectionTotals.pools}
-                </DescriptionText>
-                <DescriptionText >
-                    Exterior - {sectionTotals.exterior}
-                </DescriptionText>
-                <DescriptionText >
-                    Interior - {sectionTotals.interior}
-                </DescriptionText>
-                <DescriptionText >
-                    MEP - {sectionTotals.mep}
-                </DescriptionText>
-            </DescriptionWrapper>
-        }
-    </Container>
-)
+            <Overlay childrenWrapperStyle={{ backgroundColor: 'black' }} containerStyle={{ backgroundColor: 'black' }} visible={overlayVisible} onClose={() => setOverlayVisible(false)} closeOnTouchOutside >
+                <Ionicons onPress={() => setOverlayVisible(false)} name="close" color="white" size={32} />
+                <Image source={image} style={{ width: 320, height: 320, borderRadius: 16 }} />
+            </Overlay>
+            {/* Description */}
+            {
+                !isSubmitted && <DescriptionWrapper>
+                    <Text style={{ color: 'black', fontFamily: 'URBAN_BOLD', fontSize: 16 }}>DESCRIPTION</Text>
+                    <DescriptionText style={{ marginTop: 14 }}>
+                        {Property_Street_Address__c} is a {Bed__c} Room Property with {Baths__c} Baths and {Square_Feet__c} Sq Ft. Built in {Year_Built__c} this property is a New Construction.
+                    </DescriptionText>
+                    <DescriptionText style={{ marginTop: 16 }}>
+                        Inspection Schedule Date - {GC_Inspection_Due_Date__c}
+                    </DescriptionText>
+                    <DescriptionText>
+                        Target Rehab Complete Date - {Target_Rehab_Complete_Date__c}
+                        {/* // ! not getting this value */}
+                    </DescriptionText>
+                </DescriptionWrapper>
+            }
+            {
+                isSubmitted &&
+                <DescriptionWrapper>
+                    <Text style={{ color: 'black', fontFamily: 'URBAN_BOLD', fontSize: 16 }}>Section Breakdown</Text>
+                    <DescriptionText style={{ marginTop: 8 }}>
+                        General Rental Scopes - {sectionTotals.grs}
+                    </DescriptionText>
+                    <DescriptionText >
+                        Pools - {sectionTotals.pools}
+                    </DescriptionText>
+                    <DescriptionText >
+                        Exterior - {sectionTotals.exterior}
+                    </DescriptionText>
+                    <DescriptionText >
+                        Interior - {sectionTotals.interior}
+                    </DescriptionText>
+                    <DescriptionText >
+                        MEP - {sectionTotals.mep}
+                    </DescriptionText>
+                </DescriptionWrapper>
+            }
+        </Container>
+    )
 }
 
 
@@ -232,10 +232,10 @@ const MapBackgroundWrapper = styled.TouchableOpacity`
 `;
 
 const InsideContentWrapper = styled.View`
-/* background-color:red; */
 position: absolute;
 padding: 16px;
 width: 100%;
+height: 360px;
 `;
 
 const BackButtonWrapper = styled.TouchableOpacity`
@@ -259,7 +259,7 @@ color: white;
 `
 
 const ShortSummaryWrapper = styled.View`
-margin-top: 200px;
+margin-top: auto;
 margin-left: auto;
 `;
 
