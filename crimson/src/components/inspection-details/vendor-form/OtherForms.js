@@ -428,7 +428,10 @@ const OtherForms = ({ gTotal, isSubmitted, isForReviewerView, readOnly, inspecti
                         dataList.length > 0 ?
                             <ScrollView>
                                 {
-                                    dataList.map((item, i) => <FormLineItem key={i}   {...{ handleAcceptLineItem, isForReviewerView, item, inspId: inspectionData.Id, onRoomMeasurementValueChange, onOtherFormValueChange, navigation, readOnly, setShowAddButton, handleOnSave }} isForRoomMeasurement={currentFormData.title === "Room Measurements"} />)
+                                    [].concat(general_Rental, pools, exterior, interior, mech_Elec_Plumb).filter(item => item.Approval_Status === "Approved" || item.Approval_Status === "Approved as Noted").map((item, i) =>
+                                        <FormLineItem key={i}
+                                            {...{ isSubmitted, isForReviewerView, item, inspId: inspectionData.Id, onRoomMeasurementValueChange, onOtherFormValueChange, navigation, readOnly, setShowAddButton, handleOnSave }}x
+                                            isForRoomMeasurement={currentFormData.title === "Room Measurements"} />)
                                 }
                             </ScrollView> :
                             <View style={{ padding: 16 }}>

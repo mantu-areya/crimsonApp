@@ -134,6 +134,7 @@ const InspectionDetails = ({ route, navigation }) => {
   let bidApprovalVal = getFormTotal("all", false);
 
   console.log("IS WORK AUTH CREATED", inspectionData?.doCreateWAF__c);
+  console.log("FORM STAGE", inspectionData?.Inspection_Form_Stage__c);
   console.log("CURR INSP NAME", inspectionData?.Name);
   console.log("CURR INSP ID", inspectionData?.Id);
 
