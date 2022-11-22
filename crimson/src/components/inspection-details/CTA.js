@@ -37,7 +37,7 @@ const CTA = ({ formStatus = "Vendor Form Completed", handleOnSubmit, role, handl
                             </SubmitButtonWrapper>
                             :
                             <SubmitButtonWrapper style={shadowStyle} onPress={handleOnSubmit}>
-                                <ButtonText style={{ textAlign: 'center' }} color="white">
+                                <ButtonText style={{ textAlign: 'center', fontSize:16 }} color="white">
                                     Submit for Review
                                 </ButtonText>
                             </SubmitButtonWrapper>)
@@ -56,7 +56,7 @@ const CTA = ({ formStatus = "Vendor Form Completed", handleOnSubmit, role, handl
                             </SubmitButtonWrapper>
                             :
                             <SubmitButtonWrapper style={shadowStyle} onPress={handleOnSubmit}>
-                                <ButtonText style={{ textAlign: 'center' }} color="white">
+                                <ButtonText style={{ textAlign: 'center', fontSize:16  }} color="white">
                                     Submit for Approval
                                 </ButtonText>
                             </SubmitButtonWrapper>)

@@ -112,7 +112,6 @@ const Hero = ({ data, isSubmitted, sectionTotals }) => {
                     sliderWidth={width}
                     itemWidth={width}
                     inactiveSlideShift={0}
-                    // removeClippedSubviews={false}
                     useScrollView={false}
                     onSnapToItem={(index) => setIndex(index)}
                 />

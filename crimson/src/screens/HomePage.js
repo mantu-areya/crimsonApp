@@ -98,10 +98,10 @@ export const HomePage = ({ navigation }) => {
           }
         </Menu>
         {/* Searchbar */}
-        <View style={{ backgroundColor: '#F1F4F8', justifyContent: "space-between", alignItems: 'center', flexDirection: 'row', padding: 12, marginVertical: 8 }}>
-          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+        <View style={{ backgroundColor: '#F1F4F8', justifyContent: "space-between", alignItems: 'center', flexDirection: 'row', padding: 8, marginVertical: 8 }}>
+          <View style={{ flexDirection: 'row', alignItems: 'center',flex:.9 }}>
             <Icon name="search" color="grey" size={18} />
-            <TextInput onChangeText={onChangeSearch} placeholder="Address, city, state.." style={{ fontFamily: "URBAN_BOLD", backgroundColor: "transparent", marginLeft: 16, fontSize: 18 }} />
+            <TextInput value={searchQuery} onChangeText={onChangeSearch} placeholder="Address, city, state.." style={{ fontFamily: "URBAN_BOLD", backgroundColor: "transparent",fontSize: 18,padding:16,width:"100%"}} />
           </View>
           <Button labelStyle={{ fontFamily: "URBAN_BOLD" }} style={{ backgroundColor: "#4B39EF", padding: 8 }} mode="contained">Search</Button>
         </View>
