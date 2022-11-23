@@ -17,7 +17,7 @@ let requiredSubCategories = [
 ]
 
 
-export default function FormLineItem({ handleAcceptLineItem, isSubmitted, isForReviewerView, inspId, item, onRoomMeasurementValueChange, onOtherFormValueChange, isForRoomMeasurement, onValueChange, navigation, readOnly, setShowAddButton, handleOnSave }) {
+export default function FormLineItem({ handleAcceptLineItem, isSubmitted, isForReviewerView, inspId, item, onRoomMeasurementValueChange, onOtherFormValueChange, isForRoomMeasurement, deleteNewItem, navigation, readOnly, setShowAddButton, handleOnSave }) {
   const [overlayVisible, setOverlayVisible] = React.useState(false)
 
 
@@ -28,10 +28,19 @@ export default function FormLineItem({ handleAcceptLineItem, isSubmitted, isForR
         {/* <Text>Add Notes</Text> */}
       </View>
     </TouchableOpacity>,
-    <TouchableOpacity onPress={() => { alert("Delete") }} style={{ backgroundColor: '#F3206F', justifyContent: 'center', alignItems: 'center', width: 64, flex: 1 }}>
+    <TouchableOpacity onPress={() => handleDelete(item.Id,inspId,item.UniqueKey)} style={{ backgroundColor: '#F3206F', justifyContent: 'center', alignItems: 'center', width: 64, flex: 1 }}>
       <View>
         <MaterialCommunityIcons name="delete" size={24} color="white" />
         {/* <Text>Delete</Text> */}
+      </View>
+    </TouchableOpacity>
+  ];
+
+  const roomRightButtons = [
+    <TouchableOpacity onPress={() => { alert("Add Notes") }} style={{ backgroundColor: '#F0BA91', justifyContent: 'center', alignItems: 'center', width: 64, flex: 1 }}>
+      <View>
+        <MaterialCommunityIcons name="note-plus" size={24} />
+        {/* <Text>Add Notes</Text> */}
       </View>
     </TouchableOpacity>
   ];
@@ -41,11 +50,16 @@ export default function FormLineItem({ handleAcceptLineItem, isSubmitted, isForR
   const Category_Keys = ["Pools", "Exterior", "Interior", "Mechanical, Electrical and Plumbing Systems"]
 
   React.useEffect(() => {
-    setShowAddButton(Category_Keys.includes(item?.Category) ? true : false)
-  }, [])
+    setShowAddButton(Category_Keys.includes(item?.Category))
+  }, [item])
+
+  const handleDelete = (dvdId, inspId, UniqueKey) => {
+    console.log("DELETING",dvdId);
+    deleteNewItem(dvdId, inspId, UniqueKey)
+  }
 
   if (isSubmitted) {
-    return <SubmittedFormLineItem {...{ status: item?.Approval_Status, title: item.Matrix_Price, rate: item.Rate, quantity: item.Quantity,notes:item.Scope_Notes }} />
+    return <SubmittedFormLineItem {...{ status: item?.Approval_Status, title: item.Matrix_Price, rate: item.Rate, quantity: item.Quantity, notes: item.Scope_Notes }} />
   }
 
   if (isForRoomMeasurement) {
@@ -61,10 +75,6 @@ export default function FormLineItem({ handleAcceptLineItem, isSubmitted, isForR
       return value > 1 ? value.toString().replace(/^0+/, '') : value;
     }
 
-    const handleDelete = (dvdId, inspId, UniqueKey) => {
-      deleteNewItem(dvdId, inspId, UniqueKey)
-    }
-
     length = getFormatedRowValues(item.Room_Length);
     width = getFormatedRowValues(item.Room_Width);
     misc = getFormatedRowValues(item.Room_Misc_SF)
@@ -72,7 +82,7 @@ export default function FormLineItem({ handleAcceptLineItem, isSubmitted, isForR
 
     return (
       <>
-        <Swipeable rightButtons={rightButtons}>
+        <Swipeable rightButtons={roomRightButtons}>
           <LineItemWrapper >
             <View style={{ flex: 1 }}>
               {/* Room */}
@@ -93,9 +103,6 @@ export default function FormLineItem({ handleAcceptLineItem, isSubmitted, isForR
                 <LineItemInputText onPress={() => setOverlayVisible(true)}>Misc {misc}</LineItemInputText>
               </LineItemInputGroup>
             </View>
-            {/* Icon */}
-            {!isForReviewerView && <Ionicons name="camera" onPress={() => navigation.navigate("CameraScreen", { inspId: { inspId }, lineItemId: item.Id })} size={24} />}
-
           </LineItemWrapper>
         </Swipeable>
         <Overlay visible={overlayVisible} onClose={() => setOverlayVisible(false)} closeOnTouchOutside >
@@ -153,7 +160,7 @@ export default function FormLineItem({ handleAcceptLineItem, isSubmitted, isForR
 
   return (
     <>
-      <Swipeable rightButtons={rightButtons}>
+      <Swipeable rightButtons={Sub_Category_Keys.includes(item?.Sub_Category) ? rightButtons : rightButtons.slice(0,1) }>
         <LineItemWrapper >
           <View style={{ flex: 1 }}>
             {
@@ -262,7 +269,7 @@ export default function FormLineItem({ handleAcceptLineItem, isSubmitted, isForR
 }
 
 
-function SubmittedFormLineItem({ status, title, rate, quantity, total,notes }) {
+function SubmittedFormLineItem({ status, title, rate, quantity, total, notes }) {
   function getBackgroundColor() {
     if (status === "Approved") {
       return "#7CDD9B";
@@ -326,7 +333,7 @@ function ContractorViewLineItem({ handleAcceptLineItem, item, onOtherFormValueCh
     } else if (item.Approval_Status === "Approved as Noted") {
       return "#FCFBF3";
     }
-     else {
+    else {
       return "white";
     }
   }
@@ -364,12 +371,12 @@ function ContractorViewLineItem({ handleAcceptLineItem, item, onOtherFormValueCh
         <LineItemHeading>Scope Notes : {item.Scope_Notes}</LineItemHeading>
         <View style={{ flexDirection: 'row' }}>
           {/* Details */}
-          <View style={{ flex: .2 }}>
+          <View style={{ flex: .4 }}>
             <StyledContractorText>QTY: {quantity}</StyledContractorText>
             <StyledContractorText>RATE: {getCurrencyFormattedValue(rate)}</StyledContractorText>
             <StyledContractorText>TOTAL: {getCurrencyFormattedValue(total)}</StyledContractorText>
           </View>
-          <View style={{ flex: .8, flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
+          <View style={{ flex: .6, flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
             <StyledContractorButton labelStyle={{ fontSize: 16, fontFamily: 'URBAN_BOLD' }} backgroundColor="#7CDD9B" mode="contained" onPress={() => acceptLineItem()}>A</StyledContractorButton>
             <StyledContractorButton labelStyle={{ fontSize: 16, fontFamily: 'URBAN_BOLD' }} backgroundColor="#3983EF" mode="contained" onPress={() => reviewLineItem()}>R</StyledContractorButton>
             <StyledContractorButton labelStyle={{ fontSize: 16, fontFamily: 'URBAN_BOLD' }} backgroundColor="#E02E2E" mode="contained" onPress={() => deleteLineItem()}>D</StyledContractorButton>
@@ -389,7 +396,13 @@ function ContractorViewLineItem({ handleAcceptLineItem, item, onOtherFormValueCh
           <StyledOverlayInputWrapper style={{ flexDirection: 'row' }}>
             <StyledOverlayInputLabel>ADJ QTY: </StyledOverlayInputLabel>
             <StyledOverlayInput
-              onChangeText={text => onOtherFormValueChange(text, "Adj_Quantity", UniqueKey)}
+              keyboardType="number-pad"
+              onChangeText={text => {
+                if (text === "") { // * for negative numbers
+                  return onOtherFormValueChange(0, "Adj_Quantity", UniqueKey)
+                }
+                onOtherFormValueChange(text, "Adj_Quantity", UniqueKey)
+              }}
               value={`${Adj_Quantity ?? 0}`} />
           </StyledOverlayInputWrapper>
           <StyledOverlayInputWrapper style={{ flexDirection: 'row' }}>
