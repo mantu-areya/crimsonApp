@@ -77,7 +77,7 @@ export default function FormLineItem({ isSubmittedByReviewer, handleAcceptLineIt
 
     length = getFormatedRowValues(item.Room_Length);
     width = getFormatedRowValues(item.Room_Width);
-    misc = getFormatedRowValues(item.Room_Misc_SF)
+    misc = getFormatedRowValues(item.Room_Misc_SF);
 
 
     return (
@@ -106,43 +106,49 @@ export default function FormLineItem({ isSubmittedByReviewer, handleAcceptLineIt
           </LineItemWrapper>
         </Swipeable>
         <Overlay visible={overlayVisible} onClose={() => setOverlayVisible(false)} closeOnTouchOutside >
-          {(Sub_Category_List.includes(item.Sub_Category) || readOnly)
-            ?
-            <StyledText>{item.Sub_Category}</StyledText>
-            :
-            <StyledTextInput
-              onChangeText={val => onRoomMeasurementValueChange((val), "Sub_Category", item.UniqueKey)}
-              value={`${item.Sub_Category}`}
-            />}
+          {
+            (Sub_Category_List.includes(item.Sub_Category) || readOnly)
+              ?
+              <StyledText>{item.Sub_Category}</StyledText>
+              :
+              <StyledTextInput
+                onChangeText={val => onRoomMeasurementValueChange((val), "Sub_Category", item.UniqueKey)}
+                value={`${item.Sub_Category}`}
+              />
+          }
+          <View style={{ flexDirection: 'row' }}>
+            <CustomFormInput
+              label="Length"
+              placeholder="Length"
+              onChangeText={val => onRoomMeasurementValueChange((val), "Room_Length", item.UniqueKey)}
+              readOnly={readOnly}
+              value={length}
+            />
+            <CustomFormInput
+              label="Width"
+              placeholder="Width"
+              onChangeText={val => onRoomMeasurementValueChange((val), "Room_Width", item.UniqueKey)}
+              readOnly={readOnly}
+              value={width}
+            />
+            <CustomFormInput
+              label="Misc"
+              placeholder="Misc"
+              onChangeText={val => onRoomMeasurementValueChange((val), "Room_Misc_SF", item.UniqueKey)}
+              readOnly={readOnly}
+              value={misc}
+            />
+          </View>
+          {!readOnly &&
+            <Button
+              onPress={() => {
+                handleOnSave(true);
+                setOverlayVisible(false);
 
-          <CustomFormInput
-            label="Length"
-            placeholder="Length"
-            onChangeText={val => onRoomMeasurementValueChange((val), "Room_Length", item.UniqueKey)}
-            readOnly={readOnly}
-            value={length}
-          />
-
-          <CustomFormInput
-            label="Width"
-            placeholder="Width"
-            onChangeText={val => onRoomMeasurementValueChange((val), "Room_Width", item.UniqueKey)}
-            readOnly={readOnly}
-            value={width}
-          />
-          <CustomFormInput
-            label="Misc"
-            placeholder="Misc"
-            onChangeText={val => onRoomMeasurementValueChange((val), "Room_Misc_SF", item.UniqueKey)}
-            readOnly={readOnly}
-            value={misc}
-          />
-
-          {!readOnly && <StyledSaveButton onPress={() => {
-            handleOnSave(true);
-            setOverlayVisible(false)
-          }} mode="contained">Save</StyledSaveButton>}
-
+              }} mode="contained">
+              Save
+            </Button>
+          }
         </Overlay>
       </>
 
@@ -224,16 +230,14 @@ export default function FormLineItem({ isSubmittedByReviewer, handleAcceptLineIt
 
           <View style={{ width: '100%', flex: 1, marginHorizontal: 4 }}>
             <StyledTextInputLabel>Rate</StyledTextInputLabel>
-            {
-              <StyledTextInput
-                editable={!readOnly && requiredSubCategories.includes(item.Sub_Category)}
-                onChangeText={val => {
-                  onOtherFormValueChange(Number((val.replace("$", ""))), "Rate", item.UniqueKey)
-                }}
-                value={getFormattedValue("Rate", item.Rate)}
-                keyboardType="number-pad"
-              />
-            }
+            <StyledTextInput
+              editable={!readOnly && requiredSubCategories.includes(item.Sub_Category)}
+              onChangeText={val => {
+                onOtherFormValueChange(Number((val.replace("$", ""))), "Rate", item.UniqueKey)
+              }}
+              value={getFormattedValue("Rate", item.Rate)}
+              keyboardType="number-pad"
+            />
           </View>
 
           <CustomFormInput
@@ -367,21 +371,21 @@ function ContractorViewLineItem({ isSubmittedByReviewer, handleAcceptLineItem, i
     hideModal();
   }
 
-  function getGreyShade(status,orgColor) {
-    if (selectedStatus === status && isSubmittedByReviewer ) {
+  function getGreyShade(status, orgColor) {
+    if (selectedStatus === status && isSubmittedByReviewer) {
       return "grey"
     }
-    if (selectedStatus === status){
+    if (selectedStatus === status) {
       return "grey"
     }
     if (isSubmittedByReviewer && selectedStatus !== "") {
       return "#d4d4d4";
     }
-   return orgColor;
+    return orgColor;
   }
 
-  function isDisabled(status){
-    return isSubmittedByReviewer || selectedStatus === status ;
+  function isDisabled(status) {
+    return isSubmittedByReviewer || selectedStatus === status;
   }
 
 
@@ -402,7 +406,7 @@ function ContractorViewLineItem({ isSubmittedByReviewer, handleAcceptLineItem, i
             <StyledContractorButton
               labelStyle={{ fontSize: 16, fontFamily: 'URBAN_BOLD' }}
               disabled={isDisabled("Approved")}
-              backgroundColor={getGreyShade("Approved","#7CDD9B")}
+              backgroundColor={getGreyShade("Approved", "#7CDD9B")}
               mode="contained"
               onPress={() => acceptLineItem()}>
               A
@@ -410,7 +414,7 @@ function ContractorViewLineItem({ isSubmittedByReviewer, handleAcceptLineItem, i
             <StyledContractorButton
               labelStyle={{ fontSize: 16, fontFamily: 'URBAN_BOLD' }}
               disabled={isDisabled("Approved as Noted")}
-              backgroundColor={getGreyShade("Approved as Noted","#3983EF")}
+              backgroundColor={getGreyShade("Approved as Noted", "#3983EF")}
               mode="contained"
               onPress={() => reviewLineItem()}>
               R
@@ -418,7 +422,7 @@ function ContractorViewLineItem({ isSubmittedByReviewer, handleAcceptLineItem, i
             <StyledContractorButton
               labelStyle={{ fontSize: 16, fontFamily: 'URBAN_BOLD' }}
               disabled={isDisabled("Declined")}
-              backgroundColor={getGreyShade("Declined","#E02E2E")}
+              backgroundColor={getGreyShade("Declined", "#E02E2E")}
               mode="contained"
               onPress={() => deleteLineItem()}>
               D
@@ -540,14 +544,12 @@ function CustomFormInput({ readOnly = false, onChangeText = () => { }, value, la
   return (
     <View style={{ width: '100%', flex: 1, marginHorizontal: 4 }}>
       <StyledTextInputLabel>{`${label}`}</StyledTextInputLabel>
-      {
-        <StyledTextInput
-          onChangeText={onChangeText}
-          value={`${getFormattedValue(label, value) ?? 0}`}
-          placeholder={placeholder}
-          editable={editable}
-        />
-      }
+      <StyledTextInput
+        onChangeText={onChangeText}
+        value={`${getFormattedValue(label, value) ?? 0}`}
+        placeholder={placeholder}
+        editable={editable}
+      />
     </View>
 
   )
