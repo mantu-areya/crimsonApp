@@ -22,7 +22,7 @@ const OtherForms = ({ gTotal, isSubmitted, isForReviewerView, readOnly, inspecti
     let [room_MeasurementData, setRoom_MeasurementData] = React.useState([])
     const [sequence, setSequence] = React.useState();
 
-    const { vendorFormDetails, updateToSf } = React.useContext(VendorFormContext);
+    const { vendorFormDetails, updateToSf, deleteNewItem } = React.useContext(VendorFormContext);
 
 
 
@@ -406,7 +406,7 @@ const OtherForms = ({ gTotal, isSubmitted, isForReviewerView, readOnly, inspecti
                                             return item?.Sub_Category?.includes(searchQuery)
                                         }
                                         return item?.Matrix_Price?.includes(searchQuery)
-                                    }).map((item, i) => <FormLineItem key={i}   {...{ handleAcceptLineItem, isForReviewerView, item, inspId: inspectionData.Id, onRoomMeasurementValueChange, onOtherFormValueChange, navigation, readOnly, setShowAddButton, handleOnSave }} isForRoomMeasurement={currentFormData.title === "Room Measurements"} />)
+                                    }).map((item, i) => <FormLineItem key={i}   {...{ handleAcceptLineItem, isForReviewerView, item, inspId: inspectionData.Id, onRoomMeasurementValueChange, onOtherFormValueChange, navigation, readOnly, setShowAddButton, handleOnSave,deleteNewItem}} isForRoomMeasurement={currentFormData.title === "Room Measurements"} />)
                                 }
                             </ScrollView>
                             :

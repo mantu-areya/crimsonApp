@@ -17,7 +17,7 @@ let requiredSubCategories = [
 ]
 
 
-export default function FormLineItem({ handleAcceptLineItem, isSubmitted, isForReviewerView, inspId, item, onRoomMeasurementValueChange, onOtherFormValueChange, isForRoomMeasurement, onValueChange, navigation, readOnly, setShowAddButton, handleOnSave }) {
+export default function FormLineItem({ handleAcceptLineItem, isSubmitted, isForReviewerView, inspId, item, onRoomMeasurementValueChange, onOtherFormValueChange, isForRoomMeasurement, deleteNewItem, navigation, readOnly, setShowAddButton, handleOnSave }) {
   const [overlayVisible, setOverlayVisible] = React.useState(false)
 
 
@@ -28,10 +28,19 @@ export default function FormLineItem({ handleAcceptLineItem, isSubmitted, isForR
         {/* <Text>Add Notes</Text> */}
       </View>
     </TouchableOpacity>,
-    <TouchableOpacity onPress={() => { alert("Delete") }} style={{ backgroundColor: '#F3206F', justifyContent: 'center', alignItems: 'center', width: 64, flex: 1 }}>
+    <TouchableOpacity onPress={() => handleDelete(item.Id,inspId,item.UniqueKey)} style={{ backgroundColor: '#F3206F', justifyContent: 'center', alignItems: 'center', width: 64, flex: 1 }}>
       <View>
         <MaterialCommunityIcons name="delete" size={24} color="white" />
         {/* <Text>Delete</Text> */}
+      </View>
+    </TouchableOpacity>
+  ];
+
+  const roomRightButtons = [
+    <TouchableOpacity onPress={() => { alert("Add Notes") }} style={{ backgroundColor: '#F0BA91', justifyContent: 'center', alignItems: 'center', width: 64, flex: 1 }}>
+      <View>
+        <MaterialCommunityIcons name="note-plus" size={24} />
+        {/* <Text>Add Notes</Text> */}
       </View>
     </TouchableOpacity>
   ];
@@ -43,6 +52,11 @@ export default function FormLineItem({ handleAcceptLineItem, isSubmitted, isForR
   React.useEffect(() => {
     setShowAddButton(Category_Keys.includes(item?.Category))
   }, [item])
+
+  const handleDelete = (dvdId, inspId, UniqueKey) => {
+    console.log("DELETING",dvdId);
+    deleteNewItem(dvdId, inspId, UniqueKey)
+  }
 
   if (isSubmitted) {
     return <SubmittedFormLineItem {...{ status: item?.Approval_Status, title: item.Matrix_Price, rate: item.Rate, quantity: item.Quantity, notes: item.Scope_Notes }} />
@@ -61,10 +75,6 @@ export default function FormLineItem({ handleAcceptLineItem, isSubmitted, isForR
       return value > 1 ? value.toString().replace(/^0+/, '') : value;
     }
 
-    const handleDelete = (dvdId, inspId, UniqueKey) => {
-      deleteNewItem(dvdId, inspId, UniqueKey)
-    }
-
     length = getFormatedRowValues(item.Room_Length);
     width = getFormatedRowValues(item.Room_Width);
     misc = getFormatedRowValues(item.Room_Misc_SF)
@@ -72,7 +82,7 @@ export default function FormLineItem({ handleAcceptLineItem, isSubmitted, isForR
 
     return (
       <>
-        <Swipeable rightButtons={rightButtons}>
+        <Swipeable rightButtons={roomRightButtons}>
           <LineItemWrapper >
             <View style={{ flex: 1 }}>
               {/* Room */}
@@ -150,7 +160,7 @@ export default function FormLineItem({ handleAcceptLineItem, isSubmitted, isForR
 
   return (
     <>
-      <Swipeable rightButtons={rightButtons}>
+      <Swipeable rightButtons={Sub_Category_Keys.includes(item?.Sub_Category) ? rightButtons : rightButtons.slice(0,1) }>
         <LineItemWrapper >
           <View style={{ flex: 1 }}>
             {
