@@ -36,8 +36,6 @@ export const HomePage = ({ navigation }) => {
   const [searchQuery, setSearchQuery] = React.useState('');
   const [selectedOption, setSelectedOption] = React.useState('Pending Vendor Submission');
 
-  // console.log("ins",inspections);
-
   const onChangeSearch = query => {
     setSearchQuery(query);
   }

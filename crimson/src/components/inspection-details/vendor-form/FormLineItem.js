@@ -41,8 +41,8 @@ export default function FormLineItem({ handleAcceptLineItem, isSubmitted, isForR
   const Category_Keys = ["Pools", "Exterior", "Interior", "Mechanical, Electrical and Plumbing Systems"]
 
   React.useEffect(() => {
-    setShowAddButton(Category_Keys.includes(item?.Category) ? true : false)
-  }, [])
+    setShowAddButton(Category_Keys.includes(item?.Category))
+  }, [item])
 
   if (isSubmitted) {
     return <SubmittedFormLineItem {...{ status: item?.Approval_Status, title: item.Matrix_Price, rate: item.Rate, quantity: item.Quantity, notes: item.Scope_Notes }} />
