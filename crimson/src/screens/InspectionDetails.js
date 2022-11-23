@@ -12,7 +12,7 @@ import { SubmitReviewForm } from '../features/gcs/components/SubmitReviewForm'
 import Overlay from 'react-native-modal-overlay'
 import { InspectionsContext } from '../services/inspections/inspections.contex'
 import { AuthenticationContext } from '../services/authentication/authentication.context'
-import { Button, } from 'react-native-paper'
+import { ActivityIndicator, Button, } from 'react-native-paper'
 import Sign from '../features/gcs/components/workAuth/Sign.js';
 import * as ImagePicker from "expo-image-picker";
 
@@ -94,28 +94,47 @@ const InspectionDetails = ({ route, navigation }) => {
   }, [contextImages[inspectionData.Id]?.length])
 
 
+  const [currentRecord, setCurrentRecord] = React.useState();
+  const [isScreenLoading, setIsScreenLoading] = React.useState(false);
 
-  let currentRecord = vendorFormDetails[inspectionData.Id];
 
-  console.log("currentRecord", currentRecord);
+  React.useEffect(() => {
 
-  if (currentRecord === "NA") {
-    return <View>
-      <Text>NOT AVAILABLE</Text>
-    </View>
-  }
+    setIsScreenLoading(true);
+
+    let record = vendorFormDetails[inspectionData.Id];
+    console.log({ record });
+    if (record !== undefined || record !== "NA") {
+      setCurrentRecord(record);
+      setIsScreenLoading(false);
+    } else {
+      alert("Vendor Form Not Available")
+      setIsScreenLoading(false);
+      navigation.goBack();
+    }
+
+  }, [inspectionData])
+
+
+  // React.useEffect(() => {
+  //   if (!isValidRecord) {
+  //     alert("Vendor Form Not Available")
+  //     console.log("IS NLL");
+  //     navigation.goBack();
+  //   }
+  // }, [currentRecord])
 
   function getFormTotal(formCategory, formatted = true) {
     let total = 0;
     if (formCategory === "all") {
-      currentRecord && currentRecord.forEach(ele => {
+      currentRecord && currentRecord?.forEach(ele => {
         if (ele.Approval_Status === "Approved" || ele.Approval_Status === "Approved as Noted") {
           total += ele.Approved_Amount;
         }
       });
       return formatted ? total.toLocaleString("en-IN", { style: "currency", currency: 'USD' }) : total;
     }
-    currentRecord && currentRecord.forEach(ele => {
+    currentRecord && currentRecord?.forEach(ele => {
       if (ele.Category === formCategory && (ele.Approval_Status === "Approved" || ele.Approval_Status === "Approved as Noted")) {
         total += ele.Approved_Amount;
       }
@@ -142,28 +161,39 @@ const InspectionDetails = ({ route, navigation }) => {
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
-      <ScrollView onScroll={(e) => setOffSetY(e.nativeEvent.contentOffset.y)}>
-        {/* {!readOnly && */}
-        <Overlay visible={isSubmitModalOpen} onClose={() => setIsSubmitModalOpen(false)}  >
-          {
-            !(userRole === "Reviewer") ?
-              <SubmitReviewForm handleCloseModal={() => setIsSubmitModalOpen(false)} setreadonly={setreadonly} inspVfDetails={vendorFormDetails[inspectionData.Id]} inspId={inspectionData.Id} navigation={navigation} setIsNotesCollapsed={setIsNotesCollapsed} />
-              :
-              <ReviewerSubmitModal inspId={inspectionData.Id} initalEstimateRehab={initalEstimateRehab} handleCloseModal={() => setIsSubmitModalOpen(false)} bidApprovalVal={bidApprovalVal} navigation={navigation} />
-          }
-        </Overlay>
-        {/* } */}
-        {/* Hero */}
-        <Hero data={inspectionData} sectionTotals={sectionTotals} isSubmitted={isSubmitted} />
-        {/* CTA's */}
-        <CTA formStatus={inspectionData?.Inspection_Form_Stage__c} role={userRole} handleOnChat={() => navigation.navigate("Chat", { inspId: inspectionData.Id })} isReadOnly={readOnly} isForReviewerView={userRole === "Reviewer"} handleSignature={handleSignature} handleViewImages={handleViewImages} isSubmitted={isSubmitted} handleOnSubmit={handleSubmit} />
-        {/* Sigantures */}
-        {(isSubmitted && showSiganturesView) && <Signatures inspId={inspectionData.Id} role={userRole} />}
-        {/* Forms */}
-        <OtherForms gTotal={gTotal} isSubmitted={isSubmitted} readOnly={readOnly} isForReviewerView={userRole === "Reviewer"} inspectionData={inspectionData} navigation={navigation} />
-      </ScrollView>
-      {/* Call Now */}
-      {show && <CallNow isForReviewerView={userRole === "Reviewer"} data={inspectionData} />}
+      {
+        isScreenLoading ?
+          <View>
+            <ActivityIndicator />
+          </View>
+          :
+          <>
+            <ScrollView onScroll={(e) => setOffSetY(e.nativeEvent.contentOffset.y)}>
+              {/* {!readOnly && */}
+              <Overlay visible={isSubmitModalOpen} onClose={() => setIsSubmitModalOpen(false)}  >
+                {
+                  !(userRole === "Reviewer") ?
+                    <SubmitReviewForm handleCloseModal={() => setIsSubmitModalOpen(false)} setreadonly={setreadonly} inspVfDetails={vendorFormDetails[inspectionData.Id]} inspId={inspectionData.Id} navigation={navigation} setIsNotesCollapsed={setIsNotesCollapsed} />
+                    :
+                    <ReviewerSubmitModal inspId={inspectionData.Id} initalEstimateRehab={initalEstimateRehab} handleCloseModal={() => setIsSubmitModalOpen(false)} bidApprovalVal={bidApprovalVal} navigation={navigation} />
+                }
+              </Overlay>
+              {/* } */}
+              {/* Hero */}
+              <Hero data={inspectionData} sectionTotals={sectionTotals} isSubmitted={isSubmitted} />
+              {/* CTA's */}
+              <CTA formStatus={inspectionData?.Inspection_Form_Stage__c} role={userRole} handleOnChat={() => navigation.navigate("Chat", { inspId: inspectionData.Id })} isReadOnly={readOnly} isForReviewerView={userRole === "Reviewer"} handleSignature={handleSignature} handleViewImages={handleViewImages} isSubmitted={isSubmitted} handleOnSubmit={handleSubmit} />
+              {/* Sigantures */}
+              {(isSubmitted && showSiganturesView) && <Signatures inspId={inspectionData.Id} role={userRole} />}
+              {/* Forms */}
+              <OtherForms gTotal={gTotal} isSubmitted={isSubmitted} readOnly={readOnly} isForReviewerView={userRole === "Reviewer"} inspectionData={inspectionData} navigation={navigation} />
+            </ScrollView>
+            {/* Call Now */}
+            {show && <CallNow isForReviewerView={userRole === "Reviewer"} data={inspectionData} />}
+
+          </>
+
+      }
     </SafeAreaView>
   )
 }

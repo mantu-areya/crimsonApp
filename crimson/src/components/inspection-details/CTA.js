@@ -4,7 +4,7 @@ import Ionicons from "react-native-vector-icons/Ionicons"
 import { Platform } from 'react-native'
 
 
-const CTA = ({ formStatus = "Vendor Form Completed", handleOnSubmit, role, handleOnChat, handleViewImages, handleSignature, isSubmitted }) => {
+const CTA = ({ formStatus, handleOnSubmit, role, handleOnChat, handleViewImages, handleSignature, isSubmitted }) => {
     const shadowStyle = {
         shadowColor: "#000",
         shadowOffset: {
@@ -17,6 +17,7 @@ const CTA = ({ formStatus = "Vendor Form Completed", handleOnSubmit, role, handl
         elevation: 5,
     }
 
+    console.log("FORM",formStatus);
 
     return (
         <Wrapper>
@@ -26,7 +27,7 @@ const CTA = ({ formStatus = "Vendor Form Completed", handleOnSubmit, role, handl
                     {
                         role === "Contractor"
                         &&
-                        ((formStatus === "Vendor Form Completed")
+                        ((formStatus)
                             ?
                             <SubmitButtonWrapper  style={[shadowStyle, {
                                 backgroundColor: "grey"
