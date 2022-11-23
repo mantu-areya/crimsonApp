@@ -388,7 +388,7 @@ const OtherForms = ({ gTotal, isSubmitted, isForReviewerView, readOnly, inspecti
                     {/* Search */}
                     <View style={{ flexDirection: 'row', alignItems: 'center', padding: 4, paddingHorizontal: 16, backgroundColor: "white", margin: 8 }}>
                         <Icon name="search" color="grey" size={18} />
-                        <TextInput value={searchQuery} onChangeText={onChangeSearch} placeholder={currentForm === "Room Measurements"? "Search Sub Category":"Search Matrix Price..."} style={{ fontFamily: "URBAN_BOLD", backgroundColor: "transparent", fontSize: 18, padding: 12, width: "100%" }} />
+                        <TextInput value={searchQuery} onChangeText={onChangeSearch} placeholder={currentForm === "Room Measurements" ? "Search Sub Category" : "Search Matrix Price..."} style={{ fontFamily: "URBAN_BOLD", backgroundColor: "transparent", fontSize: 18, padding: 12, width: "100%" }} />
                     </View>
                     {
                         (isForReviewerView && currentForm !== "Room Measurements") &&
@@ -406,7 +406,7 @@ const OtherForms = ({ gTotal, isSubmitted, isForReviewerView, readOnly, inspecti
                                             return item?.Sub_Category?.includes(searchQuery)
                                         }
                                         return item?.Matrix_Price?.includes(searchQuery)
-                                    }).map((item, i) => <FormLineItem key={i}   {...{ handleAcceptLineItem, isForReviewerView, item, inspId: inspectionData.Id, onRoomMeasurementValueChange, onOtherFormValueChange, navigation, readOnly, setShowAddButton, handleOnSave,deleteNewItem}} isForRoomMeasurement={currentFormData.title === "Room Measurements"} />)
+                                    }).map((item, i) => <FormLineItem key={i}   {...{ handleAcceptLineItem, isForReviewerView, item, inspId: inspectionData.Id, onRoomMeasurementValueChange, onOtherFormValueChange, navigation, readOnly, setShowAddButton, handleOnSave, deleteNewItem }} isForRoomMeasurement={currentFormData.title === "Room Measurements"} />)
                                 }
                             </ScrollView>
                             :
@@ -448,7 +448,12 @@ const OtherForms = ({ gTotal, isSubmitted, isForReviewerView, readOnly, inspecti
                         dataList.length > 0 ?
                             <ScrollView>
                                 {
-                                    [].concat(general_Rental, pools, exterior, interior, mech_Elec_Plumb).filter(item => item?.Matrix_Price?.includes(searchQuery)).filter(item => item.Approval_Status === "Approved" || item.Approval_Status === "Approved as Noted").map((item, i) =>
+                                    [].concat(general_Rental, pools, exterior, interior, mech_Elec_Plumb).filter(item => {
+                                        if (currentForm === "Room Measurements") {
+                                            return item?.Sub_Category?.includes(searchQuery)
+                                        }
+                                        return item?.Matrix_Price?.includes(searchQuery);
+                                    }).filter(item => item.Approval_Status === "Approved" || item.Approval_Status === "Approved as Noted").map((item, i) =>
                                         <FormLineItem key={i}
                                             {...{ isSubmitted, isForReviewerView, item, inspId: inspectionData.Id, onRoomMeasurementValueChange, onOtherFormValueChange, navigation, readOnly, setShowAddButton, handleOnSave }} x
                                             isForRoomMeasurement={currentFormData.title === "Room Measurements"} />)
