@@ -186,7 +186,7 @@ const InspectionDetails = ({ route, navigation }) => {
               {/* Sigantures */}
               {(isSubmitted && showSiganturesView) && <Signatures inspId={inspectionData.Id} role={userRole} />}
               {/* Forms */}
-              <OtherForms gTotal={gTotal} isSubmitted={isSubmitted} readOnly={readOnly} isForReviewerView={userRole === "Reviewer"} inspectionData={inspectionData} navigation={navigation} />
+              <OtherForms gTotal={gTotal} isSubmitted={isSubmitted} readOnly={readOnly} isForReviewerView={userRole === "Reviewer"} formStatus={inspectionData?.Inspection_Form_Stage__c} inspectionData={inspectionData} navigation={navigation} />
             </ScrollView>
             {/* Call Now */}
             {show && <CallNow isForReviewerView={userRole === "Reviewer"} data={inspectionData} />}
@@ -276,6 +276,7 @@ function Signatures({ inspId, role }) {
         return
       } else if (string.includes(substring2)) {
         console.log("string2");
+        console.log("HAS CON SIGN",ele.file_name.split(/["Contractor_Signature_  " .jpg]+/)[1]);
         setSignDate(ele.file_name.split(/["Contractor_Signature_  " .jpg]+/)[1])
         setImg(ele.file_public_url)
         return
@@ -415,7 +416,6 @@ function Signatures({ inspId, role }) {
               height: 80
             }} source={{ uri: img }} />
           </View>}
-        {img && <Text style={{ fontSize: 12 }}>Date : {new Date().toDateString()}</Text>}
         {!img && <>
           <Button style={{
             backgroundColor: 'black',

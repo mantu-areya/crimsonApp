@@ -17,7 +17,7 @@ let requiredSubCategories = [
 ]
 
 
-export default function FormLineItem({ handleAcceptLineItem, isSubmitted, isForReviewerView, inspId, item, onRoomMeasurementValueChange, onOtherFormValueChange, isForRoomMeasurement, deleteNewItem, navigation, readOnly, setShowAddButton, handleOnSave }) {
+export default function FormLineItem({ isSubmittedByReviewer, handleAcceptLineItem, isSubmitted, isForReviewerView, inspId, item, onRoomMeasurementValueChange, onOtherFormValueChange, isForRoomMeasurement, deleteNewItem, navigation, readOnly, setShowAddButton, handleOnSave }) {
   const [overlayVisible, setOverlayVisible] = React.useState(false)
 
 
@@ -152,7 +152,7 @@ export default function FormLineItem({ handleAcceptLineItem, isSubmitted, isForR
 
   if (isForReviewerView) {
     return (
-      <ContractorViewLineItem {...{ handleAcceptLineItem, item, onOtherFormValueChange }} />
+      <ContractorViewLineItem {...{ isSubmittedByReviewer, handleAcceptLineItem, item, onOtherFormValueChange }} />
     )
 
   }
@@ -310,7 +310,7 @@ function SubmittedFormLineItem({ status, title, rate, quantity, total, notes }) 
   )
 }
 
-function ContractorViewLineItem({ handleAcceptLineItem, item, onOtherFormValueChange }) {
+function ContractorViewLineItem({ isSubmittedByReviewer, handleAcceptLineItem, item, onOtherFormValueChange }) {
 
   const {
     UniqueKey,
@@ -323,6 +323,7 @@ function ContractorViewLineItem({ handleAcceptLineItem, item, onOtherFormValueCh
     Quantity: quantity,
     Total: total
   } = item
+
 
 
   function getBackgroundColor() {
@@ -341,7 +342,7 @@ function ContractorViewLineItem({ handleAcceptLineItem, item, onOtherFormValueCh
 
   const [visible, setVisible] = React.useState(false);
 
-  const [selectedStatus, setSelectedStatus] = React.useState(item?.Approval_Status || "");
+  const [selectedStatus, setSelectedStatus] = React.useState(item?.Approval_Status);
 
   const showModal = () => setVisible(true);
   const hideModal = () => setVisible(false);
@@ -365,7 +366,23 @@ function ContractorViewLineItem({ handleAcceptLineItem, item, onOtherFormValueCh
     handleAcceptLineItem(id, "Approved as Noted");
     hideModal();
   }
-  // TODO - Upon Submit, disble buttons till WA generated
+
+  function getGreyShade(status,orgColor) {
+    if (selectedStatus === status && isSubmittedByReviewer ) {
+      return "grey"
+    }
+    if (selectedStatus === status){
+      return "grey"
+    }
+    if (isSubmittedByReviewer && selectedStatus !== "") {
+      return "#d4d4d4";
+    }
+   return orgColor;
+  }
+
+  function isDisabled(status){
+    return isSubmittedByReviewer || selectedStatus === status ;
+  }
 
 
   return (
@@ -384,24 +401,24 @@ function ContractorViewLineItem({ handleAcceptLineItem, item, onOtherFormValueCh
           <View style={{ flex: .6, flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
             <StyledContractorButton
               labelStyle={{ fontSize: 16, fontFamily: 'URBAN_BOLD' }}
-              disabled={selectedStatus === "Approved"}
-              backgroundColor={selectedStatus === "Approved" ? "grey" : "#7CDD9B"}
+              disabled={isDisabled("Approved")}
+              backgroundColor={getGreyShade("Approved","#7CDD9B")}
               mode="contained"
               onPress={() => acceptLineItem()}>
               A
             </StyledContractorButton>
             <StyledContractorButton
               labelStyle={{ fontSize: 16, fontFamily: 'URBAN_BOLD' }}
-              disabled={selectedStatus === "Approved as Noted"}
-              backgroundColor={selectedStatus === "Approved as Noted" ? "grey" : "#3983EF"}
+              disabled={isDisabled("Approved as Noted")}
+              backgroundColor={getGreyShade("Approved as Noted","#3983EF")}
               mode="contained"
               onPress={() => reviewLineItem()}>
               R
             </StyledContractorButton>
             <StyledContractorButton
               labelStyle={{ fontSize: 16, fontFamily: 'URBAN_BOLD' }}
-              disabled={selectedStatus === "Declined"}
-              backgroundColor={selectedStatus === "Declined" ? "grey" : "#E02E2E"}
+              disabled={isDisabled("Declined")}
+              backgroundColor={getGreyShade("Declined","#E02E2E")}
               mode="contained"
               onPress={() => deleteLineItem()}>
               D

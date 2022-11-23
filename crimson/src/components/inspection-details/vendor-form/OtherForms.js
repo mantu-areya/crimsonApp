@@ -10,7 +10,7 @@ import { Button } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
 
-const OtherForms = ({ gTotal, isSubmitted, isForReviewerView, readOnly, inspectionData, navigation }) => {
+const OtherForms = ({formStatus, gTotal, isSubmitted, isForReviewerView, readOnly, inspectionData, navigation }) => {
 
 
     let [general_Rental, setGeneral_Rental] = React.useState([])
@@ -374,6 +374,8 @@ const OtherForms = ({ gTotal, isSubmitted, isForReviewerView, readOnly, inspecti
         setSearchQuery(query);
     }
 
+    const isSubmittedByReviewer = formStatus === "Reviewer Form Completed";
+
 
     return (
         <View style={{ height: 820 }}>
@@ -406,7 +408,7 @@ const OtherForms = ({ gTotal, isSubmitted, isForReviewerView, readOnly, inspecti
                                             return item?.Sub_Category?.includes(searchQuery)
                                         }
                                         return item?.Matrix_Price?.includes(searchQuery)
-                                    }).map((item, i) => <FormLineItem key={i}   {...{ handleAcceptLineItem, isForReviewerView, item, inspId: inspectionData.Id, onRoomMeasurementValueChange, onOtherFormValueChange, navigation, readOnly, setShowAddButton, handleOnSave, deleteNewItem }} isForRoomMeasurement={currentFormData.title === "Room Measurements"} />)
+                                    }).map((item, i) => <FormLineItem key={i}   {...{isSubmittedByReviewer, handleAcceptLineItem, isForReviewerView, item, inspId: inspectionData.Id, onRoomMeasurementValueChange, onOtherFormValueChange, navigation, readOnly, setShowAddButton, handleOnSave, deleteNewItem }} isForRoomMeasurement={currentFormData.title === "Room Measurements"} />)
                                 }
                             </ScrollView>
                             :
