@@ -93,9 +93,6 @@ export default function FormLineItem({ handleAcceptLineItem, isSubmitted, isForR
                 <LineItemInputText onPress={() => setOverlayVisible(true)}>Misc {misc}</LineItemInputText>
               </LineItemInputGroup>
             </View>
-            {/* Icon */}
-            {!isForReviewerView && <Ionicons name="camera" onPress={() => navigation.navigate("CameraScreen", { inspId: { inspId }, lineItemId: item.Id })} size={24} />}
-
           </LineItemWrapper>
         </Swipeable>
         <Overlay visible={overlayVisible} onClose={() => setOverlayVisible(false)} closeOnTouchOutside >
