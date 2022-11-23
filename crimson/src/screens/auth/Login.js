@@ -51,7 +51,7 @@ const Login = ({ navigation }) => {
           CRIMSON
         </Title>
         {/* Email */}
-        <Text style={{ paddingHorizontal: 16, marginBottom: 4, color: 'white', fontSize: 16, fontFamily: 'URBAN_BOLD' }}>Email Address</Text>
+        <Text style={{ paddingHorizontal: 16, marginBottom: 4, color: 'white', fontSize: 16, fontFamily: 'URBAN_BOLD' }}>Username</Text>
         <InputWrapper
         >
           <TextInput
