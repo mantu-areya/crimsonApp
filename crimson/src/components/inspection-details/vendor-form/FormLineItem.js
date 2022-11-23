@@ -28,7 +28,7 @@ export default function FormLineItem({ handleAcceptLineItem, isSubmitted, isForR
         {/* <Text>Add Notes</Text> */}
       </View>
     </TouchableOpacity>,
-    <TouchableOpacity onPress={() => handleDelete(item.Id,inspId,item.UniqueKey)} style={{ backgroundColor: '#F3206F', justifyContent: 'center', alignItems: 'center', width: 64, flex: 1 }}>
+    <TouchableOpacity onPress={() => handleDelete(item.Id, inspId, item.UniqueKey)} style={{ backgroundColor: '#F3206F', justifyContent: 'center', alignItems: 'center', width: 64, flex: 1 }}>
       <View>
         <MaterialCommunityIcons name="delete" size={24} color="white" />
         {/* <Text>Delete</Text> */}
@@ -54,7 +54,7 @@ export default function FormLineItem({ handleAcceptLineItem, isSubmitted, isForR
   }, [item])
 
   const handleDelete = (dvdId, inspId, UniqueKey) => {
-    console.log("DELETING",dvdId);
+    console.log("DELETING", dvdId);
     deleteNewItem(dvdId, inspId, UniqueKey)
   }
 
@@ -160,7 +160,7 @@ export default function FormLineItem({ handleAcceptLineItem, isSubmitted, isForR
 
   return (
     <>
-      <Swipeable rightButtons={Sub_Category_Keys.includes(item?.Sub_Category) ? rightButtons : rightButtons.slice(0,1) }>
+      <Swipeable rightButtons={Sub_Category_Keys.includes(item?.Sub_Category) ? rightButtons : rightButtons.slice(0, 1)}>
         <LineItemWrapper >
           <View style={{ flex: 1 }}>
             {
@@ -341,10 +341,13 @@ function ContractorViewLineItem({ handleAcceptLineItem, item, onOtherFormValueCh
 
   const [visible, setVisible] = React.useState(false);
 
+  const [selectedStatus, setSelectedStatus] = React.useState(item?.Approval_Status || "");
+
   const showModal = () => setVisible(true);
   const hideModal = () => setVisible(false);
 
   function acceptLineItem() {
+    setSelectedStatus("Approved");
     handleAcceptLineItem(id, "Approved");
   }
 
@@ -353,14 +356,16 @@ function ContractorViewLineItem({ handleAcceptLineItem, item, onOtherFormValueCh
   }
 
   function deleteLineItem() {
+    setSelectedStatus("Declined");
     handleAcceptLineItem(id, "Declined");
   }
 
   function handleApproveAsNoted() {
+    setSelectedStatus("Approved as Noted");
     handleAcceptLineItem(id, "Approved as Noted");
     hideModal();
   }
-
+  // TODO - Upon Submit, disble buttons till WA generated
 
 
   return (
@@ -377,9 +382,30 @@ function ContractorViewLineItem({ handleAcceptLineItem, item, onOtherFormValueCh
             <StyledContractorText>TOTAL: {getCurrencyFormattedValue(total)}</StyledContractorText>
           </View>
           <View style={{ flex: .6, flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
-            <StyledContractorButton labelStyle={{ fontSize: 16, fontFamily: 'URBAN_BOLD' }} backgroundColor="#7CDD9B" mode="contained" onPress={() => acceptLineItem()}>A</StyledContractorButton>
-            <StyledContractorButton labelStyle={{ fontSize: 16, fontFamily: 'URBAN_BOLD' }} backgroundColor="#3983EF" mode="contained" onPress={() => reviewLineItem()}>R</StyledContractorButton>
-            <StyledContractorButton labelStyle={{ fontSize: 16, fontFamily: 'URBAN_BOLD' }} backgroundColor="#E02E2E" mode="contained" onPress={() => deleteLineItem()}>D</StyledContractorButton>
+            <StyledContractorButton
+              labelStyle={{ fontSize: 16, fontFamily: 'URBAN_BOLD' }}
+              disabled={selectedStatus === "Approved"}
+              backgroundColor={selectedStatus === "Approved" ? "grey" : "#7CDD9B"}
+              mode="contained"
+              onPress={() => acceptLineItem()}>
+              A
+            </StyledContractorButton>
+            <StyledContractorButton
+              labelStyle={{ fontSize: 16, fontFamily: 'URBAN_BOLD' }}
+              disabled={selectedStatus === "Approved as Noted"}
+              backgroundColor={selectedStatus === "Approved as Noted" ? "grey" : "#3983EF"}
+              mode="contained"
+              onPress={() => reviewLineItem()}>
+              R
+            </StyledContractorButton>
+            <StyledContractorButton
+              labelStyle={{ fontSize: 16, fontFamily: 'URBAN_BOLD' }}
+              disabled={selectedStatus === "Declined"}
+              backgroundColor={selectedStatus === "Declined" ? "grey" : "#E02E2E"}
+              mode="contained"
+              onPress={() => deleteLineItem()}>
+              D
+            </StyledContractorButton>
           </View>
         </View>
       </Card>
