@@ -145,6 +145,7 @@ export const SubmitReviewForm = ({ handleCloseModal, setreadonly, inspVfDetails,
         if (tempObject[ele] == "") {
           hasNoError = false
           setErrorState(true)
+          setIsSubmitting(false);
           return false;
         }
         hasNoError = true
