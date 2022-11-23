@@ -378,7 +378,7 @@ const OtherForms = ({formStatus, gTotal, isSubmitted, isForReviewerView, readOnl
 
 
     return (
-        <View style={{ height: 820 }}>
+        <View>
             {!isSubmitted &&
                 <>
                     {/* Menu */}
