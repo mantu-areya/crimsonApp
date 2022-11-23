@@ -1,4 +1,4 @@
-import { View, Text, FlatList, ActivityIndicator, Dimensions, Platform, ScrollView } from 'react-native'
+import { View, Text, FlatList, ActivityIndicator, Dimensions, Platform, ScrollView, TextInput } from 'react-native'
 import React from 'react'
 import styled from 'styled-components/native';
 import FormLineItem from './FormLineItem';
@@ -7,6 +7,7 @@ import { VendorFormContext } from '../../../services/context/VendorForm/vendorFo
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
 import { Button } from 'react-native-paper';
+import Icon from 'react-native-vector-icons/FontAwesome';
 
 
 const OtherForms = ({ gTotal, isSubmitted, isForReviewerView, readOnly, inspectionData, navigation }) => {
@@ -369,9 +370,17 @@ const OtherForms = ({ gTotal, isSubmitted, isForReviewerView, readOnly, inspecti
         return dataList.filter(item => item.Approval_Status === null).length
     }
 
+    const [searchQuery, setSearchQuery] = React.useState('');
+
+    // console.log("ins",inspections);
+
+    const onChangeSearch = query => {
+        setSearchQuery(query);
+    }
+
 
     return (
-        <View>
+        <View style={{height:820}}>
             {!isSubmitted &&
                 <>
                     {/* Menu */}
@@ -379,6 +388,11 @@ const OtherForms = ({ gTotal, isSubmitted, isForReviewerView, readOnly, inspecti
                         {menuItems.map((item, i) => <MenuItem isActive={item.title === currentForm} onPress={() => handleOnFormChange(item.title)} key={i}>{item.icon}</MenuItem>)}
                     </MenuWrapper>
                     <CurrentFormHeading>{currentForm}</CurrentFormHeading>
+                    {/* Search */}
+                    <View style={{ flexDirection: 'row', alignItems: 'center', padding:4, paddingHorizontal: 16,backgroundColor:"white", margin: 8 }}>
+                        <Icon name="search" color="grey" size={18} />
+                        <TextInput value={searchQuery} onChangeText={onChangeSearch} placeholder="Search Matrix Price..." style={{ fontFamily: "URBAN_BOLD", backgroundColor: "transparent", fontSize: 18, padding: 12, width: "100%" }} />
+                    </View>
                     {
                         (isForReviewerView && currentForm !== "Room Measurements") &&
                         <View intensity={100} style={{ marginVertical: 8, flexDirection: 'row', alignItems: 'center' }}>
@@ -390,7 +404,7 @@ const OtherForms = ({ gTotal, isSubmitted, isForReviewerView, readOnly, inspecti
                         dataList.length > 0 ?
                             <ScrollView>
                                 {
-                                    dataList.map((item, i) => <FormLineItem key={i}   {...{ handleAcceptLineItem, isForReviewerView, item, inspId: inspectionData.Id, onRoomMeasurementValueChange, onOtherFormValueChange, navigation, readOnly, setShowAddButton, handleOnSave }} isForRoomMeasurement={currentFormData.title === "Room Measurements"} />)
+                                    dataList.filter(item => item?.Matrix_Price.includes(searchQuery)).map((item, i) => <FormLineItem key={i}   {...{ handleAcceptLineItem, isForReviewerView, item, inspId: inspectionData.Id, onRoomMeasurementValueChange, onOtherFormValueChange, navigation, readOnly, setShowAddButton, handleOnSave }} isForRoomMeasurement={currentFormData.title === "Room Measurements"} />)
                                 }
                             </ScrollView>
                             :
@@ -428,9 +442,9 @@ const OtherForms = ({ gTotal, isSubmitted, isForReviewerView, readOnly, inspecti
                         dataList.length > 0 ?
                             <ScrollView>
                                 {
-                                    [].concat(general_Rental, pools, exterior, interior, mech_Elec_Plumb).filter(item => item.Approval_Status === "Approved" || item.Approval_Status === "Approved as Noted").map((item, i) =>
+                                    [].concat(general_Rental, pools, exterior, interior, mech_Elec_Plumb).filter(item => item?.Matrix_Price.includes(searchQuery)).filter(item => item.Approval_Status === "Approved" || item.Approval_Status === "Approved as Noted").map((item, i) =>
                                         <FormLineItem key={i}
-                                            {...{ isSubmitted, isForReviewerView, item, inspId: inspectionData.Id, onRoomMeasurementValueChange, onOtherFormValueChange, navigation, readOnly, setShowAddButton, handleOnSave }}x
+                                            {...{ isSubmitted, isForReviewerView, item, inspId: inspectionData.Id, onRoomMeasurementValueChange, onOtherFormValueChange, navigation, readOnly, setShowAddButton, handleOnSave }} x
                                             isForRoomMeasurement={currentFormData.title === "Room Measurements"} />)
                                 }
                             </ScrollView> :
