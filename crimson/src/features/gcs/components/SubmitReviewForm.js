@@ -153,8 +153,7 @@ export const SubmitReviewForm = ({ handleCloseModal, setreadonly, inspVfDetails,
       }
       return true;
     })
-    console.log(hasNoError && hasNoError, "ooo");
-
+    console.log(hasNoError && hasNoError, "NO GC MODAL ERROR");
     /// check not have any error and upload the data
     // hasNoError && hasNoError && console.log("frfrfr");
     hasNoError && hasNoError && updateSfVendorFormDetails(inspVfDetails, inspId, false).then(result => {
