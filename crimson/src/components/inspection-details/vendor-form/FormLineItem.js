@@ -455,7 +455,14 @@ function ContractorViewLineItem({ isSubmittedByReviewer, handleAcceptLineItem, i
           <StyledOverlayInputWrapper style={{ flexDirection: 'row' }}>
             <StyledOverlayInputLabel>RATE: </StyledOverlayInputLabel>
             <StyledOverlayInput
-              onChangeText={text => onOtherFormValueChange(text, "Adj_Rate", UniqueKey)}
+              keyboardType="number-pad"
+              onChangeText={text => {
+                let formatdText = text.slice(2);
+                if (!parseFloat(text.slice(2))) {
+                  return;
+                }
+                onOtherFormValueChange(formatdText, "Adj_Rate", UniqueKey)
+              }}
               value={`${getCurrencyFormattedValue(Adj_Rate) ?? 0}`} />
           </StyledOverlayInputWrapper>
           <StyledOverlayInputWrapper style={{ flexDirection: 'row' }}>

@@ -10,7 +10,7 @@ import { Button } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
 
-const OtherForms = ({formStatus, gTotal, isSubmitted, isForReviewerView, readOnly, inspectionData, navigation }) => {
+const OtherForms = ({ formStatus, gTotal, isSubmitted, isForReviewerView, readOnly, inspectionData, navigation }) => {
 
 
     let [general_Rental, setGeneral_Rental] = React.useState([])
@@ -166,7 +166,14 @@ const OtherForms = ({formStatus, gTotal, isSubmitted, isForReviewerView, readOnl
 
     const onOtherFormValueChange = (value, field, key) => {
         console.log("changing", field, 'with', value, "KEY", key);
-        console.log(isNaN(value));
+        if (isNaN(value)) {
+            console.log("NAN", isNaN(value));
+            return;
+        }
+        if(parseFloat(value) < 0){
+            console.log("Entered val is negative");
+            return;
+        }
         let newState, Sub_Category;
         let newSequence = sequence + 1
         let Category = currentFormData && currentFormData.data[0].Category
@@ -408,7 +415,7 @@ const OtherForms = ({formStatus, gTotal, isSubmitted, isForReviewerView, readOnl
                                             return item?.Sub_Category?.includes(searchQuery)
                                         }
                                         return item?.Matrix_Price?.includes(searchQuery)
-                                    }).map((item, i) => <FormLineItem key={i}   {...{isSubmittedByReviewer, handleAcceptLineItem, isForReviewerView, item, inspId: inspectionData.Id, onRoomMeasurementValueChange, onOtherFormValueChange, navigation, readOnly, setShowAddButton, handleOnSave, deleteNewItem }} isForRoomMeasurement={currentFormData.title === "Room Measurements"} />)
+                                    }).map((item, i) => <FormLineItem key={i}   {...{ isSubmittedByReviewer, handleAcceptLineItem, isForReviewerView, item, inspId: inspectionData.Id, onRoomMeasurementValueChange, onOtherFormValueChange, navigation, readOnly, setShowAddButton, handleOnSave, deleteNewItem }} isForRoomMeasurement={currentFormData.title === "Room Measurements"} />)
                                 }
                             </ScrollView>
                             :
