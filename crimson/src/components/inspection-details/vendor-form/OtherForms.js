@@ -160,17 +160,13 @@ const OtherForms = ({ formStatus, gTotal, isSubmitted, isForReviewerView, readOn
     const [NewItemAdded, setNewItemAdded] = React.useState(0);
     const [showAddButton, setShowAddButton] = React.useState(false)
 
-    // React.useEffect(() => {
-    //     updateVfContect(dataList, "OTHRFM", inspectionData.Id);
-    // }, [dataList]);
-
     const onOtherFormValueChange = (value, field, key) => {
         console.log("changing", field, 'with', value, "KEY", key);
         if (isNaN(value)) {
             console.log("NAN", isNaN(value));
             return;
         }
-        if(parseFloat(value) < 0){
+        if (parseFloat(value) < 0) {
             console.log("Entered val is negative");
             return;
         }
@@ -264,6 +260,16 @@ const OtherForms = ({ formStatus, gTotal, isSubmitted, isForReviewerView, readOn
     }
 
     const onRoomMeasurementValueChange = async (value, field, key) => {
+
+        console.log("changing", field, 'with', value, "KEY", key);
+        if (isNaN(value)) {
+            console.log("NAN", isNaN(value));
+            return;
+        }
+        if (parseFloat(value) < 0) {
+            console.log("Entered val is negative");
+            return;
+        }
 
         let newData;
         let newSequence = sequence + 1

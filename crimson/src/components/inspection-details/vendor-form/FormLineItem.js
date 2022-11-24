@@ -7,6 +7,7 @@ import { View, TouchableOpacity, Text, TextInput } from 'react-native'
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import React from "react";
 import AntDesign from "react-native-vector-icons/AntDesign"
+import { getVendorFormDetails } from "../../../services/inspections/inspections.service";
 
 
 let requiredSubCategories = [
@@ -158,7 +159,7 @@ export default function FormLineItem({ isSubmittedByReviewer, handleAcceptLineIt
 
   if (isForReviewerView) {
     return (
-      <ContractorViewLineItem {...{ isSubmittedByReviewer, handleAcceptLineItem, item, onOtherFormValueChange }} />
+      <ContractorViewLineItem {...{ inspId, isSubmittedByReviewer, handleAcceptLineItem, item, onOtherFormValueChange }} />
     )
 
   }
@@ -314,7 +315,7 @@ function SubmittedFormLineItem({ status, title, rate, quantity, total, notes }) 
   )
 }
 
-function ContractorViewLineItem({ isSubmittedByReviewer, handleAcceptLineItem, item, onOtherFormValueChange }) {
+function ContractorViewLineItem({ inspId, isSubmittedByReviewer, handleAcceptLineItem, item, onOtherFormValueChange }) {
 
   const {
     UniqueKey,
@@ -327,6 +328,19 @@ function ContractorViewLineItem({ isSubmittedByReviewer, handleAcceptLineItem, i
     Quantity: quantity,
     Total: total
   } = item
+
+  //  * GET LINE ITEM IMAGES 
+  // TODO - getting all images , select only line item images
+  const [allLineItemImages, setAllLineImages] = React.useState([]);
+
+  async function getLineItemImages() {
+    const data = await getVendorFormDetails(inspId);
+    setAllLineImages(data.Images)
+  }
+
+  React.useEffect(() => {
+    getLineItemImages();
+  }, [inspId])
 
 
 
@@ -432,7 +446,24 @@ function ContractorViewLineItem({ isSubmittedByReviewer, handleAcceptLineItem, i
       </Card>
       <Overlay childrenWrapperStyle={{ padding: 18 }} containerStyle={{ backgroundColor: '#dbdad960' }} visible={visible} onClose={() => setVisible(false)} closeOnTouchOutside >
         <Ionicons onPress={() => hideModal()} name="close" size={24} style={{ marginLeft: "auto" }} />
-        <View style={{ minHeight: 280, width: "100%", backgroundColor: "black" }} />
+        <GalleryWrapper>
+          <View style={{ flexDirection: "row", flexWrap: "wrap" }}>
+            {
+              allLineItemImages.length > 0 && allLineItemImages.map((item, i) =>
+                <GalleryImageItem key={i} img={item} />
+              )
+            }
+
+          </View>
+
+          {
+            allLineItemImages.length <= 0 &&
+            <View style={{ padding: 16 }}>
+              <Text style={{ fontFamily: 'URBAN_BOLD', fontSize: 16, textAlign: "center" }}>No Line Item images to Show</Text>
+            </View>
+          }
+
+        </GalleryWrapper>
         <Text style={{ width: "100%", padding: 10, fontFamily: 'URBAN_MEDIUM', fontSize: 16, color: "#BDC5CD" }}>{title}</Text>
         <View style={{ padding: 16, flexDirection: 'row', justifyContent: "space-evenly", width: "100%" }}>
           <StyledOverlayText >QTY: {quantity}</StyledOverlayText>
@@ -499,6 +530,30 @@ function ContractorViewLineItem({ isSubmittedByReviewer, handleAcceptLineItem, i
 function getCurrencyFormattedValue(value) {
   return value ? value?.toLocaleString("en-IN", { style: "currency", currency: 'USD' }) : 0
 }
+
+function GalleryImageItem({ img }) {
+
+  const [showPreview, setShowPreview] = React.useState(false);
+
+  return (
+    <TouchableOpacity onPress={() => setShowPreview(true)}>
+      <Image style={{
+        width: Dimensions.get("window").width / 3,
+        height: 128
+      }} source={{ uri: img.file_public_url }} />
+      <Overlay childrenWrapperStyle={{ backgroundColor: 'black' }} containerStyle={{ backgroundColor: 'black' }} visible={showPreview} onClose={() => setShowPreview(false)} closeOnTouchOutside >
+        <Ionicons onPress={() => setShowPreview(false)} name="close" color="white" size={32} />
+        <Image source={{ uri: img.file_public_url }} style={{ width: 480, height: 480, borderRadius: 16 }} />
+      </Overlay>
+    </TouchableOpacity>
+  )
+}
+
+
+const GalleryWrapper = styled.View`
+width: 100%;
+`;
+
 
 const StyledOverlayText = styled.Text`
 flex:1;
