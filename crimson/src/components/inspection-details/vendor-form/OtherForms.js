@@ -327,9 +327,9 @@ const OtherForms = ({ formStatus, gTotal, isSubmitted, isForReviewerView, readOn
             });
         } else {
 
-            if (value < 0 || value === '' || value === null || value === undefined) {
-                return;
-            }
+            // if (value < 0 || value === '' || value === null || value === undefined) {
+            //     return;
+            // }
             newData = dataList.map(obj => {
                 if (obj.UniqueKey === key) {
                     let formatedVal = ["Sub_Category"].includes(field) ? value : parseFloat(value)
@@ -347,8 +347,8 @@ const OtherForms = ({ formStatus, gTotal, isSubmitted, isForReviewerView, readOn
 
         // console.log(newData);
         setDatalist(newData);
-        setUpdatedData(currentForm, newState);
-        updateVfContect(newState, "RM", inspectionData.Id);
+        setUpdatedData(currentForm, newData);
+        updateVfContect(newData, "RM", inspectionData.Id);
     }
 
 
