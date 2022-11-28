@@ -162,7 +162,8 @@ const OtherForms = ({ formStatus, gTotal, isSubmitted, isForReviewerView, readOn
 
     const onOtherFormValueChange = (value, field, key) => {
         console.log("changing", field, 'with', value, "KEY", key);
-        if (isNaN(value)) {
+        const isNotStringValueField = !(["Matrix_Price","Sub_Category","U_M", "Scope_Notes", "Owner_Clarification"]?.includes(field)) 
+        if ( isNotStringValueField && isNaN(value)) {
             console.log("NAN", isNaN(value));
             return;
         }
@@ -214,7 +215,7 @@ const OtherForms = ({ formStatus, gTotal, isSubmitted, isForReviewerView, readOn
         } {
             newState = dataList.map(obj => {
                 if (obj.UniqueKey === key) {
-                    let formatedVal = ["U_M", "Scope_Notes", "Owner_Clarification"].includes(field) ? value : parseFloat(value)
+                    let formatedVal = ["Matrix_Price","Sub_Category","U_M", "Scope_Notes", "Owner_Clarification"].includes(field) ? value : parseFloat(value)
                     let newValues = { ...obj, [field]: formatedVal };
                     let newTotal;
 
