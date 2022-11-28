@@ -65,7 +65,7 @@ export default function FormLineItem({ isSubmittedByReviewer, handleAcceptLineIt
 
   if (isForRoomMeasurement) {
 
-    let length, width, misc;
+    let length, width, misc, total;
     const Sub_Category_List = ["Garage", "Foyed", "Family Room", "Breakfast Nook", "Kitchen", "Laundry Room", "Formal Living Room", "Hallway 1", "Hallway 2", "Half Bathroom", "Master Bathroom", "Bathroom 2", "Bathroom 3", "Master Bedroom", "Bedroom 2", "Bedroom 3", "Bedroom 4", "Gameroom", "Office/Study", "Basement", "master closet", "Dining Room",]
 
 
@@ -79,6 +79,8 @@ export default function FormLineItem({ isSubmittedByReviewer, handleAcceptLineIt
     length = getFormatedRowValues(item.Room_Length);
     width = getFormatedRowValues(item.Room_Width);
     misc = getFormatedRowValues(item.Room_Misc_SF);
+    total = getFormatedRowValues(item.Room_Total);
+
 
 
     return (
@@ -97,11 +99,13 @@ export default function FormLineItem({ isSubmittedByReviewer, handleAcceptLineIt
                 />}
               <LineItemInputGroup>
                 {/* Length */}
-                <LineItemInputText onPress={() => setOverlayVisible(true)}>Length {length}</LineItemInputText>
+                <LineItemInputText onPress={() => setOverlayVisible(true)}>Length: {length}</LineItemInputText>
                 {/* Width */}
-                <LineItemInputText onPress={() => setOverlayVisible(true)}>Width {width}</LineItemInputText>
+                <LineItemInputText onPress={() => setOverlayVisible(true)}>Width: {width}</LineItemInputText>
                 {/* Misc */}
-                <LineItemInputText onPress={() => setOverlayVisible(true)}>Misc {misc}</LineItemInputText>
+                <LineItemInputText onPress={() => setOverlayVisible(true)}>Misc: {misc}</LineItemInputText>
+                {/* Total */}
+                <LineItemInputText onPress={() => setOverlayVisible(true)}>Total: {total} sqft</LineItemInputText>
               </LineItemInputGroup>
             </View>
           </LineItemWrapper>
@@ -125,6 +129,7 @@ export default function FormLineItem({ isSubmittedByReviewer, handleAcceptLineIt
               readOnly={readOnly}
               value={length}
             />
+
             <CustomFormInput
               label="Width"
               placeholder="Width"
@@ -138,6 +143,12 @@ export default function FormLineItem({ isSubmittedByReviewer, handleAcceptLineIt
               onChangeText={val => onRoomMeasurementValueChange((val), "Room_Misc_SF", item.UniqueKey)}
               readOnly={readOnly}
               value={misc}
+            />
+            <CustomFormInput
+              label="Total SqFt"
+              placeholder="Total"
+              readOnly={true}
+              value={total}
             />
           </View>
           {!readOnly &&

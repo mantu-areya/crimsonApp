@@ -115,7 +115,7 @@ const OtherForms = ({ formStatus, gTotal, isSubmitted, isForReviewerView, readOn
           toatalSF = toatalSF + ele.Room_Total
           return toatalSF
         })
-        return toatalSF.toLocaleString("en-IN", { style: "currency", currency: 'USD' })
+        return toatalSF.toFixed(2)
       }
 
 
@@ -411,7 +411,7 @@ const OtherForms = ({ formStatus, gTotal, isSubmitted, isForReviewerView, readOn
                         {menuItems.map((item, i) => <MenuItem isActive={item.title === currentForm} onPress={() => handleOnFormChange(item.title)} key={i}>{item.icon}</MenuItem>)}
                     </MenuWrapper>
                     <CurrentFormHeading style={{ textAlign: "right", paddingHorizontal: 16, fontSize: 18 }}>{currentForm}</CurrentFormHeading>
-                    <Text style={{ paddingHorizontal: 16, color: 'black', fontFamily: 'URBAN_BOLD', textAlign: "right", fontSize: 16 }}>Total: {currentForm === "Room Measurements" ? GetToalSqFt() : GetTotal()}</Text>
+                    <Text style={{ paddingHorizontal: 16, color: 'black', fontFamily: 'URBAN_BOLD', textAlign: "right", fontSize: 16 }}>Total: {currentForm === "Room Measurements" ? GetToalSqFt() + " sqft": GetTotal() }</Text>
                     {/* Search */}
                     <View style={{ flexDirection: 'row', alignItems: 'center', padding: 4, paddingHorizontal: 16, backgroundColor: "white", margin: 8 }}>
                         <Icon name="search" color="grey" size={18} />
