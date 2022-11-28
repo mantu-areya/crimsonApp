@@ -25,7 +25,6 @@ const OtherForms = ({ formStatus, gTotal, isSubmitted, isForReviewerView, readOn
     const { vendorFormDetails, updateToSf, deleteNewItem } = React.useContext(VendorFormContext);
 
 
-
     const isFocused = useIsFocused();
 
 
@@ -274,7 +273,8 @@ const OtherForms = ({ formStatus, gTotal, isSubmitted, isForReviewerView, readOn
     const onRoomMeasurementValueChange = async (value, field, key) => {
 
         console.log("changing", field, 'with', value, "KEY", key);
-        if (isNaN(value)) {
+        const isNotStringValueField = !(["Sub_Category"]?.includes(field)) 
+        if (isNotStringValueField && isNaN(value)) {
             console.log("NAN", isNaN(value));
             return;
         }
@@ -332,7 +332,9 @@ const OtherForms = ({ formStatus, gTotal, isSubmitted, isForReviewerView, readOn
             }
             newData = dataList.map(obj => {
                 if (obj.UniqueKey === key) {
-                    let newValues = { ...obj, [field]: parseFloat(value) };
+                    let formatedVal = ["Sub_Category"].includes(field) ? value : parseFloat(value)
+                    let newValues = { ...obj, [field]: formatedVal };
+                    // let newValues = { ...obj, [field]: parseFloat(value) };
                     let newTotal = (newValues.Room_Length * newValues.Room_Width) + newValues.Room_Misc_SF
                     return { ...obj, [field]: parseFloat(value), ["Room_Total"]: newTotal };
                 }

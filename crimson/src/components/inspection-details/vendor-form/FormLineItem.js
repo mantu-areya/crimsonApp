@@ -223,7 +223,13 @@ export default function FormLineItem({ isSubmittedByReviewer, handleAcceptLineIt
           <CustomFormInput
             label="Quantity"
             placeholder="QTY"
-            onChangeText={val => onOtherFormValueChange((val), "Quantity", item.UniqueKey)}
+            onChangeText={text => {
+              if (text === "") { // * for negative numbers
+                return onOtherFormValueChange(0, "Quantity", item.UniqueKey)
+              }
+              onOtherFormValueChange(text, "Quantity", item.UniqueKey)
+            }}
+            // onChangeText={val => onOtherFormValueChange((val), "Quantity", item.UniqueKey)}
             readOnly={readOnly}
             value={item.Quantity}
           />
