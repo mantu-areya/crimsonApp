@@ -138,7 +138,7 @@ export const SubmitReviewForm = ({ handleCloseModal, setreadonly, inspVfDetails,
     }
 
     let hasNoError
-    let requiredFields = ["electric", "water", "gas_fuel_tank", "sewer", "electric_meter", "water_meter"]
+    let requiredFields = ["electric", "water", "gas_fuel_tank", "sewer", electric && "electric_meter", water && water.split(";").includes("City") && "water_meter",gas_fuel_tank && gas_fuel_tank.split(";").includes("Natural Gas") && gas_meter]
     tempObject && Object.keys(tempObject).every(ele => {
       // console.log(ele,);
       if (requiredFields.includes(ele)) {
@@ -157,7 +157,7 @@ export const SubmitReviewForm = ({ handleCloseModal, setreadonly, inspVfDetails,
     console.log(hasNoError && hasNoError, "NO GC MODAL ERROR");
     /// check not have any error and upload the data
     // hasNoError && hasNoError && console.log("frfrfr");
-    hasNoError && hasNoError && updateSfVendorFormDetails(inspVfDetails, inspId, false).then(result => {
+    hasNoError && hasNoError ? updateSfVendorFormDetails(inspVfDetails, inspId, false).then(result => {
       result && updateSfVendorFormDetails(tempObject, inspId, true).then(response => {
         console.log("VENDOR FORM SUBMISSION :", response)
         setIsSubmitting(false);
@@ -166,7 +166,7 @@ export const SubmitReviewForm = ({ handleCloseModal, setreadonly, inspVfDetails,
         setreadonly(true)
         navigation.navigate('HomeStack')
       })
-    })
+    }): setIsSubmitting(false);
   }
 
   const handleCancel = () => {
