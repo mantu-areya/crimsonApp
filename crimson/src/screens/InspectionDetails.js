@@ -182,7 +182,7 @@ const InspectionDetails = ({ route, navigation }) => {
               {/* Hero */}
               <Hero data={inspectionData} sectionTotals={sectionTotals} isSubmitted={isSubmitted} />
               {/* CTA's */}
-              <CTA formStatus={inspectionData?.Inspection_Form_Stage__c} role={userRole} handleOnChat={() => navigation.navigate("Chat", { inspId: inspectionData.Id })} isReadOnly={readOnly} isForReviewerView={userRole === "Reviewer"} handleSignature={handleSignature} handleViewImages={handleViewImages} isSubmitted={isSubmitted} handleOnSubmit={handleSubmit} />
+              <CTA formStatus={inspectionData?.Inspection_Form_Stage__c} role={userRole} handleOnChat={() => navigation.navigate("Chat", { inspId: inspectionData.Id, chatTitleName: userRole === "Contractor" ? inspectionData?.HHM_Field_PM__r?.Name  : inspectionData.General_Contractor__r?.Name})} isReadOnly={readOnly} isForReviewerView={userRole === "Reviewer"} handleSignature={handleSignature} handleViewImages={handleViewImages} isSubmitted={isSubmitted} handleOnSubmit={handleSubmit} />
               {/* Sigantures */}
               {(isSubmitted && showSiganturesView) && <Signatures inspId={inspectionData.Id} role={userRole} />}
               {/* Forms */}
