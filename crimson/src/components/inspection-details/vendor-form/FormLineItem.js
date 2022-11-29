@@ -3,7 +3,7 @@ import Overlay from 'react-native-modal-overlay';
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { Button, Card, Modal, Portal, Provider } from "react-native-paper";
 import Swipeable from 'react-native-swipeable';
-import { View, TouchableOpacity, Text, TextInput } from 'react-native'
+import { View, TouchableOpacity, Text, TextInput, Image, Dimensions } from 'react-native'
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import React from "react";
 import AntDesign from "react-native-vector-icons/AntDesign"
@@ -352,7 +352,8 @@ function ContractorViewLineItem({ inspId, isSubmittedByReviewer, handleAcceptLin
 
   async function getLineItemImages() {
     const data = await getVendorFormDetails(inspId);
-    setAllLineImages(data.Images)
+    const filterImages = data?.Images?.filter(image => image.file_name.includes(id))
+    setAllLineImages(filterImages)
   }
 
   React.useEffect(() => {
@@ -464,7 +465,7 @@ function ContractorViewLineItem({ inspId, isSubmittedByReviewer, handleAcceptLin
       <Overlay childrenWrapperStyle={{ padding: 18 }} containerStyle={{ backgroundColor: '#dbdad960' }} visible={visible} onClose={() => setVisible(false)} closeOnTouchOutside >
         <Ionicons onPress={() => hideModal()} name="close" size={24} style={{ marginLeft: "auto" }} />
         <GalleryWrapper>
-          <View style={{ flexDirection: "row", flexWrap: "wrap" }}>
+          <View style={{ flexDirection: "row", flexWrap: "wrap",justifyContent:"center" }}>
             {
               allLineItemImages.length > 0 && allLineItemImages.map((item, i) =>
                 <GalleryImageItem key={i} img={item} />
@@ -552,11 +553,15 @@ function GalleryImageItem({ img }) {
 
   const [showPreview, setShowPreview] = React.useState(false);
 
+  let w = Dimensions.get("window").width / 6;
+  let h = Dimensions.get("window").width / 6;
+
   return (
     <TouchableOpacity onPress={() => setShowPreview(true)}>
       <Image style={{
-        width: Dimensions.get("window").width / 3,
-        height: 128
+        width: w,
+        height: h,
+        margin: 2
       }} source={{ uri: img.file_public_url }} />
       <Overlay childrenWrapperStyle={{ backgroundColor: 'black' }} containerStyle={{ backgroundColor: 'black' }} visible={showPreview} onClose={() => setShowPreview(false)} closeOnTouchOutside >
         <Ionicons onPress={() => setShowPreview(false)} name="close" color="white" size={32} />
