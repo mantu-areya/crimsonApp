@@ -506,11 +506,11 @@ function ContractorViewLineItem({ inspId, isSubmittedByReviewer, handleAcceptLin
             <StyledOverlayInput
               keyboardType="number-pad"
               onChangeText={text => {
+               if ( Platform.OS === 'ios' ) {
                 let formatdText = text.slice(2).replace(",","");
-                if (!parseFloat(text.slice(2))) {
-                  return;
-                }
-                onOtherFormValueChange(formatdText, "Adj_Rate", UniqueKey)
+               return onOtherFormValueChange(formatdText, "Adj_Rate", UniqueKey)
+               }
+                onOtherFormValueChange(text, "Adj_Rate", UniqueKey)
               }}
               value={`${getCurrencyFormattedValue(Adj_Rate) ?? 0}`} />
           </StyledOverlayInputWrapper>
