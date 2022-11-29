@@ -31,7 +31,8 @@ const Hero = ({ data, isSubmitted, sectionTotals }) => {
         Inspection_Form_Stage__c,
         GC_Email__c,
         Prospect_ID__r: { Baths__c, Bed__c, Square_Feet__c, Year_Built__c },
-        doCreateWAF__c
+        doCreateWAF__c,
+        Is_New_Construction__c,
     } = data;
 
     const pendingDays = differenceInDays(
@@ -143,14 +144,13 @@ const Hero = ({ data, isSubmitted, sectionTotals }) => {
                 !isSubmitted && <DescriptionWrapper>
                     <Text style={{ color: 'black', fontFamily: 'URBAN_BOLD', fontSize: 16 }}>DESCRIPTION</Text>
                     <DescriptionText style={{ marginTop: 14 }}>
-                        {Property_Street_Address__c} is a {Bed__c} Room Property with {Baths__c} Baths and {Square_Feet__c} Sq Ft. Built in {Year_Built__c} this property is a New Construction.
+                        {Property_Street_Address__c} is a {Bed__c} Room Property with {Baths__c} Baths and {Square_Feet__c} Sq Ft. Built in {Year_Built__c}. {Is_New_Construction__c &&  "this property is a New Construction" }
                     </DescriptionText>
                     <DescriptionText style={{ marginTop: 16 }}>
                         Inspection Schedule Date - {GC_Inspection_Due_Date__c}
                     </DescriptionText>
                     <DescriptionText>
                         Target Rehab Complete Date - {Target_Rehab_Complete_Date__c}
-                        {/* // ! not getting this value */}
                     </DescriptionText>
                 </DescriptionWrapper>
             }
