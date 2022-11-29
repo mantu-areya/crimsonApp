@@ -506,7 +506,7 @@ function ContractorViewLineItem({ inspId, isSubmittedByReviewer, handleAcceptLin
             <StyledOverlayInput
               keyboardType="number-pad"
               onChangeText={text => {
-                let formatdText = text.slice(2);
+                let formatdText = text.slice(2).replace(",","");
                 if (!parseFloat(text.slice(2))) {
                   return;
                 }
