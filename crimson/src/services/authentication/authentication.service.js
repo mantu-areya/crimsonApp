@@ -10,10 +10,11 @@ export const setOrgToken = () => {
     'grant_type': 'password',
     'client_id': '3MVG9wt4IL4O5wvI4PySmNNrBLXwBZingrtj_Jy5Nc_X3UKaSqftCpTXb70a46VTpE7rBcj.zm_dLqm0Vuwm5',
     'client_secret': 'A552CB01650BB01A983E836E1644F3D2707CEB46B3D2CAB8E0C395E84BE37835',
-    'username': 'bhupendra.singh@areya.tech.dev',
-    'password': 'Areya@2001gMmBKQzT8yObHlhHxD680LmQJ'
+    'username': 'crimson.mobile@areya.tech',
+    'password': 'Areya@2001xnNPh415vKHd0MpqIfRK1oln'
   });
-  return apiPost('https://login.salesforce.com/services/oauth2/token?', data
+  console.log(data,"er");
+  return data && apiPost('https://login.salesforce.com/services/oauth2/token?', data
   )
     .then(response => {
       AsyncStorage.setItem('SfAdminToken', JSON.stringify(response.data.access_token)).then(data => {
@@ -22,6 +23,7 @@ export const setOrgToken = () => {
       })
     })
     .catch(err => {
+      console.log("error in setOrgToken ",JSON.stringify(err.request));
       console.error(err);
       // throw err;
     });
@@ -37,7 +39,7 @@ const setTokenoninterval = () => setInterval(() => {
       return
     }
   })
-}, 50000);
+}, 18000000);
 
 setTokenoninterval();
 

@@ -15,7 +15,7 @@ const Chat = ({ route, navigation }) => {
     const [messages, setMessages] = React.useState([]);
     const { userId, userRole } = React.useContext(InspectionsContext);
 
-    const { inspId } = route.params;
+    const { inspId, chatTitleName } = route.params;
 
 
     async function InspectionsChat() {
@@ -23,6 +23,7 @@ const Chat = ({ route, navigation }) => {
             const allChats = await getInspectionsChat(inspId);
             // console.log("Chats", allChats);
             const temp = allChats.reverse().map(({ actor, body, createdDate }) => {
+                    console.log(actor);
                 return {
                     _id: uuidv4(),
                     text: body.text,
@@ -77,7 +78,7 @@ const Chat = ({ route, navigation }) => {
                 {/* back */}
                 <Ionicons onPress={() => navigation.goBack()} name="arrow-back" color="white" size={24} />
                 {/* Person Name */}
-                <ToolBarHeading>Tim Repair_Estimator__r</ToolBarHeading>
+                <ToolBarHeading>{chatTitleName}</ToolBarHeading>
             </ToolBar>
             {/* Chat Container */}
             <ChatContainer>

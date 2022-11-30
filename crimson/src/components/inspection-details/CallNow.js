@@ -18,7 +18,7 @@ const CallNow = ({isForReviewerView,data}) => {
             <TextWrapper>
                 {/* Name */}
                 <Title>
-                {!isForReviewerView ? HHM_Field_PM__r.Name : `${General_Contractor__r?.Name} GC Contractor`}
+                {!isForReviewerView ? HHM_Field_PM__r?.Name : `${General_Contractor__r?.Name} GC Contractor`}
                 </Title>
                 {/* Mobile No */}
                 <SubTitle>

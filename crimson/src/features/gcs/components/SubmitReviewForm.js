@@ -14,6 +14,7 @@ export const SubmitReviewForm = ({ handleCloseModal, setreadonly, inspVfDetails,
   const [textObj, setTextObj] = useState({ "Electric Meter #": '', "Water Meter #": '', "Gas Meter #": '', "Utility Notes": '' })
   const [selectListObject, setSelectListObj] = useState({ "Electric On": '', "Water On": '', "Gas On": '', "Septic": '', "Well": '', "Propane": '', "Oil": '' })
   const [errorState, setErrorState] = useState(false)
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleIsChacked = (label, selecteditem, value) => {
     checkList && Object.keys(checkList).map(ele => {
@@ -97,6 +98,8 @@ export const SubmitReviewForm = ({ handleCloseModal, setreadonly, inspVfDetails,
 
   const HnadleSubmitUtility = () => {
 
+    setIsSubmitting(true);
+
     let electric, electric_meter, electric_on, water, water_meter, water_on, gas_fuel_tank, gas_meter, gas_on, sewer, septic, well, utility_notes, propane, oil = ""
     checkList && Object.keys(checkList).map(ele => {
       Object.keys(checkList[ele]).map(item => {
@@ -135,13 +138,14 @@ export const SubmitReviewForm = ({ handleCloseModal, setreadonly, inspVfDetails,
     }
 
     let hasNoError
-    let requiredFields = ["electric", "water", "gas_fuel_tank", "sewer", "electric_meter", "water_meter"]
+    let requiredFields = ["electric", "water", "gas_fuel_tank", "sewer", electric && "electric_meter", water && water.split(";").includes("City") && "water_meter", gas_fuel_tank && gas_fuel_tank.split(";").includes("Natural Gas") && "gas_meter"]
     tempObject && Object.keys(tempObject).every(ele => {
       // console.log(ele,);
       if (requiredFields.includes(ele)) {
         if (tempObject[ele] == "") {
           hasNoError = false
           setErrorState(true)
+          setIsSubmitting(false);
           return false;
         }
         hasNoError = true
@@ -150,18 +154,23 @@ export const SubmitReviewForm = ({ handleCloseModal, setreadonly, inspVfDetails,
       }
       return true;
     })
-    console.log(hasNoError && hasNoError, "ooo");
-
+    console.log(hasNoError && hasNoError, "NO GC MODAL ERROR");
     /// check not have any error and upload the data
     // hasNoError && hasNoError && console.log("frfrfr");
-    hasNoError && hasNoError && updateSfVendorFormDetails(inspVfDetails, inspId, false).then(result => {
+    hasNoError && hasNoError ? updateSfVendorFormDetails(inspVfDetails, inspId, false).then(result => {
       result && updateSfVendorFormDetails(tempObject, inspId, true).then(response => {
-        console.log("response", response)
+        console.log("VENDOR FORM SUBMISSION :", response)
+        setIsSubmitting(false);
+        handleCloseModal();
         alert("Submitted Successfully") // ! Need a proper alert component here
         setreadonly(true)
         navigation.navigate('HomeStack')
+      }).catch(err => {
+        setIsSubmitting(false);
       })
-    })
+    }).catch(err => {
+      setIsSubmitting(false);
+    }) : setIsSubmitting(false);
   }
 
   const handleCancel = () => {
@@ -233,9 +242,9 @@ export const SubmitReviewForm = ({ handleCloseModal, setreadonly, inspVfDetails,
             )
           })}
         </View>
-        <View style={{flexDirection:"row", width:"100%",justifyContent:"flex-end"}}>
-          <Button onPress={() => HnadleSubmitUtility()} mode="contained" style={{backgroundColor:"#8477EB"}}>Save</Button>
-          <Button onPress={() => handleCancel()} labelStyle={{color:"#8477EB"}}>Cancel</Button>
+        <View style={{ flexDirection: "row", width: "100%", justifyContent: "flex-end" }}>
+          <Button disabled={isSubmitting} loading={isSubmitting} onPress={() => HnadleSubmitUtility()} mode="contained" style={{ backgroundColor: "#8477EB" }}>Save</Button>
+          <Button disabled={isSubmitting} onPress={() => handleCancel()} labelStyle={{ color: "#8477EB" }}>Cancel</Button>
         </View>
       </ExpandSection>
     </>

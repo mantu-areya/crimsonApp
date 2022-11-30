@@ -14,6 +14,7 @@ const rightArr = <Icon name="angle-right" size={48} color="white" />;
 const caretDown = <Icon name="caret-down" size={16} color="white" />;
 import { AuthenticationContext } from "../services/authentication/authentication.context";
 
+import { useIsFocused } from '@react-navigation/native';
 
 const TopContainer = styled.View`
 background-color:#14181B;
@@ -31,11 +32,9 @@ background-color: #F1F4F8;
 `;
 
 export const HomePage = ({ navigation }) => {
-  const { isLoading, inspections } = useContext(InspectionsContext);
+  const { isLoading, inspections, reloadInspectionContext } = useContext(InspectionsContext);
   const [searchQuery, setSearchQuery] = React.useState('');
   const [selectedOption, setSelectedOption] = React.useState('Pending Vendor Submission');
-
-  console.log("ins",inspections);
 
   const onChangeSearch = query => {
     setSearchQuery(query);
@@ -44,10 +43,19 @@ export const HomePage = ({ navigation }) => {
 
   const insets = useSafeAreaInsets();
 
-  const {onLogout} = React.useContext(AuthenticationContext);
+  const { onLogout } = React.useContext(AuthenticationContext);
 
   const [showUserMenu, setShowUserMenu] = React.useState(false);
   const [showInspectionsMenu, setShowInspectionsMenu] = React.useState(false);
+
+  const isFocused = useIsFocused();
+
+  React.useEffect(() => {
+    if (isFocused) {
+      console.log("GETTING LATEST INSPECTION");
+      reloadInspectionContext();
+    }
+  }, [isFocused])
 
   return (
     <View style={{ flex: 1, paddingTop: insets.top, backgroundColor: 'black' }}>
@@ -88,10 +96,10 @@ export const HomePage = ({ navigation }) => {
           }
         </Menu>
         {/* Searchbar */}
-        <View style={{ backgroundColor: '#F1F4F8', justifyContent: "space-between", alignItems: 'center', flexDirection: 'row', padding: 12, marginVertical: 8 }}>
-          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+        <View style={{ backgroundColor: '#F1F4F8', justifyContent: "space-between", alignItems: 'center', flexDirection: 'row', padding: 8, marginVertical: 8 }}>
+          <View style={{ flexDirection: 'row', alignItems: 'center',flex:.9 }}>
             <Icon name="search" color="grey" size={18} />
-            <TextInput onChangeText={onChangeSearch} placeholder="Address, city, state.." style={{ fontFamily: "URBAN_BOLD", backgroundColor: "transparent", marginLeft: 16, fontSize: 18 }} />
+            <TextInput value={searchQuery} onChangeText={onChangeSearch} placeholder="Address, city, state.." style={{ fontFamily: "URBAN_BOLD", backgroundColor: "transparent",fontSize: 18,padding:16,width:"100%"}} />
           </View>
           <Button labelStyle={{ fontFamily: "URBAN_BOLD" }} style={{ backgroundColor: "#4B39EF", padding: 8 }} mode="contained">Search</Button>
         </View>

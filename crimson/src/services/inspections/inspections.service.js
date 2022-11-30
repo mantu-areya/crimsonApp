@@ -94,7 +94,7 @@ export const setTokenoninterval = (userName) => setInterval(() => {
       })
     }
   })
-}, 50000);
+}, 18000000);
 
 
 

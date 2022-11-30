@@ -5,29 +5,28 @@ import * as FileSystem from 'expo-file-system';
 import { ActivityIndicator } from "react-native-paper";
 import { Text } from "../../components/typography/text.component";
 import { SafeArea } from "../../components/utility/safe-area.component";
-import { StyleSheet, View, TouchableOpacity, Alert, ImageBackground, Image, FlatList, ScrollView } from 'react-native'
+import { StyleSheet, View, TouchableOpacity, Alert, ImageBackground, Image, FlatList, ScrollView, Dimensions } from 'react-native'
 import { Spacer } from "../../components/spacer/spacer.component";
 import { uploadSignImage } from "../../services/inspections/inspections.service";
 import { Col, Row } from "react-native-responsive-grid-system";
+let w = Dimensions.get("window").width;
+let h = Dimensions.get("window").height;
 const CameraView = styled(Camera)`
-  width: 100%;
-  height: 100%; 
-  position:absolute;
+  width: ${w}px;
+  flex :1 ;
+  position: relative;
 `;
 
 const CaptureButton = styled(TouchableOpacity)`
-margin-top:145%;
-margin-left:19%;
+margin: 640px auto 0;
 `;
 
 const ReTakeButton = styled(TouchableOpacity)`
-margin-top:150%;
-margin-left:5%;
+margin: 660px auto 0;
 `;
 
 const ConfirmButton = styled(TouchableOpacity)`
-margin-top:150%;
-margin-left:19%;
+ margin: 660px auto 0;
 `;
 
 const Images = styled(ImageBackground).attrs({
@@ -44,7 +43,7 @@ const LoadingContainer = styled.View`
 margin-top:50%;
 `;
 
-export const CameraScreen = ({navigation}) => {
+export const CameraScreen = ({ navigation }) => {
   const [hasPermission, setHasPermission] = useState(null);
   const cameraRef = useRef();
   const [startCamera, setStartCamera] = React.useState(false)
@@ -59,7 +58,7 @@ export const CameraScreen = ({navigation}) => {
       setHasPermission(status === "granted");
     })();
   }, []);
-  
+
   const __startCamera = async () => {
     const { status } = await Camera.requestCameraPermissionsAsync()
     console.log(status)
@@ -72,52 +71,52 @@ export const CameraScreen = ({navigation}) => {
 
   const __takePicture = async () => {
     const photo = await cameraRef.current.takePictureAsync({
-      mediaTypes:"Images",
-      allowsEditing:true,
-      aspect:[4,3],
-      quality:0.1
-  })
+      mediaTypes: "Images",
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 0.1
+    })
     const base64 = await FileSystem.readAsStringAsync(photo.uri, { encoding: 'base64' });
     console.log(photo.uri, "ee")
     const newImages = [...images];
-    newImages.push({ uri: photo.uri, imagData : base64});
+    newImages.push({ uri: photo.uri, imagData: base64 });
     setImages(newImages);
-    
+
     setPreviewVisible(true)
     setStartCamera(false)
     setCapturedImage(photo)
   }
 
   const __savePhoto = () => {
-    var imagelst=[];
-    
+    var imagelst = [];
+
     var recId;
     var linItemId;
     navigation.getState().routes.forEach(element => {
-      if(element.name == 'CameraScreen'){
+      if (element.name == 'CameraScreen') {
         linItemId = element.params.lineItemId;
         recId = element.params.inspId.inspId;
         console.log(element.params.lineItemId)
         console.log(element.params.inspId.inspId)
       }
-    }); 
+    });
     var i = 1;
-    images.forEach(img=>{
-      
+    images.forEach(img => {
+
       var imageData = {
-        "file_name":linItemId + '_' + i,
+        "file_name": linItemId + '_' + i,
         "image_data": img.imagData,
-        "parent_record_id":recId,
-        "image_type":"line_item",
-        "line_item_id":linItemId,
+        "parent_record_id": recId,
+        "image_type": "line_item",
+        "line_item_id": linItemId,
       }
       imagelst.push(imageData);
-      i++; 
+      i++;
     })
-      uploadSignImage(imagelst,recId).then(result=>{
-        console.log('hjhjjh')
-      })
-    
+    uploadSignImage(imagelst, recId).then(result => {
+      console.log('hjhjjh')
+    })
+
     navigation.goBack();
   }
   const __retakePicture = async () => {
@@ -134,28 +133,23 @@ export const CameraScreen = ({navigation}) => {
     return <Text>No access to camera</Text>;
   }
   return (
-
-    <View
-      style={{
-        flex: 1,
-        width: '100%'
-      }}
-    >
-
-      <CameraView
-        ref={(camera) => (cameraRef.current = camera)}
+    <SafeArea>
+      <View
+        style={{
+          flex: 1,
+          width: '100%',
+        }}
       >
-        <SafeArea>
 
-        <View style={{ padding: 16 }}>
-                                <ActivityIndicator />
-                            </View>
+        <CameraView
+          ref={(camera) => (cameraRef.current = camera)}
+        >
+          {/* <SafeArea> */}
+
+
           {previewVisible && capturedImage && <CameraPreview photo={capturedImage} savePhoto={() => { __savePhoto }} retakePicture={() => { __retakePicture }} images={images} />}
 
           <Col>
-            {/* <Row>
-  <Text>action button</Text>
-</Row> */}
             <Row>
               <ReTakeButton onPress={__retakePicture} >
                 <Text
@@ -191,13 +185,14 @@ export const CameraScreen = ({navigation}) => {
             </Row>
 
           </Col>
-        </SafeArea>
+          {/* </SafeArea> */}
 
-      </CameraView>
+        </CameraView>
 
 
+      </View>
+    </SafeArea>
 
-    </View>
   );
 }
 

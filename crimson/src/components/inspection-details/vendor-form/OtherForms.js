@@ -1,4 +1,4 @@
-import { View, Text, FlatList, ActivityIndicator, Dimensions, Platform } from 'react-native'
+import { View, Text, FlatList, ActivityIndicator, Dimensions, Platform, ScrollView, TextInput } from 'react-native'
 import React from 'react'
 import styled from 'styled-components/native';
 import FormLineItem from './FormLineItem';
@@ -7,9 +7,10 @@ import { VendorFormContext } from '../../../services/context/VendorForm/vendorFo
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
 import { Button } from 'react-native-paper';
+import Icon from 'react-native-vector-icons/FontAwesome';
 
 
-const OtherForms = ({ gTotal, isSubmitted, isForReviewerView, readOnly, inspectionData, navigation }) => {
+const OtherForms = ({ formStatus, gTotal, isSubmitted, isForReviewerView, readOnly, inspectionData, navigation }) => {
 
 
     let [general_Rental, setGeneral_Rental] = React.useState([])
@@ -21,8 +22,7 @@ const OtherForms = ({ gTotal, isSubmitted, isForReviewerView, readOnly, inspecti
     let [room_MeasurementData, setRoom_MeasurementData] = React.useState([])
     const [sequence, setSequence] = React.useState();
 
-    const { vendorFormDetails, updateToSf } = React.useContext(VendorFormContext);
-
+    const { vendorFormDetails, updateToSf, deleteNewItem } = React.useContext(VendorFormContext);
 
 
     const isFocused = useIsFocused();
@@ -96,16 +96,27 @@ const OtherForms = ({ gTotal, isSubmitted, isForReviewerView, readOnly, inspecti
         }
     }, [vendorFormDetails]);
 
-    const [currentForm, setCurrentForm] = React.useState('General Rental Operations Scope');
+    const [currentForm, setCurrentForm] = React.useState('Room Measurements');
 
     const GetTotal = () => {
+
         let toatalSF = 0;
-        formsData[currentForm].map(ele => {
+        currentFormData.data.map(ele => {
             toatalSF = toatalSF + ele.Total
             return toatalSF
         })
-        return toatalSF
+        return toatalSF.toLocaleString("en-IN", { style: "currency", currency: 'USD' })
     }
+
+    const GetToalSqFt = () => {
+        let toatalSF = 0;
+        currentFormData.data.map(ele => {
+          toatalSF = toatalSF + ele.Room_Total
+          return toatalSF
+        })
+        return toatalSF.toFixed(2)
+      }
+
 
     // React.useEffect(() => {
     //     updateToSf(inspectionData.Id)
@@ -159,12 +170,17 @@ const OtherForms = ({ gTotal, isSubmitted, isForReviewerView, readOnly, inspecti
     const [NewItemAdded, setNewItemAdded] = React.useState(0);
     const [showAddButton, setShowAddButton] = React.useState(false)
 
-    // React.useEffect(() => {
-    //     updateVfContect(dataList, "OTHRFM", inspectionData.Id);
-    // }, [dataList]);
-
     const onOtherFormValueChange = (value, field, key) => {
         console.log("changing", field, 'with', value, "KEY", key);
+        const isNotStringValueField = !(["Matrix_Price","Sub_Category","U_M", "Scope_Notes", "Owner_Clarification"]?.includes(field)) 
+        if ( isNotStringValueField && isNaN(value)) {
+            console.log("NAN", isNaN(value));
+            return;
+        }
+        if (parseFloat(value) < 0) {
+            console.log("Entered val is negative");
+            return;
+        }
         let newState, Sub_Category;
         let newSequence = sequence + 1
         let Category = currentFormData && currentFormData.data[0].Category
@@ -209,7 +225,7 @@ const OtherForms = ({ gTotal, isSubmitted, isForReviewerView, readOnly, inspecti
         } {
             newState = dataList.map(obj => {
                 if (obj.UniqueKey === key) {
-                    let formatedVal = ["U_M", "Scope_Notes", "Owner_Clarification"].includes(field) ? value : parseFloat(value)
+                    let formatedVal = ["Matrix_Price","Sub_Category","U_M", "Scope_Notes", "Owner_Clarification"].includes(field) ? value : parseFloat(value)
                     let newValues = { ...obj, [field]: formatedVal };
                     let newTotal;
 
@@ -256,6 +272,17 @@ const OtherForms = ({ gTotal, isSubmitted, isForReviewerView, readOnly, inspecti
 
     const onRoomMeasurementValueChange = async (value, field, key) => {
 
+        console.log("changing", field, 'with', value, "KEY", key);
+        const isNotStringValueField = !(["Sub_Category"]?.includes(field)) 
+        if (isNotStringValueField && isNaN(value)) {
+            console.log("NAN", isNaN(value));
+            return;
+        }
+        if (parseFloat(value) < 0) {
+            console.log("Entered val is negative");
+            return;
+        }
+
         let newData;
         let newSequence = sequence + 1
         if (field == "newItem") {
@@ -300,12 +327,14 @@ const OtherForms = ({ gTotal, isSubmitted, isForReviewerView, readOnly, inspecti
             });
         } else {
 
-            if (value < 0 || value === '' || value === null || value === undefined) {
-                return;
-            }
+            // if (value < 0 || value === '' || value === null || value === undefined) {
+            //     return;
+            // }
             newData = dataList.map(obj => {
                 if (obj.UniqueKey === key) {
-                    let newValues = { ...obj, [field]: parseFloat(value) };
+                    let formatedVal = ["Sub_Category"].includes(field) ? value : parseFloat(value)
+                    let newValues = { ...obj, [field]: formatedVal };
+                    // let newValues = { ...obj, [field]: parseFloat(value) };
                     let newTotal = (newValues.Room_Length * newValues.Room_Width) + newValues.Room_Misc_SF
                     return { ...obj, [field]: parseFloat(value), ["Room_Total"]: newTotal };
                 }
@@ -318,15 +347,12 @@ const OtherForms = ({ gTotal, isSubmitted, isForReviewerView, readOnly, inspecti
 
         // console.log(newData);
         setDatalist(newData);
-        setUpdatedData(currentForm, newState);
-        updateVfContect(newState, "RM", inspectionData.Id);
+        setUpdatedData(currentForm, newData);
+        updateVfContect(newData, "RM", inspectionData.Id);
     }
 
 
     React.useEffect(() => {
-        // currentFormData.data.map(obj => {
-        //     console.log(obj.newItem, "TEST NEW ITEM");
-        // })
         setDatalist(currentFormData.data);
     }, [currentFormData.data])
 
@@ -368,6 +394,15 @@ const OtherForms = ({ gTotal, isSubmitted, isForReviewerView, readOnly, inspecti
         return dataList.filter(item => item.Approval_Status === null).length
     }
 
+    const [searchQuery, setSearchQuery] = React.useState('');
+
+
+    const onChangeSearch = query => {
+        setSearchQuery(query);
+    }
+
+    const isSubmittedByReviewer = formStatus === "Reviewer Form Completed";
+
 
     return (
         <View>
@@ -377,21 +412,33 @@ const OtherForms = ({ gTotal, isSubmitted, isForReviewerView, readOnly, inspecti
                     <MenuWrapper >
                         {menuItems.map((item, i) => <MenuItem isActive={item.title === currentForm} onPress={() => handleOnFormChange(item.title)} key={i}>{item.icon}</MenuItem>)}
                     </MenuWrapper>
-                    <CurrentFormHeading>{currentForm}</CurrentFormHeading>
+                    <CurrentFormHeading style={{ textAlign: "right", paddingHorizontal: 16, fontSize: 18 }}>{currentForm}</CurrentFormHeading>
+                    <Text style={{ paddingHorizontal: 16, color: 'black', fontFamily: 'URBAN_BOLD', textAlign: "right", fontSize: 16 }}>Total: {currentForm === "Room Measurements" ? GetToalSqFt() + " sqft": GetTotal() }</Text>
+                    {/* Search */}
+                    <View style={{ flexDirection: 'row', alignItems: 'center', padding: 4, paddingHorizontal: 16, backgroundColor: "white", margin: 8 }}>
+                        <Icon name="search" color="grey" size={18} />
+                        <TextInput value={searchQuery} onChangeText={onChangeSearch} placeholder={currentForm === "Room Measurements" ? "Search Sub Category" : "Search Matrix Price..."} style={{ fontFamily: "URBAN_BOLD", backgroundColor: "transparent", fontSize: 18, padding: 12, width: "100%" }} />
+                    </View>
                     {
                         (isForReviewerView && currentForm !== "Room Measurements") &&
                         <View intensity={100} style={{ marginVertical: 8, flexDirection: 'row', alignItems: 'center' }}>
-                            <CurrentFormHeading style={{fontSize: Platform.OS === "android" ? 18 : 22}}>BID FOR REVIEW</CurrentFormHeading>
-                            <CurrentFormHeading style={{fontSize: Platform.OS === "android" ? 16 : 18, textTransform: 'none' }}>Pending Approvals {getPendingApprovalCount()}/{dataList.length}</CurrentFormHeading>
+                            <CurrentFormHeading style={{ fontSize: Platform.OS === "android" ? 18 : 22 }}>BID FOR REVIEW</CurrentFormHeading>
+                            <CurrentFormHeading style={{ fontSize: Platform.OS === "android" ? 16 : 18, textTransform: 'none' }}>Pending Approvals {getPendingApprovalCount()}/{dataList.length}</CurrentFormHeading>
                         </View>
                     }
                     {
                         dataList.length > 0 ?
-                            <FlatList
-                                data={dataList}
-                                keyExtractor={item => item.UniqueKey}
-                                renderItem={({ item }) => <FormLineItem   {...{ handleAcceptLineItem, isForReviewerView, item, inspId: inspectionData.Id, onRoomMeasurementValueChange, onOtherFormValueChange, navigation, readOnly, setShowAddButton, handleOnSave }} isForRoomMeasurement={currentFormData.title === "Room Measurements"} />}
-                            /> :
+                            <ScrollView>
+                                {
+                                    dataList.filter(item => {
+                                        if (currentForm === "Room Measurements") {
+                                            return item?.Sub_Category?.includes(searchQuery)
+                                        }
+                                        return item?.Matrix_Price?.includes(searchQuery)
+                                    }).map((item, i) => <FormLineItem key={i}   {...{ isSubmittedByReviewer, handleAcceptLineItem, isForReviewerView, item, inspId: inspectionData.Id, onRoomMeasurementValueChange, onOtherFormValueChange, navigation, readOnly, setShowAddButton, handleOnSave, deleteNewItem }} isForRoomMeasurement={currentFormData.title === "Room Measurements"} />)
+                                }
+                            </ScrollView>
+                            :
                             <View style={{ padding: 16 }}>
                                 <ActivityIndicator />
                             </View>
@@ -421,14 +468,26 @@ const OtherForms = ({ gTotal, isSubmitted, isForReviewerView, readOnly, inspecti
                             <Text style={{ color: '#C2CBD0', fontFamily: 'URBAN_BOLD', fontSize: 24 }}>{gTotal}</Text>
                         </View>
                     </MenuWrapper>
-
+                    {/* Search */}
+                    <View style={{ flexDirection: 'row', alignItems: 'center', padding: 4, paddingHorizontal: 16, backgroundColor: "white", margin: 8 }}>
+                        <Icon name="search" color="grey" size={18} />
+                        <TextInput value={searchQuery} onChangeText={onChangeSearch} placeholder="Search Matrix Price..." style={{ fontFamily: "URBAN_BOLD", backgroundColor: "transparent", fontSize: 18, padding: 12, width: "100%" }} />
+                    </View>
                     {
                         dataList.length > 0 ?
-                            <FlatList
-                                data={[].concat(general_Rental,pools, exterior, interior,  mech_Elec_Plumb).filter(item => item.Approval_Status === "Approved" || item.Approval_Status === "Approved as Noted")}
-                                keyExtractor={item => item.UniqueKey}
-                                renderItem={({ item }) => <FormLineItem   {...{ isSubmitted, isForReviewerView, item, inspId: inspectionData.Id, onRoomMeasurementValueChange, onOtherFormValueChange, navigation, readOnly, setShowAddButton, handleOnSave }} isForRoomMeasurement={currentFormData.title === "Room Measurements"} />}
-                            /> :
+                            <ScrollView>
+                                {
+                                    [].concat(general_Rental, pools, exterior, interior, mech_Elec_Plumb).filter(item => {
+                                        if (currentForm === "Room Measurements") {
+                                            return item?.Sub_Category?.includes(searchQuery)
+                                        }
+                                        return item?.Matrix_Price?.includes(searchQuery);
+                                    }).filter(item => item.Approval_Status === "Approved" || item.Approval_Status === "Approved as Noted").map((item, i) =>
+                                        <FormLineItem key={i}
+                                            {...{ isSubmitted, isForReviewerView, item, inspId: inspectionData.Id, onRoomMeasurementValueChange, onOtherFormValueChange, navigation, readOnly, setShowAddButton, handleOnSave }} x
+                                            isForRoomMeasurement={currentFormData.title === "Room Measurements"} />)
+                                }
+                            </ScrollView> :
                             <View style={{ padding: 16 }}>
                                 <ActivityIndicator />
                             </View>

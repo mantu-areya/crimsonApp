@@ -1,7 +1,7 @@
-import { Text } from 'react-native'
+import { Text, View } from 'react-native'
 import React, { useContext, useEffect, useRef, useState } from 'react'
 import styled from 'styled-components/native'
-import { Button } from 'react-native-paper'
+import { ActivityIndicator, Button } from 'react-native-paper'
 import { AuthenticationContext } from "../../services/authentication/authentication.context";
 import OTPTextInput from 'react-native-otp-textinput'
 import { verifyOtp } from '../../services/authentication/authentication.service';
@@ -13,6 +13,8 @@ export const OtpScreen = ({ navigation, route }) => {
   const { onOtpVerified } = useContext(AuthenticationContext);
   const [otpError, setOtpError] = useState(null)
 
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   const clearText = () => {
     otpInput.current.clear();
     setOtpError(null)
@@ -23,12 +25,15 @@ export const OtpScreen = ({ navigation, route }) => {
       "userName": route.params["userName"] && route.params["userName"],
       "OTP": otp && Number(otp)
     }
+    setIsSubmitting(true);
     verifyOtp(otpData).then(Response => {
-      console.log("RESPOMSE",Response.data);
+      console.log("OTP :", Response.data);
       onOtpVerified(Response.data.userdata)
+      setIsSubmitting(false);
     }).catch(error => {
-      console.log(JSON.stringify(error));
-      setOtpError("invalid Otp")
+      console.log("OTP EROR", error.response.data);
+      setOtpError("Invalid OTP")
+      setIsSubmitting(false);
     })
   }
 
@@ -37,16 +42,26 @@ export const OtpScreen = ({ navigation, route }) => {
 
   return (
     <Wrapper>
-      <Text style={{ color: 'red' }}>{otpError && otpError}</Text>
-      <OTPTextInput
-        handleTextChange={(text) => setOtp(text)}
-        textInputStyle={{ color: "white" }}
-        inputCount={5}
-        ref={e => (otpInput.current = e)} />
-      <InputWrapper>
-        <Button title="verify" onPress={() => verifyText()}  ><Text>Verify</Text></Button>
-        <Button title="clear" onPress={() => clearText()} ><Text>Clear</Text></Button>
-      </InputWrapper>
+      {
+        isSubmitting ? 
+        <>
+        <View style={{padding:16}}>
+          <ActivityIndicator />
+        </View>
+        </>
+          :
+          <>
+            <Text style={{ color: 'red' }}>{otpError && otpError}</Text>
+            <OTPTextInput
+              handleTextChange={(text) => setOtp(text)}
+              textInputStyle={{ color: "white" }}
+              inputCount={5}  
+              ref={e => (otpInput.current = e)} />
+            <InputWrapper>
+              <Button title="verify" onPress={() => verifyText()}  ><Text>Verify</Text></Button>
+              <Button title="clear" onPress={() => clearText()} ><Text>Clear</Text></Button>
+            </InputWrapper></>
+      }
     </Wrapper>
   )
 }

@@ -4,7 +4,7 @@ import Ionicons from "react-native-vector-icons/Ionicons"
 import { Platform } from 'react-native'
 
 
-const CTA = ({ handleOnSubmit, isReadOnly, handleOnChat, handleViewImages, handleSignature, isSubmitted }) => {
+const CTA = ({ formStatus, handleOnSubmit, role, handleOnChat, handleViewImages, handleSignature, isSubmitted }) => {
     const shadowStyle = {
         shadowColor: "#000",
         shadowOffset: {
@@ -17,35 +17,52 @@ const CTA = ({ handleOnSubmit, isReadOnly, handleOnChat, handleViewImages, handl
         elevation: 5,
     }
 
+    console.log("FORM",formStatus);
 
     return (
         <Wrapper>
             {
-                !isSubmitted && <>
-                    {/* FOR GC */}
+                !isSubmitted &&
+                <>
                     {
-                        // !isReadOnly &&
-                        <SubmitButtonWrapper style={shadowStyle} onPress={handleOnSubmit}>
-                            <ButtonText color="white">
-                                Submit for Review
-                            </ButtonText>
-                        </SubmitButtonWrapper>
-
-                    }
-                    {/* {
-                        !isReadOnly ?
-                            <SubmitButtonWrapper style={shadowStyle} onPress={handleOnSubmit}>
-                                <ButtonText color="white">
-                                    Submit for Review
-                                </ButtonText>
-                            </SubmitButtonWrapper>
-                            :
-                            <SubmitButtonWrapper style={[shadowStyle, { backgroundColor: "grey" }]}>
-                                <ButtonText style={{ textAlign: "center", }} color="white">
+                        role === "Contractor"
+                        &&
+                        ((formStatus)
+                            ?
+                            <SubmitButtonWrapper  style={[shadowStyle, {
+                                backgroundColor: "grey"
+                            }]} >
+                                <ButtonText style={{ textAlign: 'center' }} color="white">
                                     Submitted
                                 </ButtonText>
                             </SubmitButtonWrapper>
-                    } */}
+                            :
+                            <SubmitButtonWrapper style={shadowStyle} onPress={handleOnSubmit}>
+                                <ButtonText style={{ textAlign: 'center', fontSize:16 }} color="white">
+                                    Submit for Review
+                                </ButtonText>
+                            </SubmitButtonWrapper>)
+                    }
+                    {
+                        role === "Reviewer"
+                        &&
+                        ((formStatus === "Reviewer Form Completed")
+                            ?
+                            <SubmitButtonWrapper style={[shadowStyle, {
+                                backgroundColor: "grey"
+                            }]} >
+                                <ButtonText style={{ textAlign: 'center', }} color="white">
+                                    Submitted
+                                </ButtonText>
+                            </SubmitButtonWrapper>
+                            :
+                            <SubmitButtonWrapper style={shadowStyle} onPress={handleOnSubmit}>
+                                <ButtonText style={{ textAlign: 'center', fontSize:16  }} color="white">
+                                    Submit for Approval
+                                </ButtonText>
+                            </SubmitButtonWrapper>)
+                    }
+                    {/* Chat */}
                     <ChatButtonWrapper style={shadowStyle} onPress={handleOnChat}>
                         <Ionicons name="chatbubbles-sharp" size={24} color="black" />
                         <ButtonText marginLeft={8} >
@@ -53,6 +70,8 @@ const CTA = ({ handleOnSubmit, isReadOnly, handleOnChat, handleViewImages, handl
                         </ButtonText>
                     </ChatButtonWrapper>
                 </>
+
+
             }
             {
                 isSubmitted && <>
@@ -81,6 +100,8 @@ const SubmitButtonWrapper = styled.TouchableOpacity`
 background-color:#8477EB;
 padding: 8px 16px;
 flex: 1;
+justify-content:center;
+align-items:center;
 `;
 
 const ChatButtonWrapper = styled.TouchableOpacity`
