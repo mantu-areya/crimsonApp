@@ -210,7 +210,10 @@ export default function FormLineItem({ isSubmittedByReviewer, handleAcceptLineIt
             </LineItemInputGroup>
           </View>
           {/* Icon */}
-          <Ionicons name="camera" onPress={() => navigation.navigate("CameraScreen", { inspId: { inspId }, lineItemId: item.Id })} size={24} />
+          {
+            !readOnly &&
+            <Ionicons name="camera" onPress={() => navigation.navigate("CameraScreen", { inspId: { inspId }, lineItemId: item.Id })} size={24} />
+          }
 
         </LineItemWrapper>
       </Swipeable>
@@ -324,10 +327,10 @@ function SubmittedFormLineItem({ status, title, rate, quantity, total, notes, ad
       return "#FDF2BF";
     }
   }
-  
-  let showRate =  adjRate ;
+
+  let showRate = adjRate;
   let showQuantity = adjQuantity;
-  let showAmount =  approvedAmt ;
+  let showAmount = approvedAmt;
 
 
   return (
@@ -372,7 +375,7 @@ function ContractorViewLineItem({ inspId, isSubmittedByReviewer, handleAcceptLin
 
   async function getLineItemImages() {
     const data = await getVendorFormDetails(inspId);
-    const filterImages = data?.Images?.filter(image => image.file_name.includes(id)) 
+    const filterImages = data?.Images?.filter(image => image.file_name.includes(id))
     setAllLineImages(filterImages ?? [])
   }
 
