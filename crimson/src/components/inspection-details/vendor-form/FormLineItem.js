@@ -324,9 +324,11 @@ function SubmittedFormLineItem({ status, title, rate, quantity, total, notes, ad
       return "#FDF2BF";
     }
   }
+  
+  let showRate =  adjRate ;
+  let showQuantity = adjQuantity;
+  let showAmount =  approvedAmt ;
 
-  let showRate = status === "Approved as Noted" ? adjRate : rate;
-  let showAmount = status === "Approved as Noted" ? approvedAmt : total;
 
   return (
     <Card style={{ padding: 16, backgroundColor: getCardBackgroundColor(), borderBottomWidth: 2, borderColor: '#EEBC7B' }}>
@@ -341,7 +343,7 @@ function SubmittedFormLineItem({ status, title, rate, quantity, total, notes, ad
           <StyledContractorButton style={{ fontSize: 16, fontFamily: 'URBAN_BOLD', backgroundColor: getBackgroundColor(), padding: 4 }} mode="contained">{status}</StyledContractorButton>
         </View>
         <View style={{ flexDirection: 'row', marginTop: 8 }}>
-          <StyledContractorText style={{ flex: 1, fontSize: 18, }}>ADJ QTY: {status === "Approved as Noted" ? adjQuantity : quantity}</StyledContractorText>
+          <StyledContractorText style={{ flex: 1, fontSize: 18, }}>ADJ QTY: {showQuantity}</StyledContractorText>
           <StyledContractorText style={{ flex: 1, fontSize: 18, }} >RATE: {showRate ? showRate?.toLocaleString("en-IN", { style: "currency", currency: 'USD' }) : 0}</StyledContractorText>
           <StyledContractorText style={{ flex: 1, fontSize: 18, }}>TOTAL: {showAmount ? showAmount?.toLocaleString("en-IN", { style: "currency", currency: 'USD' }) : 0}</StyledContractorText>
         </View>
@@ -370,8 +372,8 @@ function ContractorViewLineItem({ inspId, isSubmittedByReviewer, handleAcceptLin
 
   async function getLineItemImages() {
     const data = await getVendorFormDetails(inspId);
-    const filterImages = data?.Images?.filter(image => image.file_name.includes(id))
-    setAllLineImages(filterImages)
+    const filterImages = data?.Images?.filter(image => image.file_name.includes(id)) 
+    setAllLineImages(filterImages ?? [])
   }
 
   React.useEffect(() => {
