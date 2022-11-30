@@ -459,7 +459,7 @@ function Signatures({ inspId, role }) {
         <Text style={{ fontSize: 12, fontFamily: 'URBAN_BOLD', color: 'black' }}>Date: {signDate && signDate}</Text>
       </View>
       {/* HHM Signature */}
-      <View style={{ padding: 16, flex: 1, }}>
+      <View style={{ padding: 16, flex: .5, }}>
         <Text style={{ fontSize: 12, fontFamily: 'URBAN_BOLD', color: 'black' }}>HHM Signature</Text>
         {reviewerImg &&
           <>
