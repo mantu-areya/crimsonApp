@@ -356,6 +356,10 @@ const OtherForms = ({ formStatus, gTotal, isSubmitted, isForReviewerView, readOn
         setDatalist(currentFormData.data);
     }, [currentFormData.data])
 
+    React.useEffect(()=>{
+      updateToSf(inspectionData.Id)
+    },[NewItemAdded])
+
     function handleAddNewItem() {
         console.log("Adding New Item to", currentForm);
         if (currentForm === "Room Measurements") {
