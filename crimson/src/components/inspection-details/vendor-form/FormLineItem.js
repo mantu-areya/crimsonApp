@@ -125,7 +125,12 @@ export default function FormLineItem({ isSubmittedByReviewer, handleAcceptLineIt
             <CustomFormInput
               label="Length"
               placeholder="Length"
-              onChangeText={val => onRoomMeasurementValueChange((val), "Room_Length", item.UniqueKey)}
+              onChangeText={val => {
+                if (val === "") { // * for negative numbers
+                  return onRoomMeasurementValueChange(0, "Room_Length", item.UniqueKey)
+                }
+                onRoomMeasurementValueChange((val), "Room_Length", item.UniqueKey)
+              }}
               readOnly={readOnly}
               value={length}
             />
@@ -133,15 +138,24 @@ export default function FormLineItem({ isSubmittedByReviewer, handleAcceptLineIt
             <CustomFormInput
               label="Width"
               placeholder="Width"
-              onChangeText={val => onRoomMeasurementValueChange((val), "Room_Width", item.UniqueKey)}
+              onChangeText={val => {
+                if (val === "") { // * for negative numbers
+                  return onRoomMeasurementValueChange(0, "Room_Width", item.UniqueKey)
+                }
+                onRoomMeasurementValueChange((val), "Room_Width", item.UniqueKey)
+              }}
               readOnly={readOnly}
               value={width}
             />
             <CustomFormInput
               label="Misc"
               placeholder="Misc"
-              onChangeText={val => onRoomMeasurementValueChange((val), "Room_Misc_SF", item.UniqueKey)}
-              readOnly={readOnly}
+              onChangeText={val => {
+                if (val === "") { // * for negative numbers
+                  return onRoomMeasurementValueChange(0, "Room_Misc_SF", item.UniqueKey)
+                }
+                onRoomMeasurementValueChange((val), "Room_Misc_SF", item.UniqueKey)
+              }} readOnly={readOnly}
               value={misc}
             />
             <CustomFormInput
@@ -469,7 +483,7 @@ function ContractorViewLineItem({ inspId, isSubmittedByReviewer, handleAcceptLin
       <Overlay childrenWrapperStyle={{ padding: 18 }} containerStyle={{ backgroundColor: '#dbdad960' }} visible={visible} onClose={() => setVisible(false)} closeOnTouchOutside >
         <Ionicons onPress={() => hideModal()} name="close" size={24} style={{ marginLeft: "auto" }} />
         <GalleryWrapper>
-          <View style={{ flexDirection: "row", flexWrap: "wrap",justifyContent:"center" }}>
+          <View style={{ flexDirection: "row", flexWrap: "wrap", justifyContent: "center" }}>
             {
               allLineItemImages.length > 0 && allLineItemImages.map((item, i) =>
                 <GalleryImageItem key={i} img={item} />
@@ -510,10 +524,10 @@ function ContractorViewLineItem({ inspId, isSubmittedByReviewer, handleAcceptLin
             <StyledOverlayInput
               keyboardType="number-pad"
               onChangeText={text => {
-               if ( Platform.OS === 'ios' ) {
-                let formatdText = text.slice(2).replace(",","");
-               return onOtherFormValueChange(formatdText, "Adj_Rate", UniqueKey)
-               }
+                if (Platform.OS === 'ios') {
+                  let formatdText = text.slice(2).replace(",", "");
+                  return onOtherFormValueChange(formatdText, "Adj_Rate", UniqueKey)
+                }
                 onOtherFormValueChange(text, "Adj_Rate", UniqueKey)
               }}
               value={`${getCurrencyFormattedValue(Adj_Rate) ?? 0}`} />
