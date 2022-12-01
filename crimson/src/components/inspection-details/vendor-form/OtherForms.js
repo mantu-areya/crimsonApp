@@ -424,11 +424,13 @@ const OtherForms = ({ formStatus, gTotal, isSubmitted, isForReviewerView, readOn
                     </MenuWrapper>
                     <View style={{ flexDirection: 'row', alignItems: 'center', paddingHorizontal: 16 }}>
                         {
+                            !isForReviewerView &&
                             !(currentForm === "Room Measurements") &&
                             <View style={{ flex: 1 }}>
                                 <CurrentFormHeading style={{ marginLeft: 0, textAlign: "left", fontSize: 16 }}>Grand Bid Total</CurrentFormHeading>
                                 <Text style={{ color: 'black', fontFamily: 'URBAN_BOLD', textAlign: "left", fontSize: 14 }}>{grandTotal ? grandTotal.toLocaleString("en-IN", { style: "currency", currency: 'USD' }) : 0}</Text>
                             </View>
+
                         }
                         <View style={{ flex: 1 }}>
                             <CurrentFormHeading style={{ textAlign: "right", fontSize: 16 }}>{currentForm}</CurrentFormHeading>
@@ -456,7 +458,7 @@ const OtherForms = ({ formStatus, gTotal, isSubmitted, isForReviewerView, readOn
                                             return item?.Sub_Category?.includes(searchQuery)
                                         }
                                         return item?.Matrix_Price?.includes(searchQuery)
-                                    }).map((item, i) => <FormLineItem key={item?.Id}   {...{isSubmittedByReviewer, handleAcceptLineItem, isForReviewerView, item, inspId: inspectionData.Id, onRoomMeasurementValueChange, onOtherFormValueChange, navigation, readOnly, setShowAddButton, handleOnSave, deleteNewItem }} isForRoomMeasurement={currentFormData.title === "Room Measurements"} />)
+                                    }).map((item, i) => <FormLineItem key={item?.Id}   {...{ isSubmittedByReviewer, handleAcceptLineItem, isForReviewerView, item, inspId: inspectionData.Id, onRoomMeasurementValueChange, onOtherFormValueChange, navigation, readOnly, setShowAddButton, handleOnSave, deleteNewItem }} isForRoomMeasurement={currentFormData.title === "Room Measurements"} />)
                                 }
                             </ScrollView>
                             :
@@ -504,7 +506,7 @@ const OtherForms = ({ formStatus, gTotal, isSubmitted, isForReviewerView, readOn
                                         }
                                         return item?.Matrix_Price?.includes(searchQuery);
                                     }).filter(item => item.Approval_Status === "Approved" || item.Approval_Status === "Approved as Noted").map((item, i) =>
-                                        <FormLineItem key={item?.Id} 
+                                        <FormLineItem key={item?.Id}
                                             {...{ isSubmitted, isForReviewerView, item, inspId: inspectionData.Id, onRoomMeasurementValueChange, onOtherFormValueChange, navigation, readOnly, setShowAddButton, handleOnSave }} x
                                             isForRoomMeasurement={currentFormData.title === "Room Measurements"} />)
                                 }
