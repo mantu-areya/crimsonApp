@@ -23,7 +23,6 @@ const Chat = ({ route, navigation }) => {
             const allChats = await getInspectionsChat(inspId);
             // console.log("Chats", allChats);
             const temp = allChats.reverse().map(({ actor, body, createdDate }) => {
-                    console.log(actor);
                 return {
                     _id: uuidv4(),
                     text: body.text,

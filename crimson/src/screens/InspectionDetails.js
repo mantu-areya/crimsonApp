@@ -103,7 +103,6 @@ const InspectionDetails = ({ route, navigation }) => {
     setIsScreenLoading(true);
 
     let record = vendorFormDetails[inspectionData.Id];
-    console.log({ record });
     if (record !== undefined || record !== "NA") {
       setCurrentRecord(record);
       setIsScreenLoading(false);
@@ -113,16 +112,8 @@ const InspectionDetails = ({ route, navigation }) => {
       navigation.goBack();
     }
 
-  }, [inspectionData])
+  }, [inspectionData,vendorFormDetails])
 
-
-  // React.useEffect(() => {
-  //   if (!isValidRecord) {
-  //     alert("Vendor Form Not Available")
-  //     console.log("IS NLL");
-  //     navigation.goBack();
-  //   }
-  // }, [currentRecord])
 
   function getFormTotal(formCategory, formatted = true) {
     let total = 0;
