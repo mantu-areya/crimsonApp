@@ -270,13 +270,13 @@ export default function FormLineItem({ isSubmittedByReviewer, handleAcceptLineIt
         <View style={{ flexDirection: "row" }}>
 
           <View style={{ width: '100%', flex: 1, marginHorizontal: 4 }}>
-            <StyledTextInputLabel>Rate</StyledTextInputLabel>
+            <StyledTextInputLabel>Rate ($)</StyledTextInputLabel>
             <StyledTextInput
               editable={!readOnly && requiredSubCategories.includes(item.Sub_Category)}
               onChangeText={val => {
-                onOtherFormValueChange(Number((val.replace("$", ""))), "Rate", item.UniqueKey)
+                onOtherFormValueChange((val), "Rate", item.UniqueKey)
               }}
-              value={getFormattedValue("Rate", item.Rate)}
+              value={`${item.Rate}`}
               keyboardType="number-pad"
             />
           </View>
@@ -656,10 +656,10 @@ function CustomFormInput({ readOnly = false, onChangeText = () => { }, value, la
 
   return (
     <View style={{ width: '100%', flex: 1, marginHorizontal: 4 }}>
-      <StyledTextInputLabel>{`${label}`}</StyledTextInputLabel>
+      <StyledTextInputLabel>{ label === "Total" ? `${label} ($)`  : `${label}`}</StyledTextInputLabel>
       <StyledTextInput
         onChangeText={onChangeText}
-        value={`${getFormattedValue(label, value) ?? 0}`}
+        value={`${value ?? 0}`}
         placeholder={placeholder}
         editable={editable}
       />
