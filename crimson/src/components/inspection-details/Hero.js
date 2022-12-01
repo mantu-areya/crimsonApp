@@ -90,7 +90,7 @@ const Hero = ({ data, isSubmitted, sectionTotals }) => {
     const handleOpenMap = () => {
         Platform.select({
             ios: () => {
-                Linking.openURL("http://maps.apple.com/maps?daddr=" + Property_Latitude__c + "," + Property_Longitude__c + "&dirflg=d&t=m");
+                Linking.openURL("http://maps.apple.com/maps?daddr=" + Property_Latitude__c + "," + Property_Longitude__c);
             },
             android: () => {
                 Linking.openURL("http://maps.google.com/maps?daddr=" + Property_Latitude__c + "," + Property_Longitude__c);

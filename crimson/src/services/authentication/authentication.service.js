@@ -31,7 +31,7 @@ export const setOrgToken = () => {
 }
 
 
-const setTokenoninterval = () => setInterval(() => {
+export const refreshAdminToken = () =>{
   return NetInfo.fetch().then(networkState => {
     // console.log("Is connected? - in settoken", networkState.isConnected);
     if (networkState.isConnected) {
@@ -39,8 +39,13 @@ const setTokenoninterval = () => setInterval(() => {
       return
     }
   })
+}
+
+const setTokenoninterval = () => setInterval(() => {
+  refreshAdminToken()
 }, 18000000);
 
+refreshAdminToken();
 setTokenoninterval();
 
 let getStoredAuthToken = () => {

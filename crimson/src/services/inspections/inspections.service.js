@@ -55,7 +55,7 @@ export let setToken = async () => {
 
 
 
-export const setTokenoninterval = (userName) => setInterval(() => {
+export const refreshOrgToken = (userName) =>{
   return NetInfo.fetch().then(networkState => {
     // console.log("Is connected? - in settoken", networkState.isConnected);
     if (networkState.isConnected) {
@@ -94,6 +94,10 @@ export const setTokenoninterval = (userName) => setInterval(() => {
       })
     }
   })
+}
+
+export const setTokenoninterval = (userName) => setInterval(() => {
+  refreshOrgToken(userName)
 }, 18000000);
 
 

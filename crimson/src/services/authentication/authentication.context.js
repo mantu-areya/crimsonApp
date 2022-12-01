@@ -4,6 +4,7 @@ import * as firebase from "firebase";
 
 import { setOrgToken } from "./authentication.service";
 import AsyncStorage from "@react-native-async-storage/async-storage"
+import { refreshOrgToken } from "../inspections/inspections.service";
 
 export const AuthenticationContext = createContext();
 
@@ -50,6 +51,7 @@ export const AuthenticationContextProvider = ({ children }) => {
     setOrgToken()
     setIsLoading(true);
     AsyncStorage.getItem('userData').then(data => {
+      data && refreshOrgToken(JSON.parse(data).userName)
       data && setUser(JSON.parse(data).userName);
       setIsLoading(false);
     })
