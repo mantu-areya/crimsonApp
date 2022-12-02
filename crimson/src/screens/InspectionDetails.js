@@ -186,7 +186,7 @@ const InspectionDetails = ({ route, navigation }) => {
               {/* Sigantures */}
               {(isSubmitted && showSiganturesView) && <Signatures inspId={inspectionData.Id} role={userRole} />}
               {/* Forms */}
-              <OtherForms gTotal={gTotal} isSubmitted={isSubmitted} readOnly={readOnly} isForReviewerView={userRole === "Reviewer"} formStatus={inspectionData?.Inspection_Form_Stage__c} inspectionData={inspectionData} navigation={navigation} />
+              <OtherForms gTotal={gTotal} isSubmitted={isSubmitted} readOnly={readOnly} isForReviewerView={userRole === "Reviewer"} formStatus={inspectionData?.Inspection_Form_Stage__c} inspectionData={inspectionData} navigation={navigation} setVendorFormData={setVendorFormData} />
             </ScrollView>
             {/* Call Now */}
             {show && <CallNow isForReviewerView={userRole === "Reviewer"} data={inspectionData} />}

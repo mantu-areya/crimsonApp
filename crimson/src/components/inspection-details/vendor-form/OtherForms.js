@@ -10,7 +10,7 @@ import { Button } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
 
-const OtherForms = ({ formStatus, gTotal, isSubmitted, isForReviewerView, readOnly, inspectionData, navigation }) => {
+const OtherForms = ({ formStatus, gTotal, isSubmitted, isForReviewerView, readOnly, inspectionData, navigation, setVendorFormData }) => {
 
 
     let [general_Rental, setGeneral_Rental] = React.useState([])
@@ -355,6 +355,11 @@ const OtherForms = ({ formStatus, gTotal, isSubmitted, isForReviewerView, readOn
     React.useEffect(() => {
         setDatalist(currentFormData.data);
     }, [currentFormData.data])
+
+    React.useEffect(()=>{
+      updateToSf(inspectionData.Id)
+      
+    },[NewItemAdded])
 
     function handleAddNewItem() {
         console.log("Adding New Item to", currentForm);
