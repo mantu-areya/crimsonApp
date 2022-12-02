@@ -21,6 +21,11 @@ let requiredSubCategories = [
 export default function FormLineItem({ isSubmittedByReviewer, handleAcceptLineItem, isSubmitted, isForReviewerView, inspId, item, onRoomMeasurementValueChange, onOtherFormValueChange, isForRoomMeasurement, deleteNewItem, navigation, readOnly, setShowAddButton, handleOnSave }) {
   const [overlayVisible, setOverlayVisible] = React.useState(false)
 
+  const handleDelGest = (Id, inspId, UniqueKey) => {
+    handleDelete(Id, inspId, UniqueKey);
+    swipeableRef.current.recenter();
+  }
+
 
   const rightButtons = [
     <TouchableOpacity onPress={() => { alert("Add Notes") }} style={{ backgroundColor: '#F0BA91', justifyContent: 'center', alignItems: 'center', width: 64, flex: 1 }}>
@@ -29,7 +34,7 @@ export default function FormLineItem({ isSubmittedByReviewer, handleAcceptLineIt
         {/* <Text>Add Notes</Text> */}
       </View>
     </TouchableOpacity>,
-    <TouchableOpacity onPress={() => handleDelete(item.Id, inspId, item.UniqueKey)} style={{ backgroundColor: '#F3206F', justifyContent: 'center', alignItems: 'center', width: 64, flex: 1 }}>
+    <TouchableOpacity onPress={() => handleDelGest(item.Id, inspId, item.UniqueKey)} style={{ backgroundColor: '#F3206F', justifyContent: 'center', alignItems: 'center', width: 64, flex: 1 }}>
       <View>
         <MaterialCommunityIcons name="delete" size={24} color="white" />
         {/* <Text>Delete</Text> */}
@@ -46,6 +51,7 @@ export default function FormLineItem({ isSubmittedByReviewer, handleAcceptLineIt
     </TouchableOpacity>
   ];
 
+  const swipeableRef = React.useRef();
 
   const Sub_Category_Keys = ["Off Matrix - Pool", "Off Matrix - Exterior", "Off Matrix - Interior", "Off Matrix - MEP"]
   const Category_Keys = ["Pools", "Exterior", "Interior", "Mechanical, Electrical and Plumbing Systems"]
@@ -85,7 +91,7 @@ export default function FormLineItem({ isSubmittedByReviewer, handleAcceptLineIt
 
     return (
       <>
-        <Swipeable rightButtons={roomRightButtons}>
+        <Swipeable onRef={(ref) => swipeableRef.current = ref}  rightButtons={roomRightButtons}>
           <LineItemWrapper >
             <View style={{ flex: 1 }}>
               {/* Room */}
@@ -125,7 +131,12 @@ export default function FormLineItem({ isSubmittedByReviewer, handleAcceptLineIt
             <CustomFormInput
               label="Length"
               placeholder="Length"
-              onChangeText={val => onRoomMeasurementValueChange((val), "Room_Length", item.UniqueKey)}
+              onChangeText={val => {
+                if (val === "") { // * for negative numbers
+                  return onRoomMeasurementValueChange(0, "Room_Length", item.UniqueKey)
+                }
+                onRoomMeasurementValueChange((val), "Room_Length", item.UniqueKey)
+              }}
               readOnly={readOnly}
               value={length}
             />
@@ -133,15 +144,24 @@ export default function FormLineItem({ isSubmittedByReviewer, handleAcceptLineIt
             <CustomFormInput
               label="Width"
               placeholder="Width"
-              onChangeText={val => onRoomMeasurementValueChange((val), "Room_Width", item.UniqueKey)}
+              onChangeText={val => {
+                if (val === "") { // * for negative numbers
+                  return onRoomMeasurementValueChange(0, "Room_Width", item.UniqueKey)
+                }
+                onRoomMeasurementValueChange((val), "Room_Width", item.UniqueKey)
+              }}
               readOnly={readOnly}
               value={width}
             />
             <CustomFormInput
               label="Misc"
               placeholder="Misc"
-              onChangeText={val => onRoomMeasurementValueChange((val), "Room_Misc_SF", item.UniqueKey)}
-              readOnly={readOnly}
+              onChangeText={val => {
+                if (val === "") { // * for negative numbers
+                  return onRoomMeasurementValueChange(0, "Room_Misc_SF", item.UniqueKey)
+                }
+                onRoomMeasurementValueChange((val), "Room_Misc_SF", item.UniqueKey)
+              }} readOnly={readOnly}
               value={misc}
             />
             <CustomFormInput
@@ -178,7 +198,7 @@ export default function FormLineItem({ isSubmittedByReviewer, handleAcceptLineIt
 
   return (
     <>
-      <Swipeable rightButtons={Sub_Category_Keys.includes(item?.Sub_Category) ? rightButtons : rightButtons.slice(0, 1)}>
+      <Swipeable onRef={(ref) => swipeableRef.current = ref} rightButtons={Sub_Category_Keys.includes(item?.Sub_Category) ? rightButtons : rightButtons.slice(0, 1)}>
         <LineItemWrapper >
           <View style={{ flex: 1 }}>
             {
@@ -196,7 +216,10 @@ export default function FormLineItem({ isSubmittedByReviewer, handleAcceptLineIt
             </LineItemInputGroup>
           </View>
           {/* Icon */}
-          <Ionicons name="camera" onPress={() => navigation.navigate("CameraScreen", { inspId: { inspId }, lineItemId: item.Id })} size={24} />
+          {
+            !readOnly &&
+            <Ionicons name="camera" onPress={() => navigation.navigate("CameraScreen", { inspId: { inspId }, lineItemId: item.Id })} size={24} />
+          }
 
         </LineItemWrapper>
       </Swipeable>
@@ -247,13 +270,13 @@ export default function FormLineItem({ isSubmittedByReviewer, handleAcceptLineIt
         <View style={{ flexDirection: "row" }}>
 
           <View style={{ width: '100%', flex: 1, marginHorizontal: 4 }}>
-            <StyledTextInputLabel>Rate</StyledTextInputLabel>
+            <StyledTextInputLabel>Rate ($)</StyledTextInputLabel>
             <StyledTextInput
               editable={!readOnly && requiredSubCategories.includes(item.Sub_Category)}
               onChangeText={val => {
-                onOtherFormValueChange(Number((val.replace("$", ""))), "Rate", item.UniqueKey)
+                onOtherFormValueChange((val), "Rate", item.UniqueKey)
               }}
-              value={getFormattedValue("Rate", item.Rate)}
+              value={`${item.Rate}`}
               keyboardType="number-pad"
             />
           </View>
@@ -311,8 +334,10 @@ function SubmittedFormLineItem({ status, title, rate, quantity, total, notes, ad
     }
   }
 
-  let showRate = status === "Approved as Noted" ? adjRate : rate;
-  let showAmount = status === "Approved as Noted" ? approvedAmt : total;
+  let showRate = adjRate;
+  let showQuantity = adjQuantity;
+  let showAmount = approvedAmt;
+
 
   return (
     <Card style={{ padding: 16, backgroundColor: getCardBackgroundColor(), borderBottomWidth: 2, borderColor: '#EEBC7B' }}>
@@ -327,7 +352,7 @@ function SubmittedFormLineItem({ status, title, rate, quantity, total, notes, ad
           <StyledContractorButton style={{ fontSize: 16, fontFamily: 'URBAN_BOLD', backgroundColor: getBackgroundColor(), padding: 4 }} mode="contained">{status}</StyledContractorButton>
         </View>
         <View style={{ flexDirection: 'row', marginTop: 8 }}>
-          <StyledContractorText style={{ flex: 1, fontSize: 18, }}>ADJ QTY: {status === "Approved as Noted" ? adjQuantity : quantity}</StyledContractorText>
+          <StyledContractorText style={{ flex: 1, fontSize: 18, }}>ADJ QTY: {showQuantity}</StyledContractorText>
           <StyledContractorText style={{ flex: 1, fontSize: 18, }} >RATE: {showRate ? showRate?.toLocaleString("en-IN", { style: "currency", currency: 'USD' }) : 0}</StyledContractorText>
           <StyledContractorText style={{ flex: 1, fontSize: 18, }}>TOTAL: {showAmount ? showAmount?.toLocaleString("en-IN", { style: "currency", currency: 'USD' }) : 0}</StyledContractorText>
         </View>
@@ -357,7 +382,7 @@ function ContractorViewLineItem({ inspId, isSubmittedByReviewer, handleAcceptLin
   async function getLineItemImages() {
     const data = await getVendorFormDetails(inspId);
     const filterImages = data?.Images?.filter(image => image.file_name.includes(id))
-    setAllLineImages(filterImages)
+    setAllLineImages(filterImages ?? [])
   }
 
   React.useEffect(() => {
@@ -469,7 +494,7 @@ function ContractorViewLineItem({ inspId, isSubmittedByReviewer, handleAcceptLin
       <Overlay childrenWrapperStyle={{ padding: 18 }} containerStyle={{ backgroundColor: '#dbdad960' }} visible={visible} onClose={() => setVisible(false)} closeOnTouchOutside >
         <Ionicons onPress={() => hideModal()} name="close" size={24} style={{ marginLeft: "auto" }} />
         <GalleryWrapper>
-          <View style={{ flexDirection: "row", flexWrap: "wrap",justifyContent:"center" }}>
+          <View style={{ flexDirection: "row", flexWrap: "wrap", justifyContent: "center" }}>
             {
               allLineItemImages.length > 0 && allLineItemImages.map((item, i) =>
                 <GalleryImageItem key={i} img={item} />
@@ -510,10 +535,10 @@ function ContractorViewLineItem({ inspId, isSubmittedByReviewer, handleAcceptLin
             <StyledOverlayInput
               keyboardType="number-pad"
               onChangeText={text => {
-               if ( Platform.OS === 'ios' ) {
-                let formatdText = text.slice(2).replace(",","");
-               return onOtherFormValueChange(formatdText, "Adj_Rate", UniqueKey)
-               }
+                if (Platform.OS === 'ios') {
+                  let formatdText = text.slice(2).replace(",", "");
+                  return onOtherFormValueChange(formatdText, "Adj_Rate", UniqueKey)
+                }
                 onOtherFormValueChange(text, "Adj_Rate", UniqueKey)
               }}
               value={`${getCurrencyFormattedValue(Adj_Rate) ?? 0}`} />
@@ -631,10 +656,10 @@ function CustomFormInput({ readOnly = false, onChangeText = () => { }, value, la
 
   return (
     <View style={{ width: '100%', flex: 1, marginHorizontal: 4 }}>
-      <StyledTextInputLabel>{`${label}`}</StyledTextInputLabel>
+      <StyledTextInputLabel>{ label === "Total" ? `${label} ($)`  : `${label}`}</StyledTextInputLabel>
       <StyledTextInput
         onChangeText={onChangeText}
-        value={`${getFormattedValue(label, value) ?? 0}`}
+        value={`${value ?? 0}`}
         placeholder={placeholder}
         editable={editable}
       />

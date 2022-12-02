@@ -111,11 +111,11 @@ const OtherForms = ({ formStatus, gTotal, isSubmitted, isForReviewerView, readOn
     const GetToalSqFt = () => {
         let toatalSF = 0;
         currentFormData.data.map(ele => {
-          toatalSF = toatalSF + ele.Room_Total
-          return toatalSF
+            toatalSF = toatalSF + ele.Room_Total
+            return toatalSF
         })
         return toatalSF.toFixed(2)
-      }
+    }
 
 
     // React.useEffect(() => {
@@ -228,12 +228,22 @@ const OtherForms = ({ formStatus, gTotal, isSubmitted, isForReviewerView, readOn
                     let formatedVal = ["Matrix_Price","Sub_Category","U_M", "Scope_Notes", "Owner_Clarification"].includes(field) ? value : parseFloat(value)
                     let newValues = { ...obj, [field]: formatedVal };
                     let newTotal;
+                    let oldTotal = obj?.Total;
+                    let added;
 
                     if (field === "Adj_Quantity" || field === "Adj_Rate") {
                         newTotal = (newValues.Adj_Quantity * newValues.Adj_Rate)
                     } else {
                         newTotal = (newValues.Quantity * newValues.Rate)
                     }
+
+                    added = oldTotal > newTotal;
+
+                    let diff = (oldTotal - newTotal);
+
+                    let newGrandTotal = added ? grandTotal + diff : grandTotal - diff;
+                    newGrandTotal && setGrandTotal(newGrandTotal);
+
 
                     return { ...obj, [field]: formatedVal, ["Total"]: newTotal };
                 }
@@ -417,8 +427,21 @@ const OtherForms = ({ formStatus, gTotal, isSubmitted, isForReviewerView, readOn
                     <MenuWrapper >
                         {menuItems.map((item, i) => <MenuItem isActive={item.title === currentForm} onPress={() => handleOnFormChange(item.title)} key={i}>{item.icon}</MenuItem>)}
                     </MenuWrapper>
-                    <CurrentFormHeading style={{ textAlign: "right", paddingHorizontal: 16, fontSize: 18 }}>{currentForm}</CurrentFormHeading>
-                    <Text style={{ paddingHorizontal: 16, color: 'black', fontFamily: 'URBAN_BOLD', textAlign: "right", fontSize: 16 }}>Total: {currentForm === "Room Measurements" ? GetToalSqFt() + " sqft": GetTotal() }</Text>
+                    <View style={{ flexDirection: 'row', alignItems: 'center', paddingHorizontal: 16 }}>
+                        {
+                            !isForReviewerView &&
+                            !(currentForm === "Room Measurements") &&
+                            <View style={{ flex: 1 }}>
+                                <CurrentFormHeading style={{ marginLeft: 0, textAlign: "left", fontSize: 16 }}>Grand Bid Total</CurrentFormHeading>
+                                <Text style={{ color: 'black', fontFamily: 'URBAN_BOLD', textAlign: "left", fontSize: 14 }}>{grandTotal ? grandTotal.toLocaleString("en-IN", { style: "currency", currency: 'USD' }) : 0}</Text>
+                            </View>
+
+                        }
+                        <View style={{ flex: 1 }}>
+                            <CurrentFormHeading style={{ textAlign: "right", fontSize: 16 }}>{currentForm}</CurrentFormHeading>
+                            <Text style={{ color: 'black', fontFamily: 'URBAN_BOLD', textAlign: "right", fontSize: 14 }}>Total: {currentForm === "Room Measurements" ? GetToalSqFt() + " sqft" : GetTotal()}</Text>
+                        </View>
+                    </View>
                     {/* Search */}
                     <View style={{ flexDirection: 'row', alignItems: 'center', padding: 4, paddingHorizontal: 16, backgroundColor: "white", margin: 8 }}>
                         <Icon name="search" color="grey" size={18} />
@@ -440,7 +463,7 @@ const OtherForms = ({ formStatus, gTotal, isSubmitted, isForReviewerView, readOn
                                             return item?.Sub_Category?.includes(searchQuery)
                                         }
                                         return item?.Matrix_Price?.includes(searchQuery)
-                                    }).map((item, i) => <FormLineItem key={i}   {...{ isSubmittedByReviewer, handleAcceptLineItem, isForReviewerView, item, inspId: inspectionData.Id, onRoomMeasurementValueChange, onOtherFormValueChange, navigation, readOnly, setShowAddButton, handleOnSave, deleteNewItem }} isForRoomMeasurement={currentFormData.title === "Room Measurements"} />)
+                                    }).map((item, i) => <FormLineItem key={item?.Id}   {...{ isSubmittedByReviewer, handleAcceptLineItem, isForReviewerView, item, inspId: inspectionData.Id, onRoomMeasurementValueChange, onOtherFormValueChange, navigation, readOnly, setShowAddButton, handleOnSave, deleteNewItem }} isForRoomMeasurement={currentFormData.title === "Room Measurements"} />)
                                 }
                             </ScrollView>
                             :
@@ -488,7 +511,7 @@ const OtherForms = ({ formStatus, gTotal, isSubmitted, isForReviewerView, readOn
                                         }
                                         return item?.Matrix_Price?.includes(searchQuery);
                                     }).filter(item => item.Approval_Status === "Approved" || item.Approval_Status === "Approved as Noted").map((item, i) =>
-                                        <FormLineItem key={i}
+                                        <FormLineItem key={item?.Id}
                                             {...{ isSubmitted, isForReviewerView, item, inspId: inspectionData.Id, onRoomMeasurementValueChange, onOtherFormValueChange, navigation, readOnly, setShowAddButton, handleOnSave }} x
                                             isForRoomMeasurement={currentFormData.title === "Room Measurements"} />)
                                 }
