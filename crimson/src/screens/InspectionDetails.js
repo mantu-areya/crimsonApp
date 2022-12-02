@@ -103,7 +103,6 @@ const InspectionDetails = ({ route, navigation }) => {
     setIsScreenLoading(true);
 
     let record = vendorFormDetails[inspectionData.Id];
-    console.log({ record });
     if (record !== undefined || record !== "NA") {
       setCurrentRecord(record);
       setIsScreenLoading(false);
@@ -113,16 +112,8 @@ const InspectionDetails = ({ route, navigation }) => {
       navigation.goBack();
     }
 
-  }, [inspectionData])
+  }, [inspectionData,vendorFormDetails])
 
-
-  // React.useEffect(() => {
-  //   if (!isValidRecord) {
-  //     alert("Vendor Form Not Available")
-  //     console.log("IS NLL");
-  //     navigation.goBack();
-  //   }
-  // }, [currentRecord])
 
   function getFormTotal(formCategory, formatted = true) {
     let total = 0;
@@ -336,7 +327,7 @@ function Signatures({ inspId, role }) {
           <Text style={{ fontSize: 12, fontFamily: 'URBAN_BOLD', color: 'black' }}>Contractor Signature</Text>
           {img &&
             <>
-              <View style={{ justifyContent: 'center', alignItems: 'flex-end', marginVertical: 8, padding: 4 }}>
+              <View style={{ justifyContent: 'center', alignItems: 'flex-start', marginVertical: 8, padding: 4 }}>
                 <Image style={{
                   width: 180,
                   height: 80
@@ -459,7 +450,7 @@ function Signatures({ inspId, role }) {
         <Text style={{ fontSize: 12, fontFamily: 'URBAN_BOLD', color: 'black' }}>Date: {signDate && signDate}</Text>
       </View>
       {/* HHM Signature */}
-      <View style={{ padding: 16, flex: 1, }}>
+      <View style={{ padding: 16, flex: .5, alignItems:"flex-end"}}>
         <Text style={{ fontSize: 12, fontFamily: 'URBAN_BOLD', color: 'black' }}>HHM Signature</Text>
         {reviewerImg &&
           <>
