@@ -19,6 +19,11 @@ export const VendorFormContextProvider = ({ children }) => {
         setContextImages({ ...contextImages, [inspId]: data["Images"] })
       });
   }
+  
+  const refreshVfData = (inspId) =>{
+    return getVendorFormDetails(inspId)
+    .then(data => setVendorFormDetails({ ...vendorFormDetails, [inspId]: data["DynamicVendorTemplates"].DynamicVendorTemplate }));
+  }
 
   const addSignature = (inspId, img, role) => {
     //backup code for adding to the context 
@@ -66,6 +71,7 @@ export const VendorFormContextProvider = ({ children }) => {
     let newVfDataArray = vendorFormDetails[inspId]
     newVfDataArray.push(newData[0])
     setVendorFormDetails({ ...vendorFormDetails, [inspId]: newVfDataArray })
+    updateToSF(inspId)
   }
 
   const deleteNewItem = (dvdId, inspId, UniqueKey) => {
@@ -138,7 +144,9 @@ export const VendorFormContextProvider = ({ children }) => {
   const updateToSF = (inspId,submitStatus=false,role="Contractor") => {
     NetInfo.fetch().then(networkState => {
       if (networkState.isConnected) {
-        vendorFormDetails[inspId] && updateSfVendorFormDetails(vendorFormDetails[inspId], inspId,submitStatus,role)
+        vendorFormDetails[inspId] && updateSfVendorFormDetails(vendorFormDetails[inspId], inspId,submitStatus,role).then(data=>{
+          return refreshVfData(inspId)
+        })
       }
     })
   }
