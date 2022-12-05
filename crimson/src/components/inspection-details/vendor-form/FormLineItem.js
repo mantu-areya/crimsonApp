@@ -138,7 +138,7 @@ export default function FormLineItem({ isSubmittedByReviewer, handleAcceptLineIt
                 onRoomMeasurementValueChange((val), "Room_Length", item.UniqueKey)
               }}
               readOnly={readOnly}
-              value={length}
+              value={length ?? 0}
             />
 
             <CustomFormInput
@@ -151,7 +151,7 @@ export default function FormLineItem({ isSubmittedByReviewer, handleAcceptLineIt
                 onRoomMeasurementValueChange((val), "Room_Width", item.UniqueKey)
               }}
               readOnly={readOnly}
-              value={width}
+              value={width ?? 0}
             />
             <CustomFormInput
               label="Misc"
@@ -162,7 +162,7 @@ export default function FormLineItem({ isSubmittedByReviewer, handleAcceptLineIt
                 }
                 onRoomMeasurementValueChange((val), "Room_Misc_SF", item.UniqueKey)
               }} readOnly={readOnly}
-              value={misc}
+              value={misc ?? 0}
             />
             <CustomFormInput
               label="Total SqFt"
@@ -254,7 +254,7 @@ export default function FormLineItem({ isSubmittedByReviewer, handleAcceptLineIt
             }}
             // onChangeText={val => onOtherFormValueChange((val), "Quantity", item.UniqueKey)}
             readOnly={readOnly}
-            value={item.Quantity}
+            value={item.Quantity ?? 0}
           />
 
           <CustomFormInput
@@ -262,7 +262,8 @@ export default function FormLineItem({ isSubmittedByReviewer, handleAcceptLineIt
             placeholder="U/A"
             onChangeText={val => onOtherFormValueChange((val), "U_M", item.UniqueKey)}
             readOnly={readOnly}
-            value={item.U_M}
+            value={item.U_M ?? 0}
+            keyboardType={"default"}
           />
 
         </View>
@@ -295,7 +296,8 @@ export default function FormLineItem({ isSubmittedByReviewer, handleAcceptLineIt
             placeholder="Scope Notes"
             onChangeText={val => onOtherFormValueChange((val), "Scope_Notes", item.UniqueKey)}
             readOnly={readOnly}
-            value={item.Scope_Notes}
+            value={item.Scope_Notes ?? ""}
+            keyboardType={"default"}
           />
         </View>
 
@@ -650,7 +652,7 @@ function getFormattedValue(fieldName, value) {
 }
 
 
-function CustomFormInput({ readOnly = false, onChangeText = () => { }, value, label, placeholder }) {
+function CustomFormInput({ readOnly = false, onChangeText = () => { }, value, label, placeholder,keyboardType = "number-pad" }) {
 
   const editable = !readOnly;
 
@@ -659,9 +661,10 @@ function CustomFormInput({ readOnly = false, onChangeText = () => { }, value, la
       <StyledTextInputLabel>{ label === "Total" ? `${label} ($)`  : `${label}`}</StyledTextInputLabel>
       <StyledTextInput
         onChangeText={onChangeText}
-        value={`${value ?? 0}`}
+        value={`${value}`}
         placeholder={placeholder}
         editable={editable}
+        keyboardType={keyboardType}
       />
     </View>
 
