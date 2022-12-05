@@ -34,7 +34,7 @@ background-color: #F1F4F8;
 export const HomePage = ({ navigation }) => {
   const { isLoading, inspections, reloadInspectionContext } = useContext(InspectionsContext);
   const [searchQuery, setSearchQuery] = React.useState('');
-  const [selectedOption, setSelectedOption] = React.useState('Pending Vendor Submission');
+  const [selectedOption, setSelectedOption] = React.useState('Pending Submission');
 
   const onChangeSearch = query => {
     setSearchQuery(query);
@@ -88,8 +88,7 @@ export const HomePage = ({ navigation }) => {
         >
           {
             [
-              "Pending Vendor Submission",
-              "Upcoming Preconstruction Look Ahead",
+              "Pending Submission",
             ].map((option, index) =>
               <Menu.Item key={index} onPress={() => { setSelectedOption(option); setShowInspectionsMenu(false) }} title={option} />
             )
