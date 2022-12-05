@@ -1,4 +1,4 @@
-import { View, Text, FlatList, ActivityIndicator, Dimensions, Platform, ScrollView, TextInput } from 'react-native'
+import { View, Text, FlatList, ActivityIndicator, Dimensions, Platform, ScrollView, TextInput, TouchableOpacity } from 'react-native'
 import React from 'react'
 import styled from 'styled-components/native';
 import FormLineItem from './FormLineItem';
@@ -10,7 +10,10 @@ import { Button } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
 
-const OtherForms = ({ formStatus, gTotal, isSubmitted, isForReviewerView, readOnly, inspectionData, navigation, setVendorFormData }) => {
+
+
+
+const OtherForms = ({sectionTotals, formStatus, gTotal, isSubmitted, isForReviewerView, readOnly, inspectionData, navigation, setVendorFormData }) => {
 
 
     let [general_Rental, setGeneral_Rental] = React.useState([])
@@ -172,8 +175,8 @@ const OtherForms = ({ formStatus, gTotal, isSubmitted, isForReviewerView, readOn
 
     const onOtherFormValueChange = (value, field, key) => {
         console.log("changing", field, 'with', value, "KEY", key);
-        const isNotStringValueField = !(["Matrix_Price","Sub_Category","U_M", "Scope_Notes", "Owner_Clarification"]?.includes(field)) 
-        if ( isNotStringValueField && isNaN(value)) {
+        const isNotStringValueField = !(["Matrix_Price", "Sub_Category", "U_M", "Scope_Notes", "Owner_Clarification"]?.includes(field))
+        if (isNotStringValueField && isNaN(value)) {
             console.log("NAN", isNaN(value));
             return;
         }
@@ -225,7 +228,7 @@ const OtherForms = ({ formStatus, gTotal, isSubmitted, isForReviewerView, readOn
         } {
             newState = dataList.map(obj => {
                 if (obj.UniqueKey === key) {
-                    let formatedVal = ["Matrix_Price","Sub_Category","U_M", "Scope_Notes", "Owner_Clarification"].includes(field) ? value : parseFloat(value)
+                    let formatedVal = ["Matrix_Price", "Sub_Category", "U_M", "Scope_Notes", "Owner_Clarification"].includes(field) ? value : parseFloat(value)
                     let newValues = { ...obj, [field]: formatedVal };
                     let newTotal;
                     let oldTotal = obj?.Total;
@@ -283,7 +286,7 @@ const OtherForms = ({ formStatus, gTotal, isSubmitted, isForReviewerView, readOn
     const onRoomMeasurementValueChange = async (value, field, key) => {
 
         console.log("changing", field, 'with', value, "KEY", key);
-        const isNotStringValueField = !(["Sub_Category"]?.includes(field)) 
+        const isNotStringValueField = !(["Sub_Category"]?.includes(field))
         if (isNotStringValueField && isNaN(value)) {
             console.log("NAN", isNaN(value));
             return;
@@ -366,10 +369,10 @@ const OtherForms = ({ formStatus, gTotal, isSubmitted, isForReviewerView, readOn
         setDatalist(currentFormData.data);
     }, [currentFormData.data])
 
-    React.useEffect(()=>{
-      updateToSf(inspectionData.Id)
-      
-    },[NewItemAdded])
+    React.useEffect(() => {
+        updateToSf(inspectionData.Id)
+
+    }, [NewItemAdded])
 
     function handleAddNewItem() {
         console.log("Adding New Item to", currentForm);
@@ -417,6 +420,8 @@ const OtherForms = ({ formStatus, gTotal, isSubmitted, isForReviewerView, readOn
     }
 
     const isSubmittedByReviewer = formStatus === "Reviewer Form Completed";
+
+    const [showDropDown, setShowDropDown] = React.useState(false)
 
 
     return (
@@ -488,14 +493,38 @@ const OtherForms = ({ formStatus, gTotal, isSubmitted, isForReviewerView, readOn
                 isSubmitted &&
                 <>
                     <MenuWrapper style={{ justifyContent: "space-between" }}>
-                        <View style={{ flexDirection: "row" }}>
+                        <TouchableOpacity onPress={() => setShowDropDown(!showDropDown)} style={{ flexDirection: "row" }}>
                             <MaterialCommunityIcons size={28} name='home-city' color={"#DE9B67"} />
-                            <Text style={{ marginLeft: 8, color: '#C2CBD0', fontFamily: 'URBAN_BOLD', fontSize: 24 }}>Work Order</Text>
-                        </View>
+                            <Text  style={{ marginLeft: 8, color: '#C2CBD0', fontFamily: 'URBAN_BOLD', fontSize: 24 }}>Work Order {<Icon name={showDropDown ? "caret-up" : "caret-down"} size={16} color="white" />}</Text>
+                        </TouchableOpacity>
                         <View>
                             <Text style={{ color: '#C2CBD0', fontFamily: 'URBAN_BOLD', fontSize: 24 }}>{gTotal}</Text>
                         </View>
                     </MenuWrapper>
+                    {/* Sub Section Total */}
+                    {
+                        showDropDown &&
+                        <View style={{ marginHorizontal: 8, padding: 16, backgroundColor: "white" }}>
+                            <DescriptionWrapper>
+                                <Text style={{ color: 'black', fontFamily: 'URBAN_BOLD', fontSize: 16 }}>Section Breakdown</Text>
+                                <DescriptionText style={{ marginTop: 8 }}>
+                                    General Rental Scopes - {sectionTotals.grs}
+                                </DescriptionText>
+                                <DescriptionText >
+                                    Pools - {sectionTotals.pools}
+                                </DescriptionText>
+                                <DescriptionText >
+                                    Exterior - {sectionTotals.exterior}
+                                </DescriptionText>
+                                <DescriptionText >
+                                    Interior - {sectionTotals.interior}
+                                </DescriptionText>
+                                <DescriptionText >
+                                    MEP - {sectionTotals.mep}
+                                </DescriptionText>
+                            </DescriptionWrapper>
+                        </View>
+                    }
                     {/* Search */}
                     <View style={{ flexDirection: 'row', alignItems: 'center', padding: 4, paddingHorizontal: 16, backgroundColor: "white", margin: 8 }}>
                         <Icon name="search" color="grey" size={18} />
@@ -560,5 +589,16 @@ const AddNewLineItemButton = styled(Button)`
 padding: 8px;
 margin: 16px;
 `;
+
+const DescriptionWrapper = styled.View`
+padding: 4px;
+`
+
+const DescriptionText = styled.Text`
+
+color: #96A1AC;
+font-family: 'URBAN_BOLD';
+font-size: 16px;
+`
 
 export default OtherForms
