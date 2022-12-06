@@ -91,7 +91,7 @@ export default function FormLineItem({ isSubmittedByReviewer, handleAcceptLineIt
 
     return (
       <>
-        <Swipeable onRef={(ref) => swipeableRef.current = ref}  rightButtons={roomRightButtons}>
+        <Swipeable onRef={(ref) => swipeableRef.current = ref} rightButtons={roomRightButtons}>
           <LineItemWrapper >
             <View style={{ flex: 1 }}>
               {/* Room */}
@@ -519,10 +519,12 @@ function ContractorViewLineItem({ inspId, isSubmittedByReviewer, handleAcceptLin
           <StyledOverlayText style={{ flex: 1 }}>RATE: {getCurrencyFormattedValue(rate)}</StyledOverlayText>
           <StyledOverlayText style={{ flex: 1 }}>TOTAL: {getCurrencyFormattedValue(total)}</StyledOverlayText>
         </View>
-        <View style={{ flexDirection: 'row', justifyContent: 'space-evenly', width: "100%", flexWrap: "wrap" }}>
-          <StyledOverlayInputWrapper style={{ flexDirection: 'row' }}>
-            <StyledOverlayInputLabel>ADJ QTY: </StyledOverlayInputLabel>
-            <StyledOverlayInput
+        {/* ADJ QTY, RATE, TOTAL */}
+        <View style={{ flexDirection: 'row', justifyContent: "" }}>
+          {/* ADJ QTY */}
+          <View style={{ flex: 1, padding: 4 }}>
+            <StyledOverlayInputLabel>ADJ QTY</StyledOverlayInputLabel>
+            <TextInput
               keyboardType="number-pad"
               onChangeText={text => {
                 if (text === "") { // * for negative numbers
@@ -530,26 +532,38 @@ function ContractorViewLineItem({ inspId, isSubmittedByReviewer, handleAcceptLin
                 }
                 onOtherFormValueChange(text, "Adj_Quantity", UniqueKey)
               }}
-              value={`${Adj_Quantity ?? 0}`} />
-          </StyledOverlayInputWrapper>
-          <StyledOverlayInputWrapper style={{ flexDirection: 'row' }}>
-            <StyledOverlayInputLabel>RATE: </StyledOverlayInputLabel>
-            <StyledOverlayInput
+              value={`${Adj_Quantity ?? 0}`}
+              style={{ padding: 8, borderRadius: 4, backgroundColor: "#d4d4d470", fontFamily: 'URBAN_MEDIUM', fontSize: 16, color: "#BDC5CD" }}
+            />
+          </View>
+          {/* ADJ RATE */}
+          <View style={{ flex: 1, padding: 4 }}>
+            <StyledOverlayInputLabel>ADJ RATE ($)</StyledOverlayInputLabel>
+            <TextInput
               keyboardType="number-pad"
               onChangeText={text => {
                 if (Platform.OS === 'ios') {
-                  let formatdText = text.slice(2).replace(",", "");
-                  return onOtherFormValueChange(formatdText, "Adj_Rate", UniqueKey)
+                  return onOtherFormValueChange(text, "Adj_Rate", UniqueKey)
                 }
                 onOtherFormValueChange(text, "Adj_Rate", UniqueKey)
               }}
-              value={`${getCurrencyFormattedValue(Adj_Rate) ?? 0}`} />
-          </StyledOverlayInputWrapper>
-          <StyledOverlayInputWrapper style={{ flexDirection: 'row' }}>
-            <StyledOverlayInputLabel>TOTAL: </StyledOverlayInputLabel>
-            <StyledOverlayInput editable={false} value={`${getCurrencyFormattedValue(total) ?? 0}`} />
-          </StyledOverlayInputWrapper>
+              value={`${Adj_Rate ?? 0}`}
+              style={{ padding: 8, borderRadius: 4, backgroundColor: "#d4d4d470", fontFamily: 'URBAN_MEDIUM', fontSize: 16, color: "#BDC5CD" }}
+            />
+          </View>
         </View>
+        <View style={{ flexDirection: 'row', justifyContent: "" }}>
+          {/* ADJ TOTAL */}
+          <View style={{ flex: 1, padding: 4 }}>
+            <StyledOverlayInputLabel>ADJ TOTAL</StyledOverlayInputLabel>
+            <TextInput
+              value={`${getCurrencyFormattedValue(total)}` ?? 0}
+              editable={false}
+              style={{ borderRadius: 4, fontFamily: 'URBAN_MEDIUM', fontSize: 20, color: "#BDC5CD" }}
+            />
+          </View>
+        </View>
+
 
         <View style={{ width: "100%", marginVertical: 8 }}>
           <Text style={{ fontSize: 16, fontFamily: 'URBAN_BOLD', color: '#BDC5CD', marginVertical: 8 }}>OWNER CLARIFICATIONS:</Text>
@@ -625,7 +639,7 @@ margin:0  8px;
 const StyledOverlayInputLabel = styled.Text`
 color: #EEC690;
 font-family: URBAN_BOLD;
-font-size: 20px;
+font-size: 16px;
 `;
 const StyledOverlayInput = styled.TextInput`
 color: #EEC690;
@@ -652,13 +666,13 @@ function getFormattedValue(fieldName, value) {
 }
 
 
-function CustomFormInput({ readOnly = false, onChangeText = () => { }, value, label, placeholder,keyboardType = "number-pad" }) {
+function CustomFormInput({ readOnly = false, onChangeText = () => { }, value, label, placeholder, keyboardType = "number-pad" }) {
 
   const editable = !readOnly;
 
   return (
     <View style={{ width: '100%', flex: 1, marginHorizontal: 4 }}>
-      <StyledTextInputLabel>{ label === "Total" ? `${label} ($)`  : `${label}`}</StyledTextInputLabel>
+      <StyledTextInputLabel>{label === "Total" ? `${label} ($)` : `${label}`}</StyledTextInputLabel>
       <StyledTextInput
         onChangeText={onChangeText}
         value={`${value}`}
