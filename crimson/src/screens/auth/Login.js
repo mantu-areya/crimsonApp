@@ -1,11 +1,9 @@
-import { View, Text, TextInput } from 'react-native'
-import React, { useContext, useEffect } from 'react'
+import { View, Text, TextInput, Image } from 'react-native'
+import React from 'react'
 import styled from 'styled-components/native'
 import { useSafeAreaInsets } from "react-native-safe-area-context"
-import { Button, IconButton } from 'react-native-paper'
 import Ionicons from "react-native-vector-icons/Ionicons"
-import { AuthenticationContext } from "../../services/authentication/authentication.context";
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
+
 
 import { Spacer } from '../../components/spacer/spacer.component';
 import { sendOtp } from "../../services/authentication/authentication.service"
@@ -25,11 +23,9 @@ const shadowStyle = {
 const Login = ({ navigation }) => {
   const insets = useSafeAreaInsets()
   const [userName, setEmail] = React.useState("");
-  // const [password, setPassword] = React.useState("");
-  // const [showPassword, setShowPassword] = React.useState(false);
+
   const [error, setError] = React.useState(null)
 
-  // const { onLogin, error,fBLoginData,otpSent } = useContext(AuthenticationContext);
 
   const handleLogin = (userName) => {
     let data = {
@@ -47,10 +43,9 @@ const Login = ({ navigation }) => {
   return (
     <Wrapper style={{ paddingTop: insets.top }}>
       <FormWrapper style={[shadowStyle]}>
-        {/* Title */}
-        <Title>
-          CRIMSON
-        </Title>
+        <View style={{justifyContent: 'center',alignItems: 'center',marginVertical:8}}>
+          <Image style={{ width: 128, height: 128, borderRadius: 100 }} source={require("../../../assets/icon.png")} />
+        </View>
         {/* Email */}
         <Text style={{ paddingHorizontal: 16, marginBottom: 4, color: 'white', fontSize: 16, fontFamily: 'URBAN_BOLD' }}>Username</Text>
         <InputWrapper
@@ -59,17 +54,17 @@ const Login = ({ navigation }) => {
             style={{
               color: 'white',
               fontSize: 16,
-              padding:16,
-              width:"100%",
-              flex:.9,
+              padding: 16,
+              width: "100%",
+              flex: .9,
               fontFamily: 'URBAN_BOLD'
             }}
             onChangeText={userName => setEmail(userName)}
             value={userName}
             placeholderTextColor={"#7E8892"}
-            placeholder="Enter your Username here"
+            placeholder="Enter your username here"
           />
-          <Ionicons style={{ flex:.1}} onPress={() => handleLogin(userName)} size={36} color="#E45679" name="arrow-forward-circle" />
+          <Ionicons style={{ flex: .1 }} onPress={() => handleLogin(userName)} size={36} color="#E45679" name="arrow-forward-circle" />
         </InputWrapper>
 
         {error && (
@@ -121,16 +116,3 @@ border-width: 1px;
 border-radius: 8px;
 border-color: #14181B;
 `
-
-
-const ForgotPasswordLink = styled.Text`
-font-size: 18px;
-font-family: URBAN_BOLD;
-color: white;
-`;
-
-const StyledLoginButton = styled(Button)`
-padding: 12px 24px;
-border-radius: 16px;
-background-color: #E45679;
-`;
