@@ -13,7 +13,7 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 
 
 
-const OtherForms = ({sectionTotals, formStatus, gTotal, isSubmitted, isForReviewerView, readOnly, inspectionData, navigation, setVendorFormData }) => {
+const OtherForms = ({ sectionTotals, formStatus, gTotal, isSubmitted, isForReviewerView, readOnly, inspectionData, navigation, setVendorFormData }) => {
 
 
     let [general_Rental, setGeneral_Rental] = React.useState([])
@@ -425,6 +425,7 @@ const OtherForms = ({sectionTotals, formStatus, gTotal, isSubmitted, isForReview
     const [showDropDown, setShowDropDown] = React.useState(false)
 
 
+
     return (
         <View>
             {!isSubmitted &&
@@ -462,16 +463,28 @@ const OtherForms = ({sectionTotals, formStatus, gTotal, isSubmitted, isForReview
                     }
                     {
                         dataList.length > 0 ?
-                            <ScrollView>
-                                {
-                                    dataList.filter(item => {
-                                        if (currentForm === "Room Measurements") {
-                                            return item?.Sub_Category?.includes(searchQuery)
-                                        }
-                                        return item?.Matrix_Price?.includes(searchQuery)
-                                    }).map((item, i) => <FormLineItem key={item?.Id}   {...{ isSubmittedByReviewer, handleAcceptLineItem, isForReviewerView, item, inspId: inspectionData.Id, onRoomMeasurementValueChange, onOtherFormValueChange, navigation, readOnly, setShowAddButton, handleOnSave, deleteNewItem }} isForRoomMeasurement={currentFormData.title === "Room Measurements"} />)
-                                }
-                            </ScrollView>
+                            isForReviewerView ?
+                                <ScrollView>
+                                    {
+                                        dataList.sort((a, b) => b.Quantity - a.Quantity).filter(item => {
+                                            if (currentForm === "Room Measurements") {
+                                                return item?.Sub_Category?.includes(searchQuery)
+                                            }
+                                            return item?.Matrix_Price?.includes(searchQuery)
+                                        }).map((item, i) => <FormLineItem key={item?.Id}   {...{ isSubmittedByReviewer, handleAcceptLineItem, isForReviewerView, item, inspId: inspectionData.Id, onRoomMeasurementValueChange, onOtherFormValueChange, navigation, readOnly, setShowAddButton, handleOnSave, deleteNewItem }} isForRoomMeasurement={currentFormData.title === "Room Measurements"} />)
+                                    }
+                                </ScrollView>
+                                :
+                                <ScrollView>
+                                    {
+                                        dataList.filter(item => {
+                                            if (currentForm === "Room Measurements") {
+                                                return item?.Sub_Category?.includes(searchQuery)
+                                            }
+                                            return item?.Matrix_Price?.includes(searchQuery)
+                                        }).map((item, i) => <FormLineItem key={item?.Id}   {...{ isSubmittedByReviewer, handleAcceptLineItem, isForReviewerView, item, inspId: inspectionData.Id, onRoomMeasurementValueChange, onOtherFormValueChange, navigation, readOnly, setShowAddButton, handleOnSave, deleteNewItem }} isForRoomMeasurement={currentFormData.title === "Room Measurements"} />)
+                                    }
+                                </ScrollView>
                             :
                             <View style={{ padding: 16 }}>
                                 <ActivityIndicator />
@@ -496,7 +509,7 @@ const OtherForms = ({sectionTotals, formStatus, gTotal, isSubmitted, isForReview
                     <MenuWrapper style={{ justifyContent: "space-between" }}>
                         <TouchableOpacity onPress={() => setShowDropDown(!showDropDown)} style={{ flexDirection: "row" }}>
                             <MaterialCommunityIcons size={28} name='home-city' color={"#DE9B67"} />
-                            <Text  style={{ marginLeft: 8, color: '#C2CBD0', fontFamily: 'URBAN_BOLD', fontSize: 24 }}>Work Order {<Icon name={showDropDown ? "caret-up" : "caret-down"} size={16} color="white" />}</Text>
+                            <Text style={{ marginLeft: 8, color: '#C2CBD0', fontFamily: 'URBAN_BOLD', fontSize: 24 }}>Work Order {<Icon name={showDropDown ? "caret-up" : "caret-down"} size={16} color="white" />}</Text>
                         </TouchableOpacity>
                         <View>
                             <Text style={{ color: '#C2CBD0', fontFamily: 'URBAN_BOLD', fontSize: 24 }}>{gTotal}</Text>
