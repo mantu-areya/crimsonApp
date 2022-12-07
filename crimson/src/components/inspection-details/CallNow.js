@@ -1,7 +1,8 @@
-import { View, Text } from 'react-native'
+import { View, Text, Platform } from 'react-native'
 import React from 'react'
 import styled from "styled-components/native"
 import  Ionicons  from "react-native-vector-icons/Ionicons"
+import * as Linking from "expo-linking";
 
 
 const CallNow = ({isForReviewerView,data}) => {
@@ -9,9 +10,22 @@ const CallNow = ({isForReviewerView,data}) => {
         HHM_Field_PM__r,
         HHM_Field_PM_Email__c,
         GC_Email__c,
-        General_Contractor__r
-
+        General_Contractor__r,
+        HHM_Field_PM_Phone__c,
     } = data;
+
+const handleCall = (phNumber)=>{
+  console.log("call",phNumber);
+  return Platform.select({
+    ios: () => {
+        Linking.openURL(`telprompt:${phNumber}`);
+    },
+    android: () => {
+        Linking.openURL(`tel:${phNumber}`);
+    }
+})();
+}
+
     return (
         <Container>
             {/* Text */}
@@ -31,7 +45,7 @@ const CallNow = ({isForReviewerView,data}) => {
                 </SubTitle>
             </TextWrapper>
             {/*  Button */}
-            <CallButtonWrapper onPress={() => alert("Yo")}>
+            <CallButtonWrapper onPress={() => handleCall(HHM_Field_PM_Phone__c)}>
                 <Ionicons name="call" color="white" size={18} />
                 <CallButtonText >
                     Call Now

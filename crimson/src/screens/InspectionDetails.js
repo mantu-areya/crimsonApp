@@ -159,7 +159,7 @@ const InspectionDetails = ({ route, navigation }) => {
           </View>
           :
           <>
-            <ScrollView onScroll={(e) => setOffSetY(e.nativeEvent.contentOffset.y)}>
+            <ScrollView onScroll={(e) => e.nativeEvent.contentOffset.y <1 ? setShow(true):setShow(false)}>
               {/* {!readOnly && */}
               <Overlay visible={isSubmitModalOpen} onClose={() => setIsSubmitModalOpen(false)}  >
                 {

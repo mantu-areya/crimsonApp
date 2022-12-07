@@ -1,7 +1,7 @@
-import { Text, View } from 'react-native'
+import { Text, View ,Button} from 'react-native'
 import React, { useContext, useEffect, useRef, useState } from 'react'
 import styled from 'styled-components/native'
-import { ActivityIndicator, Button } from 'react-native-paper'
+import { ActivityIndicator } from 'react-native-paper'
 import { AuthenticationContext } from "../../services/authentication/authentication.context";
 import OTPTextInput from 'react-native-otp-textinput'
 import { verifyOtp } from '../../services/authentication/authentication.service';
@@ -9,7 +9,7 @@ import { verifyOtp } from '../../services/authentication/authentication.service'
 
 export const OtpScreen = ({ navigation, route }) => {
   const otpInput = useRef(null);
-  const [otp, setOtp] = useState(null)
+  const [otp, setOtp] = useState('')
   const { onOtpVerified } = useContext(AuthenticationContext);
   const [otpError, setOtpError] = useState(null)
 
@@ -58,7 +58,8 @@ export const OtpScreen = ({ navigation, route }) => {
               inputCount={5}  
               ref={e => (otpInput.current = e)} />
             <InputWrapper>
-              <Button title="verify" onPress={() => verifyText()}  ><Text>Verify</Text></Button>
+            {console.log(otp,"otp")}
+              <Button disabled = {otp.length <5} contentStyle={{color:"red"}} title="verify" onPress={() => verifyText()}   >Verify</Button>
               <Button title="clear" onPress={() => clearText()} ><Text>Clear</Text></Button>
             </InputWrapper></>
       }

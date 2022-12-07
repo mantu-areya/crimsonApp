@@ -81,15 +81,13 @@ export const SubmitReviewForm = ({ handleCloseModal, setreadonly, inspVfDetails,
     }
 
     return (
-      <View style={{ width: '30%', height: 30, }}>
-        <Row >
-          <Pressable onPress={() => { handleSelectChange(ele, "Yes") }} style={{ width: '49%', height: "100%", borderEndWidth: 1, borderTopLeftRadius: 5, borderBottomLeftRadius: 5, borderWidth: .5, alignItems: 'center', backgroundColor: `${CurrentValue == "Yes" ? "grey" : "white"}` }}>
-            <Text>Yes</Text>
-          </Pressable>
-          <Pressable onPress={() => { handleSelectChange(ele, "No") }} style={{ width: '50%', height: "100%", borderEndWidth: 1, borderTopRightRadius: 5, borderBottomRightRadius: 5, borderWidth: .5, alignItems: 'center', backgroundColor: `${CurrentValue == "No" ? "grey" : "white"}` }}>
-            <Text>No</Text>
-          </Pressable>
-        </Row>
+      <View style={{ width: '20%', height: 30,marginLeft:10 }}>
+
+        <CheckListbox 
+                        isChecked={CurrentValue === "Yes" ? true : false}
+                        onClick={() => { handleSelectChange(ele,CurrentValue== "Yes"?"No":"Yes") }
+                        }
+                      />
       </View>
     )
   }
@@ -236,8 +234,8 @@ export const SubmitReviewForm = ({ handleCloseModal, setreadonly, inspVfDetails,
             let key = String(ele)
             return (
               <View key={ele} style={{ width: "50%", flexDirection: "row" }} >
-                <Text>{ele} : </Text>
                 {customSelector(ele, selectListObject[ele])}
+                <Text>{ele} </Text>
               </View>
             )
           })}
