@@ -1,30 +1,22 @@
-import React, { useEffect } from "react";
-import { StatusBar as ExpoStatusBar } from "expo-status-bar";
-import { StyleSheet, Text, View } from 'react-native';
+import React from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { SafeArea } from "../../components/utility/safe-area.component";
 import { Ionicons } from "@expo/vector-icons";
-import { HomeScreen } from "../../features/gcs/screens/Homescreens"
 
 import { createStackNavigator } from '@react-navigation/stack';
-import { InspectionsScreen } from "../../features/gcs/screens/InspectionsScreen";
-// import { InspectionDetailScreen } from "../../features/gcs/screens/InspectionDetailScreen";
 import { CameraScreen } from "../../utilities/camera/CameraScreen"
 import InspectionDetails from "../../screens/InspectionDetails";
-import Login from "../../screens/auth/Login";
-import { AuthContext } from "../../contexts/AuthContext";
 import { HomePage } from "../../screens/HomePage";
 import { getFocusedRouteNameFromRoute } from "@react-navigation/native";
-import Schedule from "../../screens/Schedule";
 import Chat from "../../screens/Chat";
 import ImageGallery from "../../screens/auth/ImageGallery";
+import {TurnHome} from "../../screens/turns/TurnHome";
+import TurnDetails from "../../screens/turns/TurnDetails";
 export const AppNavigator = () => {
 
 
   const TAB_ICON = {
-    Home: "md-home",
-    Map: "md-map",
-    Schedule: "list-outline",
+    Inspections: "bookmark-outline",
+    Turns: "infinite-outline",
   };
 
   const screenOptions = ({ route }) => {
@@ -57,27 +49,39 @@ export const AppNavigator = () => {
           name="CameraScreen" component={CameraScreen} />
         <Stack.Screen options={{ headerShown: false, }}
           name="Chat" component={Chat} />
-           <Stack.Screen options={{ headerShown: false, }}
+        <Stack.Screen options={{ headerShown: false, }}
           name="ImageGallery" component={ImageGallery} />
       </Stack.Navigator>
 
     );
   }
 
-  // function AuthStack() {
-  //   return (
-  //     <Stack.Navigator>
-  //       <Stack.Screen options={{ headerShown: false }} name="Login" component={Login} />
-  //     </Stack.Navigator>
-  //   )
-  // }
+
+  function TurnStack() {
+    return (
+      <Stack.Navigator>
+        <Stack.Screen options={{ headerShown: false }}
+          name="TurnHome" component={TurnHome} />
+        <Stack.Screen options={{ headerShown: false, }}
+          name="TurnDetails" component={TurnDetails} />
+        <Stack.Screen options={{ headerShown: false, }}
+          name="CameraScreen" component={CameraScreen} />
+        <Stack.Screen options={{ headerShown: false, }}
+          name="Chat" component={Chat} />
+        <Stack.Screen options={{ headerShown: false, }}
+          name="ImageGallery" component={ImageGallery} />
+      </Stack.Navigator>
+
+    );
+  }
+
 
 
 
   function getRouteName(route) {
     const rName = getFocusedRouteNameFromRoute(route);
-    if (rName === "Home" || rName === "HomeStack"|| rName === undefined) {
-      return  "flex";
+    if (rName === "TurnHome" || rName === "HomeStack" || rName === undefined) {
+      return "flex";
     }
     return "none";
   }
@@ -85,27 +89,28 @@ export const AppNavigator = () => {
 
   return (
     <>
-      {/* {
-        !isAuth ?
-          <AuthStack /> : */}
-          <Tab.Navigator screenOptions={screenOptions}>
-            <Tab.Screen
-              options={({ route }) => ({
-                headerShown: false,
-                tabBarStyle: {
-                  display: getRouteName(route)
-                }
-              })}
-              name="Home"
-              component={HomeStackScreen}
-            />
-            <Tab.Screen
-              options={{ headerShown: false }}
-              name="Schedule"
-              component={Schedule}
-            />
-          </Tab.Navigator>
-      {/* } */}
+      <Tab.Navigator screenOptions={screenOptions}>
+        <Tab.Screen
+          options={({ route }) => ({
+            headerShown: false,
+            tabBarStyle: {
+              display: getRouteName(route)
+            }
+          })}
+          name="Turns"
+          component={TurnStack}
+        />
+        <Tab.Screen
+          options={({ route }) => ({
+            headerShown: false,
+            tabBarStyle: {
+              display: getRouteName(route)
+            }
+          })}
+          name="Inspections"
+          component={HomeStackScreen}
+        />
+      </Tab.Navigator>
     </>
   );
 }

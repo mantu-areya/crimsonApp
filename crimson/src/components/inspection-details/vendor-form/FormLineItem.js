@@ -91,13 +91,13 @@ export default function FormLineItem({ isSubmittedByReviewer, handleAcceptLineIt
 
     return (
       <>
-        <Swipeable onRef={(ref) => swipeableRef.current = ref}  rightButtons={roomRightButtons}>
+        <Swipeable onRef={(ref) => swipeableRef.current = ref} rightButtons={roomRightButtons}>
           <LineItemWrapper >
             <View style={{ flex: 1 }}>
               {/* Room */}
               {(Sub_Category_List.includes(item.Sub_Category) || readOnly)
                 ?
-                <StyledText>{item.Sub_Category}</StyledText>
+                <StyledText onPress={() => setOverlayVisible(true)}>{item.Sub_Category}</StyledText>
                 :
                 <StyledTextInput
                   onChangeText={val => onRoomMeasurementValueChange((val), "Sub_Category", item.UniqueKey)}
@@ -138,7 +138,7 @@ export default function FormLineItem({ isSubmittedByReviewer, handleAcceptLineIt
                 onRoomMeasurementValueChange((val), "Room_Length", item.UniqueKey)
               }}
               readOnly={readOnly}
-              value={length}
+              value={length ?? 0}
             />
 
             <CustomFormInput
@@ -151,7 +151,7 @@ export default function FormLineItem({ isSubmittedByReviewer, handleAcceptLineIt
                 onRoomMeasurementValueChange((val), "Room_Width", item.UniqueKey)
               }}
               readOnly={readOnly}
-              value={width}
+              value={width ?? 0}
             />
             <CustomFormInput
               label="Misc"
@@ -162,7 +162,7 @@ export default function FormLineItem({ isSubmittedByReviewer, handleAcceptLineIt
                 }
                 onRoomMeasurementValueChange((val), "Room_Misc_SF", item.UniqueKey)
               }} readOnly={readOnly}
-              value={misc}
+              value={misc ?? 0}
             />
             <CustomFormInput
               label="Total SqFt"
@@ -202,7 +202,7 @@ export default function FormLineItem({ isSubmittedByReviewer, handleAcceptLineIt
         <LineItemWrapper >
           <View style={{ flex: 1 }}>
             {
-              <LineItemHeading>
+              <LineItemHeading onPress={() => setOverlayVisible(true)}>
                 {item?.Matrix_Price}
               </LineItemHeading>
             }
@@ -254,7 +254,7 @@ export default function FormLineItem({ isSubmittedByReviewer, handleAcceptLineIt
             }}
             // onChangeText={val => onOtherFormValueChange((val), "Quantity", item.UniqueKey)}
             readOnly={readOnly}
-            value={item.Quantity}
+            value={item.Quantity ?? 0}
           />
 
           <CustomFormInput
@@ -262,7 +262,8 @@ export default function FormLineItem({ isSubmittedByReviewer, handleAcceptLineIt
             placeholder="U/A"
             onChangeText={val => onOtherFormValueChange((val), "U_M", item.UniqueKey)}
             readOnly={readOnly}
-            value={item.U_M}
+            value={item.U_M ?? 0}
+            keyboardType={"default"}
           />
 
         </View>
@@ -295,14 +296,15 @@ export default function FormLineItem({ isSubmittedByReviewer, handleAcceptLineIt
             placeholder="Scope Notes"
             onChangeText={val => onOtherFormValueChange((val), "Scope_Notes", item.UniqueKey)}
             readOnly={readOnly}
-            value={item.Scope_Notes}
+            value={item.Scope_Notes ?? ""}
+            keyboardType={"default"}
           />
         </View>
 
         {!readOnly &&
           <StyledSaveButton onPress={() => { handleOnSave(); setOverlayVisible(false) }} mode="contained">
             <Text style={{ color: 'white', fontWeight: 'bold', fontFamily: "URBAN_BOLD", fontSize: 18 }}>
-              SWIPE TO SAVE <AntDesign size={16} name="doubleright" />
+              Save
             </Text>
           </StyledSaveButton>}
 
@@ -517,10 +519,12 @@ function ContractorViewLineItem({ inspId, isSubmittedByReviewer, handleAcceptLin
           <StyledOverlayText style={{ flex: 1 }}>RATE: {getCurrencyFormattedValue(rate)}</StyledOverlayText>
           <StyledOverlayText style={{ flex: 1 }}>TOTAL: {getCurrencyFormattedValue(total)}</StyledOverlayText>
         </View>
-        <View style={{ flexDirection: 'row', justifyContent: 'space-evenly', width: "100%", flexWrap: "wrap" }}>
-          <StyledOverlayInputWrapper style={{ flexDirection: 'row' }}>
-            <StyledOverlayInputLabel>ADJ QTY: </StyledOverlayInputLabel>
-            <StyledOverlayInput
+        {/* ADJ QTY, RATE, TOTAL */}
+        <View style={{ flexDirection: 'row', justifyContent: "" }}>
+          {/* ADJ QTY */}
+          <View style={{ flex: 1, padding: 4 }}>
+            <StyledOverlayInputLabel>ADJ QTY</StyledOverlayInputLabel>
+            <TextInput
               keyboardType="number-pad"
               onChangeText={text => {
                 if (text === "") { // * for negative numbers
@@ -528,26 +532,38 @@ function ContractorViewLineItem({ inspId, isSubmittedByReviewer, handleAcceptLin
                 }
                 onOtherFormValueChange(text, "Adj_Quantity", UniqueKey)
               }}
-              value={`${Adj_Quantity ?? 0}`} />
-          </StyledOverlayInputWrapper>
-          <StyledOverlayInputWrapper style={{ flexDirection: 'row' }}>
-            <StyledOverlayInputLabel>RATE: </StyledOverlayInputLabel>
-            <StyledOverlayInput
+              value={`${Adj_Quantity ?? 0}`}
+              style={{ padding: 8, borderRadius: 4, backgroundColor: "#d4d4d470", fontFamily: 'URBAN_MEDIUM', fontSize: 16, color: "#BDC5CD" }}
+            />
+          </View>
+          {/* ADJ RATE */}
+          <View style={{ flex: 1, padding: 4 }}>
+            <StyledOverlayInputLabel>ADJ RATE ($)</StyledOverlayInputLabel>
+            <TextInput
               keyboardType="number-pad"
               onChangeText={text => {
                 if (Platform.OS === 'ios') {
-                  let formatdText = text.slice(2).replace(",", "");
-                  return onOtherFormValueChange(formatdText, "Adj_Rate", UniqueKey)
+                  return onOtherFormValueChange(text, "Adj_Rate", UniqueKey)
                 }
                 onOtherFormValueChange(text, "Adj_Rate", UniqueKey)
               }}
-              value={`${getCurrencyFormattedValue(Adj_Rate) ?? 0}`} />
-          </StyledOverlayInputWrapper>
-          <StyledOverlayInputWrapper style={{ flexDirection: 'row' }}>
-            <StyledOverlayInputLabel>TOTAL: </StyledOverlayInputLabel>
-            <StyledOverlayInput editable={false} value={`${getCurrencyFormattedValue(total) ?? 0}`} />
-          </StyledOverlayInputWrapper>
+              value={`${Adj_Rate ?? 0}`}
+              style={{ padding: 8, borderRadius: 4, backgroundColor: "#d4d4d470", fontFamily: 'URBAN_MEDIUM', fontSize: 16, color: "#BDC5CD" }}
+            />
+          </View>
         </View>
+        <View style={{ flexDirection: 'row', justifyContent: "" }}>
+          {/* ADJ TOTAL */}
+          <View style={{ flex: 1, padding: 4 }}>
+            <StyledOverlayInputLabel>ADJ TOTAL</StyledOverlayInputLabel>
+            <TextInput
+              value={`${getCurrencyFormattedValue(total)}` ?? 0}
+              editable={false}
+              style={{ borderRadius: 4, fontFamily: 'URBAN_MEDIUM', fontSize: 20, color: "#BDC5CD" }}
+            />
+          </View>
+        </View>
+
 
         <View style={{ width: "100%", marginVertical: 8 }}>
           <Text style={{ fontSize: 16, fontFamily: 'URBAN_BOLD', color: '#BDC5CD', marginVertical: 8 }}>OWNER CLARIFICATIONS:</Text>
@@ -623,7 +639,7 @@ margin:0  8px;
 const StyledOverlayInputLabel = styled.Text`
 color: #EEC690;
 font-family: URBAN_BOLD;
-font-size: 20px;
+font-size: 16px;
 `;
 const StyledOverlayInput = styled.TextInput`
 color: #EEC690;
@@ -650,18 +666,19 @@ function getFormattedValue(fieldName, value) {
 }
 
 
-function CustomFormInput({ readOnly = false, onChangeText = () => { }, value, label, placeholder }) {
+function CustomFormInput({ readOnly = false, onChangeText = () => { }, value, label, placeholder, keyboardType = "number-pad" }) {
 
   const editable = !readOnly;
 
   return (
     <View style={{ width: '100%', flex: 1, marginHorizontal: 4 }}>
-      <StyledTextInputLabel>{ label === "Total" ? `${label} ($)`  : `${label}`}</StyledTextInputLabel>
+      <StyledTextInputLabel>{label === "Total" ? `${label} ($)` : `${label}`}</StyledTextInputLabel>
       <StyledTextInput
         onChangeText={onChangeText}
-        value={`${value ?? 0}`}
+        value={`${value}`}
         placeholder={placeholder}
         editable={editable}
+        keyboardType={keyboardType}
       />
     </View>
 

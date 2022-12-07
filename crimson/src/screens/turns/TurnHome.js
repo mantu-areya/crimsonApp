@@ -1,18 +1,17 @@
 import React, { useContext } from "react";
-import { InspectionsContext } from "../services/inspections/inspections.contex"
+import { InspectionsContext } from "../../services/inspections/inspections.contex"
 
 
-import { Searchbar as PaperSearchBar, Colors, IconButton, Menu, Button, Card, Provider, Avatar } from 'react-native-paper';
+import {  Menu, Button, Card, Avatar } from 'react-native-paper';
 import { ActivityIndicator, Dimensions, FlatList, Text, TextInput, TouchableOpacity, View } from "react-native";
 import styled from "styled-components/native";
 
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { useNavigation } from "@react-navigation/native";
-import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
-const backIcon = <Icon name="arrow-left" size={16} />;
-const rightArr = <Icon name="angle-right" size={48} color="white" />;
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+
 const caretDown = <Icon name="caret-down" size={16} color="white" />;
-import { AuthenticationContext } from "../services/authentication/authentication.context";
+import { AuthenticationContext } from "../../services/authentication/authentication.context";
 
 import { useIsFocused } from '@react-navigation/native';
 
@@ -31,10 +30,10 @@ width: 100%;
 background-color: #F1F4F8;
 `;
 
-export const HomePage = ({ navigation }) => {
+export const TurnHome = ({ navigation }) => {
   const { isLoading, inspections, reloadInspectionContext } = useContext(InspectionsContext);
   const [searchQuery, setSearchQuery] = React.useState('');
-  const [selectedOption, setSelectedOption] = React.useState('Pending Submission');
+  const [selectedOption, setSelectedOption] = React.useState('Pending Turns');
 
   const onChangeSearch = query => {
     setSearchQuery(query);
@@ -69,7 +68,7 @@ export const HomePage = ({ navigation }) => {
             onDismiss={() => setShowUserMenu(false)}
             anchor={
               <TouchableOpacity onPress={() => setShowUserMenu(true)}>
-                <Avatar.Image size={36} source={require('../assets/images/ProfilePic.png')} />
+                <Avatar.Image size={36} source={require('../../assets/images/ProfilePic.png')} />
               </TouchableOpacity>}>
             <Menu.Item onPress={() => setShowUserMenu(false)} title="Profile" />
             <Menu.Item onPress={() => {
@@ -88,7 +87,7 @@ export const HomePage = ({ navigation }) => {
         >
           {
             [
-              "Pending Submission",
+              "Pending Turns",
             ].map((option, index) =>
               <Menu.Item key={index} onPress={() => { setSelectedOption(option); setShowInspectionsMenu(false) }} title={option} />
             )
@@ -133,7 +132,7 @@ function ListViewCard({ data }) {
   const inspectionData = data
 
   return (
-    <Card onPress={() => navigation.navigate('InspectionsDetail', { inspectionData })} style={{ display: 'flex', alignItems: "center", flexDirection: "row", borderRadius: 8, marginBottom: 16 }}>
+    <Card onPress={() => navigation.navigate('TurnDetails', { inspectionData })} style={{ display: 'flex', alignItems: "center", flexDirection: "row", borderRadius: 8, marginBottom: 16 }}>
       <View style={{ display: 'flex', alignItems: "center", flexDirection: "row", padding: 16 }}>
         <View>
           <Text style={{ color: 'black', fontFamily: 'URBAN_MEDIUM', fontSize: 18, marginBottom: 4 }}  >{data?.Property_Address__c === '' ? 'Property Address NA' : data?.Property_Address__c}</Text>
