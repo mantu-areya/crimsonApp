@@ -97,7 +97,7 @@ export default function FormLineItem({ isSubmittedByReviewer, handleAcceptLineIt
               {/* Room */}
               {(Sub_Category_List.includes(item.Sub_Category) || readOnly)
                 ?
-                <StyledText>{item.Sub_Category}</StyledText>
+                <StyledText onPress={() => setOverlayVisible(true)}>{item.Sub_Category}</StyledText>
                 :
                 <StyledTextInput
                   onChangeText={val => onRoomMeasurementValueChange((val), "Sub_Category", item.UniqueKey)}
@@ -202,7 +202,7 @@ export default function FormLineItem({ isSubmittedByReviewer, handleAcceptLineIt
         <LineItemWrapper >
           <View style={{ flex: 1 }}>
             {
-              <LineItemHeading>
+              <LineItemHeading onPress={() => setOverlayVisible(true)}>
                 {item?.Matrix_Price}
               </LineItemHeading>
             }
