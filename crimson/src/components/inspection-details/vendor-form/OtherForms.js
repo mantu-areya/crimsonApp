@@ -572,7 +572,7 @@ width: ${windowWidth}px ;
 
 const MenuItem = styled.TouchableOpacity`
 margin: 0 ${Platform.OS === "android" ? 12 : 16}px;
-border: ${props => props.isActive ? "2px solid red" : "none"};
+border: ${props => props.isActive ? "2px solid white" : "none"};
 border-radius: 4px;
 padding:4px;
 `;
