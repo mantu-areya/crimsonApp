@@ -393,6 +393,7 @@ const OtherForms = ({sectionTotals, formStatus, gTotal, isSubmitted, isForReview
         console.log("FORM CHANGE TO: " + title);
         setCurrentForm(title);
         updateToSf(inspectionData.Id)
+        setSearchQuery("")
     }
 
     function handleAcceptLineItem(lineItemId, status) {
