@@ -1,6 +1,6 @@
 import React, { useContext } from "react";
 import { InspectionsContext } from "../services/inspections/inspections.contex"
-
+import { compareAsc, differenceInDays } from 'date-fns'
 
 import { Searchbar as PaperSearchBar, Colors, IconButton, Menu, Button, Card, Provider, Avatar } from 'react-native-paper';
 import { ActivityIndicator, Dimensions, FlatList, Text, TextInput, TouchableOpacity, View } from "react-native";
@@ -32,14 +32,97 @@ background-color: #F1F4F8;
 `;
 
 export const HomePage = ({ navigation }) => {
-  const { isLoading, inspections, reloadInspectionContext } = useContext(InspectionsContext);
+  const { isLoading, inspections, reloadInspectionContext, userRole } = useContext(InspectionsContext);
   const [searchQuery, setSearchQuery] = React.useState('');
-  const [selectedOption, setSelectedOption] = React.useState('Pending Submission');
+
+
+
+  const allInspectionsTypes = [
+    userRole === "Contractor" ? "Pending Vendor Submission" : "Pending Review",
+    userRole === "Contractor" ? "Pending Review" : "Approval Submitted",
+    "WA Generated",
+    "Upcoming Preconstruction",
+    "Next 7days Projected Rehab Complete Date"
+  ];
+
+  // ! For GC's ONLY
+  const pendingInspectionsForGC = inspections?.filter(insp => insp.Inspection_Stage__c === "Bid Reviewer Assigned" && insp.Inspection_Form_Stage__c !== "Vendor Form Completed")
+  console.log("P for GC", pendingInspectionsForGC.length);
+  // ! For Contractor's ONLY
+  const pendingInspectionsForReviewer = inspections?.filter(insp => insp.Inspection_Stage__c === "Bid Reviewer Assigned" && insp.Inspection_Form_Stage__c === "Vendor Form Completed")
+  console.log("P FOR CONTRACTOR", pendingInspectionsForReviewer.length);
+  const pendingSubmittedForApprovalByContractor = inspections?.filter(insp => insp.Inspection_Stage__c === "Inspection Complete" && insp.Inspection_Form_Stage__c === "Reviewer Form Completed")
+  console.log("S BY CONTRACTOR", pendingSubmittedForApprovalByContractor.length);
+  // ? for BOTH
+  const waGenerated = inspections?.filter(insp => insp.Inspection_Stage__c === "Work Authorization Form Created")
+  console.log("WA", waGenerated.length);
+
+
+  let TODAY = new Date();
+
+  const upcomingPreconstruction = inspections?.filter(insp => {
+    let isValidRehabStage = insp?.Initial_Rehab_Operating_Stage__c === "2 - Pre-Construction";
+    let isPreConDateValid = false;
+    if (insp?.Pre_Con_Meeting_Date__c) {
+      isPreConDateValid = compareAsc(new Date(insp.Pre_Con_Meeting_Date__c), TODAY) === 0 || compareAsc(new Date(insp.Pre_Con_Meeting_Date__c), TODAY) === 1;
+    }
+    if (isValidRehabStage && isPreConDateValid && insp?.General_Contractor__c) {
+      return insp;
+    }
+  })
+  console.log("UPCPRE", upcomingPreconstruction.length);
+  // Initial_Rehab_Operating_Stage__c=‘3 - Under Rehab’ AND (Pre_Con_Meeting_Date__c = TODAY OR Projected_Rehab_Complete_Date__c >= Next_N_Days:7)
+  const next7DaysProjectedRehab = inspections?.filter(insp => {
+    let isValidRehabStage = insp?.Initial_Rehab_Operating_Stage__c === "3 - Under Rehab";
+    let isPreConDateEqualToToday = false;
+    if (insp?.Pre_Con_Meeting_Date__c) {
+      isPreConDateEqualToToday = compareAsc(new Date(insp.Pre_Con_Meeting_Date__c), TODAY) === 0;
+    }
+    let isValidProjectRehabDate = false;
+    if (insp?.Projected_Rehab_Complete_Date__c ) {
+      isValidProjectRehabDate = differenceInDays(new Date(insp.Projected_Rehab_Complete_Date__), TODAY) >= 7
+    }
+    if (isValidRehabStage && (isPreConDateEqualToToday || isValidProjectRehabDate)) {
+      return insp;
+    }
+  })
+  console.log("N7D", next7DaysProjectedRehab.length);
+
+  const [selectedOption, setSelectedOption] = React.useState(allInspectionsTypes[0]);
+  const [currentSelectedInspections, setCurrentSelectedInspections] = React.useState(userRole === "Contractor" ? pendingInspectionsForGC : pendingInspectionsForReviewer)
+
+
+  const handleOptionSelect = (option) => {
+    setSelectedOption(option);
+    if (option === "WA Generated") {
+      setCurrentSelectedInspections(waGenerated)
+    }
+    if (option === "Pending Review") {
+      setCurrentSelectedInspections(pendingInspectionsForReviewer)
+    }
+    if (option === "Approval Submitted") {
+      setCurrentSelectedInspections(pendingSubmittedForApprovalByContractor)
+    }
+    if (option === "Pending Vendor Submission") {
+      setCurrentSelectedInspections(pendingInspectionsForGC)
+    }
+    if (option === "Upcoming Preconstruction") {
+      setCurrentSelectedInspections(upcomingPreconstruction);
+    }
+    if (option === "Next 7days Projected Rehab Complete Date") {
+      setCurrentSelectedInspections(next7DaysProjectedRehab);
+    }
+  }
+
+
+
+
+
 
   const onChangeSearch = query => {
     setSearchQuery(query);
   }
-  const filterInspections = inspections?.filter((ins) => ins?.Name.toLowerCase().includes(searchQuery.toLowerCase()) || ins?.Property_Address__c.toLowerCase().includes(searchQuery.toLowerCase()) || ins?.Property_City__c?.toLowerCase()?.includes(searchQuery.toLowerCase()));
+  const filterInspections = currentSelectedInspections?.filter((ins) => ins?.Name.toLowerCase().includes(searchQuery.toLowerCase()) || ins?.Property_Address__c.toLowerCase().includes(searchQuery.toLowerCase()) || ins?.Property_City__c?.toLowerCase()?.includes(searchQuery.toLowerCase()));
 
   const insets = useSafeAreaInsets();
 
@@ -56,6 +139,7 @@ export const HomePage = ({ navigation }) => {
       reloadInspectionContext();
     }
   }, [isFocused])
+
 
   return (
     <View style={{ flex: 1, paddingTop: insets.top, backgroundColor: 'black' }}>
@@ -87,18 +171,16 @@ export const HomePage = ({ navigation }) => {
           }
         >
           {
-            [
-              "Pending Submission",
-            ].map((option, index) =>
-              <Menu.Item key={index} onPress={() => { setSelectedOption(option); setShowInspectionsMenu(false) }} title={option} />
+            allInspectionsTypes.map((option, index) =>
+              <Menu.Item key={index} onPress={() => { handleOptionSelect(option); setShowInspectionsMenu(false) }} title={option} />
             )
           }
         </Menu>
         {/* Searchbar */}
         <View style={{ backgroundColor: '#F1F4F8', justifyContent: "space-between", alignItems: 'center', flexDirection: 'row', padding: 8, marginVertical: 8 }}>
-          <View style={{ flexDirection: 'row', alignItems: 'center',flex:.9 }}>
+          <View style={{ flexDirection: 'row', alignItems: 'center', flex: .9 }}>
             <Icon name="search" color="grey" size={18} />
-            <TextInput value={searchQuery} onChangeText={onChangeSearch} placeholder="Address, city, state.." style={{ fontFamily: "URBAN_BOLD", backgroundColor: "transparent",fontSize: 18,padding:16,width:"100%"}} />
+            <TextInput value={searchQuery} onChangeText={onChangeSearch} placeholder="Address, city, state.." style={{ fontFamily: "URBAN_BOLD", backgroundColor: "transparent", fontSize: 18, padding: 16, width: "100%" }} />
           </View>
           <Button labelStyle={{ fontFamily: "URBAN_BOLD" }} style={{ backgroundColor: "#4B39EF", padding: 8 }} mode="contained">Search</Button>
         </View>
