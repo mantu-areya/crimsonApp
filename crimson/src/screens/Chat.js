@@ -1,5 +1,5 @@
 import 'react-native-get-random-values';
-import { View, Text, FlatList, TextInput } from 'react-native'
+import { View, Text, FlatList, TextInput, Platform } from 'react-native'
 import React from 'react'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import styled from 'styled-components/native';
@@ -9,6 +9,7 @@ import { GiftedChat } from 'react-native-gifted-chat'
 import { getInspectionsChat, postInspectionsChat } from '../services/inspections/inspections.service';
 import { v4 as uuidv4 } from 'uuid';
 import { InspectionsContext } from '../services/inspections/inspections.contex';
+import KeyboardSpacer from 'react-native-keyboard-spacer';
 
 const Chat = ({ route, navigation }) => {
     const insets = useSafeAreaInsets();
@@ -73,6 +74,7 @@ const Chat = ({ route, navigation }) => {
     }
 
     return (
+      <>
         <View style={{ paddingTop: insets.top, flex: 1 }}>
             <ToolBar>
                 {/* back */}
@@ -98,6 +100,8 @@ const Chat = ({ route, navigation }) => {
             </ChatInputWrapper>
 
         </View>
+        {Platform.OS == 'ios' && <KeyboardSpacer/>} 
+        </>
     )
 }
 
