@@ -1,4 +1,4 @@
-import { ScrollView, Text, View, TextInput, Modal, Image } from 'react-native'
+import { ScrollView, Text, View, TextInput, Modal, Image, Platform } from 'react-native'
 import React from 'react'
 import { SafeAreaView } from "react-native-safe-area-context"
 import CallNow from '../components/inspection-details/CallNow'
@@ -15,6 +15,7 @@ import { AuthenticationContext } from '../services/authentication/authentication
 import { ActivityIndicator, Button, } from 'react-native-paper'
 import Sign from '../features/gcs/components/workAuth/Sign.js';
 import * as ImagePicker from "expo-image-picker";
+import KeyboardSpacer from 'react-native-keyboard-spacer';
 
 
 
@@ -179,6 +180,7 @@ const InspectionDetails = ({ route, navigation }) => {
               {/* Forms */}
               <OtherForms gTotal={gTotal} isSubmitted={isSubmitted} readOnly={readOnly} isForReviewerView={userRole === "Reviewer"} formStatus={inspectionData?.Inspection_Form_Stage__c} inspectionData={inspectionData} navigation={navigation} setVendorFormData={setVendorFormData} />
             </ScrollView>
+            {Platform.OS == 'ios' && <KeyboardSpacer/>} 
             {/* Call Now */}
             {show && <CallNow isForReviewerView={userRole === "Reviewer"} data={inspectionData} />}
 
