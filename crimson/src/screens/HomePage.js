@@ -58,13 +58,17 @@ export const HomePage = ({ navigation }) => {
   console.log("WA", waGenerated.length);
 
 
-  let TODAY = new Date();
+  let TODAY = new Date().toISOString().split("T")[0];
+
+  console.log("TODAY",TODAY);
 
   const upcomingPreconstruction = inspections?.filter(insp => {
     let isValidRehabStage = insp?.Initial_Rehab_Operating_Stage__c === "2 - Pre-Construction";
     let isPreConDateValid = false;
-    if (insp?.Pre_Con_Meeting_Date__c) {
-      isPreConDateValid = compareAsc(new Date(insp.Pre_Con_Meeting_Date__c), TODAY) === 0 || compareAsc(new Date(insp.Pre_Con_Meeting_Date__c), TODAY) === 1;
+    if (insp?.Initial_Rehab_ID__r?.Pre_Con_Meeting_Date__c) {
+      console.log("insp?.Initial_Rehab_ID__r?.Pre_Con_Meeting_Date__c",insp?.Initial_Rehab_ID__r?.Pre_Con_Meeting_Date__c);
+      console.log(compareAsc(new Date(insp.Initial_Rehab_ID__r.Pre_Con_Meeting_Date__c), new Date(TODAY)),"comp");
+      isPreConDateValid = compareAsc(new Date(insp.Initial_Rehab_ID__r.Pre_Con_Meeting_Date__c), new Date(TODAY)) === 0 || compareAsc(new Date(insp.Initial_Rehab_ID__r.Pre_Con_Meeting_Date__c), new Date(TODAY)) === 1;
     }
     if (isValidRehabStage && isPreConDateValid && insp?.General_Contractor__c) {
       return insp;
@@ -75,12 +79,13 @@ export const HomePage = ({ navigation }) => {
   const next7DaysProjectedRehab = inspections?.filter(insp => {
     let isValidRehabStage = insp?.Initial_Rehab_Operating_Stage__c === "3 - Under Rehab";
     let isPreConDateEqualToToday = false;
-    if (insp?.Pre_Con_Meeting_Date__c) {
-      isPreConDateEqualToToday = compareAsc(new Date(insp.Pre_Con_Meeting_Date__c), TODAY) === 0;
+    if (insp?.Initial_Rehab_ID__r?.Pre_Con_Meeting_Date__c) {
+      console.log(compareAsc(new Date(insp.Initial_Rehab_ID__r.Pre_Con_Meeting_Date__c), new Date(TODAY)),"COMp2");
+      isPreConDateEqualToToday = compareAsc(new Date(insp.Initial_Rehab_ID__r.Pre_Con_Meeting_Date__c), new Date(TODAY)) === 0;
     }
     let isValidProjectRehabDate = false;
     if (insp?.Projected_Rehab_Complete_Date__c ) {
-      isValidProjectRehabDate = differenceInDays(new Date(insp.Projected_Rehab_Complete_Date__), TODAY) >= 7
+      isValidProjectRehabDate = differenceInDays(new Date(insp.Projected_Rehab_Complete_Date__), new Date(TODAY)) >= 7
     }
     if (isValidRehabStage && (isPreConDateEqualToToday || isValidProjectRehabDate)) {
       return insp;
