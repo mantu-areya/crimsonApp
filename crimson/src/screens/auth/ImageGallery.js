@@ -1,4 +1,4 @@
-import { View, Text, Image, FlatList, Dimensions, TouchableOpacity } from 'react-native'
+import { View, Text, Image, FlatList, Dimensions, TouchableOpacity, ActivityIndicator } from 'react-native'
 import React from 'react'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { VendorFormContext } from '../../services/context/VendorForm/vendorForm.contex';
@@ -12,7 +12,7 @@ const ImageGallery = ({ route, navigation }) => {
 
     const { inspId } = route.params;
 
-    const [allImages, setAllImages] = React.useState([]);
+    const [allImages, setAllImages] = React.useState();
 
     async function getLineItemImages() {
         const data = await getVendorFormDetails(inspId);
@@ -33,24 +33,35 @@ const ImageGallery = ({ route, navigation }) => {
                 {/* Person Name */}
                 <ToolBarHeading>Image Gallery</ToolBarHeading>
             </ToolBar>
-            <GalleryWrapper>
-                <View style={{ flexDirection: "row", flexWrap: "wrap" }}>
-                    {
-                        allImages.length > 0 && allImages.map((item, i) =>
-                            <GalleryImageItem key={i} img={item} />
-                        )
-                    }
+            {
 
-                </View>
+                allImages ?
 
-                {
-                    allImages.length <= 0 &&
-                    <View style={{ padding: 16 }}>
-                        <Text style={{ fontFamily: 'URBAN_BOLD', fontSize:24 }}>No images to Show</Text>
-                    </View>
-                }
 
-            </GalleryWrapper>
+                    <GalleryWrapper>
+                        <View style={{ flexDirection: "row", flexWrap: "wrap" }}>
+                            {
+                                allImages && allImages.length > 0 && allImages.map((item, i) =>
+                                    <GalleryImageItem key={i} img={item} />
+                                )
+                            }
+
+                        </View>
+
+                        {
+                            allImages && allImages.length <= 0 &&
+                            <View style={{ padding: 16 }}>
+                                <Text style={{ fontFamily: 'URBAN_BOLD', fontSize: 24 }}>No images to Show</Text>
+                            </View>
+                        }
+
+                    </GalleryWrapper>
+
+                    :
+
+                    <ActivityIndicator />
+
+            }
         </View>
     )
 }

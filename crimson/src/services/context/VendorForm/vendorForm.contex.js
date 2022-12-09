@@ -118,7 +118,9 @@ export const VendorFormContextProvider = ({ children }) => {
             ele['Approval_Status'] = obj.Approval_Status;
             ele['Adj_Rate'] = obj.Adj_Rate;
             ele['Adj_Quantity'] = obj.Adj_Quantity;
-            ele['Owner_Clarifications'] = obj.Owner_Clarifications;
+            ele['Owner_Clarification'] = obj.Owner_Clarification;
+            ele['Approved_Amount'] = obj.Approved_Amount;
+
           }
           return obj
         });

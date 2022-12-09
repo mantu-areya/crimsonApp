@@ -9,7 +9,7 @@ import { HomePage } from "../../screens/HomePage";
 import { getFocusedRouteNameFromRoute } from "@react-navigation/native";
 import Chat from "../../screens/Chat";
 import ImageGallery from "../../screens/auth/ImageGallery";
-import {TurnHome} from "../../screens/turns/TurnHome";
+import { TurnHome } from "../../screens/turns/TurnHome";
 import TurnDetails from "../../screens/turns/TurnDetails";
 export const AppNavigator = () => {
 
@@ -97,8 +97,8 @@ export const AppNavigator = () => {
               display: getRouteName(route)
             }
           })}
-          name="Turns"
-          component={TurnStack}
+          name="Inspections"
+          component={HomeStackScreen}
         />
         <Tab.Screen
           options={({ route }) => ({
@@ -107,9 +107,10 @@ export const AppNavigator = () => {
               display: getRouteName(route)
             }
           })}
-          name="Inspections"
-          component={HomeStackScreen}
+          name="Turns"
+          component={TurnStack}
         />
+
       </Tab.Navigator>
     </>
   );

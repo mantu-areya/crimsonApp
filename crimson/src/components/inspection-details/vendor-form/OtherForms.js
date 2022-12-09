@@ -105,7 +105,7 @@ const OtherForms = ({ sectionTotals, formStatus, gTotal, isSubmitted, isForRevie
 
         let toatalSF = 0;
         currentFormData.data.map(ele => {
-            toatalSF = toatalSF + ele.Total
+            toatalSF = toatalSF + (ele.Total == 0 ?ele.Approved_Amount : ele.Total)
             return toatalSF
         })
         return toatalSF.toLocaleString("en-IN", { style: "currency", currency: 'USD' })
@@ -235,15 +235,16 @@ const OtherForms = ({ sectionTotals, formStatus, gTotal, isSubmitted, isForRevie
                     let added;
 
                     if (field === "Adj_Quantity" || field === "Adj_Rate") {
-                        newTotal = (newValues.Adj_Quantity * newValues.Adj_Rate)
-                    } else {
-                        newTotal = (newValues.Quantity * newValues.Rate)
+                        newTotal = newValues && (newValues.Adj_Quantity * newValues.Adj_Rate)
+                    } else if(field === 'Owner_Clarification'){
+                      newTotal= obj?.Total;
+                    }else{
+                      newTotal = newValues && (newValues.Quantity * newValues.Rate)
                     }
 
-                    added = oldTotal > newTotal;
+                    added = (oldTotal > newTotal);
 
                     let diff = (oldTotal - newTotal);
-
                     let newGrandTotal = added ? grandTotal + diff : grandTotal - diff;
                     newGrandTotal && setGrandTotal(newGrandTotal);
 
