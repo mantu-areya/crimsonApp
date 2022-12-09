@@ -1,5 +1,5 @@
 import { View, Text, ImageBackground, Image, Dimensions, Platform } from 'react-native'
-import React from 'react'
+import React,{useEffect} from 'react'
 import styled from 'styled-components/native'
 import Ionicons from "react-native-vector-icons/Ionicons"
 import { differenceInDays } from 'date-fns'
@@ -9,6 +9,7 @@ import { postSendFileEmail } from '../../services/inspections/inspections.servic
 import Carousel, { Pagination } from 'react-native-snap-carousel'
 import { Map } from './maps/Map'
 import * as Linking from "expo-linking";
+import Icon from 'react-native-vector-icons/Ionicons'
 
 
 
@@ -46,6 +47,10 @@ const Hero = ({ data, isSubmitted, sectionTotals }) => {
 
     const [index, setIndex] = React.useState(0)
 
+useEffect(() =>{
+    console.log(isCarousel && isCarousel.current._carouselRef._listRef,"in");
+    // isCarousel.current
+},[index])
 
     function CarouselCardItem({ index }) {
         if (index == 0) {
@@ -105,6 +110,20 @@ const Hero = ({ data, isSubmitted, sectionTotals }) => {
     return (
         <Container>
             <View>
+                {
+                    index === 1 &&
+                    <Icon 
+                    // carouselRef={isCarousel}
+                    // onPress={(index) => setIndex(index)}
+
+                    onPress={()=>isCarousel.current.scrollsToTop()} 
+                    size={24} color="white" name="arrow-back" style={{
+                        position: "absolute",
+                        top: 140,
+                        zIndex: 9999
+                    }} 
+                    />
+                }
                 <Carousel
                     layout="default"
                     layoutCardOffset={2}
@@ -122,9 +141,9 @@ const Hero = ({ data, isSubmitted, sectionTotals }) => {
                     activeDotIndex={index}
                     carouselRef={isCarousel}
                     dotStyle={{
-                        width: 10,
-                        height: 10,
-                        borderRadius: 5,
+                        width: 15,
+                        height: 15,
+                        borderRadius: 100,
                         marginHorizontal: 0,
                         backgroundColor: 'rgba(0, 0, 0, 0.92)'
                     }}
