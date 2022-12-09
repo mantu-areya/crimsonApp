@@ -9,7 +9,7 @@ import { refreshOrgToken } from "../inspections/inspections.service";
 export const AuthenticationContext = createContext();
 
 export const AuthenticationContextProvider = ({ children }) => {
-  const [isLoading, setIsLoading] = useState(false);
+  const [isauthLoading, setIsauthLoading] = useState(false);
   const [user, setUser] = useState(null);
   // const [error, setError] = useState(null);
   // const [fBLoginData, setFbLoginData] = useState(null)
@@ -48,13 +48,18 @@ export const AuthenticationContextProvider = ({ children }) => {
   }
 
   const onAppLoad = () => {
-    setOrgToken()
-    setIsLoading(true);
-    AsyncStorage.getItem('userData').then(data => {
-      data && refreshOrgToken(JSON.parse(data).userName)
-      data && setUser(JSON.parse(data).userName);
-      setIsLoading(false);
-    })
+    setIsauthLoading(true);
+    setOrgToken().then(
+      _=>{
+        return AsyncStorage.getItem('userData').then(data => {
+          data && refreshOrgToken(JSON.parse(data).userName)
+          data && setUser(JSON.parse(data).userName);
+          setIsauthLoading(false);
+        }).catch(err=>{
+          setIsauthLoading(false);
+        })
+      }
+    )
   }
 
   const onLogout = () => {
@@ -93,7 +98,7 @@ export const AuthenticationContextProvider = ({ children }) => {
       value={{
         isAuthenticated: !!user,
         user,
-        isLoading,
+        isauthLoading,
         // error,
         // onLogin,
         onAppLoad,

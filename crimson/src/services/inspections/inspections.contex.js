@@ -21,7 +21,7 @@ export const InspectionsContextProvider = ({ children }) => {
   const [isOnline, setIsOnline] = useState(null)
   const [userRole,setUserRole]= useState(null)
   const [userId,setUserId]= useState(null)
-  const { user } = useContext(AuthenticationContext);
+  const { user,isauthLoading } = useContext(AuthenticationContext);
 
 
 
@@ -29,7 +29,8 @@ export const InspectionsContextProvider = ({ children }) => {
     // console.log(user,"usr");
     console.log("BEFORE GETTING INS");
     let userEmail = user && user
-    setIsLoading(true);
+    if(isauthLoading == false){ 
+      setIsLoading(true);
     getInspectionsData(userEmail)
       .then(results => {
         setIsLoading(false);
@@ -42,7 +43,7 @@ export const InspectionsContextProvider = ({ children }) => {
         setIsLoading(false);
         setError(err);
         console.log(err);
-      });
+      })}
 
     // mocking local inspection data
     // setInspections(mockedinspections)
@@ -96,6 +97,10 @@ export const InspectionsContextProvider = ({ children }) => {
       return
     });
   }, [stateChnage])
+
+  useEffect(()=>{
+    retrieveInspections();
+  },[isauthLoading])
 
   const changeState = () => setStaeChange(!stateChnage)
 

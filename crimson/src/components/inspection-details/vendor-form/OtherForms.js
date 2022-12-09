@@ -468,10 +468,7 @@ const OtherForms = ({ sectionTotals, formStatus, gTotal, isSubmitted, isForRevie
                                 <ScrollView>
                                     {
                                         dataList.sort((a, b) => b.Quantity - a.Quantity).filter(item => {
-                                            if (currentForm === "Room Measurements") {
-                                                return item?.Sub_Category?.includes(searchQuery)
-                                            }
-                                            return item?.Matrix_Price?.includes(searchQuery)
+                                          return item?.Sub_Category?.includes(searchQuery) || item?.Matrix_Price?.includes(searchQuery)
                                         }).map((item, i) => <FormLineItem key={item?.Id}   {...{ isSubmittedByReviewer, handleAcceptLineItem, isForReviewerView, item, inspId: inspectionData.Id, onRoomMeasurementValueChange, onOtherFormValueChange, navigation, readOnly, setShowAddButton, handleOnSave, deleteNewItem }} isForRoomMeasurement={currentFormData.title === "Room Measurements"} />)
                                     }
                                 </ScrollView>
