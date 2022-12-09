@@ -47,51 +47,40 @@ export const HomePage = ({ navigation }) => {
 
   // ! For GC's ONLY
   const pendingInspectionsForGC = inspections?.filter(insp => insp.Inspection_Stage__c === "Bid Reviewer Assigned" && insp.Inspection_Form_Stage__c !== "Vendor Form Completed")
-  console.log("P for GC", pendingInspectionsForGC.length);
   // ! For Contractor's ONLY
   const pendingInspectionsForReviewer = inspections?.filter(insp => insp.Inspection_Stage__c === "Bid Reviewer Assigned" && insp.Inspection_Form_Stage__c === "Vendor Form Completed")
-  console.log("P FOR CONTRACTOR", pendingInspectionsForReviewer.length);
   const pendingSubmittedForApprovalByContractor = inspections?.filter(insp => insp.Inspection_Stage__c === "Inspection Complete" && insp.Inspection_Form_Stage__c === "Reviewer Form Completed")
-  console.log("S BY CONTRACTOR", pendingSubmittedForApprovalByContractor.length);
-  // ? for BOTH
+  // ! for BOTH
   const waGenerated = inspections?.filter(insp => insp.Inspection_Stage__c === "Work Authorization Form Created")
-  console.log("WA", waGenerated.length);
+
 
 
   let TODAY = new Date().toISOString().split("T")[0];
-
-  console.log("TODAY",TODAY);
 
   const upcomingPreconstruction = inspections?.filter(insp => {
     let isValidRehabStage = insp?.Initial_Rehab_Operating_Stage__c === "2 - Pre-Construction";
     let isPreConDateValid = false;
     if (insp?.Initial_Rehab_ID__r?.Pre_Con_Meeting_Date__c) {
-      console.log("insp?.Initial_Rehab_ID__r?.Pre_Con_Meeting_Date__c",insp?.Initial_Rehab_ID__r?.Pre_Con_Meeting_Date__c);
-      console.log(compareAsc(new Date(insp.Initial_Rehab_ID__r.Pre_Con_Meeting_Date__c), new Date(TODAY)),"comp");
       isPreConDateValid = compareAsc(new Date(insp.Initial_Rehab_ID__r.Pre_Con_Meeting_Date__c), new Date(TODAY)) === 0 || compareAsc(new Date(insp.Initial_Rehab_ID__r.Pre_Con_Meeting_Date__c), new Date(TODAY)) === 1;
     }
     if (isValidRehabStage && isPreConDateValid && insp?.General_Contractor__c) {
       return insp;
     }
   })
-  console.log("UPCPRE", upcomingPreconstruction.length);
-  // Initial_Rehab_Operating_Stage__c=‘3 - Under Rehab’ AND (Pre_Con_Meeting_Date__c = TODAY OR Projected_Rehab_Complete_Date__c >= Next_N_Days:7)
   const next7DaysProjectedRehab = inspections?.filter(insp => {
     let isValidRehabStage = insp?.Initial_Rehab_Operating_Stage__c === "3 - Under Rehab";
     let isPreConDateEqualToToday = false;
     if (insp?.Initial_Rehab_ID__r?.Pre_Con_Meeting_Date__c) {
-      console.log(compareAsc(new Date(insp.Initial_Rehab_ID__r.Pre_Con_Meeting_Date__c), new Date(TODAY)),"COMp2");
       isPreConDateEqualToToday = compareAsc(new Date(insp.Initial_Rehab_ID__r.Pre_Con_Meeting_Date__c), new Date(TODAY)) === 0;
     }
     let isValidProjectRehabDate = false;
-    if (insp?.Projected_Rehab_Complete_Date__c ) {
-      isValidProjectRehabDate = differenceInDays(new Date(insp.Projected_Rehab_Complete_Date__), new Date(TODAY)) >= 7
+    if (insp?.Initial_Rehab_ID__r?.Projected_Rehab_Complete_Date__c ) {
+      isValidProjectRehabDate = differenceInDays(new Date(insp?.Initial_Rehab_ID__r?.Projected_Rehab_Complete_Date__c), new Date(TODAY)) >= 7
     }
     if (isValidRehabStage && (isPreConDateEqualToToday || isValidProjectRehabDate)) {
       return insp;
     }
   })
-  console.log("N7D", next7DaysProjectedRehab.length);
 
   const [selectedOption, setSelectedOption] = React.useState(allInspectionsTypes[0]);
   const [currentSelectedInspections, setCurrentSelectedInspections] = React.useState(userRole === "Contractor" ? pendingInspectionsForGC : pendingInspectionsForReviewer)
