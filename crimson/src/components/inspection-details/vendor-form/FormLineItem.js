@@ -520,7 +520,7 @@ function ContractorViewLineItem({ inspId, isSubmittedByReviewer, handleAcceptLin
           <StyledOverlayText style={{ flex: 1 }}>TOTAL: {getCurrencyFormattedValue(total)}</StyledOverlayText>
         </View>
         {/* ADJ QTY, RATE, TOTAL */}
-        <View style={{ flexDirection: 'row', justifyContent: "" }}>
+        <View style={{ flexDirection: 'row'}}>
           {/* ADJ QTY */}
           <View style={{ flex: 1, padding: 4 }}>
             <StyledOverlayInputLabel>ADJ QTY</StyledOverlayInputLabel>
@@ -552,7 +552,7 @@ function ContractorViewLineItem({ inspId, isSubmittedByReviewer, handleAcceptLin
             />
           </View>
         </View>
-        <View style={{ flexDirection: 'row', justifyContent: "" }}>
+        <View style={{ flexDirection: 'row' }}>
           {/* ADJ TOTAL */}
           <View style={{ flex: 1, padding: 4 }}>
             <StyledOverlayInputLabel>ADJ TOTAL</StyledOverlayInputLabel>
