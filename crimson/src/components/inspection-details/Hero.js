@@ -21,6 +21,7 @@ const Hero = ({ data, isSubmitted, sectionTotals }) => {
 
     async function handleFileDownload() {
         const res = await postSendFileEmail(data.Id, GC_Email__c);
+        alert("File Sent on Email")
         console.log("FILE EMAIl SEND", res);
     }
 
