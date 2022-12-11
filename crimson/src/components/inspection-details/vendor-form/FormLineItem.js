@@ -520,7 +520,7 @@ function ContractorViewLineItem({ inspId, isSubmittedByReviewer, handleAcceptLin
           <StyledOverlayText style={{ flex: 1 }}>TOTAL: {getCurrencyFormattedValue(total)}</StyledOverlayText>
         </View>
         {/* ADJ QTY, RATE, TOTAL */}
-        <View style={{ flexDirection: 'row', justifyContent: "" }}>
+        <View style={{ flexDirection: 'row'}}>
           {/* ADJ QTY */}
           <View style={{ flex: 1, padding: 4 }}>
             <StyledOverlayInputLabel>ADJ QTY</StyledOverlayInputLabel>
@@ -533,7 +533,7 @@ function ContractorViewLineItem({ inspId, isSubmittedByReviewer, handleAcceptLin
                 onOtherFormValueChange(text, "Adj_Quantity", UniqueKey)
               }}
               value={`${Adj_Quantity ?? 0}`}
-              style={{ padding: 8, borderRadius: 4, backgroundColor: "#d4d4d470", fontFamily: 'URBAN_MEDIUM', fontSize: 16, color: "#BDC5CD" }}
+              style={{ padding: 8, borderRadius: 4, backgroundColor: "#d4d4d470", fontFamily: 'URBAN_MEDIUM', fontSize: 16, color: "#000" }}
             />
           </View>
           {/* ADJ RATE */}
@@ -548,18 +548,18 @@ function ContractorViewLineItem({ inspId, isSubmittedByReviewer, handleAcceptLin
                 onOtherFormValueChange(text, "Adj_Rate", UniqueKey)
               }}
               value={`${Adj_Rate ?? 0}`}
-              style={{ padding: 8, borderRadius: 4, backgroundColor: "#d4d4d470", fontFamily: 'URBAN_MEDIUM', fontSize: 16, color: "#BDC5CD" }}
+              style={{ padding: 8, borderRadius: 4, backgroundColor: "#d4d4d470", fontFamily: 'URBAN_MEDIUM', fontSize: 16, color: "#000" }}
             />
           </View>
         </View>
-        <View style={{ flexDirection: 'row', justifyContent: "" }}>
+        <View style={{ flexDirection: 'row' }}>
           {/* ADJ TOTAL */}
           <View style={{ flex: 1, padding: 4 }}>
             <StyledOverlayInputLabel>ADJ TOTAL</StyledOverlayInputLabel>
             <TextInput
               value={`${getCurrencyFormattedValue(total)}` ?? 0}
               editable={false}
-              style={{ borderRadius: 4, fontFamily: 'URBAN_MEDIUM', fontSize: 20, color: "#BDC5CD" }}
+              style={{ borderRadius: 4, fontFamily: 'URBAN_MEDIUM', fontSize: 20, color: "#000" }}
             />
           </View>
         </View>
@@ -568,7 +568,7 @@ function ContractorViewLineItem({ inspId, isSubmittedByReviewer, handleAcceptLin
         <View style={{ width: "100%", marginVertical: 8 }}>
           <Text style={{ fontSize: 16, fontFamily: 'URBAN_BOLD', color: '#BDC5CD', marginVertical: 8 }}>OWNER CLARIFICATIONS:</Text>
           <TextInput
-            style={{ padding: 16, paddingLeft: 16, borderRadius: 4, backgroundColor: "#d4d4d470", fontFamily: 'URBAN_MEDIUM', fontSize: 16, color: "#BDC5CD" }}
+            style={{ padding: 16, paddingLeft: 16, borderRadius: 4, backgroundColor: "#d4d4d470", fontFamily: 'URBAN_MEDIUM', fontSize: 16, color: "#000" }}
             multiline
             numberOfLines={4}
             onChangeText={text => {
