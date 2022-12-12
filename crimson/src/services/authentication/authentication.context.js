@@ -48,10 +48,8 @@ export const AuthenticationContextProvider = ({ children }) => {
   }
 
   const onAppLoad = () => {
-    setOrgToken()
     setIsLoading(true);
     AsyncStorage.getItem('userData').then(data => {
-      data && refreshOrgToken(JSON.parse(data).userName)
       data && setUser(JSON.parse(data).userName);
       setIsLoading(false);
     })

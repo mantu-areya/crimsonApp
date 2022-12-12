@@ -127,10 +127,6 @@ export const getInspectionsData = async (userEmail) => {
     .then(response => {
       return response.data;
     })
-    .catch(err => {
-      console.error(err);
-      // throw err;
-    });
 
 }
 
