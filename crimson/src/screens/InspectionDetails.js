@@ -113,7 +113,7 @@ const InspectionDetails = ({ route, navigation }) => {
       navigation.goBack();
     }
 
-  }, [inspectionData,vendorFormDetails])
+  }, [inspectionData, vendorFormDetails])
 
 
   function getFormTotal(formCategory, formatted = true) {
@@ -151,6 +151,27 @@ const InspectionDetails = ({ route, navigation }) => {
 
   const initalEstimateRehab = "0"
 
+  const getRoomMeasurementTotal = () => {
+    let toatalSF = 0;
+    currentRecord && currentRecord.map(ele => {
+      toatalSF = toatalSF + ele.Room_Total
+      return toatalSF
+    })
+    return toatalSF.toLocaleString("en-IN", { style: "currency", currency: 'USD' })
+  }
+
+  const getTotalBidSubmitted = () => {
+
+    let toatalSF = 0;
+    currentRecord && Object.keys(currentRecord).map(item => {
+      if (currentRecord[item].Category !== "Room Measurements") {
+        toatalSF = toatalSF + (currentRecord[item].Total)
+      }
+    })
+    return toatalSF.toLocaleString("en-IN", { style: "currency", currency: 'USD' })
+  }
+
+
   return (
     <SafeAreaView style={{ flex: 1 }}>
       {
@@ -160,7 +181,7 @@ const InspectionDetails = ({ route, navigation }) => {
           </View>
           :
           <>
-            <ScrollView onScroll={(e) => e.nativeEvent.contentOffset.y < 500 ? setShow(true):setShow(false)} scrollEventThrottle={16}>
+            <ScrollView onScroll={(e) => e.nativeEvent.contentOffset.y < 500 ? setShow(true) : setShow(false)} scrollEventThrottle={16}>
               {/* {!readOnly && */}
               <Overlay visible={isSubmitModalOpen} onClose={() => setIsSubmitModalOpen(false)}  >
                 {
@@ -172,18 +193,17 @@ const InspectionDetails = ({ route, navigation }) => {
               </Overlay>
               {/* } */}
               {/* Hero */}
-              <Hero data={inspectionData} sectionTotals={sectionTotals} isSubmitted={isSubmitted} />
+              <Hero totalBidSubmitted={getTotalBidSubmitted()} roomMeasurementTotal={getRoomMeasurementTotal()} data={inspectionData} sectionTotals={sectionTotals} isSubmitted={isSubmitted} />
               {/* CTA's */}
-              <CTA formStatus={inspectionData?.Inspection_Form_Stage__c} role={userRole} handleOnChat={() => navigation.navigate("Chat", { inspId: inspectionData.Id, chatTitleName: userRole === "Contractor" ? inspectionData?.HHM_Field_PM__r?.Name  : inspectionData.General_Contractor__r?.Name})} isReadOnly={readOnly} isForReviewerView={userRole === "Reviewer"} handleSignature={handleSignature} handleViewImages={handleViewImages} isSubmitted={isSubmitted} handleOnSubmit={handleSubmit} />
+              <CTA formStatus={inspectionData?.Inspection_Form_Stage__c} role={userRole} handleOnChat={() => navigation.navigate("Chat", { inspId: inspectionData.Id, chatTitleName: userRole === "Contractor" ? inspectionData?.HHM_Field_PM__r?.Name : inspectionData.General_Contractor__r?.Name })} isReadOnly={readOnly} isForReviewerView={userRole === "Reviewer"} handleSignature={handleSignature} handleViewImages={handleViewImages} isSubmitted={isSubmitted} handleOnSubmit={handleSubmit} />
               {/* Sigantures */}
               {(isSubmitted && showSiganturesView) && <Signatures inspId={inspectionData.Id} role={userRole} />}
               {/* Forms */}
               <OtherForms sectionTotals={sectionTotals} gTotal={gTotal} isSubmitted={isSubmitted} readOnly={readOnly} isForReviewerView={userRole === "Reviewer"} formStatus={inspectionData?.Inspection_Form_Stage__c} inspectionData={inspectionData} navigation={navigation} setVendorFormData={setVendorFormData} />
             </ScrollView>
-            {Platform.OS == 'ios' && <KeyboardSpacer/>} 
+            {Platform.OS == 'ios' && <KeyboardSpacer />}
             {/* Call Now */}
             {show && <CallNow isForReviewerView={userRole === "Reviewer"} data={inspectionData} />}
-
           </>
 
       }
@@ -269,7 +289,7 @@ function Signatures({ inspId, role }) {
         return
       } else if (string.includes(substring2)) {
         console.log("string2");
-        console.log("HAS CON SIGN",ele.file_name.split(/["Contractor_Signature_  " .jpg]+/)[1]);
+        console.log("HAS CON SIGN", ele.file_name.split(/["Contractor_Signature_  " .jpg]+/)[1]);
         setSignDate(ele.file_name.split(/["Contractor_Signature_  " .jpg]+/)[1])
         setImg(ele.file_public_url)
         return
@@ -452,7 +472,7 @@ function Signatures({ inspId, role }) {
         <Text style={{ fontSize: 12, fontFamily: 'URBAN_BOLD', color: 'black' }}>Date: {signDate && signDate}</Text>
       </View>
       {/* HHM Signature */}
-      <View style={{ padding: 16, flex: .5, alignItems:"flex-end"}}>
+      <View style={{ padding: 16, flex: .5, alignItems: "flex-end" }}>
         <Text style={{ fontSize: 12, fontFamily: 'URBAN_BOLD', color: 'black' }}>HHM Signature</Text>
         {reviewerImg &&
           <>

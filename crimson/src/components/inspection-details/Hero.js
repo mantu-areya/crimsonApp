@@ -14,7 +14,7 @@ import * as Linking from "expo-linking";
 
 const image = require("../../../assets/black-bg.jpg");
 
-const Hero = ({ data, isSubmitted, sectionTotals }) => {
+const Hero = ({totalBidSubmitted, roomMeasurementTotal,data, isSubmitted, sectionTotals }) => {
 
     const navigation = useNavigation()
     const [overlayVisible, setOverlayVisible] = React.useState(false);
@@ -24,6 +24,7 @@ const Hero = ({ data, isSubmitted, sectionTotals }) => {
         alert("WAF sent to Email Address")
         console.log("FILE EMAIl SEND", res);
     }
+
 
     const {
         Property_Street_Address__c,
@@ -151,6 +152,12 @@ const Hero = ({ data, isSubmitted, sectionTotals }) => {
                 </DescriptionText>
                 <DescriptionText>
                     Target Rehab Complete Date - {Target_Rehab_Complete_Date__c}
+                </DescriptionText>
+                <DescriptionText style={{ marginTop: 16 }}>
+                    Total Bid Submitted - {totalBidSubmitted}
+                </DescriptionText>
+                <DescriptionText>
+                    Room Measurements Total - {roomMeasurementTotal}
                 </DescriptionText>
             </DescriptionWrapper>
         </Container>
