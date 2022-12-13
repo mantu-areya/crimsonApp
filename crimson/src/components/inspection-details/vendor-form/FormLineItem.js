@@ -77,12 +77,12 @@ export default function FormLineItem({ isSubmittedByReviewer, handleAcceptLineIt
     return (
       <>
         <Swipeable onRef={(ref) => swipeableRef.current = ref}>
-          <LineItemWrapper >
+          <LineItemWrapper onPress={() => setOverlayVisible(true)} >
             <View style={{ flex: 1 }}>
               {/* Room */}
               {(Sub_Category_List.includes(item.Sub_Category) || readOnly)
                 ?
-                <StyledText onPress={() => setOverlayVisible(true)}>{item.Sub_Category}</StyledText>
+                <StyledText>{item.Sub_Category}</StyledText>
                 :
                 <StyledTextInput
                   onChangeText={val => onRoomMeasurementValueChange((val), "Sub_Category", item.UniqueKey)}
@@ -90,13 +90,13 @@ export default function FormLineItem({ isSubmittedByReviewer, handleAcceptLineIt
                 />}
               <LineItemInputGroup>
                 {/* Length */}
-                <LineItemInputText onPress={() => setOverlayVisible(true)}>Length: {length}</LineItemInputText>
+                <LineItemInputText>Length: {length}</LineItemInputText>
                 {/* Width */}
-                <LineItemInputText onPress={() => setOverlayVisible(true)}>Width: {width}</LineItemInputText>
+                <LineItemInputText>Width: {width}</LineItemInputText>
                 {/* Misc */}
-                <LineItemInputText onPress={() => setOverlayVisible(true)}>Misc: {misc}</LineItemInputText>
+                <LineItemInputText>Misc: {misc}</LineItemInputText>
                 {/* Total */}
-                <LineItemInputText onPress={() => setOverlayVisible(true)}>Total: {total} sqft</LineItemInputText>
+                <LineItemInputText>Total: {total} sqft</LineItemInputText>
               </LineItemInputGroup>
             </View>
           </LineItemWrapper>
@@ -183,21 +183,21 @@ export default function FormLineItem({ isSubmittedByReviewer, handleAcceptLineIt
 
   return (
     <>
-      <Swipeable onRef={(ref) => swipeableRef.current = ref} rightButtons={Sub_Category_Keys.includes(item?.Sub_Category) ? rightButtons : null}>
-        <LineItemWrapper >
+      <Swipeable  onRef={(ref) => swipeableRef.current = ref} rightButtons={Sub_Category_Keys.includes(item?.Sub_Category) ? rightButtons : null}>
+        <LineItemWrapper onPress={() => setOverlayVisible(true)} >
           <View style={{ flex: 1 }}>
             {
-              <LineItemHeading onPress={() => setOverlayVisible(true)}>
+              <LineItemHeading>
                 {item?.Matrix_Price}
               </LineItemHeading>
             }
             <LineItemInputGroup>
               {/* QTY */}
-              <LineItemInputText onPress={() => setOverlayVisible(true)}>Qty {item.Quantity}</LineItemInputText>
+              <LineItemInputText>Qty {item.Quantity}</LineItemInputText>
               {/* RATE */}
-              <LineItemInputText onPress={() => setOverlayVisible(true)}>Rate {getFormattedValue("Rate", item.Rate)}</LineItemInputText>
+              <LineItemInputText >Rate {getFormattedValue("Rate", item.Rate)}</LineItemInputText>
               {/* NOTES */}
-              <LineItemInputText onPress={() => setOverlayVisible(true)}>Total {getFormattedValue("Total", item.Total)}</LineItemInputText>
+              <LineItemInputText >Total {getFormattedValue("Total", item.Total)}</LineItemInputText>
             </LineItemInputGroup>
           </View>
           {/* Icon */}
