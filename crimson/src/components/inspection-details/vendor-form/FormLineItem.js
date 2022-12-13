@@ -691,7 +691,7 @@ const LineItemInputText = styled.Text`
 font-family: 'URBAN_BOLD';
 font-size: 16px;
 color: #469869;
-margin-left: 8px;
+margin-right: 8px;
 
 `;
 
