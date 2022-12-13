@@ -28,25 +28,10 @@ export default function FormLineItem({ isSubmittedByReviewer, handleAcceptLineIt
 
 
   const rightButtons = [
-    <TouchableOpacity onPress={() => { alert("Add Notes") }} style={{ backgroundColor: '#F0BA91', justifyContent: 'center', alignItems: 'center', width: 64, flex: 1 }}>
-      <View>
-        <MaterialCommunityIcons name="note-plus" size={24} />
-        {/* <Text>Add Notes</Text> */}
-      </View>
-    </TouchableOpacity>,
     <TouchableOpacity onPress={() => handleDelGest(item.Id, inspId, item.UniqueKey)} style={{ backgroundColor: '#F3206F', justifyContent: 'center', alignItems: 'center', width: 64, flex: 1 }}>
       <View>
         <MaterialCommunityIcons name="delete" size={24} color="white" />
         {/* <Text>Delete</Text> */}
-      </View>
-    </TouchableOpacity>
-  ];
-
-  const roomRightButtons = [
-    <TouchableOpacity onPress={() => { alert("Add Notes") }} style={{ backgroundColor: '#F0BA91', justifyContent: 'center', alignItems: 'center', width: 64, flex: 1 }}>
-      <View>
-        <MaterialCommunityIcons name="note-plus" size={24} />
-        {/* <Text>Add Notes</Text> */}
       </View>
     </TouchableOpacity>
   ];
@@ -91,7 +76,7 @@ export default function FormLineItem({ isSubmittedByReviewer, handleAcceptLineIt
 
     return (
       <>
-        <Swipeable onRef={(ref) => swipeableRef.current = ref} rightButtons={roomRightButtons}>
+        <Swipeable onRef={(ref) => swipeableRef.current = ref}>
           <LineItemWrapper >
             <View style={{ flex: 1 }}>
               {/* Room */}
@@ -198,7 +183,7 @@ export default function FormLineItem({ isSubmittedByReviewer, handleAcceptLineIt
 
   return (
     <>
-      <Swipeable onRef={(ref) => swipeableRef.current = ref} rightButtons={Sub_Category_Keys.includes(item?.Sub_Category) ? rightButtons : rightButtons.slice(0, 1)}>
+      <Swipeable onRef={(ref) => swipeableRef.current = ref} rightButtons={Sub_Category_Keys.includes(item?.Sub_Category) ? rightButtons : null}>
         <LineItemWrapper >
           <View style={{ flex: 1 }}>
             {
