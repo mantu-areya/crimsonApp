@@ -8,6 +8,7 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
 import { Button } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import EntypoIcon from 'react-native-vector-icons/Entypo'
 
 
 
@@ -105,7 +106,7 @@ const OtherForms = ({ sectionTotals, formStatus, gTotal, isSubmitted, isForRevie
 
         let toatalSF = 0;
         currentFormData.data.map(ele => {
-            toatalSF = toatalSF + (ele.Total == 0 ?ele.Approved_Amount : ele.Total)
+            toatalSF = toatalSF + (ele.Total == 0 ? ele.Approved_Amount : ele.Total)
             return toatalSF
         })
         return toatalSF.toLocaleString("en-IN", { style: "currency", currency: 'USD' })
@@ -236,10 +237,10 @@ const OtherForms = ({ sectionTotals, formStatus, gTotal, isSubmitted, isForRevie
 
                     if (field === "Adj_Quantity" || field === "Adj_Rate") {
                         newTotal = newValues && (newValues.Adj_Quantity * newValues.Adj_Rate)
-                    } else if(field === 'Owner_Clarification'){
-                      newTotal= obj?.Total;
-                    }else{
-                      newTotal = newValues && (newValues.Quantity * newValues.Rate)
+                    } else if (field === 'Owner_Clarification') {
+                        newTotal = obj?.Total;
+                    } else {
+                        newTotal = newValues && (newValues.Quantity * newValues.Rate)
                     }
 
                     added = (oldTotal > newTotal);
@@ -452,8 +453,12 @@ const OtherForms = ({ sectionTotals, formStatus, gTotal, isSubmitted, isForRevie
                     </View>
                     {/* Search */}
                     <View style={{ flexDirection: 'row', alignItems: 'center', padding: 4, paddingHorizontal: 16, backgroundColor: "white", margin: 8 }}>
-                        <Icon name="search" color="grey" size={18} />
-                        <TextInput value={searchQuery} onChangeText={onChangeSearch} placeholder={currentForm === "Room Measurements" ? "Search Sub Category" : "Search Matrix Price..."} style={{ fontFamily: "URBAN_BOLD", backgroundColor: "transparent", fontSize: 18, padding: 12, width: "100%" }} />
+                        <Icon name="search" color="grey" style={{ flex: .1, }} size={18} />
+                        <TextInput value={searchQuery} onChangeText={onChangeSearch} placeholder={currentForm === "Room Measurements" ? "Search Sub Category" : "Search Matrix Price..."} style={{ flex: .8, fontFamily: "URBAN_BOLD", backgroundColor: "transparent", fontSize: 18, padding: 12, width: "100%" }} />
+                        {
+                            searchQuery.length > 0 &&
+                            <EntypoIcon onPress={() => setSearchQuery("")} name="cross" color="grey" style={{ flex: .1 }} size={24} />
+                        }
                     </View>
                     {
                         (isForReviewerView && currentForm !== "Room Measurements") &&
@@ -468,7 +473,7 @@ const OtherForms = ({ sectionTotals, formStatus, gTotal, isSubmitted, isForRevie
                                 <ScrollView>
                                     {
                                         dataList.sort((a, b) => b.Quantity - a.Quantity).filter(item => {
-                                          return item?.Sub_Category?.includes(searchQuery) || item?.Matrix_Price?.includes(searchQuery)
+                                            return item?.Sub_Category?.includes(searchQuery) || item?.Matrix_Price?.includes(searchQuery)
                                         }).map((item, i) => <FormLineItem key={item?.Id}   {...{ isSubmittedByReviewer, handleAcceptLineItem, isForReviewerView, item, inspId: inspectionData.Id, onRoomMeasurementValueChange, onOtherFormValueChange, navigation, readOnly, setShowAddButton, handleOnSave, deleteNewItem }} isForRoomMeasurement={currentFormData.title === "Room Measurements"} />)
                                     }
                                 </ScrollView>
@@ -476,7 +481,7 @@ const OtherForms = ({ sectionTotals, formStatus, gTotal, isSubmitted, isForRevie
                                 <ScrollView>
                                     {
                                         dataList.filter(item => {
-                                          return item?.Sub_Category?.includes(searchQuery) || item?.Matrix_Price?.includes(searchQuery)
+                                            return item?.Sub_Category?.includes(searchQuery) || item?.Matrix_Price?.includes(searchQuery)
                                         }).map((item, i) => <FormLineItem key={item?.Id}   {...{ isSubmittedByReviewer, handleAcceptLineItem, isForReviewerView, item, inspId: inspectionData.Id, onRoomMeasurementValueChange, onOtherFormValueChange, navigation, readOnly, setShowAddButton, handleOnSave, deleteNewItem }} isForRoomMeasurement={currentFormData.title === "Room Measurements"} />)
                                     }
                                 </ScrollView>
