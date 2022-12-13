@@ -149,6 +149,7 @@ export const SubmitReviewForm = ({ handleCloseModal, setreadonly, inspVfDetails,
           return false;
         }
         hasNoError = true
+        setIsCollapsed('')
         setErrorState(false)
         return true;
       }
