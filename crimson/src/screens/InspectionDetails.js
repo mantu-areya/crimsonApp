@@ -158,7 +158,7 @@ const InspectionDetails = ({ route, navigation }) => {
       toatalSF = toatalSF + ele.Room_Total
       return toatalSF
     })
-    return toatalSF.toLocaleString("en-IN", { style: "currency", currency: 'USD' })
+    return toatalSF + " sqft"
   }
 
   const getTotalBidSubmitted = () => {
