@@ -16,6 +16,7 @@ import { ActivityIndicator, Button, } from 'react-native-paper'
 import Sign from '../features/gcs/components/workAuth/Sign.js';
 import * as ImagePicker from "expo-image-picker";
 import KeyboardSpacer from 'react-native-keyboard-spacer';
+import SignModal from '../features/gcs/components/workAuth/SignModal'
 
 
 
@@ -172,6 +173,12 @@ const InspectionDetails = ({ route, navigation }) => {
   }
 
 
+  const [hasRequiredSign, setHasRequiredSign] = React.useState(false);
+
+  // for current role if not signed show sign prompt otherwise show signed message
+  // add sign to modal and provide cross button to close modal
+
+
   return (
     <SafeAreaView style={{ flex: 1 }}>
       {
@@ -195,9 +202,9 @@ const InspectionDetails = ({ route, navigation }) => {
               {/* Hero */}
               <Hero totalBidSubmitted={getTotalBidSubmitted()} roomMeasurementTotal={getRoomMeasurementTotal()} data={inspectionData} sectionTotals={sectionTotals} isSubmitted={isSubmitted} />
               {/* CTA's */}
-              <CTA formStatus={inspectionData?.Inspection_Form_Stage__c} role={userRole} handleOnChat={() => navigation.navigate("Chat", { inspId: inspectionData.Id, chatTitleName: userRole === "Contractor" ? inspectionData?.HHM_Field_PM__r?.Name : inspectionData.General_Contractor__r?.Name })} isReadOnly={readOnly} isForReviewerView={userRole === "Reviewer"} handleSignature={handleSignature} handleViewImages={handleViewImages} isSubmitted={isSubmitted} handleOnSubmit={handleSubmit} />
+              <CTA hasRequiredSign={hasRequiredSign} formStatus={inspectionData?.Inspection_Form_Stage__c} role={userRole} handleOnChat={() => navigation.navigate("Chat", { inspId: inspectionData.Id, chatTitleName: userRole === "Contractor" ? inspectionData?.HHM_Field_PM__r?.Name : inspectionData.General_Contractor__r?.Name })} isReadOnly={readOnly} isForReviewerView={userRole === "Reviewer"} handleSignature={handleSignature} handleViewImages={handleViewImages} isSubmitted={isSubmitted} handleOnSubmit={handleSubmit} />
               {/* Sigantures */}
-              {(isSubmitted && showSiganturesView) && <Signatures inspId={inspectionData.Id} role={userRole} />}
+              {(isSubmitted && showSiganturesView) && <Signatures navigation={navigation} inspId={inspectionData.Id} role={userRole} hasRequiredSign={hasRequiredSign} setHasRequiredSign={setHasRequiredSign} />}
               {/* Forms */}
               <OtherForms sectionTotals={sectionTotals} gTotal={gTotal} isSubmitted={isSubmitted} readOnly={readOnly} isForReviewerView={userRole === "Reviewer"} formStatus={inspectionData?.Inspection_Form_Stage__c} inspectionData={inspectionData} navigation={navigation} setVendorFormData={setVendorFormData} />
             </ScrollView>
@@ -268,12 +275,15 @@ function ReviewerSubmitModal({ inspId, handleCloseModal, navigation, bidApproval
 }
 
 
-function Signatures({ inspId, role }) {
+function Signatures({ navigation, inspId, role, hasRequiredSign, setHasRequiredSign }) {
 
 
   const updateSignToContext = (image) => {
     addSignature(inspId, image, role)
   }
+
+
+
 
   React.useEffect(() => {
     contextImages[inspId] && contextImages[inspId].map(ele => {
@@ -285,11 +295,17 @@ function Signatures({ inspId, role }) {
         // console.log(ele.file_public_url, "vfvfvfv");
         console.log("string1");
         setReviewerSignDate(ele.file_name.split(/["Company_Signature_  " .jpg]+/)[1])
+        if (role === "Reviewer") {
+          setHasRequiredSign(true);
+        }
         setReviewerImg(ele.file_public_url)
         return
       } else if (string.includes(substring2)) {
         console.log("string2");
         console.log("HAS CON SIGN", ele.file_name.split(/["Contractor_Signature_  " .jpg]+/)[1]);
+        if (role === "Contractor") {
+          setHasRequiredSign(true);
+        }
         setSignDate(ele.file_name.split(/["Contractor_Signature_  " .jpg]+/)[1])
         setImg(ele.file_public_url)
         return
@@ -328,6 +344,8 @@ function Signatures({ inspId, role }) {
         role === "Reviewer" ? setReviewerImg(result) : setImg(result);
         updateSignToContext(result)
         setIsLoading(false);
+        alert("Signature Uploaded successfully")
+        navigation.goBack();
       }
 
     } catch (error) {
@@ -340,35 +358,18 @@ function Signatures({ inspId, role }) {
 
   }
 
+  if (hasRequiredSign) {
+    console.log("HIDING SIGNATURES");
+    return null;
+  }
+
 
   if (role === "Reviewer") {
     return (
-      <View style={{ flexDirection: "row" }}>
-        {/* Contractor Signature */}
-        <View style={{ padding: 16, flex: 1, }}>
-          <Text style={{ fontSize: 12, fontFamily: 'URBAN_BOLD', color: 'black' }}>Contractor Signature</Text>
-          {img &&
-            <>
-              <View style={{ justifyContent: 'center', alignItems: 'flex-start', marginVertical: 8, padding: 4 }}>
-                <Image style={{
-                  width: 180,
-                  height: 80
-                }} source={{ uri: img }} />
-              </View>
-              <Text style={{ fontSize: 12, fontFamily: 'URBAN_BOLD', color: 'black' }}>Date : {signDate}</Text>
-            </>
-          }
-        </View>
+      <View style={{ flexDirection: "row", justifyContent: "flex-end" }}>
         {/* Company Signature */}
         <View style={{ padding: 16, flex: 1, alignItems: "flex-end" }}>
           <Text style={{ fontSize: 12, fontFamily: 'URBAN_BOLD', color: 'black' }}>HHM Signature</Text>
-          {reviewerImg &&
-            <View style={{ justifyContent: 'center', marginVertical: 8, padding: 4 }}>
-              <Image style={{
-                width: 180,
-                height: 80
-              }} source={{ uri: reviewerImg }} />
-            </View>}
           {!reviewerImg && <>
             <Button style={{
               backgroundColor: 'black',
@@ -389,26 +390,19 @@ function Signatures({ inspId, role }) {
               Upload
             </Button>
           </>}
-          <Modal
-            animationType="slide"
-            transparent={true}
-            visible={modalVisible}
-            onRequestClose={() => {
-              setModalVisible(!modalVisible);
-            }}>
-
-
-            <Sign onOK={(e) => {
-              let bs64dataArray = e.split(',')
-              setReviewerImg(e);
-              setModalVisible(!modalVisible);
-              updateSignToContext(bs64dataArray[1])
-              setIsLoading(true);
-            }} text='HHM Signature' />
-
-
-          </Modal>
-          <Text style={{ fontSize: 12, fontFamily: 'URBAN_BOLD', color: 'black' }}>Date:{reviewerSignDate}</Text>
+          <Overlay childrenWrapperStyle={{ backgroundColor: 'transparent', flex: 1, padding: 0, justifyContent: "center", alignItems: "center" }} visible={modalVisible} onClose={() => setModalVisible(false)} >
+            <SignModal
+              onOK={(e) => {
+                let bs64dataArray = e.split(',')
+                setModalVisible(!modalVisible);
+                updateSignToContext(bs64dataArray[1])
+                alert("Signed successfully")
+                navigation.goBack()
+              }}
+              text='HHM Signature'
+              onCancel={() => setModalVisible(false)}
+            />
+          </Overlay>
         </View>
 
       </View>
@@ -422,13 +416,6 @@ function Signatures({ inspId, role }) {
       {/* Contractor Signature */}
       <View style={{ padding: 16, flex: .5 }}>
         <Text style={{ fontSize: 12, fontFamily: 'URBAN_BOLD', color: 'black' }}>Contractor Signature</Text>
-        {img &&
-          <View style={{ justifyContent: 'center', marginVertical: 8, padding: 4 }}>
-            <Image style={{
-              width: 180,
-              height: 80
-            }} source={{ uri: img }} />
-          </View>}
         {!img && <>
           <Button style={{
             backgroundColor: 'black',
@@ -450,7 +437,7 @@ function Signatures({ inspId, role }) {
           </Button>
         </>}
         {/* <Button title="Sign"  /> */}
-        <Modal
+        {/* <Modal
           animationType="slide"
           transparent={true}
           visible={modalVisible}
@@ -468,11 +455,22 @@ function Signatures({ inspId, role }) {
           }} text='Contractor Signature' />
 
 
-        </Modal>
-        <Text style={{ fontSize: 12, fontFamily: 'URBAN_BOLD', color: 'black' }}>Date: {signDate && signDate}</Text>
+        </Modal> */}
+        <Overlay childrenWrapperStyle={{ backgroundColor: 'transparent', flex: 1, padding: 0, justifyContent: "center", alignItems: "center" }} visible={modalVisible} onClose={() => setModalVisible(false)} >
+          <SignModal
+            onOK={(e) => {
+              let bs64dataArray = e.split(',')
+              setModalVisible(!modalVisible);
+              updateSignToContext(bs64dataArray[1])
+              alert("Signed successfully")
+              navigation.goBack()
+            }} text='Contractor Signature'
+            onCancel={() => setModalVisible(false)}
+          />
+        </Overlay>
       </View>
       {/* HHM Signature */}
-      <View style={{ padding: 16, flex: .5, alignItems: "flex-end" }}>
+      {/* <View style={{ padding: 16, flex: .5, alignItems: "flex-end" }}>
         <Text style={{ fontSize: 12, fontFamily: 'URBAN_BOLD', color: 'black' }}>HHM Signature</Text>
         {reviewerImg &&
           <>
@@ -485,7 +483,7 @@ function Signatures({ inspId, role }) {
             <Text style={{ fontSize: 12, fontFamily: 'URBAN_BOLD', color: 'black' }}>Date : {reviewerSignDate}</Text>
           </>
         }
-      </View>
+      </View> */}
     </View>
   )
 }
