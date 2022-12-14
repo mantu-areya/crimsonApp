@@ -83,7 +83,20 @@ export const HomePage = ({ navigation }) => {
   })
 
   const [selectedOption, setSelectedOption] = React.useState(allInspectionsTypes[0]);
-  const [currentSelectedInspections, setCurrentSelectedInspections] = React.useState(userRole === "Contractor" ? pendingInspectionsForGC : pendingInspectionsForReviewer)
+
+
+  const [currentSelectedInspections, setCurrentSelectedInspections] = React.useState()
+
+
+  React.useEffect(() => {
+
+    if (userRole === "Contractor") {
+      setCurrentSelectedInspections(pendingInspectionsForGC)
+    } else {
+      setCurrentSelectedInspections(pendingInspectionsForReviewer)
+    }
+
+  },[userRole,inspections])
 
 
   const handleOptionSelect = (option) => {
