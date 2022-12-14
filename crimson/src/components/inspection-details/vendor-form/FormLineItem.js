@@ -28,25 +28,10 @@ export default function FormLineItem({ isSubmittedByReviewer, handleAcceptLineIt
 
 
   const rightButtons = [
-    <TouchableOpacity onPress={() => { alert("Add Notes") }} style={{ backgroundColor: '#F0BA91', justifyContent: 'center', alignItems: 'center', width: 64, flex: 1 }}>
-      <View>
-        <MaterialCommunityIcons name="note-plus" size={24} />
-        {/* <Text>Add Notes</Text> */}
-      </View>
-    </TouchableOpacity>,
     <TouchableOpacity onPress={() => handleDelGest(item.Id, inspId, item.UniqueKey)} style={{ backgroundColor: '#F3206F', justifyContent: 'center', alignItems: 'center', width: 64, flex: 1 }}>
       <View>
         <MaterialCommunityIcons name="delete" size={24} color="white" />
         {/* <Text>Delete</Text> */}
-      </View>
-    </TouchableOpacity>
-  ];
-
-  const roomRightButtons = [
-    <TouchableOpacity onPress={() => { alert("Add Notes") }} style={{ backgroundColor: '#F0BA91', justifyContent: 'center', alignItems: 'center', width: 64, flex: 1 }}>
-      <View>
-        <MaterialCommunityIcons name="note-plus" size={24} />
-        {/* <Text>Add Notes</Text> */}
       </View>
     </TouchableOpacity>
   ];
@@ -91,13 +76,13 @@ export default function FormLineItem({ isSubmittedByReviewer, handleAcceptLineIt
 
     return (
       <>
-        <Swipeable onRef={(ref) => swipeableRef.current = ref} rightButtons={roomRightButtons}>
-          <LineItemWrapper >
+        <Swipeable onRef={(ref) => swipeableRef.current = ref}>
+          <LineItemWrapper onPress={() => setOverlayVisible(true)} >
             <View style={{ flex: 1 }}>
               {/* Room */}
               {(Sub_Category_List.includes(item.Sub_Category) || readOnly)
                 ?
-                <StyledText onPress={() => setOverlayVisible(true)}>{item.Sub_Category}</StyledText>
+                <StyledText>{item.Sub_Category}</StyledText>
                 :
                 <StyledTextInput
                   onChangeText={val => onRoomMeasurementValueChange((val), "Sub_Category", item.UniqueKey)}
@@ -105,13 +90,13 @@ export default function FormLineItem({ isSubmittedByReviewer, handleAcceptLineIt
                 />}
               <LineItemInputGroup>
                 {/* Length */}
-                <LineItemInputText onPress={() => setOverlayVisible(true)}>Length: {length}</LineItemInputText>
+                <LineItemInputText>Length: {length}</LineItemInputText>
                 {/* Width */}
-                <LineItemInputText onPress={() => setOverlayVisible(true)}>Width: {width}</LineItemInputText>
+                <LineItemInputText>Width: {width}</LineItemInputText>
                 {/* Misc */}
-                <LineItemInputText onPress={() => setOverlayVisible(true)}>Misc: {misc}</LineItemInputText>
+                <LineItemInputText>Misc: {misc}</LineItemInputText>
                 {/* Total */}
-                <LineItemInputText onPress={() => setOverlayVisible(true)}>Total: {total} sqft</LineItemInputText>
+                <LineItemInputText>Total: {total} sqft</LineItemInputText>
               </LineItemInputGroup>
             </View>
           </LineItemWrapper>
@@ -198,21 +183,21 @@ export default function FormLineItem({ isSubmittedByReviewer, handleAcceptLineIt
 
   return (
     <>
-      <Swipeable onRef={(ref) => swipeableRef.current = ref} rightButtons={Sub_Category_Keys.includes(item?.Sub_Category) ? rightButtons : rightButtons.slice(0, 1)}>
-        <LineItemWrapper >
+      <Swipeable onRef={(ref) => swipeableRef.current = ref} rightButtons={Sub_Category_Keys.includes(item?.Sub_Category) ? rightButtons : null}>
+        <LineItemWrapper onPress={() => setOverlayVisible(true)} >
           <View style={{ flex: 1 }}>
             {
-              <LineItemHeading onPress={() => setOverlayVisible(true)}>
+              <LineItemHeading>
                 {item?.Matrix_Price}
               </LineItemHeading>
             }
             <LineItemInputGroup>
               {/* QTY */}
-              <LineItemInputText onPress={() => setOverlayVisible(true)}>Qty {item.Quantity}</LineItemInputText>
+              <LineItemInputText>Qty {item.Quantity}</LineItemInputText>
               {/* RATE */}
-              <LineItemInputText onPress={() => setOverlayVisible(true)}>Rate {getFormattedValue("Rate", item.Rate)}</LineItemInputText>
+              <LineItemInputText >Rate {getFormattedValue("Rate", item.Rate)}</LineItemInputText>
               {/* NOTES */}
-              <LineItemInputText onPress={() => setOverlayVisible(true)}>Total {getFormattedValue("Total", item.Total)}</LineItemInputText>
+              <LineItemInputText >Total {getFormattedValue("Total", item.Total)}</LineItemInputText>
             </LineItemInputGroup>
           </View>
           {/* Icon */}
@@ -342,8 +327,29 @@ function SubmittedFormLineItem({ status, title, rate, quantity, total, notes, ad
 
 
   return (
-    <Card style={{ padding: 16, backgroundColor: getCardBackgroundColor(), borderBottomWidth: 2, borderColor: '#EEBC7B' }}>
-      <LineItemHeading style={{}}>{title}</LineItemHeading>
+    // <Card style={{ padding: 16, backgroundColor: getCardBackgroundColor(), borderBottomWidth: 2, borderColor: '#EEBC7B' }}>
+    //   <LineItemHeading style={{}}>{title}</LineItemHeading>
+    //   <LineItemHeading style={{}}>Scope Notes : {notes}</LineItemHeading>
+    //   <View >
+    //     {/* Details */}
+    //     <View style={{ flexDirection: 'row' }}>
+    //       <StyledContractorText style={{ flex: 1, fontSize: 14, }}>QTY: {quantity}</StyledContractorText>
+    //       <StyledContractorText style={{ flex: 1, fontSize: 14, }} >RATE: {rate ? rate?.toLocaleString("en-IN", { style: "currency", currency: 'USD' }) : 0}</StyledContractorText>
+    //       <StyledContractorText style={{ flex: 1, fontSize: 14, }}>TOTAL: {total ? total?.toLocaleString("en-IN", { style: "currency", currency: 'USD' }) : 0}</StyledContractorText>
+    //       <StyledContractorButton style={{ fontSize: 16, fontFamily: 'URBAN_BOLD', backgroundColor: getBackgroundColor(), padding: 4 }} mode="contained">{status}</StyledContractorButton>
+    //     </View>
+    //     <View style={{ flexDirection: 'row', marginTop: 8 }}>
+    //       <StyledContractorText style={{ flex: 1, fontSize: 18, }}>ADJ QTY: {showQuantity}</StyledContractorText>
+    //       <StyledContractorText style={{ flex: 1, fontSize: 18, }} >RATE: {showRate ? showRate?.toLocaleString("en-IN", { style: "currency", currency: 'USD' }) : 0}</StyledContractorText>
+    //       <StyledContractorText style={{ flex: 1, fontSize: 18, }}>TOTAL: {showAmount ? showAmount?.toLocaleString("en-IN", { style: "currency", currency: 'USD' }) : 0}</StyledContractorText>
+    //     </View>
+    //   </View>
+    // </Card>
+    <Card style={{ padding: 12, backgroundColor: getCardBackgroundColor(), borderBottomWidth: 2, borderColor: '#EEBC7B' }}>
+      <View style={{ alignSelf: 'flex-start', marginVertical: 4, padding: 8, borderRadius: 8, backgroundColor: getBackgroundColor() }}>
+        <Text style={{ fontSize: 12, fontFamily: 'URBAN_BOLD' }}>{status}</Text>
+      </View>
+      <LineItemHeading style={{ fontFamily: 'URBAN_BOLD' }}>{title}</LineItemHeading>
       <LineItemHeading style={{}}>Scope Notes : {notes}</LineItemHeading>
       <View >
         {/* Details */}
@@ -351,15 +357,15 @@ function SubmittedFormLineItem({ status, title, rate, quantity, total, notes, ad
           <StyledContractorText style={{ flex: 1, fontSize: 14, }}>QTY: {quantity}</StyledContractorText>
           <StyledContractorText style={{ flex: 1, fontSize: 14, }} >RATE: {rate ? rate?.toLocaleString("en-IN", { style: "currency", currency: 'USD' }) : 0}</StyledContractorText>
           <StyledContractorText style={{ flex: 1, fontSize: 14, }}>TOTAL: {total ? total?.toLocaleString("en-IN", { style: "currency", currency: 'USD' }) : 0}</StyledContractorText>
-          <StyledContractorButton style={{ fontSize: 16, fontFamily: 'URBAN_BOLD', backgroundColor: getBackgroundColor(), padding: 4 }} mode="contained">{status}</StyledContractorButton>
         </View>
         <View style={{ flexDirection: 'row', marginTop: 8 }}>
-          <StyledContractorText style={{ flex: 1, fontSize: 18, }}>ADJ QTY: {showQuantity}</StyledContractorText>
-          <StyledContractorText style={{ flex: 1, fontSize: 18, }} >RATE: {showRate ? showRate?.toLocaleString("en-IN", { style: "currency", currency: 'USD' }) : 0}</StyledContractorText>
-          <StyledContractorText style={{ flex: 1, fontSize: 18, }}>TOTAL: {showAmount ? showAmount?.toLocaleString("en-IN", { style: "currency", currency: 'USD' }) : 0}</StyledContractorText>
+          <StyledContractorText style={{ flex: 1, fontSize: 18, fontFamily: 'URBAN_MEDIUM' }}>ADJ QTY: {showQuantity}</StyledContractorText>
+          <StyledContractorText style={{ flex: 1, fontSize: 18, fontFamily: 'URBAN_MEDIUM' }} >RATE: {showRate ? showRate?.toLocaleString("en-IN", { style: "currency", currency: 'USD' }) : 0}</StyledContractorText>
+          <StyledContractorText style={{ flex: 1, fontSize: 18, fontFamily: 'URBAN_MEDIUM' }}>TOTAL: {showAmount ? showAmount?.toLocaleString("en-IN", { style: "currency", currency: 'USD' }) : 0}</StyledContractorText>
         </View>
       </View>
     </Card>
+
   )
 }
 
@@ -520,7 +526,7 @@ function ContractorViewLineItem({ inspId, isSubmittedByReviewer, handleAcceptLin
           <StyledOverlayText style={{ flex: 1 }}>TOTAL: {getCurrencyFormattedValue(total)}</StyledOverlayText>
         </View>
         {/* ADJ QTY, RATE, TOTAL */}
-        <View style={{ flexDirection: 'row'}}>
+        <View style={{ flexDirection: 'row' }}>
           {/* ADJ QTY */}
           <View style={{ flex: 1, padding: 4 }}>
             <StyledOverlayInputLabel>ADJ QTY</StyledOverlayInputLabel>
@@ -706,7 +712,7 @@ const LineItemInputText = styled.Text`
 font-family: 'URBAN_BOLD';
 font-size: 16px;
 color: #469869;
-margin-left: 8px;
+margin-right: 8px;
 
 `;
 

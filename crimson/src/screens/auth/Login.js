@@ -64,6 +64,7 @@ const Login = ({ navigation }) => {
             value={userName}
             placeholderTextColor={"#7E8892"}
             placeholder="Enter your username here"
+            autoCorrect={false}
           />
           <Ionicons style={{ flex: .1 }} onPress={() => handleLogin(userName)} size={36} color="#E45679" name="arrow-forward-circle" />
         </InputWrapper>
