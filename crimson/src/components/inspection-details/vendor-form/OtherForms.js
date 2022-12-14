@@ -541,12 +541,16 @@ const OtherForms = ({ sectionTotals, formStatus, gTotal, isSubmitted, isForRevie
                     }
                     {/* Search */}
                     <View style={{ flexDirection: 'row', alignItems: 'center', padding: 4, paddingHorizontal: 16, backgroundColor: "white", margin: 8 }}>
-                        <Icon name="search" color="grey" size={18} />
-                        <TextInput value={searchQuery} onChangeText={onChangeSearch} placeholder="Search Matrix Price..." style={{ fontFamily: "URBAN_BOLD", backgroundColor: "transparent", fontSize: 18, padding: 12, width: "100%" }} />
+                        <Icon name="search" color="grey" style={{ flex: .1, }} size={18} />
+                        <TextInput value={searchQuery} onChangeText={onChangeSearch} placeholder={currentForm === "Room Measurements" ? "Search Sub Category" : "Search Matrix Price..."} style={{ flex: .8, fontFamily: "URBAN_BOLD", backgroundColor: "transparent", fontSize: 18, padding: 12, width: "100%" }} />
+                        {
+                            searchQuery.length > 0 &&
+                            <EntypoIcon onPress={() => setSearchQuery("")} name="cross" color="grey" style={{ flex: .1 }} size={24} />
+                        }
                     </View>
                     {
                         dataList.length > 0 ?
-                            <ScrollView>
+                            <ScrollView style={{minHeight:96}}>
                                 {
                                     [].concat(general_Rental, pools, exterior, interior, mech_Elec_Plumb).filter(item => {
                                         if (currentForm === "Room Measurements") {
