@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { ExpandSection, CheckListbox, Header, InputField, ErrorBanner, RequireMarkText } from "./SubmitReviewFormStyle"
 import { Row, Col } from 'react-native-responsive-grid-system';
 import { Text } from "../../../components/typography/text.component";
-import { Platform, Pressable, View, } from 'react-native'
+import { Image, Platform, Pressable, View, } from 'react-native'
 import { Spacer } from "../../../components/spacer/spacer.component";
 import { updateSfVendorFormDetails } from "../../../services/inspections/inspections.service";
 import { Button } from "react-native-paper";
@@ -17,7 +17,7 @@ export const SubmitReviewForm = ({ handleCloseModal, setreadonly, inspVfDetails,
 
   const [checkList, setCheckList] = useState(checkListObj)
   const [textObj, setTextObj] = useState({ "Electric Meter #": '', "Water Meter #": '', "Gas Meter #": '', "Utility Notes": '' })
-  const [selectListObject, setSelectListObj] = useState({ "Electric On": '', "Water On": '', "Gas On": '', "Septic": 'Yes', "Well": '', "Propane": '', "Oil": '' })
+  const [selectListObject, setSelectListObj] = useState({ "Electric On": '', "Water On": '', "Gas On": '', "Septic": '', "Well": '', "Propane": '', "Oil": '' })
   const [errorState, setErrorState] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isCollapsed, setIsCollapsed] = useState('');
@@ -211,24 +211,28 @@ export const SubmitReviewForm = ({ handleCloseModal, setreadonly, inspVfDetails,
             }
             let meterKey = meterMapping[ele]
             let selectKey = selectMapping[ele]
+            const iconUrl =  ele =="Electric"? require( '../../../assets/images/electricity.png'):ele =="Water"? require( '../../../assets/images/water.png'):ele =="Gas/Fuel Tank"&& require( '../../../assets/images/gas.png')
             return (
               <View style={{
-                width: "100%", padding: 1, backgroundColor: '#00000010',
-                color: '#FFFFFF', borderRadius: 5
+                width: "100%", padding: 1, 
+                color: '#FFFFFF', borderRadius: 5,top:5
               }} key={ele} >
-                <Pressable onPress={() => setIsCollapsed(isCollapsed == ele ? '' : ele)} style={{ flexDirection: 'row', justifyContent: "space-between", padding: 5, backgroundColor: '#6B38FB', borderTopRightRadius: 5, borderTopLeftRadius: 5 }}>
+                <Pressable onPress={() => setIsCollapsed(isCollapsed == ele ? '' : ele)} style={{ flexDirection: 'row', justifyContent: "space-between", padding: 5, backgroundColor: '#262626', borderRadius: 5}}>
                   <Spacer position={'top'} size={'small'} />
-                  <View style={{ flex: 1, flexDirection: 'row' }}>
-                    <Text style={{ fontSize: 17, fontFamily: 'URBAN_REGULAR', color: 'red' }}>*</Text>
-                    <Text style={{ fontSize: 17, fontFamily: 'URBAN_REGULAR', color: 'white' }}>
-                      {ele}
+                  <View style={{ flex: 1, flexDirection: 'row',left:'3%' }}>
+                    <Text style={{ fontSize: 17, fontFamily: 'URBAN_BOLD', color: 'red' }}>*</Text>
+                    <Text style={{ fontSize: 17, fontFamily: 'URBAN_BOLD', color: 'white' }}>
+                      {ele.toUpperCase()}
                     </Text>
                   </View>
-                  <Icon size={25} name={`${isCollapsed == ele ? "keyboard-arrow-up" : "keyboard-arrow-down"}`} />
+                  <Icon size={25} name={`${isCollapsed == ele ? "keyboard-arrow-up" : "keyboard-arrow-down"}`} color={'white'} />
                   <Spacer position={'bottom'} size={'small'} />
                 </Pressable>
-                <Collapsible collapsed={!(isCollapsed == ele)}  >
-                  <View style={{ flexDirection: 'row', padding: 9 }} >
+                <Collapsible collapsed={!(isCollapsed == ele)}  style={{shadowColor:'black', borderWidth:1, borderRadius:5,padding:10}} >
+                <View style={{left:'58%',top:-10}}>
+                  {iconUrl !== undefined && <Image style={{resizeMode:'strech',position: 'absolute'}} source={iconUrl} />}
+                  </View>
+                  <View style={{ flexDirection: 'row',  }} >
                     <View style={{ width: '50%' }}>
                       <Spacer position={'top'} size={'small'} />
                       {
@@ -247,12 +251,8 @@ export const SubmitReviewForm = ({ handleCloseModal, setreadonly, inspVfDetails,
 
                     {<View style={{ width: '50%' }}>
                       {meterKey !== 'Septic' ? <View>
-                        <View style={{ flexDirection: 'row' }}>
-                          {meterKey == "Electric Meter #" && <Text style={{ fontSize: 15, fontFamily: 'URBAN_REGULAR', color: 'red' }}>*</Text>}
-                          <Text style={{ fontSize: 15, fontFamily: 'URBAN_REGULAR', color: 'black' }}>{meterKey} :</Text>
-                        </View>
                         <InputField
-                          label={meterKey}
+                          label={`*${meterKey}`}
                           value={textObj[meterKey]}
                           onChangeText={text => { handleTextChange(meterKey, text) }}
                           error={meterKey == errorFields}
@@ -260,23 +260,26 @@ export const SubmitReviewForm = ({ handleCloseModal, setreadonly, inspVfDetails,
                       </View>
                         : <View>
                           <Text style={{ fontSize: 15, fontFamily: 'URBAN_REGULAR', color: 'black' }}>{meterKey} :</Text>
-                          <Dropdown label="Yes" data={data} callBack={handleSelectChange}   {...{ selectKey: 'selectKey' }} />
+                          <Dropdown label="Select an Option" data={data} callBack={handleSelectChange}   {...{ selectKey: 'selectKey' }} />
                         </View>
                       }
                       <Spacer position={'top'} size={'medium'} />
                       <View>
                         <Text style={{ fontSize: 15, fontFamily: 'URBAN_REGULAR', color: 'black' }}>{selectKey} :</Text>
+                        <Spacer position={'bottom'} size={'small'} />
                         <Dropdown label="Select an Option" data={data} callBack={handleSelectChange}   {...{ selectKey }} />
                       </View>
                     </View>}
                   </View>
-                  {ele == "Gas/Fuel Tank" && <View style={{ flexDirection: 'row', padding: 5, justifyContent: 'space-between' }}>
-                    <View style={{ width: '48%' }}>
+                  {ele == "Gas/Fuel Tank" && <View style={{ flexDirection: 'row',  justifyContent: 'space-between' }}>
+                    <View style={{ width: '49%' }}>
                       <Text>Propane :</Text>
+                      <Spacer position={'bottom'} size={'small'} />
                       <Dropdown label="Select an Option" data={data} callBack={handleSelectChange}   {...{ selectKey: "Propane" }} />
                     </View>
-                    <View style={{ width: '48%' }}>
+                    <View style={{ width: '50%' }}>
                       <Text>Oil :</Text>
+                      <Spacer position={'bottom'} size={'small'} />
                       <Dropdown label="Select an Option" data={data} callBack={handleSelectChange}   {...{ selectKey: "Oil" }} />
                     </View>
                   </View>}

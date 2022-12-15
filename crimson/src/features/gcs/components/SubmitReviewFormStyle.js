@@ -30,7 +30,7 @@ export const CheckListbox = styled(CheckBox)``
 export const InputField = styled(TextInput).attrs({
   mode: 'outlined',
 })`
-  height:30px;
+  height:40px;
 `
 
 export const RequireMarkText = styled(Text)`

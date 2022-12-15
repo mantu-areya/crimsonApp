@@ -61,7 +61,7 @@ export const Dropdown= ({ label, data, callBack,children,selectKey }) => {
       <Text style={styles.buttonText}>
         {(!!selected && selected.label) || label}
       </Text>
-      <Icon style={styles.icon} size={25} name={`${isCollapsed?"keyboard-arrow-down":"keyboard-arrow-up"}`} />
+      <Icon size={25} name={`${isCollapsed?"keyboard-arrow-down":"keyboard-arrow-up"}`} />
     </TouchableOpacity>
           {renderDropdown()}
           </>
@@ -77,14 +77,13 @@ const styles = StyleSheet.create({
     zIndex: 1,
     borderRadius:5,
     borderWidth:.5,
+    justifyContent: 'space-between'
   },
   buttonText: {
     flex: 1,
     textAlign: 'center',
   },
-  icon: {
-    marginRight: 10,
-  },
+
   flatList:{
     backgroundColor: '#AEAEAE',
     borderRadius:5,
