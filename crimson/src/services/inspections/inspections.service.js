@@ -181,7 +181,7 @@ export const updateSfVendorFormDetails = async (data, inspId, submitStatus = fal
   const token = await getStoredToken();
   console.log(inspId);
   // console.log("SUBMIT DTATA", data);
-  console.log("start", "upload");
+  console.log("start", "upload",data);
 
   // console.log("Upload Data",data);
 

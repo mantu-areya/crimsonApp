@@ -5,7 +5,7 @@ import { Button, Card, Modal, Portal, Provider } from "react-native-paper";
 import Swipeable from 'react-native-swipeable';
 import { View, TouchableOpacity, Text, TextInput, Image, Dimensions } from 'react-native'
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
-import React from "react";
+import React, { useEffect } from "react";
 import AntDesign from "react-native-vector-icons/AntDesign"
 import { getVendorFormDetails } from "../../../services/inspections/inspections.service";
 
@@ -18,7 +18,7 @@ let requiredSubCategories = [
 ]
 
 
-export default function FormLineItem({ isSubmittedByReviewer, handleAcceptLineItem, isSubmitted, isForReviewerView, inspId, item, onRoomMeasurementValueChange, onOtherFormValueChange, isForRoomMeasurement, deleteNewItem, navigation, readOnly, setShowAddButton, handleOnSave }) {
+export default function FormLineItem({ isSubmittedByReviewer, handleAcceptLineItem, isSubmitted, isForReviewerView, inspId, item, onRoomMeasurementValueChange, onOtherFormValueChange, isForRoomMeasurement, deleteNewItem, navigation, readOnly, setShowAddButton, handleOnSave,setIsEditModalClosed }) {
   const [overlayVisible, setOverlayVisible] = React.useState(false)
 
   const handleDelGest = (Id, inspId, UniqueKey) => {
@@ -26,6 +26,9 @@ export default function FormLineItem({ isSubmittedByReviewer, handleAcceptLineIt
     swipeableRef.current.recenter();
   }
 
+  useEffect(()=>{
+    setIsEditModalClosed(overlayVisible)
+  },[overlayVisible])
 
   const rightButtons = [
     <TouchableOpacity onPress={() => handleDelGest(item.Id, inspId, item.UniqueKey)} style={{ backgroundColor: '#F3206F', justifyContent: 'center', alignItems: 'center', width: 64, flex: 1 }}>
@@ -159,7 +162,7 @@ export default function FormLineItem({ isSubmittedByReviewer, handleAcceptLineIt
           {!readOnly &&
             <Button
               onPress={() => {
-                handleOnSave(true);
+                handleOnSave(true,item,inspId);
                 setOverlayVisible(false);
 
               }} mode="contained">
