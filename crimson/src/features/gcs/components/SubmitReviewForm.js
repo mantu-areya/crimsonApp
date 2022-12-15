@@ -230,7 +230,7 @@ export const SubmitReviewForm = ({ handleCloseModal, setreadonly, inspVfDetails,
                 </Pressable>
                 <Collapsible collapsed={!(isCollapsed == ele)}  style={{shadowColor:'black', borderWidth:1, borderRadius:5,padding:10}} >
                 <View style={{left:'58%',top:-10}}>
-                  {iconUrl !== undefined && <Image style={{resizeMode:'strech',position: 'absolute'}} source={iconUrl} />}
+                  {iconUrl !== undefined && <Image style={{resizeMode:'cover',position: 'absolute'}} source={iconUrl} />}
                   </View>
                   <View style={{ flexDirection: 'row',  }} >
                     <View style={{ width: '50%' }}>
