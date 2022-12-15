@@ -16,7 +16,6 @@ import { ActivityIndicator, Button, } from 'react-native-paper'
 import Sign from '../features/gcs/components/workAuth/Sign.js';
 import * as ImagePicker from "expo-image-picker";
 import KeyboardSpacer from 'react-native-keyboard-spacer';
-import SignModal from '../features/gcs/components/workAuth/SignModal'
 
 
 
@@ -367,7 +366,7 @@ function Signatures({ navigation, inspId, role, hasRequiredSign, setHasRequiredS
   if (role === "Reviewer") {
     return (
       <View style={{ flexDirection: "row", justifyContent: "flex-end" }}>
-        {/* Company Signature */}
+        {/* HHM Signature */}
         <View style={{ padding: 16, flex: 1, alignItems: "flex-end" }}>
           <Text style={{ fontSize: 12, fontFamily: 'URBAN_BOLD', color: 'black' }}>HHM Signature</Text>
           {!reviewerImg && <>
@@ -390,19 +389,27 @@ function Signatures({ navigation, inspId, role, hasRequiredSign, setHasRequiredS
               Upload
             </Button>
           </>}
-          <Overlay childrenWrapperStyle={{ backgroundColor: 'transparent', flex: 1, padding: 0, justifyContent: "center", alignItems: "center" }} visible={modalVisible} onClose={() => setModalVisible(false)} >
-            <SignModal
+          <Modal
+            animationType="slide"
+            transparent={true}
+            visible={modalVisible}
+            onRequestClose={() => {
+              setModalVisible(!modalVisible);
+            }}>
+
+
+            <Sign
               onOK={(e) => {
                 let bs64dataArray = e.split(',')
                 setModalVisible(!modalVisible);
                 updateSignToContext(bs64dataArray[1])
                 alert("Signed successfully")
                 navigation.goBack()
-              }}
-              text='HHM Signature'
-              onCancel={() => setModalVisible(false)}
+              }} text='HHM Signature'
+              handleOnCancel={() => setModalVisible(false)}
             />
-          </Overlay>
+
+          </Modal>
         </View>
 
       </View>
@@ -436,28 +443,14 @@ function Signatures({ navigation, inspId, role, hasRequiredSign, setHasRequiredS
             Upload
           </Button>
         </>}
-        {/* <Button title="Sign"  /> */}
-        {/* <Modal
+        <Modal
           animationType="slide"
           transparent={true}
           visible={modalVisible}
           onRequestClose={() => {
             setModalVisible(!modalVisible);
           }}>
-
-
-          <Sign onOK={(e) => {
-            let bs64dataArray = e.split(',')
-            setImg(e);
-            setModalVisible(!modalVisible);
-            updateSignToContext(bs64dataArray[1])
-            setIsLoading(true);
-          }} text='Contractor Signature' />
-
-
-        </Modal> */}
-        <Overlay childrenWrapperStyle={{ backgroundColor: 'transparent', flex: 1, padding: 0, justifyContent: "center", alignItems: "center" }} visible={modalVisible} onClose={() => setModalVisible(false)} >
-          <SignModal
+          <Sign
             onOK={(e) => {
               let bs64dataArray = e.split(',')
               setModalVisible(!modalVisible);
@@ -465,25 +458,11 @@ function Signatures({ navigation, inspId, role, hasRequiredSign, setHasRequiredS
               alert("Signed successfully")
               navigation.goBack()
             }} text='Contractor Signature'
-            onCancel={() => setModalVisible(false)}
+            handleOnCancel={() => setModalVisible(false)}
           />
-        </Overlay>
+
+        </Modal>
       </View>
-      {/* HHM Signature */}
-      {/* <View style={{ padding: 16, flex: .5, alignItems: "flex-end" }}>
-        <Text style={{ fontSize: 12, fontFamily: 'URBAN_BOLD', color: 'black' }}>HHM Signature</Text>
-        {reviewerImg &&
-          <>
-            <View style={{ justifyContent: 'center', alignItems: 'flex-end', marginVertical: 8, padding: 4 }}>
-              <Image style={{
-                width: 180,
-                height: 80
-              }} source={{ uri: reviewerImg }} />
-            </View>
-            <Text style={{ fontSize: 12, fontFamily: 'URBAN_BOLD', color: 'black' }}>Date : {reviewerSignDate}</Text>
-          </>
-        }
-      </View> */}
     </View>
   )
 }
