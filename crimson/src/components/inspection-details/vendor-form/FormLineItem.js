@@ -27,7 +27,7 @@ export default function FormLineItem({ isSubmittedByReviewer, handleAcceptLineIt
   }
 
   useEffect(()=>{
-    setIsEditModalClosed(overlayVisible)
+    setIsEditModalClosed &&  setIsEditModalClosed(overlayVisible)
   },[overlayVisible])
 
   const rightButtons = [
