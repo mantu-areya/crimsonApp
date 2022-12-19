@@ -425,7 +425,7 @@ function ContractorViewLineItem({ inspId, isSubmittedByReviewer, handleAcceptLin
 
   function acceptLineItem() {
     setSelectedStatus("Approved");
-    handleAcceptLineItem(id, "Approved");
+    handleAcceptLineItem(id, "Approved",item,inspId);
   }
 
   function reviewLineItem() {
@@ -434,12 +434,12 @@ function ContractorViewLineItem({ inspId, isSubmittedByReviewer, handleAcceptLin
 
   function deleteLineItem() {
     setSelectedStatus("Declined");
-    handleAcceptLineItem(id, "Declined");
+    handleAcceptLineItem(id, "Declined",item,inspId);
   }
 
   function handleApproveAsNoted() {
     setSelectedStatus("Approved as Noted");
-    handleAcceptLineItem(id, "Approved as Noted");
+    handleAcceptLineItem(id, "Approved as Noted",item,inspId);
     hideModal();
   }
 

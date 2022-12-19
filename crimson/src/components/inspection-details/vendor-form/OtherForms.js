@@ -191,7 +191,7 @@ const OtherForms = ({ sectionTotals, formStatus, gTotal, isSubmitted, isForRevie
 
     const [dataList, setDatalist] = React.useState([]);
 
-    const { updateVfContect, addNewItem,updateModifiedLineItemContext } = React.useContext(VendorFormContext);
+    const { updateVfContect, addNewItem,updateModifiedLineItemToSf } = React.useContext(VendorFormContext);
     const [NewItemAdded, setNewItemAdded] = React.useState(0);
     const [showAddButton, setShowAddButton] = React.useState(false)
 
@@ -410,7 +410,7 @@ const OtherForms = ({ sectionTotals, formStatus, gTotal, isSubmitted, isForRevie
         let formType = isForRoomMeasurement ? "RM" : "OTHRFM";
         console.log("Updating VF Context", formType);
         updateVfContect(dataList, formType, inspectionData.Id);
-        updateModifiedLineItemContext(modifiedLineItem,inspId)
+        updateModifiedLineItemToSf(modifiedLineItem,inspId)
     }
 
 
@@ -422,7 +422,7 @@ const OtherForms = ({ sectionTotals, formStatus, gTotal, isSubmitted, isForRevie
         setSearchQuery("")
     }
 
-    function handleAcceptLineItem(lineItemId, status) {
+    function handleAcceptLineItem(lineItemId, status,item,inspId) {
         console.log("CHNAGING ITEM: " + lineItemId);
         let updatedData = dataList.map((data) => {
             if (data.Id === lineItemId) {
@@ -432,6 +432,7 @@ const OtherForms = ({ sectionTotals, formStatus, gTotal, isSubmitted, isForRevie
         });
         setDatalist(updatedData);
         updateVfContect(updatedData, "OTHRFM", inspectionData.Id);
+        updateModifiedLineItemToSf(item,inspId,false,"Reviewer")
         //code commented for Sync issue
         // updateToSf(inspectionData.Id, false);
     }

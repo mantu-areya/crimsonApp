@@ -73,17 +73,18 @@ export const VendorFormContextProvider = ({ children }) => {
     let newVfDataArray = vendorFormDetails[inspId]
     newVfDataArray.push(newData[0])
     setVendorFormDetails({ ...vendorFormDetails, [inspId]: newVfDataArray })
-    updateToSF(inspId)
+    updateModifiedLineItemToSf(newData[0], inspId)
+    // updateToSF(inspId)
   }
 
-  const updateModifiedLineItemContext = (modifiedrecord,inspId,submitStatus=false,role="Contractor") =>{
+  const updateModifiedLineItemToSf = (modifiedrecord,inspId,submitStatus=false,role="Contractor") =>{
     console.log(modifiedrecord,"mdfrc");
     NetInfo.fetch().then(networkState => {
       if (networkState.isConnected) {
         vendorFormDetails[inspId] && updateSfVendorFormDetails([modifiedrecord], inspId,submitStatus,role).then(data=>{
           // return refreshVfData(inspId)
         }).catch(error=>{
-          console.log("eroor in updateModifiedLineItemContext ");
+          console.log("eroor in updateModifiedLineItemToSf ");
         })
       }
     })
@@ -196,7 +197,7 @@ export const VendorFormContextProvider = ({ children }) => {
         deleteNewItem,
         deletedLineItems,
         refreshVfData:refreshVfData,
-        updateModifiedLineItemContext
+        updateModifiedLineItemToSf
       }}
     >
       {children}
