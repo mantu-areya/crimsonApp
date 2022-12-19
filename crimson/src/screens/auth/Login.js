@@ -1,8 +1,9 @@
-import { View, Text, TextInput, Image } from 'react-native'
+import { View, Text, TextInput, Image, Platform } from 'react-native'
 import React from 'react'
 import styled from 'styled-components/native'
 import { useSafeAreaInsets } from "react-native-safe-area-context"
 import Ionicons from "react-native-vector-icons/Ionicons"
+import KeyboardSpacer from 'react-native-keyboard-spacer';
 
 
 import { Spacer } from '../../components/spacer/spacer.component';
@@ -74,6 +75,7 @@ const Login = ({ navigation }) => {
           </Spacer>
         )}
       </FormWrapper>
+      {Platform.OS == 'ios' && <KeyboardSpacer/>} 
     </Wrapper>
   )
 }
