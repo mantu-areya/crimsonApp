@@ -82,7 +82,7 @@ export const VendorFormContextProvider = ({ children }) => {
     NetInfo.fetch().then(networkState => {
       if (networkState.isConnected) {
         vendorFormDetails[inspId] && updateSfVendorFormDetails([modifiedrecord], inspId,submitStatus,role).then(data=>{
-          // return refreshVfData(inspId)
+          return refreshVfData(inspId)
         }).catch(error=>{
           console.log("eroor in updateModifiedLineItemToSf ");
         })

@@ -290,7 +290,7 @@ export default function FormLineItem({ isSubmittedByReviewer, handleAcceptLineIt
         </View>
 
         {!readOnly &&
-          <StyledSaveButton onPress={() => { handleOnSave(); setOverlayVisible(false) }} mode="contained">
+          <StyledSaveButton onPress={() => { handleOnSave(false,item,inspId); setOverlayVisible(false) }} mode="contained">
             <Text style={{ color: 'white', fontWeight: 'bold', fontFamily: "URBAN_BOLD", fontSize: 18 }}>
               Save
             </Text>
