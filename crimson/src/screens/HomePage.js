@@ -36,6 +36,7 @@ export const HomePage = ({ navigation }) => {
   const [searchQuery, setSearchQuery] = React.useState('');
 
 
+
   const allInspectionsTypes = [
     userRole === "Contractor" ? "Pending Vendor Submission" : "Pending Review",
     userRole === "Contractor" ? "Pending Review" : "Approval Submitted",
@@ -81,23 +82,17 @@ export const HomePage = ({ navigation }) => {
     }
   })
 
-  const [selectedOption, setSelectedOption] = React.useState();
+  const [selectedOption, setSelectedOption] = React.useState(allInspectionsTypes[0]);
+
 
   const [currentSelectedInspections, setCurrentSelectedInspections] = React.useState()
 
-  React.useEffect(() => {
-    if (userRole) {
-      setSelectedOption(allInspectionsTypes[0])
-    }
-  },[userRole])
-
 
   React.useEffect(() => {
 
-    if (userRole === "Contractor" && selectedOption === allInspectionsTypes[0]) {
+    if (userRole === "Contractor") {
       setCurrentSelectedInspections(pendingInspectionsForGC)
-    } 
-    if (userRole === "Reviewer" && selectedOption === allInspectionsTypes[0])  {
+    } else {
       setCurrentSelectedInspections(pendingInspectionsForReviewer)
     }
 
