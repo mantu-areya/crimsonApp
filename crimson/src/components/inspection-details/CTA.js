@@ -4,7 +4,7 @@ import Ionicons from "react-native-vector-icons/Ionicons"
 import { Platform } from 'react-native'
 
 
-const CTA = ({ formStatus, handleOnSubmit, role, handleOnChat, handleViewImages, handleSignature, isSubmitted }) => {
+const CTA = ({ hasRequiredSign, formStatus, handleOnSubmit, role, handleOnChat, handleViewImages, handleSignature, isSubmitted }) => {
     const shadowStyle = {
         shadowColor: "#000",
         shadowOffset: {
@@ -17,7 +17,7 @@ const CTA = ({ formStatus, handleOnSubmit, role, handleOnChat, handleViewImages,
         elevation: 5,
     }
 
-    console.log("FORM",formStatus);
+    console.log("FORM", formStatus);
 
     return (
         <Wrapper>
@@ -29,7 +29,7 @@ const CTA = ({ formStatus, handleOnSubmit, role, handleOnChat, handleViewImages,
                         &&
                         ((formStatus)
                             ?
-                            <SubmitButtonWrapper  style={[shadowStyle, {
+                            <SubmitButtonWrapper style={[shadowStyle, {
                                 backgroundColor: "grey"
                             }]} >
                                 <ButtonText style={{ textAlign: 'center' }} color="white">
@@ -38,7 +38,7 @@ const CTA = ({ formStatus, handleOnSubmit, role, handleOnChat, handleViewImages,
                             </SubmitButtonWrapper>
                             :
                             <SubmitButtonWrapper style={shadowStyle} onPress={handleOnSubmit}>
-                                <ButtonText style={{ textAlign: 'center', fontSize:16 }} color="white">
+                                <ButtonText style={{ textAlign: 'center', fontSize: 16 }} color="white">
                                     Submit for Review
                                 </ButtonText>
                             </SubmitButtonWrapper>)
@@ -57,7 +57,7 @@ const CTA = ({ formStatus, handleOnSubmit, role, handleOnChat, handleViewImages,
                             </SubmitButtonWrapper>
                             :
                             <SubmitButtonWrapper style={shadowStyle} onPress={handleOnSubmit}>
-                                <ButtonText style={{ textAlign: 'center', fontSize:16  }} color="white">
+                                <ButtonText style={{ textAlign: 'center', fontSize: 16 }} color="white">
                                     Submit for Approval
                                 </ButtonText>
                             </SubmitButtonWrapper>)
@@ -75,11 +75,23 @@ const CTA = ({ formStatus, handleOnSubmit, role, handleOnChat, handleViewImages,
             }
             {
                 isSubmitted && <>
-                    <SubmitButtonWrapper style={shadowStyle} onPress={handleSignature}>
-                        <ButtonText style={{ textAlign: 'center' }} color="white">
-                            Sign
-                        </ButtonText>
-                    </SubmitButtonWrapper>
+                    {
+                        hasRequiredSign ?
+                            <SubmitButtonWrapper style={[shadowStyle, {
+                                backgroundColor: "grey"
+                            }]} >
+                                <ButtonText style={{ textAlign: 'center' }} color="white">
+                                    Signed
+                                </ButtonText>
+                            </SubmitButtonWrapper>
+                            :
+                            <SubmitButtonWrapper style={shadowStyle} onPress={handleSignature}>
+                                <ButtonText style={{ textAlign: 'center' }} color="white">
+                                    Sign
+                                </ButtonText>
+                            </SubmitButtonWrapper>
+
+                    }
                     <ChatButtonWrapper style={shadowStyle} onPress={handleViewImages}>
                         <Ionicons name="list" size={24} color="black" />
                         <ButtonText marginLeft={8} >
