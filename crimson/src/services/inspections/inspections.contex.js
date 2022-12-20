@@ -1,8 +1,9 @@
 import React, { useState, createContext, useEffect, useContext } from "react";
-import { getInspectionsData, getPendingInspections, setToken,setTokenoninterval } from "./inspections.service";
+import { getInspectionsData, getPendingInspections, refreshOrgToken, setToken,setTokenoninterval } from "./inspections.service";
 import NetInfo from "@react-native-community/netinfo";
 import AsyncStorage from "@react-native-async-storage/async-storage"
 import { AuthenticationContext } from "../../services/authentication/authentication.context";
+import { setOrgToken } from "../authentication/authentication.service";
 
 // imports for mocking results
 // import { mockedinspections } from "../../mocks/inspections";
@@ -96,6 +97,31 @@ export const InspectionsContextProvider = ({ children }) => {
       return
     });
   }, [stateChnage])
+
+  useEffect(() => {
+    // validating Token Expiry and refreshing token
+    NetInfo.fetch().then(networkState => {
+      if (networkState.isConnected) {
+        let userEmail = user && user
+        getInspectionsData(userEmail)
+          .then(results => {
+            setIsLoading(false);
+          })
+          .catch((err) => {
+            // console.log(err.code, "coder")
+            setIsLoading(true);
+            err.code === 'ERR_BAD_REQUEST' && setOrgToken()
+              .then(_ => {
+                return refreshOrgToken(user).then(_ => {
+                  return reloadInspectionContext()
+                })
+              })
+          })
+      }
+      return
+    });
+
+  }, [])
 
   const changeState = () => setStaeChange(!stateChnage)
 
