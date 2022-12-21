@@ -393,16 +393,18 @@ function ContractorViewLineItem({ inspId, isSubmittedByReviewer, handleAcceptLin
   // TODO - getting all images , select only line item images
   const [allLineItemImages, setAllLineImages] = React.useState([]);
 
-  async function getLineItemImages() {
-    const data = await getVendorFormDetails(inspId);
-    const filterImages = data?.Images?.filter(image => image.file_name.includes(id))
-    setAllLineImages(filterImages ?? [])
-  }
 
-  React.useEffect(() => {
-    // commenting this function to avoid overWrite of value to Zero
+   // commenting this function to avoid overWrite of value to Zero
+  // async function getLineItemImages() {
+  //   const data = await getVendorFormDetails(inspId);
+  //   const filterImages = data?.Images?.filter(image => image.file_name.includes(id))
+  //   setAllLineImages(filterImages ?? [])
+  // }
+
+  
+  // React.useEffect(() => {
     // getLineItemImages();
-  }, [inspId])
+  // }, [inspId])
 
 
 
