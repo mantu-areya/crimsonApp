@@ -104,7 +104,8 @@ export default function FormLineItem({ isSubmittedByReviewer, handleAcceptLineIt
             </View>
           </LineItemWrapper>
         </Swipeable>
-        <Overlay visible={overlayVisible} onClose={() => setOverlayVisible(false)} closeOnTouchOutside >
+        <Overlay visible={overlayVisible} onClose={() => setOverlayVisible(false)}  >
+          <Ionicons style={{ marginLeft: "auto" }} onPress={() => setOverlayVisible(false)} name="close" size={24} />
           {
             (Sub_Category_List.includes(item.Sub_Category) || readOnly)
               ?
@@ -211,8 +212,8 @@ export default function FormLineItem({ isSubmittedByReviewer, handleAcceptLineIt
 
         </LineItemWrapper>
       </Swipeable>
-      <Overlay visible={overlayVisible} onClose={() => setOverlayVisible(false)} closeOnTouchOutside >
-
+      <Overlay visible={overlayVisible} onClose={() => setOverlayVisible(false)} >
+        <Ionicons style={{ marginLeft: "auto" }} onPress={() => setOverlayVisible(false)} name="close" size={24} />
         {
           Sub_Category_Keys.includes(item?.Sub_Category)
             ?
