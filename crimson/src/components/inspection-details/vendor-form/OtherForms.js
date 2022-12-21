@@ -127,7 +127,7 @@ const OtherForms = ({ sectionTotals, formStatus, gTotal, isSubmitted, isForRevie
 
         let toatalSF = 0;
         currentFormData.data.map(ele => {
-            toatalSF = toatalSF + (ele.Total == 0 ? ele.Approved_Amount : ele.Total)
+            toatalSF = toatalSF + ele.Total
             return toatalSF
         })
         return toatalSF.toLocaleString("en-IN", { style: "currency", currency: 'USD' })
@@ -247,35 +247,31 @@ const OtherForms = ({ sectionTotals, formStatus, gTotal, isSubmitted, isForRevie
             setSequence(newSequence)
             addNewItem(itemObject, inspectionData.Id)
             setNewItemAdded(NewItemAdded + 1)
-        } {
-            newState = dataList.map(obj => {
-                if (obj.UniqueKey === key) {
-                    let formatedVal = ["Matrix_Price", "Sub_Category", "U_M", "Scope_Notes", "Owner_Clarification"].includes(field) ? value : parseFloat(value)
-                    let newValues = { ...obj, [field]: formatedVal };
-                    let newTotal;
-                    let oldTotal = obj?.Total;
-                    let added;
+      } {
+        newState = dataList.map(obj => {
+          if (obj.UniqueKey === key) {
+            let formatedVal = ["Matrix_Price", "Sub_Category", "U_M", "Scope_Notes", "Owner_Clarification"].includes(field) ? value : parseFloat(value)
+            let newValues = { ...obj, [field]: formatedVal };
+            let newTotal, approvedAmt;
+            let oldTotal = obj?.Total;
+            let added;
 
-                    if (field === "Adj_Quantity" || field === "Adj_Rate") {
-                        newTotal = newValues && (newValues.Adj_Quantity * newValues.Adj_Rate)
-                    } else if (field === 'Owner_Clarification') {
-                        newTotal = obj?.Total;
-                    } else {
-                        newTotal = newValues && (newValues.Quantity * newValues.Rate)
-                    }
+            if (field === "Adj_Quantity" || field === "Adj_Rate" || field === 'Owner_Clarification') {
+              approvedAmt = newValues && (newValues.Adj_Quantity * newValues.Adj_Rate)
+              return { ...obj, [field]: formatedVal, ["Total"]: obj?.Total, ["Approved_Amount"]: approvedAmt };
 
-                    added = (oldTotal > newTotal);
-
-                    let diff = (oldTotal - newTotal);
-                    let newGrandTotal = added ? grandTotal + diff : grandTotal - diff;
-                    newGrandTotal && setGrandTotal(newGrandTotal);
-
-
-                    return { ...obj, [field]: formatedVal, ["Total"]: newTotal };
-                }
-                return obj;
-            });
-        }
+            } else {
+              newTotal = newValues && (newValues.Quantity * newValues.Rate)
+              added = (oldTotal > newTotal);
+              let diff = (oldTotal - newTotal);
+              let newGrandTotal = added ? grandTotal + diff : grandTotal - diff;
+              newGrandTotal && setGrandTotal(newGrandTotal);
+              return { ...obj, [field]: formatedVal, ["Total"]: newTotal, ["Approved_Amount"]: obj?.Approved_Amount };
+            }
+          }
+          return obj;
+        });
+      }
         setDatalist(newState)
         setUpdatedData(currentForm, newState);
         updateVfContect(newState, "OTHRFM", inspectionData.Id);

@@ -178,7 +178,7 @@ export default function FormLineItem({ isSubmittedByReviewer, handleAcceptLineIt
 
   if (isForReviewerView) {
     return (
-      <ContractorViewLineItem {...{ inspId, isSubmittedByReviewer, handleAcceptLineItem, item, onOtherFormValueChange }} />
+      <ContractorViewLineItem {...{ inspId, isSubmittedByReviewer, handleAcceptLineItem, item, onOtherFormValueChange,setIsEditModalClosed }} />
     )
 
   }
@@ -372,13 +372,14 @@ function SubmittedFormLineItem({ status, title, rate, quantity, total, notes, ad
   )
 }
 
-function ContractorViewLineItem({ inspId, isSubmittedByReviewer, handleAcceptLineItem, item, onOtherFormValueChange }) {
+function ContractorViewLineItem({ inspId, isSubmittedByReviewer, handleAcceptLineItem, item, onOtherFormValueChange,setIsEditModalClosed }) {
 
   const {
     UniqueKey,
     Adj_Quantity,
     Adj_Rate,
     Owner_Clarification,
+    Approved_Amount,
     Id: id,
     Matrix_Price: title,
     Rate: rate,
@@ -422,6 +423,10 @@ function ContractorViewLineItem({ inspId, isSubmittedByReviewer, handleAcceptLin
 
   const showModal = () => setVisible(true);
   const hideModal = () => setVisible(false);
+
+  useEffect(()=>{
+    setIsEditModalClosed &&  setIsEditModalClosed(visible)
+  },[visible])
 
   function acceptLineItem() {
     setSelectedStatus("Approved");
@@ -566,7 +571,7 @@ function ContractorViewLineItem({ inspId, isSubmittedByReviewer, handleAcceptLin
           <View style={{ flex: 1, padding: 4 }}>
             <StyledOverlayInputLabel>ADJ TOTAL</StyledOverlayInputLabel>
             <TextInput
-              value={`${getCurrencyFormattedValue(total)}` ?? 0}
+              value={`${getCurrencyFormattedValue(Approved_Amount)}` ?? 0}
               editable={false}
               style={{ borderRadius: 4, fontFamily: 'URBAN_MEDIUM', fontSize: 20, color: "#000" }}
             />
