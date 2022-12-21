@@ -140,10 +140,9 @@ export const NewVendorForm = ({ inspectionData, readOnly,navigation }) => {
 
     console.log("ID",inspectionData.Id);
 
-        //code commented for Sync issue
-    // useEffect(() => {
-    //     isFocused == false && updateToSf(inspectionData.Id)
-    //   }, [isFocused])
+    useEffect(() => {
+        isFocused == false && updateToSf(inspectionData.Id)
+      }, [isFocused])
 
 
     return (<>

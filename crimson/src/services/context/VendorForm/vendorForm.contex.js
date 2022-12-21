@@ -10,8 +10,6 @@ export const VendorFormContextProvider = ({ children }) => {
   const [vendorFormDetails, setVendorFormDetails] = useState({});
   const [deletedLineItems, setDeletedLineItems] = useState([])
   const [contextImages, setContextImages] = useState({});
-  // const [modifiedRecords, setModifiedRecords] = useState({});
-
   const add = (dataset, inspData) => inspData ? setVendorFormDetails({ ...vendorFormDetails, [inspData.Id]: dataset.length > 0 ? dataset : "NA" })
     : setVendorFormDetails(dataset)
 
@@ -73,21 +71,7 @@ export const VendorFormContextProvider = ({ children }) => {
     let newVfDataArray = vendorFormDetails[inspId]
     newVfDataArray.push(newData[0])
     setVendorFormDetails({ ...vendorFormDetails, [inspId]: newVfDataArray })
-    updateModifiedLineItemToSf(newData[0], inspId)
-    // updateToSF(inspId)
-  }
-
-  const updateModifiedLineItemToSf = (modifiedrecord,inspId,submitStatus=false,role="Contractor") =>{
-    console.log(modifiedrecord,"mdfrc");
-    NetInfo.fetch().then(networkState => {
-      if (networkState.isConnected) {
-        vendorFormDetails[inspId] && updateSfVendorFormDetails([modifiedrecord], inspId,submitStatus,role).then(data=>{
-          return refreshVfData(inspId)
-        }).catch(error=>{
-          console.log("eroor in updateModifiedLineItemToSf ");
-        })
-      }
-    })
+    updateToSF(inspId)
   }
 
   const deleteNewItem = (dvdId, inspId, UniqueKey) => {
@@ -169,16 +153,6 @@ export const VendorFormContextProvider = ({ children }) => {
     })
   }
 
-  const UpdateSfOnSaveButton = (inspId,submitStatus=false,role="Contractor") =>{
-    NetInfo.fetch().then(networkState => {
-      if (networkState.isConnected) {
-        vendorFormDetails[inspId] && updateSfVendorFormDetails(vendorFormDetails[inspId], inspId,submitStatus,role).then(data=>{
-          return refreshVfData(inspId)
-        })
-      }
-    })
-  }
-
 
 
   return (
@@ -195,9 +169,7 @@ export const VendorFormContextProvider = ({ children }) => {
         contextImages,
         addNewItem,
         deleteNewItem,
-        deletedLineItems,
-        refreshVfData:refreshVfData,
-        updateModifiedLineItemToSf
+        deletedLineItems
       }}
     >
       {children}

@@ -106,16 +106,15 @@ export const VendorFormsPage = ({ inspectionData, navigation,readonly }) => {
     setVendorFormData(inspData)
   }
 
-    //code commented for Sync issue
-  // useEffect(() => {
-  //   formNum !== '' && updateToSf(inspectionData.Id)
-  // }, [formNum])
 
-  
-    //code commented for Sync issue
-  // useEffect(() => {
-  //   isFocused == false && updateToSf(inspectionData.Id)
-  // }, [isFocused])
+  useEffect(() => {
+    formNum !== '' && updateToSf(inspectionData.Id)
+  }, [formNum])
+
+
+  useEffect(() => {
+    isFocused == false && updateToSf(inspectionData.Id)
+  }, [isFocused])
 
   useEffect(() => {
     let contexRecord = vendorFormDetails[inspectionData.Id]

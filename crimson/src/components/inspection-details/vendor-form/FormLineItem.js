@@ -5,7 +5,7 @@ import { Button, Card, Modal, Portal, Provider } from "react-native-paper";
 import Swipeable from 'react-native-swipeable';
 import { View, TouchableOpacity, Text, TextInput, Image, Dimensions } from 'react-native'
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
-import React, { useEffect } from "react";
+import React from "react";
 import AntDesign from "react-native-vector-icons/AntDesign"
 import { getVendorFormDetails } from "../../../services/inspections/inspections.service";
 
@@ -18,7 +18,7 @@ let requiredSubCategories = [
 ]
 
 
-export default function FormLineItem({ isSubmittedByReviewer, handleAcceptLineItem, isSubmitted, isForReviewerView, inspId, item, onRoomMeasurementValueChange, onOtherFormValueChange, isForRoomMeasurement, deleteNewItem, navigation, readOnly, setShowAddButton, handleOnSave,setIsEditModalClosed }) {
+export default function FormLineItem({ isSubmittedByReviewer, handleAcceptLineItem, isSubmitted, isForReviewerView, inspId, item, onRoomMeasurementValueChange, onOtherFormValueChange, isForRoomMeasurement, deleteNewItem, navigation, readOnly, setShowAddButton, handleOnSave }) {
   const [overlayVisible, setOverlayVisible] = React.useState(false)
 
   const handleDelGest = (Id, inspId, UniqueKey) => {
@@ -26,9 +26,6 @@ export default function FormLineItem({ isSubmittedByReviewer, handleAcceptLineIt
     swipeableRef.current.recenter();
   }
 
-  useEffect(()=>{
-    setIsEditModalClosed &&  setIsEditModalClosed(overlayVisible)
-  },[overlayVisible])
 
   const rightButtons = [
     <TouchableOpacity onPress={() => handleDelGest(item.Id, inspId, item.UniqueKey)} style={{ backgroundColor: '#F3206F', justifyContent: 'center', alignItems: 'center', width: 64, flex: 1 }}>
@@ -163,7 +160,7 @@ export default function FormLineItem({ isSubmittedByReviewer, handleAcceptLineIt
           {!readOnly &&
             <Button
               onPress={() => {
-                handleOnSave(true,item,inspId);
+                handleOnSave(true);
                 setOverlayVisible(false);
 
               }} mode="contained">
@@ -179,7 +176,7 @@ export default function FormLineItem({ isSubmittedByReviewer, handleAcceptLineIt
 
   if (isForReviewerView) {
     return (
-      <ContractorViewLineItem {...{ inspId, isSubmittedByReviewer, handleAcceptLineItem, item, onOtherFormValueChange,setIsEditModalClosed }} />
+      <ContractorViewLineItem {...{ inspId, isSubmittedByReviewer, handleAcceptLineItem, item, onOtherFormValueChange }} />
     )
 
   }
@@ -291,7 +288,7 @@ export default function FormLineItem({ isSubmittedByReviewer, handleAcceptLineIt
         </View>
 
         {!readOnly &&
-          <StyledSaveButton onPress={() => { handleOnSave(false,item,inspId); setOverlayVisible(false) }} mode="contained">
+          <StyledSaveButton onPress={() => { handleOnSave(); setOverlayVisible(false) }} mode="contained">
             <Text style={{ color: 'white', fontWeight: 'bold', fontFamily: "URBAN_BOLD", fontSize: 18 }}>
               Save
             </Text>
@@ -373,38 +370,33 @@ function SubmittedFormLineItem({ status, title, rate, quantity, total, notes, ad
   )
 }
 
-function ContractorViewLineItem({ inspId, isSubmittedByReviewer, handleAcceptLineItem, item, onOtherFormValueChange,setIsEditModalClosed }) {
+function ContractorViewLineItem({ inspId, isSubmittedByReviewer, handleAcceptLineItem, item, onOtherFormValueChange }) {
 
   const {
     UniqueKey,
     Adj_Quantity,
     Adj_Rate,
     Owner_Clarification,
-    Approved_Amount,
     Id: id,
     Matrix_Price: title,
     Rate: rate,
     Quantity: quantity,
-    Total: total,
-    Approval_Status
+    Total: total
   } = item
 
   //  * GET LINE ITEM IMAGES 
   // TODO - getting all images , select only line item images
   const [allLineItemImages, setAllLineImages] = React.useState([]);
 
+  async function getLineItemImages() {
+    const data = await getVendorFormDetails(inspId);
+    const filterImages = data?.Images?.filter(image => image.file_name.includes(id))
+    setAllLineImages(filterImages ?? [])
+  }
 
-   // commenting this function to avoid overWrite of value to Zero
-  // async function getLineItemImages() {
-  //   const data = await getVendorFormDetails(inspId);
-  //   const filterImages = data?.Images?.filter(image => image.file_name.includes(id))
-  //   setAllLineImages(filterImages ?? [])
-  // }
-
-  
-  // React.useEffect(() => {
-    // getLineItemImages();
-  // }, [inspId])
+  React.useEffect(() => {
+    getLineItemImages();
+  }, [inspId])
 
 
 
@@ -429,13 +421,9 @@ function ContractorViewLineItem({ inspId, isSubmittedByReviewer, handleAcceptLin
   const showModal = () => setVisible(true);
   const hideModal = () => setVisible(false);
 
-  useEffect(()=>{
-    setIsEditModalClosed &&  setIsEditModalClosed(visible)
-  },[visible])
-
   function acceptLineItem() {
     setSelectedStatus("Approved");
-    handleAcceptLineItem(id, "Approved",item,inspId);
+    handleAcceptLineItem(id, "Approved");
   }
 
   function reviewLineItem() {
@@ -444,16 +432,15 @@ function ContractorViewLineItem({ inspId, isSubmittedByReviewer, handleAcceptLin
 
   function deleteLineItem() {
     setSelectedStatus("Declined");
-    handleAcceptLineItem(id, "Declined",item,inspId);
+    handleAcceptLineItem(id, "Declined");
   }
 
   function handleApproveAsNoted() {
     setSelectedStatus("Approved as Noted");
-    handleAcceptLineItem(id, "Approved as Noted",item,inspId);
+    handleAcceptLineItem(id, "Approved as Noted");
     hideModal();
   }
 
-  // verify and delete this function further
   function getGreyShade(status, orgColor) {
     if (selectedStatus === status && isSubmittedByReviewer) {
       return "grey"
@@ -467,8 +454,6 @@ function ContractorViewLineItem({ inspId, isSubmittedByReviewer, handleAcceptLin
     return orgColor;
   }
 
-
-  // verify and delete this code further
   function isDisabled(status) {
     return isSubmittedByReviewer || selectedStatus === status;
   }
@@ -490,24 +475,24 @@ function ContractorViewLineItem({ inspId, isSubmittedByReviewer, handleAcceptLin
           <View style={{ flex: .6, flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
             <StyledContractorButton
               labelStyle={{ fontSize: 16, fontFamily: 'URBAN_BOLD' }}
-              disabled={Approval_Status==="Approved"}
-              backgroundColor={Approval_Status==="Approved" ?'grey':"#7CDD9B"}
+              disabled={isDisabled("Approved")}
+              backgroundColor={getGreyShade("Approved", "#7CDD9B")}
               mode="contained"
               onPress={() => acceptLineItem()}>
               A
             </StyledContractorButton>
             <StyledContractorButton
               labelStyle={{ fontSize: 16, fontFamily: 'URBAN_BOLD' }}
-              disabled={Approval_Status==="Approved as Noted"}
-              backgroundColor={Approval_Status==="Approved as Noted" ?'grey': "#3983EF"}
+              disabled={isDisabled("Approved as Noted")}
+              backgroundColor={getGreyShade("Approved as Noted", "#3983EF")}
               mode="contained"
               onPress={() => reviewLineItem()}>
               R
             </StyledContractorButton>
             <StyledContractorButton
               labelStyle={{ fontSize: 16, fontFamily: 'URBAN_BOLD' }}
-              disabled={Approval_Status==="Declined"}
-              backgroundColor={Approval_Status==="Declined" ?'grey':"#E02E2E"}
+              disabled={isDisabled("Declined")}
+              backgroundColor={getGreyShade("Declined", "#E02E2E")}
               mode="contained"
               onPress={() => deleteLineItem()}>
               D
@@ -579,7 +564,7 @@ function ContractorViewLineItem({ inspId, isSubmittedByReviewer, handleAcceptLin
           <View style={{ flex: 1, padding: 4 }}>
             <StyledOverlayInputLabel>ADJ TOTAL</StyledOverlayInputLabel>
             <TextInput
-              value={`${getCurrencyFormattedValue(Approved_Amount)}` ?? 0}
+              value={`${getCurrencyFormattedValue(total)}` ?? 0}
               editable={false}
               style={{ borderRadius: 4, fontFamily: 'URBAN_MEDIUM', fontSize: 20, color: "#000" }}
             />
