@@ -470,7 +470,7 @@ const OtherForms = ({ sectionTotals, formStatus, gTotal, isSubmitted, isForRevie
                     {
                         dataList.length > 0 ?
                             isForReviewerView ?
-                                <ScrollView>
+                                <ScrollView >
                                     {
                                         dataList.sort((a, b) => b.Quantity - a.Quantity).filter(item => {
                                             return item?.Sub_Category?.includes(searchQuery) || item?.Matrix_Price?.includes(searchQuery)
@@ -478,7 +478,7 @@ const OtherForms = ({ sectionTotals, formStatus, gTotal, isSubmitted, isForRevie
                                     }
                                 </ScrollView>
                                 :
-                                <ScrollView>
+                                <ScrollView style={{marginBottom:currentForm === "Room Measurements" || currentForm === "General Rental Operations Scope"  ? 128 : 0}}>
                                     {
                                         dataList.filter(item => {
                                             return item?.Sub_Category?.includes(searchQuery) || item?.Matrix_Price?.includes(searchQuery)
@@ -492,7 +492,7 @@ const OtherForms = ({ sectionTotals, formStatus, gTotal, isSubmitted, isForRevie
 
                     }
                     {!readOnly && showAddButton &&
-                        <View>
+                        <View style={{marginBottom:84}}>
                             <AddNewLineItemButton mode="contained" onPress={handleAddNewItem} labelStyle={{
                                 fontFamily: 'URBAN_BOLD'
                             }}>
