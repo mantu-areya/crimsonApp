@@ -5,7 +5,7 @@ import { Button, Card, Modal, Portal, Provider } from "react-native-paper";
 import Swipeable from 'react-native-swipeable';
 import { View, TouchableOpacity, Text, TextInput, Image, Dimensions } from 'react-native'
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
-import React from "react";
+import React, { useEffect } from "react";
 import AntDesign from "react-native-vector-icons/AntDesign"
 import { getVendorFormDetails } from "../../../services/inspections/inspections.service";
 
@@ -18,13 +18,17 @@ let requiredSubCategories = [
 ]
 
 
-export default function FormLineItem({ isSubmittedByReviewer, handleAcceptLineItem, isSubmitted, isForReviewerView, inspId, item, onRoomMeasurementValueChange, onOtherFormValueChange, isForRoomMeasurement, deleteNewItem, navigation, readOnly, setShowAddButton, handleOnSave }) {
+export default function FormLineItem({ isSubmittedByReviewer, handleAcceptLineItem, isSubmitted, isForReviewerView, inspId, item, onRoomMeasurementValueChange, onOtherFormValueChange, isForRoomMeasurement, deleteNewItem, navigation, readOnly, setShowAddButton, handleOnSave,setIsEditModalClosed }) {
   const [overlayVisible, setOverlayVisible] = React.useState(false)
 
   const handleDelGest = (Id, inspId, UniqueKey) => {
     handleDelete(Id, inspId, UniqueKey);
     swipeableRef.current.recenter();
   }
+
+  useEffect(()=>{
+    setIsEditModalClosed(overlayVisible)
+  },[overlayVisible])
 
 
   const rightButtons = [
@@ -176,7 +180,7 @@ export default function FormLineItem({ isSubmittedByReviewer, handleAcceptLineIt
 
   if (isForReviewerView) {
     return (
-      <ContractorViewLineItem {...{ inspId, isSubmittedByReviewer, handleAcceptLineItem, item, onOtherFormValueChange }} />
+      <ContractorViewLineItem {...{ inspId, isSubmittedByReviewer, handleAcceptLineItem, item, onOtherFormValueChange,setIsEditModalClosed }} />
     )
 
   }
@@ -370,7 +374,7 @@ function SubmittedFormLineItem({ status, title, rate, quantity, total, notes, ad
   )
 }
 
-function ContractorViewLineItem({ inspId, isSubmittedByReviewer, handleAcceptLineItem, item, onOtherFormValueChange }) {
+function ContractorViewLineItem({ inspId, isSubmittedByReviewer, handleAcceptLineItem, item, onOtherFormValueChange,setIsEditModalClosed }) {
 
   const {
     UniqueKey,
@@ -420,6 +424,10 @@ function ContractorViewLineItem({ inspId, isSubmittedByReviewer, handleAcceptLin
 
   const showModal = () => setVisible(true);
   const hideModal = () => setVisible(false);
+
+  useEffect(()=>{
+    setIsEditModalClosed(visible)
+  },[visible])
 
   function acceptLineItem() {
     setSelectedStatus("Approved");

@@ -169,7 +169,8 @@ export const VendorFormContextProvider = ({ children }) => {
         contextImages,
         addNewItem,
         deleteNewItem,
-        deletedLineItems
+        deletedLineItems,
+        refreshVfData
       }}
     >
       {children}
