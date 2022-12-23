@@ -67,11 +67,26 @@ export const VendorFormContextProvider = ({ children }) => {
     // img && vfData && setVendorFormDetails({...vendorFormDetails,[inspId]: vfData.length > 0 ? vfData : "NA"})
 
   }
+
+  const updateModifiedLineItemToSf = (modifiedrecord,inspId,submitStatus=false,role="Contractor") =>{
+    console.log(modifiedrecord,"mdfrc");
+    NetInfo.fetch().then(networkState => {
+      if (networkState.isConnected) {
+        vendorFormDetails[inspId] && updateSfVendorFormDetails([modifiedrecord], inspId,submitStatus,role).then(data=>{
+          return refreshVfData(inspId)
+        }).catch(error=>{
+          console.log("eroor in updateModifiedLineItemToSf ");
+        })
+      }
+      return
+    })
+  }
+
   const addNewItem = (newData, inspId) => {
     let newVfDataArray = vendorFormDetails[inspId]
     newVfDataArray.push(newData[0])
     setVendorFormDetails({ ...vendorFormDetails, [inspId]: newVfDataArray })
-    updateToSF(inspId)
+    updateModifiedLineItemToSf(newData[0],inspId)
   }
 
   const deleteNewItem = (dvdId, inspId, UniqueKey) => {
@@ -170,7 +185,8 @@ export const VendorFormContextProvider = ({ children }) => {
         addNewItem,
         deleteNewItem,
         deletedLineItems,
-        refreshVfData
+        refreshVfData,
+        updateModifiedLineItemToSf
       }}
     >
       {children}

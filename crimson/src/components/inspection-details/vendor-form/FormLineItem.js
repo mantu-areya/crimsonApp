@@ -381,11 +381,12 @@ function ContractorViewLineItem({ inspId, isSubmittedByReviewer, handleAcceptLin
     Adj_Quantity,
     Adj_Rate,
     Owner_Clarification,
+    Approved_Amount,
     Id: id,
     Matrix_Price: title,
     Rate: rate,
     Quantity: quantity,
-    Total: total
+    Total: total,
   } = item
 
   //  * GET LINE ITEM IMAGES 
@@ -572,7 +573,7 @@ function ContractorViewLineItem({ inspId, isSubmittedByReviewer, handleAcceptLin
           <View style={{ flex: 1, padding: 4 }}>
             <StyledOverlayInputLabel>ADJ TOTAL</StyledOverlayInputLabel>
             <TextInput
-              value={`${getCurrencyFormattedValue(total)}` ?? 0}
+              value={`${getCurrencyFormattedValue(Approved_Amount)}` ?? 0}
               editable={false}
               style={{ borderRadius: 4, fontFamily: 'URBAN_MEDIUM', fontSize: 20, color: "#000" }}
             />
