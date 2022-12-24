@@ -149,8 +149,9 @@ const OtherForms = ({ sectionTotals, formStatus, gTotal, isSubmitted, isForRevie
     // }, [currentForm])
 
 
+                //removing this code will crash app in device do not remove till we get other approach
     React.useEffect(() => {
-        isFocused == false && updateToSf(inspectionData.Id)
+        // isFocused == false && updateToSf(inspectionData.Id)
     }, [isFocused])
 
     const menuItems = [
@@ -389,10 +390,10 @@ const OtherForms = ({ sectionTotals, formStatus, gTotal, isSubmitted, isForRevie
         setDatalist(currentFormData.data);
     }, [currentFormData.data])
 
-    React.useEffect(() => {
-        updateToSf(inspectionData.Id)
-
-    }, [NewItemAdded])
+  //code commented for Sync issue
+    // React.useEffect(() => {
+    // updateToSf(inspectionData.Id)
+    // }, [NewItemAdded])
 
     function handleAddNewItem() {
         console.log("Adding New Item to", currentForm);
@@ -412,7 +413,8 @@ const OtherForms = ({ sectionTotals, formStatus, gTotal, isSubmitted, isForRevie
     function handleOnFormChange(title) {
         console.log("FORM CHANGE TO: " + title);
         setCurrentForm(title);
-        updateToSf(inspectionData.Id)
+                    //code commented for Sync issue
+        // updateToSf(inspectionData.Id)
         setSearchQuery("")
     }
 
@@ -426,7 +428,8 @@ const OtherForms = ({ sectionTotals, formStatus, gTotal, isSubmitted, isForRevie
         });
         setDatalist(updatedData);
         updateVfContect(updatedData, "OTHRFM", inspectionData.Id);
-        updateToSf(inspectionData.Id, false);
+                    //code commented for Sync issue
+        // updateToSf(inspectionData.Id, false);
     }
 
     function getPendingApprovalCount() {
