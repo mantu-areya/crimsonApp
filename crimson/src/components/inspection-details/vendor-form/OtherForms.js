@@ -27,7 +27,7 @@ const OtherForms = ({ sectionTotals, formStatus, gTotal, isSubmitted, isForRevie
     let [isEditModalClosed, setIsEditModalClosed] = React.useState(false)
     const [sequence, setSequence] = React.useState();
 
-    const { vendorFormDetails, updateToSf, deleteNewItem,refreshVfData } = React.useContext(VendorFormContext);
+    const { vendorFormDetails, updateToSf, deleteNewItem,refreshVfData,updateModifiedLineItemToSf } = React.useContext(VendorFormContext);
 
 
     const isFocused = useIsFocused();
@@ -403,10 +403,11 @@ const OtherForms = ({ sectionTotals, formStatus, gTotal, isSubmitted, isForRevie
         onOtherFormValueChange(null, "newItem");
     }
 
-    function handleOnSave(isForRoomMeasurement = false) {
+    function handleOnSave(isForRoomMeasurement = false,modifiedLineItem) {
         let formType = isForRoomMeasurement ? "RM" : "OTHRFM";
         console.log("Updating VF Context", formType);
         updateVfContect(dataList, formType, inspectionData.Id);
+        modifiedLineItem && updateModifiedLineItemToSf(modifiedLineItem,inspectionData.Id)
     }
 
 
@@ -418,7 +419,7 @@ const OtherForms = ({ sectionTotals, formStatus, gTotal, isSubmitted, isForRevie
         setSearchQuery("")
     }
 
-    function handleAcceptLineItem(lineItemId, status) {
+    function handleAcceptLineItem(lineItemId, status,modifiedItem) {
         console.log("CHNAGING ITEM: " + lineItemId);
         let updatedData = dataList.map((data) => {
             if (data.Id === lineItemId) {
@@ -428,6 +429,7 @@ const OtherForms = ({ sectionTotals, formStatus, gTotal, isSubmitted, isForRevie
         });
         setDatalist(updatedData);
         updateVfContect(updatedData, "OTHRFM", inspectionData.Id);
+        modifiedItem && updateModifiedLineItemToSf(modifiedItem,inspectionData.Id,false,"Reviewer")
                     //code commented for Sync issue
         // updateToSf(inspectionData.Id, false);
     }

@@ -164,7 +164,7 @@ export default function FormLineItem({ isSubmittedByReviewer, handleAcceptLineIt
           {!readOnly &&
             <Button
               onPress={() => {
-                handleOnSave(true);
+                item && handleOnSave(true,item);
                 setOverlayVisible(false);
 
               }} mode="contained">
@@ -292,7 +292,7 @@ export default function FormLineItem({ isSubmittedByReviewer, handleAcceptLineIt
         </View>
 
         {!readOnly &&
-          <StyledSaveButton onPress={() => { handleOnSave(); setOverlayVisible(false) }} mode="contained">
+          <StyledSaveButton onPress={() => { item && handleOnSave(false,item); setOverlayVisible(false) }} mode="contained">
             <Text style={{ color: 'white', fontWeight: 'bold', fontFamily: "URBAN_BOLD", fontSize: 18 }}>
               Save
             </Text>
@@ -432,7 +432,7 @@ function ContractorViewLineItem({ inspId, isSubmittedByReviewer, handleAcceptLin
 
   function acceptLineItem() {
     setSelectedStatus("Approved");
-    handleAcceptLineItem(id, "Approved");
+    item && handleAcceptLineItem(id, "Approved",item);
   }
 
   function reviewLineItem() {
@@ -441,12 +441,12 @@ function ContractorViewLineItem({ inspId, isSubmittedByReviewer, handleAcceptLin
 
   function deleteLineItem() {
     setSelectedStatus("Declined");
-    handleAcceptLineItem(id, "Declined");
+    item && handleAcceptLineItem(id, "Declined",item);
   }
 
   function handleApproveAsNoted() {
     setSelectedStatus("Approved as Noted");
-    handleAcceptLineItem(id, "Approved as Noted");
+    item && handleAcceptLineItem(id, "Approved as Noted",item);
     hideModal();
   }
 
