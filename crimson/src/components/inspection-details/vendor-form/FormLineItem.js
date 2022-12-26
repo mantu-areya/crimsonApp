@@ -387,6 +387,7 @@ function ContractorViewLineItem({ inspId, isSubmittedByReviewer, handleAcceptLin
     Rate: rate,
     Quantity: quantity,
     Total: total,
+    Approval_Status
   } = item
 
   //  * GET LINE ITEM IMAGES 
@@ -450,6 +451,7 @@ function ContractorViewLineItem({ inspId, isSubmittedByReviewer, handleAcceptLin
     hideModal();
   }
 
+  //remove below function after verification
   function getGreyShade(status, orgColor) {
     if (selectedStatus === status && isSubmittedByReviewer) {
       return "grey"
@@ -462,7 +464,7 @@ function ContractorViewLineItem({ inspId, isSubmittedByReviewer, handleAcceptLin
     }
     return orgColor;
   }
-
+//remove code after verification
   function isDisabled(status) {
     return isSubmittedByReviewer || selectedStatus === status;
   }
@@ -484,24 +486,24 @@ function ContractorViewLineItem({ inspId, isSubmittedByReviewer, handleAcceptLin
           <View style={{ flex: .6, flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
             <StyledContractorButton
               labelStyle={{ fontSize: 16, fontFamily: 'URBAN_BOLD' }}
-              disabled={isDisabled("Approved")}
-              backgroundColor={getGreyShade("Approved", "#7CDD9B")}
+              disabled={Approval_Status==="Approved"}
+              backgroundColor={Approval_Status==="Approved" ?"grey":"#7CDD9B"}
               mode="contained"
               onPress={() => acceptLineItem()}>
               A
             </StyledContractorButton>
             <StyledContractorButton
               labelStyle={{ fontSize: 16, fontFamily: 'URBAN_BOLD' }}
-              disabled={isDisabled("Approved as Noted")}
-              backgroundColor={getGreyShade("Approved as Noted", "#3983EF")}
+              disabled={Approval_Status==="Approved as Noted"}
+              backgroundColor={Approval_Status==="Approved as Noted" ?"grey": "#3983EF"}
               mode="contained"
               onPress={() => reviewLineItem()}>
               R
             </StyledContractorButton>
             <StyledContractorButton
               labelStyle={{ fontSize: 16, fontFamily: 'URBAN_BOLD' }}
-              disabled={isDisabled("Declined")}
-              backgroundColor={getGreyShade("Declined", "#E02E2E")}
+              disabled={Approval_Status==="Declined"}
+              backgroundColor={Approval_Status==="Declined" ?"grey":"#E02E2E"}
               mode="contained"
               onPress={() => deleteLineItem()}>
               D
