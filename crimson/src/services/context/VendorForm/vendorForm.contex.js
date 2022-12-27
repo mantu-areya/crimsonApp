@@ -86,7 +86,11 @@ export const VendorFormContextProvider = ({ children }) => {
     let newVfDataArray = vendorFormDetails[inspId]
     newVfDataArray.push(newData[0])
     setVendorFormDetails({ ...vendorFormDetails, [inspId]: newVfDataArray })
-    updateModifiedLineItemToSf(newData[0],inspId)
+    updateSfVendorFormDetails([newData[0]], inspId,submitStatus=false,role="Contractor").then(data=>{
+          return
+        }).catch(error=>{
+          console.log("eroor in updateModifiedLineItemToSf ");
+        })
   }
 
   const deleteNewItem = (dvdId, inspId, UniqueKey) => {

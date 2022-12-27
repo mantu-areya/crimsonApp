@@ -188,6 +188,7 @@ export default function FormLineItem({ isSubmittedByReviewer, handleAcceptLineIt
 
   return (
     <>
+      {item?.Matrix_Price && item?.Matrix_Price.length >0 &&  
       <Swipeable onRef={(ref) => swipeableRef.current = ref} rightButtons={Sub_Category_Keys.includes(item?.Sub_Category) ? rightButtons : null}>
         <LineItemWrapper onPress={() => setOverlayVisible(true)} >
           <View style={{ flex: 1 }}>
@@ -213,6 +214,7 @@ export default function FormLineItem({ isSubmittedByReviewer, handleAcceptLineIt
 
         </LineItemWrapper>
       </Swipeable>
+      }
       <Overlay visible={overlayVisible} onClose={() => setOverlayVisible(false)} >
         <Ionicons style={{ marginLeft: "auto" }} onPress={() => setOverlayVisible(false)} name="close" size={24} />
         {

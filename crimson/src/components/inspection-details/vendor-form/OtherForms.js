@@ -96,7 +96,7 @@ const OtherForms = ({ sectionTotals, formStatus, gTotal, isSubmitted, isForRevie
         netData.isConnected && refreshVfData(inspectionData.Id)
         return
         })
-      }, 6000);
+      }, 20000);
     }
     else {
       clearInterval(refreshVfDataOnInterval);
