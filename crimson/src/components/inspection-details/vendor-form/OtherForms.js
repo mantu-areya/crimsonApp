@@ -582,7 +582,7 @@ const OtherForms = ({ sectionTotals, formStatus, gTotal, isSubmitted, isForRevie
                                         return item?.Matrix_Price?.includes(searchQuery);
                                     }).filter(item => item.Approval_Status === "Approved" || item.Approval_Status === "Approved as Noted").map((item, i) =>
                                         <FormLineItem key={item?.Id}
-                                            {...{ isSubmitted, isForReviewerView, item, inspId: inspectionData.Id, onRoomMeasurementValueChange, onOtherFormValueChange, navigation, readOnly, setShowAddButton, handleOnSave }} x
+                                            {...{ isSubmitted, isForReviewerView, item, inspId: inspectionData.Id, onRoomMeasurementValueChange, onOtherFormValueChange, navigation, readOnly, setShowAddButton, handleOnSave,setIsEditModalClosed }} x
                                             isForRoomMeasurement={currentFormData.title === "Room Measurements"} />)
                                 }
                             </ScrollView> :
