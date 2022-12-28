@@ -474,6 +474,7 @@ function ContractorViewLineItem({ inspId, isSubmittedByReviewer, handleAcceptLin
 
   return (
     <>
+      {title && title.length >0 &&  
       <Card style={{ padding: 16, backgroundColor: getBackgroundColor(), borderBottomWidth: 2, borderColor: '#EEBC7B' }}>
         <LineItemHeading>{title}</LineItemHeading>
         {/* <LineItemHeading>{item.Approval_Status}</LineItemHeading> */}
@@ -513,6 +514,7 @@ function ContractorViewLineItem({ inspId, isSubmittedByReviewer, handleAcceptLin
           </View>
         </View>
       </Card>
+      }
       <Overlay childrenWrapperStyle={{ padding: 18 }} containerStyle={{ backgroundColor: '#dbdad960' }} visible={visible} onClose={() => setVisible(false)} closeOnTouchOutside >
         <Ionicons onPress={() => hideModal()} name="close" size={24} style={{ marginLeft: "auto" }} />
         <GalleryWrapper>
