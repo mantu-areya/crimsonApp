@@ -7,7 +7,8 @@
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web",
-    "eject": "expo eject"
+    "eject": "expo eject",
+    "build-apk":"eas build -p android --profile preview"
   },
   "dependencies": {
     "@expo-google-fonts/lato": "^0.2.2",
@@ -48,13 +49,8 @@
     "react-content-loader": "^6.2.0",
     "react-dom": "17.0.2",
     "react-native": "0.68.2",
-    "react-native-background-job": "^2.3.1",
-    "react-native-background-task": "^0.2.1",
-    "react-native-camera": "^4.2.1",
-    "react-native-carousel-view": "^0.5.1",
     "react-native-check-box": "^2.1.7",
     "react-native-collapsible": "^1.6.0",
-    "react-native-dropdownalert": "^4.5.1",
     "react-native-fs": "^2.20.0",
     "react-native-gesture-handler": "~2.2.1",
     "react-native-get-random-values": "^1.8.0",
@@ -65,7 +61,6 @@
     "react-native-maps": "^1.3.2",
     "react-native-modal-overlay": "^1.3.1",
     "react-native-numeric-input": "^1.9.1",
-    "react-native-orientation": "^3.1.3",
     "react-native-otp-textinput": "^0.0.9",
     "react-native-paper": "^4.12.1",
     "react-native-profile-picture": "^1.0.0",
