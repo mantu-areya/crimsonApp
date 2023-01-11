@@ -1,13 +1,17 @@
 import styled from "styled-components/native";
 import Overlay from 'react-native-modal-overlay';
 import Ionicons from "react-native-vector-icons/Ionicons";
-import { Button, Card, Modal, Portal, Provider } from "react-native-paper";
+import { Button, Card, Portal, Provider } from "react-native-paper";
 import Swipeable from 'react-native-swipeable';
-import { View, TouchableOpacity, Text, TextInput, Image, Dimensions } from 'react-native'
+import { View, TouchableOpacity, Modal, Text, TextInput, Image, Dimensions } from 'react-native'
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
-import React, { useEffect } from "react";
-import AntDesign from "react-native-vector-icons/AntDesign"
+import React from "react";
 import { getVendorFormDetails } from "../../../services/inspections/inspections.service";
+import ComposedGestureWrapper from "../../animated/ComposedGestureWrapper";
+import Animated, { interpolateColor, runOnJS, useAnimatedGestureHandler, useAnimatedStyle, useDerivedValue, useSharedValue, withSpring } from "react-native-reanimated";
+import { showMessage } from "react-native-flash-message";
+import LottieView from 'lottie-react-native';
+import { Gesture } from "react-native-gesture-handler";
 
 
 let requiredSubCategories = [
@@ -77,6 +81,153 @@ export default function FormLineItem({ isSubmittedByReviewer, handleAcceptLineIt
     total = getFormatedRowValues(item.Room_Total);
 
 
+    const animation = React.useRef(null);
+
+    React.useEffect(() => {
+      animation.current?.reset();
+      animation.current?.play();
+    }, []);
+
+
+    const offset = useSharedValue({ x: 0 });
+    const start = useSharedValue({ x: 0 });
+
+    const [show, setShow] = React.useState(false);
+    const [showModal, setShowModal] = React.useState(false);
+
+    const handleLongPressState = (state) => {
+      setShow(state);
+    }
+
+
+    const longPressGesture = Gesture.LongPress()
+      .onEnd(() => {
+        // console.log("LP");
+        runOnJS(handleLongPressState)(true)
+      })
+
+
+
+    const dragGesture = Gesture.Pan()
+      .averageTouches(true)
+      .onUpdate((e) => {
+        offset.value = {
+          x: e.translationX + start.value.x,
+        };
+      })
+      .onEnd(() => {
+        start.value = {
+          x: offset.value.x,
+        };
+      });
+
+    const animatedStyles = useAnimatedStyle(() => {
+      return {
+        transform: [
+          { translateX: offset.value.x },
+        ],
+      };
+    });
+
+
+    const obj = useDerivedValue(() => {
+      if (offset.value.x > 0) {
+        return {
+          color: "green",
+          limit: 180
+        }
+      }
+      if (offset.value.x < 0) {
+        return {
+          color: "red",
+          limit: -180
+        }
+      }
+    }, [offset.value.x])
+
+    const animatedStyleforBackground = useAnimatedStyle(() => {
+
+      let bColor = "#c4c4c490";
+
+      if (obj.value) {
+        bColor = interpolateColor(offset.value.x, [0, obj.value.limit], ["grey", obj.value.color])
+      }
+
+      return {
+        backgroundColor: bColor,
+      }
+    });
+
+
+    const handleAlert = (v) => {
+      if (v > 160) {
+        setOverlayVisible(false);
+
+        showMessage({
+          message: "Saved",
+          type: "success",
+        });
+        offset.value = {
+          x: 0
+        }
+        start.value = {
+          x: 0
+        }
+        setShow(false)
+        console.log({ temp })  // * Call SAVE TO CONTEXT FUNCTION
+      }
+      if (v < -140 && v > -160) {
+        setOverlayVisible(false);
+        showMessage({
+          message: "Cancelled",
+          type: "default",
+        });
+        offset.value = {
+          x: 0
+        }
+        start.value = {
+          x: 0
+        }
+        setShow(false)
+        setTemp({
+          Sub_Category: item.Sub_Category,
+          Room_Length: length,
+          Room_Width: width,
+          Room_Misc_SF: misc
+        })
+      }
+    }
+
+    useDerivedValue(() => {
+      if (offset.value.x > 160 || (offset.value.x < 0 && offset.value.x > -160)) {
+        runOnJS(handleAlert)(offset.value.x)
+      }
+
+    }, [offset.value.x])
+
+
+
+    const composed = Gesture.Simultaneous(longPressGesture, dragGesture);
+
+    const [temp, setTemp] = React.useState({
+      Sub_Category: item.Sub_Category,
+      Room_Length: length,
+      Room_Width: width,
+      Room_Misc_SF: misc
+    })
+
+    const handleTempValueChange = (key, value) => {
+      console.log({ key, value });
+      setTemp(prev => {
+        return {
+          ...prev,
+          [key]: value
+        }
+      })
+    }
+
+
+
 
     return (
       <>
@@ -105,7 +256,7 @@ export default function FormLineItem({ isSubmittedByReviewer, handleAcceptLineIt
             </View>
           </LineItemWrapper>
         </Swipeable>
-        <Overlay visible={overlayVisible} onClose={() => setOverlayVisible(false)}  >
+        {/* <Overlay visible={overlayVisible} onClose={() => setOverlayVisible(false)}  >
           <Ionicons style={{ marginLeft: "auto" }} onPress={() => setOverlayVisible(false)} name="close" size={24} />
           {
             (Sub_Category_List.includes(item.Sub_Category) || readOnly)
@@ -171,7 +322,118 @@ export default function FormLineItem({ isSubmittedByReviewer, handleAcceptLineIt
               Save
             </Button>
           }
-        </Overlay>
+        </Overlay> */}
+        <Modal transparent visible={overlayVisible} onDismiss={() => setOverlayVisible(false)}>
+          <ComposedGestureWrapper gesture={composed}>
+            <Animated.View style={{ flex: 1 }}>
+              <Animated.View style={[{ backgroundColor: "white", height: "100%", justifyContent: 'center', alignItems: 'center', padding: 16 }, animatedStyleforBackground]}>
+                {
+                  show &&
+                  <Animated.View style={{ position: 'absolute', bottom: 100, width: "100%", paddingHorizontal: 12 }}>
+                    <Animated.View style={{ marginLeft: "auto", justifyContent: 'center', alignItems: 'center', }}>
+                      <Text style={{ color: "#8477EB", fontFamily: "URBAN_BOLD", fontSize: 20 }}>Swipe right to save</Text>
+                      <LottieView
+                        autoPlay
+                        ref={animation}
+                        style={{
+                          width: 60,
+                          height: 60,
+                          backgroundColor: 'transparent',
+                        }}
+                        source={require('../../../../assets/animations/swipe-right.json')}
+                      />
+                    </Animated.View>
+                    <Animated.View style={{ marginRight: "auto", justifyContent: 'center', alignItems: 'center' }}>
+                      <Text style={{ color: "#8477EB", fontFamily: "URBAN_BOLD", fontSize: 20 }}>Swipe left to Cancel</Text>
+                      <LottieView
+                        autoPlay
+                        ref={animation}
+                        style={{
+                          width: 60,
+                          height: 60,
+                          backgroundColor: 'transparent',
+                        }}
+                        source={require('../../../../assets/animations/swipe-left.json')}
+                      />
+                    </Animated.View>
+                  </Animated.View>
+                }
+                <Animated.View style={[{ width: "100%", backgroundColor: "white", padding: 16, borderRadius: 8 }, animatedStyles]}>
+                  {
+                    (Sub_Category_List.includes(item.Sub_Category) || readOnly)
+                      ?
+                      <StyledText>{item.Sub_Category}</StyledText>
+                      :
+                      <StyledTextInput
+                        // onChangeText={val => onRoomMeasurementValueChange((val), "Sub_Category", item.UniqueKey)}
+                        // value={`${item.Sub_Category}`}
+                        onChangeText={val => handleTempValueChange("Sub_Category", val)}
+                        value={`${temp.Sub_Category}`}
+                      />
+                  }
+                  <View style={[{ flexDirection: 'row' }]}>
+                    <CustomFormInput
+                      label="Length"
+                      placeholder="Length"
+                      // onChangeText={val => {
+                      //   if (val === "") { // * for negative numbers
+                      //     return onRoomMeasurementValueChange(0, "Room_Length", item.UniqueKey)
+                      //   }
+                      //   onRoomMeasurementValueChange((val), "Room_Length", item.UniqueKey)
+                      // }}
+                      readOnly={readOnly}
+                      // value={length ?? 0}
+                      onChangeText={val => handleTempValueChange("Room_Length", val)}
+                      value={`${temp.Room_Length}`}
+
+                    />
+
+                    <CustomFormInput
+                      label="Width"
+                      placeholder="Width"
+                      // onChangeText={val => {
+                      //   if (val === "") { // * for negative numbers
+                      //     return onRoomMeasurementValueChange(0, "Room_Width", item.UniqueKey)
+                      //   }
+                      //   onRoomMeasurementValueChange((val), "Room_Width", item.UniqueKey)
+                      // }}
+                      readOnly={readOnly}
+                      // value={width ?? 0}
+                      onChangeText={val => handleTempValueChange("Room_Width", val)}
+                      value={`${temp.Room_Width}`}
+                    />
+                    <CustomFormInput
+                      label="Misc"
+                      placeholder="Misc"
+                      // onChangeText={val => {
+                      //   if (val === "") { // * for negative numbers
+                      //     return onRoomMeasurementValueChange(0, "Room_Misc_SF", item.UniqueKey)
+                      //   }
+                      //   onRoomMeasurementValueChange((val), "Room_Misc_SF", item.UniqueKey)
+                      // }} 
+                      readOnly={readOnly}
+                      // value={misc ?? 0}
+                      onChangeText={val => handleTempValueChange("Room_Misc_SF", val)}
+                      value={`${temp.Room_Misc_SF}`}
+                    />
+                    <CustomFormInput
+                      label="Total SqFt"
+                      placeholder="Total"
+                      readOnly={true}
+                      value={total}
+                    />
+
+                  </View>
+                </Animated.View>
+                {/* Instructions */}
+                {/* <View style={{ position: "absolute", bottom: 120, width: "100%" }}>
+                  <Text style={{ marginLeft: "auto", padding: 8, fontSize: 16, backgroundColor: "#8477EB", color: "white", fontFamily: "URBAN_BOLD" }}>Swipe Right to Save</Text>
+                  <Text style={{ marginRight: "auto", padding: 8, fontSize: 16, backgroundColor: "#8477EB", color: "white", fontFamily: "URBAN_BOLD", marginTop: 36 }}>Swipe Left to Cancel</Text>
+                </View> */}
+              </Animated.View>
+            </Animated.View>
+          </ComposedGestureWrapper>
+        </Modal>
       </>
 
     )
@@ -668,8 +930,6 @@ color: #EEC690;
 font-family: URBAN_BOLD;
 font-size: 20px;
 `;
-
-
 
 
 
