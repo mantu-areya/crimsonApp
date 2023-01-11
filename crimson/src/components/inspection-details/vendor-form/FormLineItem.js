@@ -112,7 +112,7 @@ export default function FormLineItem({ isSubmittedByReviewer, handleAcceptLineIt
       .averageTouches(true)
       .onUpdate((e) => {
         offset.value = {
-          x: e.translationX + start.value.x,
+          x: (e.translationY + start.value.x)
         };
       })
       .onEnd(() => {
@@ -124,7 +124,7 @@ export default function FormLineItem({ isSubmittedByReviewer, handleAcceptLineIt
     const animatedStyles = useAnimatedStyle(() => {
       return {
         transform: [
-          { translateX: offset.value.x },
+          { translateY: offset.value.x },
         ],
       };
     });
@@ -133,13 +133,13 @@ export default function FormLineItem({ isSubmittedByReviewer, handleAcceptLineIt
     const obj = useDerivedValue(() => {
       if (offset.value.x > 0) {
         return {
-          color: "green",
+          color: "red",
           limit: 180
         }
       }
       if (offset.value.x < 0) {
         return {
-          color: "red",
+          color: "green",
           limit: -180
         }
       }
@@ -160,7 +160,7 @@ export default function FormLineItem({ isSubmittedByReviewer, handleAcceptLineIt
 
 
     const handleAlert = (v) => {
-      if (v > 160) {
+      if (v < -60 && v > -80) {
         setOverlayVisible(false);
 
         showMessage({
@@ -177,7 +177,8 @@ export default function FormLineItem({ isSubmittedByReviewer, handleAcceptLineIt
         // console.log({ temp })  // * Call SAVE TO CONTEXT FUNCTION
         handleOnSave(true,item);
       }
-      if (v < -140 && v > -160) {
+      
+      if (v > 80) {
         setOverlayVisible(false);
         showMessage({
           message: "Cancelled",
@@ -190,17 +191,11 @@ export default function FormLineItem({ isSubmittedByReviewer, handleAcceptLineIt
           x: 0
         }
         setShow(false)
-        setTemp({
-          Sub_Category: item.Sub_Category,
-          Room_Length: length,
-          Room_Width: width,
-          Room_Misc_SF: misc
-        })
       }
     }
 
     useDerivedValue(() => {
-      if (offset.value.x > 160 || (offset.value.x < 0 && offset.value.x > -160)) {
+      if (offset.value.x > 80 || (offset.value.x < 0 && offset.value.x > -80)) {
         runOnJS(handleAlert)(offset.value.x)
       }
 
