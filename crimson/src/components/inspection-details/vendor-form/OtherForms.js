@@ -382,7 +382,7 @@ const OtherForms = ({ sectionTotals, formStatus, gTotal, isSubmitted, isForRevie
         // console.log(newData);
         setDatalist(newData);
         setUpdatedData(currentForm, newData);
-        updateVfContect(newData, "RM", inspectionData.Id);
+        // updateVfContect(newData, "RM", inspectionData.Id);
     }
 
 

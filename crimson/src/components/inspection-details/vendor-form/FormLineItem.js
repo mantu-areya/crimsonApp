@@ -5,7 +5,7 @@ import { Button, Card, Portal, Provider } from "react-native-paper";
 import Swipeable from 'react-native-swipeable';
 import { View, TouchableOpacity, Modal, Text, TextInput, Image, Dimensions } from 'react-native'
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
-import React from "react";
+import React, {useEffect} from "react";
 import { getVendorFormDetails } from "../../../services/inspections/inspections.service";
 import ComposedGestureWrapper from "../../animated/ComposedGestureWrapper";
 import Animated, { interpolateColor, runOnJS, useAnimatedGestureHandler, useAnimatedStyle, useDerivedValue, useSharedValue, withSpring } from "react-native-reanimated";
@@ -174,7 +174,8 @@ export default function FormLineItem({ isSubmittedByReviewer, handleAcceptLineIt
           x: 0
         }
         setShow(false)
-        console.log({ temp })  // * Call SAVE TO CONTEXT FUNCTION
+        // console.log({ temp })  // * Call SAVE TO CONTEXT FUNCTION
+        handleOnSave(true,item);
       }
       if (v < -140 && v > -160) {
         setOverlayVisible(false);
@@ -256,73 +257,7 @@ export default function FormLineItem({ isSubmittedByReviewer, handleAcceptLineIt
             </View>
           </LineItemWrapper>
         </Swipeable>
-        {/* <Overlay visible={overlayVisible} onClose={() => setOverlayVisible(false)}  >
-          <Ionicons style={{ marginLeft: "auto" }} onPress={() => setOverlayVisible(false)} name="close" size={24} />
-          {
-            (Sub_Category_List.includes(item.Sub_Category) || readOnly)
-              ?
-              <StyledText>{item.Sub_Category}</StyledText>
-              :
-              <StyledTextInput
-                onChangeText={val => onRoomMeasurementValueChange((val), "Sub_Category", item.UniqueKey)}
-                value={`${item.Sub_Category}`}
-              />
-          }
-          <View style={{ flexDirection: 'row' }}>
-            <CustomFormInput
-              label="Length"
-              placeholder="Length"
-              onChangeText={val => {
-                if (val === "") { // * for negative numbers
-                  return onRoomMeasurementValueChange(0, "Room_Length", item.UniqueKey)
-                }
-                onRoomMeasurementValueChange((val), "Room_Length", item.UniqueKey)
-              }}
-              readOnly={readOnly}
-              value={length ?? 0}
-            />
-
-            <CustomFormInput
-              label="Width"
-              placeholder="Width"
-              onChangeText={val => {
-                if (val === "") { // * for negative numbers
-                  return onRoomMeasurementValueChange(0, "Room_Width", item.UniqueKey)
-                }
-                onRoomMeasurementValueChange((val), "Room_Width", item.UniqueKey)
-              }}
-              readOnly={readOnly}
-              value={width ?? 0}
-            />
-            <CustomFormInput
-              label="Misc"
-              placeholder="Misc"
-              onChangeText={val => {
-                if (val === "") { // * for negative numbers
-                  return onRoomMeasurementValueChange(0, "Room_Misc_SF", item.UniqueKey)
-                }
-                onRoomMeasurementValueChange((val), "Room_Misc_SF", item.UniqueKey)
-              }} readOnly={readOnly}
-              value={misc ?? 0}
-            />
-            <CustomFormInput
-              label="Total SqFt"
-              placeholder="Total"
-              readOnly={true}
-              value={total}
-            />
-          </View>
-          {!readOnly &&
-            <Button
-              onPress={() => {
-                item && handleOnSave(true,item);
-                setOverlayVisible(false);
-
-              }} mode="contained">
-              Save
-            </Button>
-          }
-        </Overlay> */}
+      
         <Modal transparent visible={overlayVisible} onDismiss={() => setOverlayVisible(false)}>
           <ComposedGestureWrapper gesture={composed}>
             <Animated.View style={{ flex: 1 }}>
@@ -365,56 +300,56 @@ export default function FormLineItem({ isSubmittedByReviewer, handleAcceptLineIt
                       <StyledText>{item.Sub_Category}</StyledText>
                       :
                       <StyledTextInput
-                        // onChangeText={val => onRoomMeasurementValueChange((val), "Sub_Category", item.UniqueKey)}
-                        // value={`${item.Sub_Category}`}
-                        onChangeText={val => handleTempValueChange("Sub_Category", val)}
-                        value={`${temp.Sub_Category}`}
+                        onChangeText={val => onRoomMeasurementValueChange((val), "Sub_Category", item.UniqueKey)}
+                        value={`${item.Sub_Category}`}
+                        // onChangeText={val => handleTempValueChange("Sub_Category", val)}
+                        // value={`${temp.Sub_Category}`}
                       />
                   }
                   <View style={[{ flexDirection: 'row' }]}>
                     <CustomFormInput
                       label="Length"
                       placeholder="Length"
-                      // onChangeText={val => {
-                      //   if (val === "") { // * for negative numbers
-                      //     return onRoomMeasurementValueChange(0, "Room_Length", item.UniqueKey)
-                      //   }
-                      //   onRoomMeasurementValueChange((val), "Room_Length", item.UniqueKey)
-                      // }}
+                      onChangeText={val => {
+                        if (val === "") { // * for negative numbers
+                          return onRoomMeasurementValueChange(0, "Room_Length", item.UniqueKey)
+                        }
+                        onRoomMeasurementValueChange((val), "Room_Length", item.UniqueKey)
+                      }}
                       readOnly={readOnly}
-                      // value={length ?? 0}
-                      onChangeText={val => handleTempValueChange("Room_Length", val)}
-                      value={`${temp.Room_Length}`}
+                      value={length ?? 0}
+                      // onChangeText={val => handleTempValueChange("Room_Length", val)}
+                      // value={`${temp.Room_Length}`}
 
                     />
 
                     <CustomFormInput
                       label="Width"
                       placeholder="Width"
-                      // onChangeText={val => {
-                      //   if (val === "") { // * for negative numbers
-                      //     return onRoomMeasurementValueChange(0, "Room_Width", item.UniqueKey)
-                      //   }
-                      //   onRoomMeasurementValueChange((val), "Room_Width", item.UniqueKey)
-                      // }}
+                      onChangeText={val => {
+                        if (val === "") { // * for negative numbers
+                          return onRoomMeasurementValueChange(0, "Room_Width", item.UniqueKey)
+                        }
+                        onRoomMeasurementValueChange((val), "Room_Width", item.UniqueKey)
+                      }}
                       readOnly={readOnly}
-                      // value={width ?? 0}
-                      onChangeText={val => handleTempValueChange("Room_Width", val)}
-                      value={`${temp.Room_Width}`}
+                      value={width ?? 0}
+                      // onChangeText={val => handleTempValueChange("Room_Width", val)}
+                      // value={`${temp.Room_Width}`}
                     />
                     <CustomFormInput
                       label="Misc"
                       placeholder="Misc"
-                      // onChangeText={val => {
-                      //   if (val === "") { // * for negative numbers
-                      //     return onRoomMeasurementValueChange(0, "Room_Misc_SF", item.UniqueKey)
-                      //   }
-                      //   onRoomMeasurementValueChange((val), "Room_Misc_SF", item.UniqueKey)
-                      // }} 
+                      onChangeText={val => {
+                        if (val === "") { // * for negative numbers
+                          return onRoomMeasurementValueChange(0, "Room_Misc_SF", item.UniqueKey)
+                        }
+                        onRoomMeasurementValueChange((val), "Room_Misc_SF", item.UniqueKey)
+                      }} 
                       readOnly={readOnly}
-                      // value={misc ?? 0}
-                      onChangeText={val => handleTempValueChange("Room_Misc_SF", val)}
-                      value={`${temp.Room_Misc_SF}`}
+                      value={misc ?? 0}
+                      // onChangeText={val => handleTempValueChange("Room_Misc_SF", val)}
+                      // value={`${temp.Room_Misc_SF}`}
                     />
                     <CustomFormInput
                       label="Total SqFt"
