@@ -160,9 +160,10 @@ export default function FormLineItem({ isSubmittedByReviewer, handleAcceptLineIt
 
 
     const handleAlert = (v) => {
-      if (v < -60 && v > -80) {
+      if (v < -20 && v > -40) {
+        console.log({item});
+        item && handleOnSave(true,item);
         setOverlayVisible(false);
-
         showMessage({
           message: "Saved",
           type: "success",
@@ -175,10 +176,9 @@ export default function FormLineItem({ isSubmittedByReviewer, handleAcceptLineIt
         }
         setShow(false)
         // console.log({ temp })  // * Call SAVE TO CONTEXT FUNCTION
-        handleOnSave(true,item);
       }
       
-      if (v > 80) {
+      if (v > 40) {
         setOverlayVisible(false);
         showMessage({
           message: "Cancelled",
@@ -195,11 +195,11 @@ export default function FormLineItem({ isSubmittedByReviewer, handleAcceptLineIt
     }
 
     useDerivedValue(() => {
-      if (offset.value.x > 80 || (offset.value.x < 0 && offset.value.x > -80)) {
+      if (offset.value.x > 40 || (offset.value.x < 0 && offset.value.x > -40)) {
         runOnJS(handleAlert)(offset.value.x)
       }
 
-    }, [offset.value.x])
+    }, [offset.value.x,item])
 
 
 
