@@ -87,25 +87,25 @@ const OtherForms = ({ sectionTotals, formStatus, gTotal, isSubmitted, isForRevie
 
 
         // comment this useEffeect function while developing to avoid refresh VF loop
-  React.useEffect(() => {
-    let refreshVfDataOnInterval;
-    if (isEditModalClosed == false) {
-       refreshVfDataOnInterval = setInterval(() => {
-        NetInfo.fetch().then(netData => {
-        console.log("VF  interval  REFRESH Started");
-        netData.isConnected && refreshVfData(inspectionData.Id)
-        return
-        })
-      }, 20000);
-    }
-    else {
-      clearInterval(refreshVfDataOnInterval);
-    }
-    return () => {
-      clearInterval(refreshVfDataOnInterval);
-      console.log("Vf REFRESH STOPPED");
-    }
-  }, [isEditModalClosed])
+//   React.useEffect(() => {
+//     let refreshVfDataOnInterval;
+//     if (isEditModalClosed == false) {
+//        refreshVfDataOnInterval = setInterval(() => {
+//         NetInfo.fetch().then(netData => {
+//         console.log("VF  interval  REFRESH Started");
+//         netData.isConnected && refreshVfData(inspectionData.Id)
+//         return
+//         })
+//       }, 20000);
+//     }
+//     else {
+//       clearInterval(refreshVfDataOnInterval);
+//     }
+//     return () => {
+//       clearInterval(refreshVfDataOnInterval);
+//       console.log("Vf REFRESH STOPPED");
+//     }
+//   }, [isEditModalClosed])
 
     React.useEffect(() => {
         let contexRecord = vendorFormDetails[inspectionData.Id]

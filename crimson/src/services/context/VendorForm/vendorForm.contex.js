@@ -72,6 +72,7 @@ export const VendorFormContextProvider = ({ children }) => {
     console.log(modifiedrecord,"mdfrc");
     NetInfo.fetch().then(networkState => {
       if (networkState.isConnected) {
+        console.log({modifiedrecord});
         vendorFormDetails[inspId] && updateSfVendorFormDetails([modifiedrecord], inspId,submitStatus,role).then(data=>{
           return
         }).catch(error=>{
@@ -120,7 +121,9 @@ export const VendorFormContextProvider = ({ children }) => {
             ele['Room_Misc_SF'] = obj.Room_Misc_SF;
             ele['Room_Total'] = obj.Room_Total;
             ele['Sub_Category'] = obj.Sub_Category;
+            console.log("TEST_LOG",obj.Room_Length,obj.UniqueKey);
           }
+         
           return obj
         });
       }

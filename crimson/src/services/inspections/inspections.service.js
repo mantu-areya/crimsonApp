@@ -175,6 +175,7 @@ export const getVendorFormDetails = async (inspId) => {
 
 export const updateSfVendorFormDetails = async (data, inspId, submitStatus = false, role = "Contractor") => {
   const token = await getStoredToken();
+  console.log("DATA",data);
   console.log(inspId);
   // console.log("SUBMIT DTATA", data);
   console.log("start", "upload");
