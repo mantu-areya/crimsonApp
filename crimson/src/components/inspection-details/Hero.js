@@ -64,7 +64,7 @@ const Hero = ({totalBidSubmitted, roomMeasurementTotal,data, isSubmitted, sectio
                         </View>
                         {/* Short Summary */}
                         <ShortSummary {...{ Property_Street_Address__c, Baths__c, Bed__c, Square_Feet__c }} />
-
+                        <Image style={{height:72,width:72,position: 'absolute',bottom:16,left:16}} source={require("../../../assets/images/signed.png")} />
                     </InsideContentWrapper>
 
                 </ImageBackgroundWrapper>
