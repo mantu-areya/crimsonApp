@@ -5,7 +5,7 @@ import { Button, Card, Portal, Provider } from "react-native-paper";
 import Swipeable from 'react-native-swipeable';
 import { View, TouchableOpacity, Modal, Text, TextInput, Image, Dimensions } from 'react-native'
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
-import React, {useEffect} from "react";
+import React, { useEffect } from "react";
 import { getVendorFormDetails } from "../../../services/inspections/inspections.service";
 import ComposedGestureWrapper from "../../animated/ComposedGestureWrapper";
 import Animated, { interpolateColor, runOnJS, useAnimatedGestureHandler, useAnimatedStyle, useDerivedValue, useSharedValue, withSpring } from "react-native-reanimated";
@@ -22,7 +22,7 @@ let requiredSubCategories = [
 ]
 
 
-export default function FormLineItem({ isSubmittedByReviewer, handleAcceptLineItem, isSubmitted, isForReviewerView, inspId, item, onRoomMeasurementValueChange, onOtherFormValueChange, isForRoomMeasurement, deleteNewItem, navigation, readOnly, setShowAddButton, handleOnSave,setIsEditModalClosed }) {
+export default function FormLineItem({ refreshData, isSubmittedByReviewer, handleAcceptLineItem, isSubmitted, isForReviewerView, inspId, item, onRoomMeasurementValueChange, onOtherFormValueChange, isForRoomMeasurement, deleteNewItem, navigation, readOnly, setShowAddButton, handleOnSave, setIsEditModalClosed }) {
   const [overlayVisible, setOverlayVisible] = React.useState(false)
 
   const handleDelGest = (Id, inspId, UniqueKey) => {
@@ -30,9 +30,9 @@ export default function FormLineItem({ isSubmittedByReviewer, handleAcceptLineIt
     swipeableRef.current.recenter();
   }
 
-  useEffect(()=>{
+  useEffect(() => {
     setIsEditModalClosed(overlayVisible)
-  },[overlayVisible])
+  }, [overlayVisible])
 
 
   const rightButtons = [
@@ -111,6 +111,7 @@ export default function FormLineItem({ isSubmittedByReviewer, handleAcceptLineIt
     const dragGesture = Gesture.Pan()
       .averageTouches(true)
       .onUpdate((e) => {
+        console.log(e.translationY);
         offset.value = {
           x: (e.translationY + start.value.x)
         };
@@ -161,8 +162,7 @@ export default function FormLineItem({ isSubmittedByReviewer, handleAcceptLineIt
 
     const handleAlert = (v) => {
       if (v < -20 && v > -40) {
-        console.log({item});
-        item && handleOnSave(true,item);
+        item && handleOnSave(true, item); // * Call SAVE TO CONTEXT FUNCTION
         setOverlayVisible(false);
         showMessage({
           message: "Saved",
@@ -175,10 +175,11 @@ export default function FormLineItem({ isSubmittedByReviewer, handleAcceptLineIt
           x: 0
         }
         setShow(false)
-        // console.log({ temp })  // * Call SAVE TO CONTEXT FUNCTION
       }
-      
-      if (v > 40) {
+
+      if (offset.value.x < 80 && offset.value.x > 20) {
+        console.log("INSIDE", v);
+        refreshData(); // * Reset Old Data
         setOverlayVisible(false);
         showMessage({
           message: "Cancelled",
@@ -195,32 +196,19 @@ export default function FormLineItem({ isSubmittedByReviewer, handleAcceptLineIt
     }
 
     useDerivedValue(() => {
-      if (offset.value.x > 40 || (offset.value.x < 0 && offset.value.x > -40)) {
-        runOnJS(handleAlert)(offset.value.x)
-      }
 
-    }, [offset.value.x,item])
+      if ((offset.value.x > 20) || (offset.value.x < 0 && offset.value.x > -40)) {
+        runOnJS(handleAlert)(offset.value.x)
+      } 
+
+    }, [offset.value.x, item])
 
 
 
     const composed = Gesture.Simultaneous(longPressGesture, dragGesture);
 
-    const [temp, setTemp] = React.useState({
-      Sub_Category: item.Sub_Category,
-      Room_Length: length,
-      Room_Width: width,
-      Room_Misc_SF: misc
-    })
 
-    const handleTempValueChange = (key, value) => {
-      console.log({ key, value });
-      setTemp(prev => {
-        return {
-          ...prev,
-          [key]: value
-        }
-      })
-    }
+
 
 
 
@@ -252,17 +240,16 @@ export default function FormLineItem({ isSubmittedByReviewer, handleAcceptLineIt
             </View>
           </LineItemWrapper>
         </Swipeable>
-      
         <Modal transparent visible={overlayVisible} onDismiss={() => setOverlayVisible(false)}>
           <ComposedGestureWrapper gesture={composed}>
             <Animated.View style={{ flex: 1 }}>
               <Animated.View style={[{ backgroundColor: "white", height: "100%", justifyContent: 'center', alignItems: 'center', padding: 16 }, animatedStyleforBackground]}>
                 {
                   show &&
-                  <Animated.View style={{ position: 'absolute', bottom: 100, width: "100%", paddingHorizontal: 12 }}>
-                    <Animated.View style={{ marginLeft: "auto", justifyContent: 'center', alignItems: 'center', }}>
-                      <Text style={{ color: "#8477EB", fontFamily: "URBAN_BOLD", fontSize: 20 }}>Swipe right to save</Text>
-                      <LottieView
+                  <Animated.View style={{ position: 'absolute', bottom: 120, width: "100%", paddingHorizontal: 12 }}>
+                    <Animated.View style={{ marginLeft: "auto", justifyContent: 'center', alignItems: 'center', marginBottom: 16 }}>
+                      <Text style={{ backgroundColor: "#8477EB", padding: 8, color: "white", fontFamily: "URBAN_BOLD", fontSize: 16 }}>Swipe Up to save</Text>
+                      {/* <LottieView
                         autoPlay
                         ref={animation}
                         style={{
@@ -271,11 +258,11 @@ export default function FormLineItem({ isSubmittedByReviewer, handleAcceptLineIt
                           backgroundColor: 'transparent',
                         }}
                         source={require('../../../../assets/animations/swipe-right.json')}
-                      />
+                      /> */}
                     </Animated.View>
                     <Animated.View style={{ marginRight: "auto", justifyContent: 'center', alignItems: 'center' }}>
-                      <Text style={{ color: "#8477EB", fontFamily: "URBAN_BOLD", fontSize: 20 }}>Swipe left to Cancel</Text>
-                      <LottieView
+                      <Text style={{ backgroundColor: "#8477EB", padding: 8, color: "white", fontFamily: "URBAN_BOLD", fontSize: 16 }}>Swipe Down to Cancel</Text>
+                      {/* <LottieView
                         autoPlay
                         ref={animation}
                         style={{
@@ -284,7 +271,7 @@ export default function FormLineItem({ isSubmittedByReviewer, handleAcceptLineIt
                           backgroundColor: 'transparent',
                         }}
                         source={require('../../../../assets/animations/swipe-left.json')}
-                      />
+                      /> */}
                     </Animated.View>
                   </Animated.View>
                 }
@@ -297,8 +284,8 @@ export default function FormLineItem({ isSubmittedByReviewer, handleAcceptLineIt
                       <StyledTextInput
                         onChangeText={val => onRoomMeasurementValueChange((val), "Sub_Category", item.UniqueKey)}
                         value={`${item.Sub_Category}`}
-                        // onChangeText={val => handleTempValueChange("Sub_Category", val)}
-                        // value={`${temp.Sub_Category}`}
+                      // onChangeText={val => handleTempValueChange("Sub_Category", val)}
+                      // value={`${temp.Sub_Category}`}
                       />
                   }
                   <View style={[{ flexDirection: 'row' }]}>
@@ -313,8 +300,8 @@ export default function FormLineItem({ isSubmittedByReviewer, handleAcceptLineIt
                       }}
                       readOnly={readOnly}
                       value={length ?? 0}
-                      // onChangeText={val => handleTempValueChange("Room_Length", val)}
-                      // value={`${temp.Room_Length}`}
+                    // onChangeText={val => handleTempValueChange("Room_Length", val)}
+                    // value={`${temp.Room_Length}`}
 
                     />
 
@@ -329,8 +316,8 @@ export default function FormLineItem({ isSubmittedByReviewer, handleAcceptLineIt
                       }}
                       readOnly={readOnly}
                       value={width ?? 0}
-                      // onChangeText={val => handleTempValueChange("Room_Width", val)}
-                      // value={`${temp.Room_Width}`}
+                    // onChangeText={val => handleTempValueChange("Room_Width", val)}
+                    // value={`${temp.Room_Width}`}
                     />
                     <CustomFormInput
                       label="Misc"
@@ -340,11 +327,11 @@ export default function FormLineItem({ isSubmittedByReviewer, handleAcceptLineIt
                           return onRoomMeasurementValueChange(0, "Room_Misc_SF", item.UniqueKey)
                         }
                         onRoomMeasurementValueChange((val), "Room_Misc_SF", item.UniqueKey)
-                      }} 
+                      }}
                       readOnly={readOnly}
                       value={misc ?? 0}
-                      // onChangeText={val => handleTempValueChange("Room_Misc_SF", val)}
-                      // value={`${temp.Room_Misc_SF}`}
+                    // onChangeText={val => handleTempValueChange("Room_Misc_SF", val)}
+                    // value={`${temp.Room_Misc_SF}`}
                     />
                     <CustomFormInput
                       label="Total SqFt"
@@ -372,7 +359,7 @@ export default function FormLineItem({ isSubmittedByReviewer, handleAcceptLineIt
 
   if (isForReviewerView) {
     return (
-      <ContractorViewLineItem {...{ inspId, isSubmittedByReviewer, handleAcceptLineItem, item, onOtherFormValueChange,setIsEditModalClosed }} />
+      <ContractorViewLineItem {...{ inspId, isSubmittedByReviewer, handleAcceptLineItem, item, onOtherFormValueChange, setIsEditModalClosed }} />
     )
 
   }
@@ -380,32 +367,32 @@ export default function FormLineItem({ isSubmittedByReviewer, handleAcceptLineIt
 
   return (
     <>
-      {item?.Matrix_Price && item?.Matrix_Price.length >0 &&  
-      <Swipeable onRef={(ref) => swipeableRef.current = ref} rightButtons={Sub_Category_Keys.includes(item?.Sub_Category) ? rightButtons : null}>
-        <LineItemWrapper onPress={() => setOverlayVisible(true)} >
-          <View style={{ flex: 1 }}>
+      {item?.Matrix_Price && item?.Matrix_Price.length > 0 &&
+        <Swipeable onRef={(ref) => swipeableRef.current = ref} rightButtons={Sub_Category_Keys.includes(item?.Sub_Category) ? rightButtons : null}>
+          <LineItemWrapper onPress={() => setOverlayVisible(true)} >
+            <View style={{ flex: 1 }}>
+              {
+                <LineItemHeading>
+                  {item?.Matrix_Price}
+                </LineItemHeading>
+              }
+              <LineItemInputGroup>
+                {/* QTY */}
+                <LineItemInputText>Qty {item.Quantity}</LineItemInputText>
+                {/* RATE */}
+                <LineItemInputText >Rate {getFormattedValue("Rate", item.Rate)}</LineItemInputText>
+                {/* NOTES */}
+                <LineItemInputText >Total {getFormattedValue("Total", item.Total)}</LineItemInputText>
+              </LineItemInputGroup>
+            </View>
+            {/* Icon */}
             {
-              <LineItemHeading>
-                {item?.Matrix_Price}
-              </LineItemHeading>
+              !readOnly &&
+              <Ionicons name="camera" onPress={() => navigation.navigate("CameraScreen", { inspId: { inspId }, lineItemId: item.Id })} size={24} />
             }
-            <LineItemInputGroup>
-              {/* QTY */}
-              <LineItemInputText>Qty {item.Quantity}</LineItemInputText>
-              {/* RATE */}
-              <LineItemInputText >Rate {getFormattedValue("Rate", item.Rate)}</LineItemInputText>
-              {/* NOTES */}
-              <LineItemInputText >Total {getFormattedValue("Total", item.Total)}</LineItemInputText>
-            </LineItemInputGroup>
-          </View>
-          {/* Icon */}
-          {
-            !readOnly &&
-            <Ionicons name="camera" onPress={() => navigation.navigate("CameraScreen", { inspId: { inspId }, lineItemId: item.Id })} size={24} />
-          }
 
-        </LineItemWrapper>
-      </Swipeable>
+          </LineItemWrapper>
+        </Swipeable>
       }
       <Overlay visible={overlayVisible} onClose={() => setOverlayVisible(false)} >
         <Ionicons style={{ marginLeft: "auto" }} onPress={() => setOverlayVisible(false)} name="close" size={24} />
@@ -486,7 +473,7 @@ export default function FormLineItem({ isSubmittedByReviewer, handleAcceptLineIt
         </View>
 
         {!readOnly &&
-          <StyledSaveButton onPress={() => { item && handleOnSave(false,item); setOverlayVisible(false) }} mode="contained">
+          <StyledSaveButton onPress={() => { item && handleOnSave(false, item); setOverlayVisible(false) }} mode="contained">
             <Text style={{ color: 'white', fontWeight: 'bold', fontFamily: "URBAN_BOLD", fontSize: 18 }}>
               Save
             </Text>
@@ -568,7 +555,7 @@ function SubmittedFormLineItem({ status, title, rate, quantity, total, notes, ad
   )
 }
 
-function ContractorViewLineItem({ inspId, isSubmittedByReviewer, handleAcceptLineItem, item, onOtherFormValueChange,setIsEditModalClosed }) {
+function ContractorViewLineItem({ inspId, isSubmittedByReviewer, handleAcceptLineItem, item, onOtherFormValueChange, setIsEditModalClosed }) {
 
   const {
     UniqueKey,
@@ -621,13 +608,13 @@ function ContractorViewLineItem({ inspId, isSubmittedByReviewer, handleAcceptLin
   const showModal = () => setVisible(true);
   const hideModal = () => setVisible(false);
 
-  useEffect(()=>{
+  useEffect(() => {
     setIsEditModalClosed(visible)
-  },[visible])
+  }, [visible])
 
   function acceptLineItem() {
     setSelectedStatus("Approved");
-    item && handleAcceptLineItem(id, "Approved",item);
+    item && handleAcceptLineItem(id, "Approved", item);
   }
 
   function reviewLineItem() {
@@ -636,12 +623,12 @@ function ContractorViewLineItem({ inspId, isSubmittedByReviewer, handleAcceptLin
 
   function deleteLineItem() {
     setSelectedStatus("Declined");
-    item && handleAcceptLineItem(id, "Declined",item);
+    item && handleAcceptLineItem(id, "Declined", item);
   }
 
   function handleApproveAsNoted() {
     setSelectedStatus("Approved as Noted");
-    item && handleAcceptLineItem(id, "Approved as Noted",item);
+    item && handleAcceptLineItem(id, "Approved as Noted", item);
     hideModal();
   }
 
@@ -658,7 +645,7 @@ function ContractorViewLineItem({ inspId, isSubmittedByReviewer, handleAcceptLin
     }
     return orgColor;
   }
-//remove code after verification
+  //remove code after verification
   function isDisabled(status) {
     return isSubmittedByReviewer || selectedStatus === status;
   }
@@ -666,46 +653,46 @@ function ContractorViewLineItem({ inspId, isSubmittedByReviewer, handleAcceptLin
 
   return (
     <>
-      {title && title.length >0 &&  
-      <Card style={{ padding: 16, backgroundColor: getBackgroundColor(), borderBottomWidth: 2, borderColor: '#EEBC7B' }}>
-        <LineItemHeading>{title}</LineItemHeading>
-        {/* <LineItemHeading>{item.Approval_Status}</LineItemHeading> */}
-        <LineItemHeading>Scope Notes : {item.Scope_Notes}</LineItemHeading>
-        <View style={{ flexDirection: 'row' }}>
-          {/* Details */}
-          <View style={{ flex: .4 }}>
-            <StyledContractorText>QTY: {quantity}</StyledContractorText>
-            <StyledContractorText>RATE: {getCurrencyFormattedValue(rate)}</StyledContractorText>
-            <StyledContractorText>TOTAL: {getCurrencyFormattedValue(total)}</StyledContractorText>
+      {title && title.length > 0 &&
+        <Card style={{ padding: 16, backgroundColor: getBackgroundColor(), borderBottomWidth: 2, borderColor: '#EEBC7B' }}>
+          <LineItemHeading>{title}</LineItemHeading>
+          {/* <LineItemHeading>{item.Approval_Status}</LineItemHeading> */}
+          <LineItemHeading>Scope Notes : {item.Scope_Notes}</LineItemHeading>
+          <View style={{ flexDirection: 'row' }}>
+            {/* Details */}
+            <View style={{ flex: .4 }}>
+              <StyledContractorText>QTY: {quantity}</StyledContractorText>
+              <StyledContractorText>RATE: {getCurrencyFormattedValue(rate)}</StyledContractorText>
+              <StyledContractorText>TOTAL: {getCurrencyFormattedValue(total)}</StyledContractorText>
+            </View>
+            <View style={{ flex: .6, flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
+              <StyledContractorButton
+                labelStyle={{ fontSize: 16, fontFamily: 'URBAN_BOLD' }}
+                disabled={Approval_Status === "Approved"}
+                backgroundColor={Approval_Status === "Approved" ? "grey" : "#7CDD9B"}
+                mode="contained"
+                onPress={() => acceptLineItem()}>
+                A
+              </StyledContractorButton>
+              <StyledContractorButton
+                labelStyle={{ fontSize: 16, fontFamily: 'URBAN_BOLD' }}
+                disabled={Approval_Status === "Approved as Noted"}
+                backgroundColor={Approval_Status === "Approved as Noted" ? "grey" : "#3983EF"}
+                mode="contained"
+                onPress={() => reviewLineItem()}>
+                R
+              </StyledContractorButton>
+              <StyledContractorButton
+                labelStyle={{ fontSize: 16, fontFamily: 'URBAN_BOLD' }}
+                disabled={Approval_Status === "Declined"}
+                backgroundColor={Approval_Status === "Declined" ? "grey" : "#E02E2E"}
+                mode="contained"
+                onPress={() => deleteLineItem()}>
+                D
+              </StyledContractorButton>
+            </View>
           </View>
-          <View style={{ flex: .6, flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
-            <StyledContractorButton
-              labelStyle={{ fontSize: 16, fontFamily: 'URBAN_BOLD' }}
-              disabled={Approval_Status==="Approved"}
-              backgroundColor={Approval_Status==="Approved" ?"grey":"#7CDD9B"}
-              mode="contained"
-              onPress={() => acceptLineItem()}>
-              A
-            </StyledContractorButton>
-            <StyledContractorButton
-              labelStyle={{ fontSize: 16, fontFamily: 'URBAN_BOLD' }}
-              disabled={Approval_Status==="Approved as Noted"}
-              backgroundColor={Approval_Status==="Approved as Noted" ?"grey": "#3983EF"}
-              mode="contained"
-              onPress={() => reviewLineItem()}>
-              R
-            </StyledContractorButton>
-            <StyledContractorButton
-              labelStyle={{ fontSize: 16, fontFamily: 'URBAN_BOLD' }}
-              disabled={Approval_Status==="Declined"}
-              backgroundColor={Approval_Status==="Declined" ?"grey":"#E02E2E"}
-              mode="contained"
-              onPress={() => deleteLineItem()}>
-              D
-            </StyledContractorButton>
-          </View>
-        </View>
-      </Card>
+        </Card>
       }
       <Overlay childrenWrapperStyle={{ padding: 18 }} containerStyle={{ backgroundColor: '#dbdad960' }} visible={visible} onClose={() => setVisible(false)} closeOnTouchOutside >
         <Ionicons onPress={() => hideModal()} name="close" size={24} style={{ marginLeft: "auto" }} />
