@@ -20,6 +20,7 @@ import { useRef } from 'react'
 import { useMemo } from 'react'
 import { useCallback } from 'react'
 import BottomSheet, { BottomSheetView } from '@gorhom/bottom-sheet';
+import CoForms from '../components/inspection-details/co-forms/CoForms'
 
 
 
@@ -203,6 +204,8 @@ const InspectionDetails = ({ route, navigation }) => {
 
 
 
+
+
   return (
     <SafeAreaView style={{ flex: 1 }}>
       {
@@ -232,9 +235,7 @@ const InspectionDetails = ({ route, navigation }) => {
               {/* Forms */}
               {
                 showCoForm ?
-                  <View>
-                    <Text>CO FORMS HERE</Text>
-                  </View>
+                  <CoForms sectionTotals={sectionTotals} gTotal={gTotal} isSubmitted={isSubmitted} readOnly={readOnly} isForReviewerView={userRole === "Reviewer"} formStatus={inspectionData?.Inspection_Form_Stage__c} inspectionData={inspectionData} navigation={navigation} setVendorFormData={setVendorFormData} />
                   :
                   <OtherForms sectionTotals={sectionTotals} gTotal={gTotal} isSubmitted={isSubmitted} readOnly={readOnly} isForReviewerView={userRole === "Reviewer"} formStatus={inspectionData?.Inspection_Form_Stage__c} inspectionData={inspectionData} navigation={navigation} setVendorFormData={setVendorFormData} />
               }
@@ -256,6 +257,7 @@ const InspectionDetails = ({ route, navigation }) => {
                   padding: 16
                 }}>
                   {
+                    !showCoForm &&
                     !hasRequiredSign &&
                     <TouchableOpacity onPress={() => {
                       handleSignature();
@@ -267,15 +269,17 @@ const InspectionDetails = ({ route, navigation }) => {
 
                   <TouchableOpacity onPress={() => {
                     handleViewImages();
+                    setShowSiganturesView(false)
                     handleClosePress(); // Close Bottom Sheet
                   }}>
                     <Text style={{ fontSize: 18, marginBottom: 8 }}>View Images</Text>
                   </TouchableOpacity>
                   <TouchableOpacity onPress={() => {
-                    setShowCoForm(true);
+                    setShowCoForm(!showCoForm);
+                    setShowSiganturesView(false)
                     handleClosePress(); // Close Bottom Sheet
                   }}>
-                    <Text style={{ fontSize: 18, marginBottom: 8 }}>Show CO Forms</Text>
+                    <Text style={{ fontSize: 18, marginBottom: 8 }}>{showCoForm ? "Show Work Auth Form" : "Show CO FORMS"}</Text>
                   </TouchableOpacity>
                 </View>
               </BottomSheetView>
