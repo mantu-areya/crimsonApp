@@ -249,7 +249,7 @@ const InspectionDetails = ({ route, navigation }) => {
               snapPoints={snapPoints}
               onChange={handleSheetChange}
               enablePanDownToClose
-              animateOnMount
+              index={-1}
             >
               <BottomSheetView style={{ flex: 1, zIndex: 500 }}>
                 <View style={{
