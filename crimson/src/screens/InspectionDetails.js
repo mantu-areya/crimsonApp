@@ -1,4 +1,4 @@
-import { ScrollView, Text, View, TextInput, Modal, Image, Platform } from 'react-native'
+import { ScrollView, Text, View, TextInput, Modal, Image, Platform, TouchableOpacity } from 'react-native'
 import React from 'react'
 import { SafeAreaView } from "react-native-safe-area-context"
 import CallNow from '../components/inspection-details/CallNow'
@@ -16,6 +16,11 @@ import { ActivityIndicator, Button, } from 'react-native-paper'
 import Sign from '../features/gcs/components/workAuth/Sign.js';
 import * as ImagePicker from "expo-image-picker";
 import KeyboardSpacer from 'react-native-keyboard-spacer';
+import { useRef } from 'react'
+import { useMemo } from 'react'
+import { useCallback } from 'react'
+import BottomSheet, { BottomSheetView } from '@gorhom/bottom-sheet';
+
 
 
 
@@ -177,6 +182,26 @@ const InspectionDetails = ({ route, navigation }) => {
   // for current role if not signed show sign prompt otherwise show signed message
   // add sign to modal and provide cross button to close modal
 
+  // ref
+  const bottomSheetRef = useRef(null);
+
+  const snapPoints = useMemo(() => ["25%", "50%", "90%"], []);
+
+  // callbacks
+  const handleSheetChange = useCallback((index) => {
+    console.log("handleSheetChange", index);
+  }, []);
+  const handleSnapPress = useCallback((index) => {
+    bottomSheetRef.current?.snapToIndex(index);
+  }, []);
+
+  const handleClosePress = () => bottomSheetRef.current.close()
+
+
+  // Handle CO FORM CHANGE VIEW
+  const [showCoForm, setShowCoForm] = React.useState(false);
+
+
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
@@ -199,17 +224,63 @@ const InspectionDetails = ({ route, navigation }) => {
               </Overlay>
               {/* } */}
               {/* Hero */}
-              <Hero totalBidSubmitted={getTotalBidSubmitted()} roomMeasurementTotal={getRoomMeasurementTotal()} data={inspectionData} sectionTotals={sectionTotals} isSubmitted={isSubmitted} />
+              <Hero hasRequiredSign={hasRequiredSign} totalBidSubmitted={getTotalBidSubmitted()} roomMeasurementTotal={getRoomMeasurementTotal()} data={inspectionData} sectionTotals={sectionTotals} isSubmitted={isSubmitted} />
               {/* CTA's */}
-              <CTA hasRequiredSign={hasRequiredSign} formStatus={inspectionData?.Inspection_Form_Stage__c} role={userRole} handleOnChat={() => navigation.navigate("Chat", { inspId: inspectionData.Id, chatTitleName: userRole === "Contractor" ? inspectionData?.HHM_Field_PM__r?.Name : inspectionData.General_Contractor__r?.Name })} isReadOnly={readOnly} isForReviewerView={userRole === "Reviewer"} handleSignature={handleSignature} handleViewImages={handleViewImages} isSubmitted={isSubmitted} handleOnSubmit={handleSubmit} />
+              <CTA handleSnapPress={handleSnapPress} hasRequiredSign={hasRequiredSign} formStatus={inspectionData?.Inspection_Form_Stage__c} role={userRole} handleOnChat={() => navigation.navigate("Chat", { inspId: inspectionData.Id, chatTitleName: userRole === "Contractor" ? inspectionData?.HHM_Field_PM__r?.Name : inspectionData.General_Contractor__r?.Name })} isReadOnly={readOnly} isForReviewerView={userRole === "Reviewer"} handleSignature={handleSignature} handleViewImages={handleViewImages} isSubmitted={isSubmitted} handleOnSubmit={handleSubmit} />
               {/* Sigantures */}
               {(isSubmitted && showSiganturesView) && <Signatures navigation={navigation} inspId={inspectionData.Id} role={userRole} hasRequiredSign={hasRequiredSign} setHasRequiredSign={setHasRequiredSign} />}
               {/* Forms */}
-              <OtherForms sectionTotals={sectionTotals} gTotal={gTotal} isSubmitted={isSubmitted} readOnly={readOnly} isForReviewerView={userRole === "Reviewer"} formStatus={inspectionData?.Inspection_Form_Stage__c} inspectionData={inspectionData} navigation={navigation} setVendorFormData={setVendorFormData} />
+              {
+                showCoForm ?
+                  <View>
+                    <Text>CO FORMS HERE</Text>
+                  </View>
+                  :
+                  <OtherForms sectionTotals={sectionTotals} gTotal={gTotal} isSubmitted={isSubmitted} readOnly={readOnly} isForReviewerView={userRole === "Reviewer"} formStatus={inspectionData?.Inspection_Form_Stage__c} inspectionData={inspectionData} navigation={navigation} setVendorFormData={setVendorFormData} />
+              }
             </ScrollView>
             {Platform.OS == 'ios' && <KeyboardSpacer />}
             {/* Call Now */}
             {show && <CallNow isForReviewerView={userRole === "Reviewer"} data={inspectionData} />}
+            {/* Bottom Sheet for CTA's */}
+            <BottomSheet
+              ref={bottomSheetRef}
+              snapPoints={snapPoints}
+              onChange={handleSheetChange}
+              enablePanDownToClose
+              animateOnMount
+            >
+              <BottomSheetView style={{ flex: 1, zIndex: 500 }}>
+                <View style={{
+                  flex: 1,
+                  padding: 16
+                }}>
+                  {
+                    !hasRequiredSign &&
+                    <TouchableOpacity onPress={() => {
+                      handleSignature();
+                      handleClosePress();
+                    }}>
+                      <Text style={{ fontSize: 18, marginBottom: 8 }}>Add Signature</Text>
+                    </TouchableOpacity>
+                  }
+
+                  <TouchableOpacity onPress={() => {
+                    handleViewImages();
+                    handleClosePress(); // Close Bottom Sheet
+                  }}>
+                    <Text style={{ fontSize: 18, marginBottom: 8 }}>View Images</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity onPress={() => {
+                    setShowCoForm(true);
+                    handleClosePress(); // Close Bottom Sheet
+                  }}>
+                    <Text style={{ fontSize: 18, marginBottom: 8 }}>Show CO Forms</Text>
+                  </TouchableOpacity>
+                </View>
+              </BottomSheetView>
+
+            </BottomSheet>
           </>
 
       }

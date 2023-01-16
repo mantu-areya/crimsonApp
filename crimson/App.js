@@ -11,6 +11,7 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 import { AuthenticationContextProvider } from "./src/services/authentication/authentication.context";
 import * as firebase from "firebase";
 import { Provider } from "react-native-paper";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 const firebaseConfig = {
   apiKey: "AIzaSyCFLpOHzySZk_bngknbxy1jLOuaOZsY8pg",
@@ -44,16 +45,18 @@ export default function App() {
 
   return (
     <>
-      <ThemeProvider theme={theme}>
-        <Provider>
-          <AuthenticationContextProvider>
-            <SafeAreaProvider>
-              <Navigation />
-            </SafeAreaProvider>
-          </AuthenticationContextProvider>
-        </Provider>
-      </ThemeProvider>
-      <ExpoStatusBar style={"inverted"} backgroundColor="#2B243E" />
+      <GestureHandlerRootView style={{flex:1}} >
+        <ThemeProvider theme={theme}>
+          <Provider>
+            <AuthenticationContextProvider>
+              <SafeAreaProvider>
+                <Navigation />
+              </SafeAreaProvider>
+            </AuthenticationContextProvider>
+          </Provider>
+        </ThemeProvider>
+        <ExpoStatusBar style={"inverted"} backgroundColor="#2B243E" />
+      </GestureHandlerRootView>
     </>
   );
 }

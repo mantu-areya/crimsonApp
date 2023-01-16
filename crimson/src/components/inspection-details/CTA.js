@@ -1,10 +1,10 @@
-import React from 'react'
+import React, { useCallback, useMemo, useRef } from 'react'
 import styled from 'styled-components/native'
 import Ionicons from "react-native-vector-icons/Ionicons"
-import { Platform } from 'react-native'
+import { Platform, Text, View } from 'react-native'
 
 
-const CTA = ({ hasRequiredSign, formStatus, handleOnSubmit, role, handleOnChat, handleViewImages, handleSignature, isSubmitted }) => {
+const CTA = ({handleSnapPress, hasRequiredSign, formStatus, handleOnSubmit, role, handleOnChat, handleViewImages, handleSignature, isSubmitted }) => {
     const shadowStyle = {
         shadowColor: "#000",
         shadowOffset: {
@@ -18,6 +18,9 @@ const CTA = ({ hasRequiredSign, formStatus, handleOnSubmit, role, handleOnChat, 
     }
 
     console.log("FORM", formStatus);
+
+   
+
 
     return (
         <Wrapper>
@@ -74,33 +77,17 @@ const CTA = ({ hasRequiredSign, formStatus, handleOnSubmit, role, handleOnChat, 
 
             }
             {
-                isSubmitted && <>
-                    {
-                        hasRequiredSign ?
-                            <SubmitButtonWrapper style={[shadowStyle, {
-                                backgroundColor: "grey"
-                            }]} >
-                                <ButtonText style={{ textAlign: 'center' }} color="white">
-                                    Signed
-                                </ButtonText>
-                            </SubmitButtonWrapper>
-                            :
-                            <SubmitButtonWrapper style={shadowStyle} onPress={handleSignature}>
-                                <ButtonText style={{ textAlign: 'center' }} color="white">
-                                    Sign
-                                </ButtonText>
-                            </SubmitButtonWrapper>
-
-                    }
-                    <ChatButtonWrapper style={shadowStyle} onPress={handleViewImages}>
-                        <Ionicons name="list" size={24} color="black" />
-                        <ButtonText marginLeft={8} >
-                            View Images
-                        </ButtonText>
-                    </ChatButtonWrapper>
-                </>
+                isSubmitted &&
+                // <View style={{paddingHorizontal:16}}>
+                <SubmitButtonWrapper onPress={() => handleSnapPress(0)} style={[shadowStyle, {
+                    marginHorizontal: 32
+                }]}>
+                    <ButtonText color="white">View Options</ButtonText>
+                </SubmitButtonWrapper>
+                // </View>
             }
-        </Wrapper>
+           
+        </Wrapper >
     )
 }
 

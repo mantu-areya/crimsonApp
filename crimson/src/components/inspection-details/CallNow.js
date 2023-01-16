@@ -64,7 +64,7 @@ width: 100%;
 flex-direction: row;
 justify-content: space-between;
 align-items: center;
-z-index: 9999;
+/* z-index: 20; */
 `;
 
 const TextWrapper = styled.View``;

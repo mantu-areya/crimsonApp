@@ -14,7 +14,7 @@ import * as Linking from "expo-linking";
 
 const image = require("../../../assets/black-bg.jpg");
 
-const Hero = ({totalBidSubmitted, roomMeasurementTotal,data, isSubmitted, sectionTotals }) => {
+const Hero = ({ hasRequiredSign, totalBidSubmitted, roomMeasurementTotal, data, isSubmitted, sectionTotals }) => {
 
     const navigation = useNavigation()
     const [overlayVisible, setOverlayVisible] = React.useState(false);
@@ -64,7 +64,7 @@ const Hero = ({totalBidSubmitted, roomMeasurementTotal,data, isSubmitted, sectio
                         </View>
                         {/* Short Summary */}
                         <ShortSummary {...{ Property_Street_Address__c, Baths__c, Bed__c, Square_Feet__c }} />
-                        <Image style={{height:72,width:72,position: 'absolute',bottom:16,left:16}} source={require("../../../assets/images/signed.png")} />
+                        {hasRequiredSign && <Image style={{ height: 72, width: 72, position: 'absolute', bottom: 16, left: 16 }} source={require("../../../assets/images/signed.png")} />}
                     </InsideContentWrapper>
 
                 </ImageBackgroundWrapper>
