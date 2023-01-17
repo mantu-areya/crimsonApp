@@ -27,7 +27,7 @@ const OtherForms = ({ sectionTotals, formStatus, gTotal, isSubmitted, isForRevie
     let [isEditModalClosed, setIsEditModalClosed] = React.useState(false)
     const [sequence, setSequence] = React.useState();
 
-    const { vendorFormDetails, updateToSf, deleteNewItem,refreshVfData,updateModifiedLineItemToSf } = React.useContext(VendorFormContext);
+    const { vendorFormDetails, updateToSf, deleteNewItem, refreshVfData, updateModifiedLineItemToSf } = React.useContext(VendorFormContext);
 
 
     const isFocused = useIsFocused();
@@ -86,28 +86,28 @@ const OtherForms = ({ sectionTotals, formStatus, gTotal, isSubmitted, isForRevie
     }
 
 
-        // comment this useEffeect function while developing to avoid refresh VF loop
-  React.useEffect(() => {
-    let refreshVfDataOnInterval;
-    if (isEditModalClosed == false) {
-       refreshVfDataOnInterval = setInterval(() => {
-        NetInfo.fetch().then(netData => {
-        console.log("VF  interval  REFRESH Started");
-        netData.isConnected && refreshVfData(inspectionData.Id)
-        return
-        })
-      }, 20000);
-    }
-    else {
-      clearInterval(refreshVfDataOnInterval);
-    }
-    return () => {
-      clearInterval(refreshVfDataOnInterval);
-      console.log("Vf REFRESH STOPPED");
-    }
-  }, [isEditModalClosed])
+    // comment this useEffeect function while developing to avoid refresh VF loop
+    //   React.useEffect(() => {
+    //     let refreshVfDataOnInterval;
+    //     if (isEditModalClosed == false) {
+    //        refreshVfDataOnInterval = setInterval(() => {
+    //         NetInfo.fetch().then(netData => {
+    //         console.log("VF  interval  REFRESH Started");
+    //         netData.isConnected && refreshVfData(inspectionData.Id)
+    //         return
+    //         })
+    //       }, 20000);
+    //     }
+    //     else {
+    //       clearInterval(refreshVfDataOnInterval);
+    //     }
+    //     return () => {
+    //       clearInterval(refreshVfDataOnInterval);
+    //       console.log("Vf REFRESH STOPPED");
+    //     }
+    //   }, [isEditModalClosed])
 
-    React.useEffect(() => {
+    function refreshData() {
         let contexRecord = vendorFormDetails[inspectionData.Id]
         if (contexRecord) {
             if (contexRecord == "NA") {
@@ -120,6 +120,10 @@ const OtherForms = ({ sectionTotals, formStatus, gTotal, isSubmitted, isForRevie
                 })
             }
         }
+    }
+
+    React.useEffect(() => {
+        refreshData();
     }, [vendorFormDetails]);
 
     const [currentForm, setCurrentForm] = React.useState('Room Measurements');
@@ -128,7 +132,7 @@ const OtherForms = ({ sectionTotals, formStatus, gTotal, isSubmitted, isForRevie
 
         let toatalSF = 0;
         currentFormData.data.map(ele => {
-          toatalSF = toatalSF + ele.Total
+            toatalSF = toatalSF + ele.Total
             return toatalSF
         })
         return toatalSF.toLocaleString("en-IN", { style: "currency", currency: 'USD' })
@@ -149,7 +153,7 @@ const OtherForms = ({ sectionTotals, formStatus, gTotal, isSubmitted, isForRevie
     // }, [currentForm])
 
 
-                //removing this code will crash app in device do not remove till we get other approach
+    //removing this code will crash app in device do not remove till we get other approach
     React.useEffect(() => {
         // isFocused == false && updateToSf(inspectionData.Id)
     }, [isFocused])
@@ -249,31 +253,31 @@ const OtherForms = ({ sectionTotals, formStatus, gTotal, isSubmitted, isForRevie
             setSequence(newSequence)
             addNewItem(itemObject, inspectionData.Id)
             setNewItemAdded(NewItemAdded + 1)
-          } {
+        } {
             newState = dataList.map(obj => {
-              if (obj.UniqueKey === key) {
-                let formatedVal = ["Matrix_Price", "Sub_Category", "U_M", "Scope_Notes", "Owner_Clarification"].includes(field) ? value : parseFloat(value)
-                let newValues = { ...obj, [field]: formatedVal };
-                let newTotal, approvedAmt;
-                let oldTotal = obj?.Total;
-                let added;
-    
-                if (field === "Adj_Quantity" || field === "Adj_Rate" || field === 'Owner_Clarification') {
-                  approvedAmt = newValues && (newValues.Adj_Quantity * newValues.Adj_Rate)
-                  return { ...obj, [field]: formatedVal, ["Total"]: obj?.Total, ["Approved_Amount"]: approvedAmt };
-    
-                } else {
-                  newTotal = newValues && (newValues.Quantity * newValues.Rate)
-                  added = (oldTotal > newTotal);
-                  let diff = (oldTotal - newTotal);
-                  let newGrandTotal = added ? grandTotal + diff : grandTotal - diff;
-                  newGrandTotal && setGrandTotal(newGrandTotal);
-                  return { ...obj, [field]: formatedVal, ["Total"]: newTotal, ["Approved_Amount"]: obj?.Approved_Amount };
+                if (obj.UniqueKey === key) {
+                    let formatedVal = ["Matrix_Price", "Sub_Category", "U_M", "Scope_Notes", "Owner_Clarification"].includes(field) ? value : parseFloat(value)
+                    let newValues = { ...obj, [field]: formatedVal };
+                    let newTotal, approvedAmt;
+                    let oldTotal = obj?.Total;
+                    let added;
+
+                    if (field === "Adj_Quantity" || field === "Adj_Rate" || field === 'Owner_Clarification') {
+                        approvedAmt = newValues && (newValues.Adj_Quantity * newValues.Adj_Rate)
+                        return { ...obj, [field]: formatedVal, ["Total"]: obj?.Total, ["Approved_Amount"]: approvedAmt };
+
+                    } else {
+                        newTotal = newValues && (newValues.Quantity * newValues.Rate)
+                        added = (oldTotal > newTotal);
+                        let diff = (oldTotal - newTotal);
+                        let newGrandTotal = added ? grandTotal + diff : grandTotal - diff;
+                        newGrandTotal && setGrandTotal(newGrandTotal);
+                        return { ...obj, [field]: formatedVal, ["Total"]: newTotal, ["Approved_Amount"]: obj?.Approved_Amount };
+                    }
                 }
-              }
-              return obj;
+                return obj;
             });
-          }
+        }
         setDatalist(newState)
         setUpdatedData(currentForm, newState);
         updateVfContect(newState, "OTHRFM", inspectionData.Id);
@@ -382,7 +386,7 @@ const OtherForms = ({ sectionTotals, formStatus, gTotal, isSubmitted, isForRevie
         // console.log(newData);
         setDatalist(newData);
         setUpdatedData(currentForm, newData);
-        updateVfContect(newData, "RM", inspectionData.Id);
+        // updateVfContect(newData, "RM", inspectionData.Id);
     }
 
 
@@ -390,7 +394,7 @@ const OtherForms = ({ sectionTotals, formStatus, gTotal, isSubmitted, isForRevie
         setDatalist(currentFormData.data);
     }, [currentFormData.data])
 
-  //code commented for Sync issue
+    //code commented for Sync issue
     // React.useEffect(() => {
     // updateToSf(inspectionData.Id)
     // }, [NewItemAdded])
@@ -403,23 +407,23 @@ const OtherForms = ({ sectionTotals, formStatus, gTotal, isSubmitted, isForRevie
         onOtherFormValueChange(null, "newItem");
     }
 
-    function handleOnSave(isForRoomMeasurement = false,modifiedLineItem) {
+    function handleOnSave(isForRoomMeasurement = false, modifiedLineItem) {
         let formType = isForRoomMeasurement ? "RM" : "OTHRFM";
         console.log("Updating VF Context", formType);
         updateVfContect(dataList, formType, inspectionData.Id);
-        modifiedLineItem && updateModifiedLineItemToSf(modifiedLineItem,inspectionData.Id)
+        modifiedLineItem && updateModifiedLineItemToSf(modifiedLineItem, inspectionData.Id)
     }
 
 
     function handleOnFormChange(title) {
         console.log("FORM CHANGE TO: " + title);
         setCurrentForm(title);
-                    //code commented for Sync issue
+        //code commented for Sync issue
         // updateToSf(inspectionData.Id)
         setSearchQuery("")
     }
 
-    function handleAcceptLineItem(lineItemId, status,modifiedItem) {
+    function handleAcceptLineItem(lineItemId, status, modifiedItem) {
         console.log("CHNAGING ITEM: " + lineItemId);
         let updatedData = dataList.map((data) => {
             if (data.Id === lineItemId) {
@@ -429,8 +433,8 @@ const OtherForms = ({ sectionTotals, formStatus, gTotal, isSubmitted, isForRevie
         });
         setDatalist(updatedData);
         updateVfContect(updatedData, "OTHRFM", inspectionData.Id);
-        modifiedItem && updateModifiedLineItemToSf(modifiedItem,inspectionData.Id,false,"Reviewer")
-                    //code commented for Sync issue
+        modifiedItem && updateModifiedLineItemToSf(modifiedItem, inspectionData.Id, false, "Reviewer")
+        //code commented for Sync issue
         // updateToSf(inspectionData.Id, false);
     }
 
@@ -493,19 +497,19 @@ const OtherForms = ({ sectionTotals, formStatus, gTotal, isSubmitted, isForRevie
                     {
                         dataList.length > 0 ?
                             isForReviewerView ?
-                                <ScrollView>
+                                <ScrollView >
                                     {
                                         dataList.sort((a, b) => b.Quantity - a.Quantity).filter(item => {
                                             return item?.Sub_Category?.includes(searchQuery) || item?.Matrix_Price?.includes(searchQuery)
-                                        }).map((item, i) => <FormLineItem key={item?.Id}   {...{ isSubmittedByReviewer, handleAcceptLineItem, isForReviewerView, item, inspId: inspectionData.Id, onRoomMeasurementValueChange, onOtherFormValueChange, navigation, readOnly, setShowAddButton, handleOnSave, deleteNewItem,setIsEditModalClosed }} isForRoomMeasurement={currentFormData.title === "Room Measurements"} />)
+                                        }).map((item, i) => <FormLineItem key={item?.Id}   {...{ isSubmittedByReviewer, handleAcceptLineItem, isForReviewerView, item, inspId: inspectionData.Id, onRoomMeasurementValueChange, onOtherFormValueChange, navigation, readOnly, setShowAddButton, handleOnSave, deleteNewItem, setIsEditModalClosed }} isForRoomMeasurement={currentFormData.title === "Room Measurements"} />)
                                     }
                                 </ScrollView>
                                 :
-                                <ScrollView>
+                                <ScrollView style={{ marginBottom: currentForm === "Room Measurements" || currentForm === "General Rental Operations Scope" ? 128 : 0 }}>
                                     {
                                         dataList.filter(item => {
                                             return item?.Sub_Category?.includes(searchQuery) || item?.Matrix_Price?.includes(searchQuery)
-                                        }).map((item, i) => <FormLineItem key={item?.Id}   {...{ isSubmittedByReviewer, handleAcceptLineItem, isForReviewerView, item, inspId: inspectionData.Id, onRoomMeasurementValueChange, onOtherFormValueChange, navigation, readOnly, setShowAddButton, handleOnSave, deleteNewItem,setIsEditModalClosed }} isForRoomMeasurement={currentFormData.title === "Room Measurements"} />)
+                                        }).map((item, i) => <FormLineItem key={item?.Id}   {...{ isSubmittedByReviewer, handleAcceptLineItem, isForReviewerView, item, inspId: inspectionData.Id, onRoomMeasurementValueChange, onOtherFormValueChange, navigation, readOnly, setShowAddButton, handleOnSave, deleteNewItem, setIsEditModalClosed,refreshData }} isForRoomMeasurement={currentFormData.title === "Room Measurements"} />)
                                     }
                                 </ScrollView>
                             :
@@ -515,7 +519,7 @@ const OtherForms = ({ sectionTotals, formStatus, gTotal, isSubmitted, isForRevie
 
                     }
                     {!readOnly && showAddButton &&
-                        <View>
+                        <View style={{ marginBottom: 84 }}>
                             <AddNewLineItemButton mode="contained" onPress={handleAddNewItem} labelStyle={{
                                 fontFamily: 'URBAN_BOLD'
                             }}>
@@ -573,7 +577,7 @@ const OtherForms = ({ sectionTotals, formStatus, gTotal, isSubmitted, isForRevie
                     </View>
                     {
                         dataList.length > 0 ?
-                            <ScrollView style={{minHeight:96}}>
+                            <ScrollView style={{ minHeight: 96 }}>
                                 {
                                     [].concat(general_Rental, pools, exterior, interior, mech_Elec_Plumb).filter(item => {
                                         if (currentForm === "Room Measurements") {
@@ -582,7 +586,7 @@ const OtherForms = ({ sectionTotals, formStatus, gTotal, isSubmitted, isForRevie
                                         return item?.Matrix_Price?.includes(searchQuery);
                                     }).filter(item => item.Approval_Status === "Approved" || item.Approval_Status === "Approved as Noted").map((item, i) =>
                                         <FormLineItem key={item?.Id}
-                                            {...{ isSubmitted, isForReviewerView, item, inspId: inspectionData.Id, onRoomMeasurementValueChange, onOtherFormValueChange, navigation, readOnly, setShowAddButton, handleOnSave,setIsEditModalClosed }} x
+                                            {...{ isSubmitted, isForReviewerView, item, inspId: inspectionData.Id, onRoomMeasurementValueChange, onOtherFormValueChange, navigation, readOnly, setShowAddButton, handleOnSave, setIsEditModalClosed }} x
                                             isForRoomMeasurement={currentFormData.title === "Room Measurements"} />)
                                 }
                             </ScrollView> :

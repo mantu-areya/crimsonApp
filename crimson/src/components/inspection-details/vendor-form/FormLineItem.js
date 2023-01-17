@@ -1,13 +1,16 @@
 import styled from "styled-components/native";
 import Overlay from 'react-native-modal-overlay';
 import Ionicons from "react-native-vector-icons/Ionicons";
-import { Button, Card, Modal, Portal, Provider } from "react-native-paper";
+import { Button, Card, Portal, Provider } from "react-native-paper";
 import Swipeable from 'react-native-swipeable';
-import { View, TouchableOpacity, Text, TextInput, Image, Dimensions } from 'react-native'
+import { View, TouchableOpacity, Modal, Text, TextInput, Image, Dimensions } from 'react-native'
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import React, { useEffect } from "react";
-import AntDesign from "react-native-vector-icons/AntDesign"
 import { getVendorFormDetails } from "../../../services/inspections/inspections.service";
+import ComposedGestureWrapper from "../../animated/ComposedGestureWrapper";
+import Animated, { interpolateColor, runOnJS, useAnimatedGestureHandler, useAnimatedStyle, useDerivedValue, useSharedValue, withSpring } from "react-native-reanimated";
+import { showMessage } from "react-native-flash-message";
+import { Gesture } from "react-native-gesture-handler";
 
 
 let requiredSubCategories = [
@@ -18,7 +21,7 @@ let requiredSubCategories = [
 ]
 
 
-export default function FormLineItem({ isSubmittedByReviewer, handleAcceptLineItem, isSubmitted, isForReviewerView, inspId, item, onRoomMeasurementValueChange, onOtherFormValueChange, isForRoomMeasurement, deleteNewItem, navigation, readOnly, setShowAddButton, handleOnSave,setIsEditModalClosed }) {
+export default function FormLineItem({ refreshData, isSubmittedByReviewer, handleAcceptLineItem, isSubmitted, isForReviewerView, inspId, item, onRoomMeasurementValueChange, onOtherFormValueChange, isForRoomMeasurement, deleteNewItem, navigation, readOnly, setShowAddButton, handleOnSave, setIsEditModalClosed }) {
   const [overlayVisible, setOverlayVisible] = React.useState(false)
 
   const handleDelGest = (Id, inspId, UniqueKey) => {
@@ -26,9 +29,9 @@ export default function FormLineItem({ isSubmittedByReviewer, handleAcceptLineIt
     swipeableRef.current.recenter();
   }
 
-  useEffect(()=>{
+  useEffect(() => {
     setIsEditModalClosed(overlayVisible)
-  },[overlayVisible])
+  }, [overlayVisible])
 
 
   const rightButtons = [
@@ -77,6 +80,136 @@ export default function FormLineItem({ isSubmittedByReviewer, handleAcceptLineIt
     total = getFormatedRowValues(item.Room_Total);
 
 
+    const animation = React.useRef(null);
+
+    React.useEffect(() => {
+      animation.current?.reset();
+      animation.current?.play();
+    }, []);
+
+
+    const offset = useSharedValue({ x: 0 });
+    const start = useSharedValue({ x: 0 });
+
+    const [show, setShow] = React.useState(false);
+
+    const handleLongPressState = (state) => {
+      setShow(state);
+    }
+
+
+    const longPressGesture = Gesture.LongPress()
+      .onEnd(() => {
+        // console.log("LP");
+        runOnJS(handleLongPressState)(true)
+      })
+
+
+
+    const dragGesture = Gesture.Pan()
+      .averageTouches(true)
+      .onUpdate((e) => {
+        console.log(e.translationY);
+        offset.value = {
+          x: (e.translationY + start.value.x)
+        };
+      })
+      .onEnd(() => {
+        start.value = {
+          x: offset.value.x,
+        };
+      });
+
+    const animatedStyles = useAnimatedStyle(() => {
+      return {
+        transform: [
+          { translateY: offset.value.x },
+        ],
+      };
+    });
+
+
+    const obj = useDerivedValue(() => {
+      if (offset.value.x > 0) {
+        return {
+          color: "red",
+          limit: 180
+        }
+      }
+      if (offset.value.x < 0) {
+        return {
+          color: "green",
+          limit: -180
+        }
+      }
+    }, [offset.value.x])
+
+    const animatedStyleforBackground = useAnimatedStyle(() => {
+
+      let bColor = "#c4c4c490";
+
+      if (obj.value) {
+        bColor = interpolateColor(offset.value.x, [0, obj.value.limit], ["grey", obj.value.color])
+      }
+
+      return {
+        backgroundColor: bColor,
+      }
+    });
+
+
+    const handleAlert = () => {
+      if (offset.value.x < -20 && offset.value.x > -40) {
+        item && handleOnSave(true, item); // * Call SAVE TO CONTEXT FUNCTION
+        setOverlayVisible(false);
+        showMessage({
+          message: "Saved",
+          type: "success",
+        });
+        offset.value = {
+          x: 0
+        }
+        start.value = {
+          x: 0
+        }
+        setShow(false)
+      }
+
+      if (offset.value.x > 20) {
+        // console.log("INSIDE", v);
+        refreshData(); // * Reset Old Data
+        setOverlayVisible(false);
+        showMessage({
+          message: "Cancelled",
+          type: "default",
+        });
+        offset.value = {
+          x: 0
+        }
+        start.value = {
+          x: 0
+        }
+        setShow(false)
+      }
+    }
+
+    useDerivedValue(() => {
+
+      if ((offset.value.x > 20) || (offset.value.x < 0 && offset.value.x > -40)) {
+        runOnJS(handleAlert)(offset.value.x)
+      }
+
+    }, [offset.value.x, item])
+
+
+
+    const composed = Gesture.Simultaneous(longPressGesture, dragGesture);
+
+
+
+
+
+
 
     return (
       <>
@@ -105,73 +238,84 @@ export default function FormLineItem({ isSubmittedByReviewer, handleAcceptLineIt
             </View>
           </LineItemWrapper>
         </Swipeable>
-        <Overlay visible={overlayVisible} onClose={() => setOverlayVisible(false)}  >
-          <Ionicons style={{ marginLeft: "auto" }} onPress={() => setOverlayVisible(false)} name="close" size={24} />
-          {
-            (Sub_Category_List.includes(item.Sub_Category) || readOnly)
-              ?
-              <StyledText>{item.Sub_Category}</StyledText>
-              :
-              <StyledTextInput
-                onChangeText={val => onRoomMeasurementValueChange((val), "Sub_Category", item.UniqueKey)}
-                value={`${item.Sub_Category}`}
-              />
-          }
-          <View style={{ flexDirection: 'row' }}>
-            <CustomFormInput
-              label="Length"
-              placeholder="Length"
-              onChangeText={val => {
-                if (val === "") { // * for negative numbers
-                  return onRoomMeasurementValueChange(0, "Room_Length", item.UniqueKey)
+        <Modal transparent visible={overlayVisible} onDismiss={() => setOverlayVisible(false)}>
+          <ComposedGestureWrapper gesture={composed}>
+            <Animated.View style={{ flex: 1 }}>
+              <Animated.View style={[{ backgroundColor: "white", height: "100%", justifyContent: 'center', alignItems: 'center', padding: 16 }, animatedStyleforBackground]}>
+                {
+                  show &&
+                  <Animated.View style={{ position: 'absolute', bottom: 120, width: "100%", paddingHorizontal: 12 }}>
+                    <Animated.View style={{ marginLeft: "auto", justifyContent: 'center', alignItems: 'center', marginBottom: 16 }}>
+                      <Text style={{ backgroundColor: "#8477EB", padding: 8, color: "white", fontFamily: "URBAN_BOLD", fontSize: 16 }}>Swipe Up to save</Text>
+                    </Animated.View>
+                    <Animated.View style={{ marginRight: "auto", justifyContent: 'center', alignItems: 'center' }}>
+                      <Text style={{ backgroundColor: "#8477EB", padding: 8, color: "white", fontFamily: "URBAN_BOLD", fontSize: 16 }}>Swipe Down to Cancel</Text>
+                    </Animated.View>
+                  </Animated.View>
                 }
-                onRoomMeasurementValueChange((val), "Room_Length", item.UniqueKey)
-              }}
-              readOnly={readOnly}
-              value={length ?? 0}
-            />
+                <Animated.View style={[{ width: "100%", backgroundColor: "white", padding: 16, borderRadius: 8 }, animatedStyles]}>
+                  {
+                    (Sub_Category_List.includes(item.Sub_Category) || readOnly)
+                      ?
+                      <StyledText>{item.Sub_Category}</StyledText>
+                      :
+                      <StyledTextInput
+                        onChangeText={val => onRoomMeasurementValueChange((val), "Sub_Category", item.UniqueKey)}
+                        value={`${item.Sub_Category}`}
+                      />
+                  }
+                  <View style={[{ flexDirection: 'row' }]}>
+                    <CustomFormInput
+                      label="Length"
+                      placeholder="Length"
+                      onChangeText={val => {
+                        if (val === "") { // * for negative numbers
+                          return onRoomMeasurementValueChange(0, "Room_Length", item.UniqueKey)
+                        }
+                        onRoomMeasurementValueChange((val), "Room_Length", item.UniqueKey)
+                      }}
+                      readOnly={readOnly}
+                      value={length ?? 0}
 
-            <CustomFormInput
-              label="Width"
-              placeholder="Width"
-              onChangeText={val => {
-                if (val === "") { // * for negative numbers
-                  return onRoomMeasurementValueChange(0, "Room_Width", item.UniqueKey)
-                }
-                onRoomMeasurementValueChange((val), "Room_Width", item.UniqueKey)
-              }}
-              readOnly={readOnly}
-              value={width ?? 0}
-            />
-            <CustomFormInput
-              label="Misc"
-              placeholder="Misc"
-              onChangeText={val => {
-                if (val === "") { // * for negative numbers
-                  return onRoomMeasurementValueChange(0, "Room_Misc_SF", item.UniqueKey)
-                }
-                onRoomMeasurementValueChange((val), "Room_Misc_SF", item.UniqueKey)
-              }} readOnly={readOnly}
-              value={misc ?? 0}
-            />
-            <CustomFormInput
-              label="Total SqFt"
-              placeholder="Total"
-              readOnly={true}
-              value={total}
-            />
-          </View>
-          {!readOnly &&
-            <Button
-              onPress={() => {
-                item && handleOnSave(true,item);
-                setOverlayVisible(false);
+                    />
 
-              }} mode="contained">
-              Save
-            </Button>
-          }
-        </Overlay>
+                    <CustomFormInput
+                      label="Width"
+                      placeholder="Width"
+                      onChangeText={val => {
+                        if (val === "") { // * for negative numbers
+                          return onRoomMeasurementValueChange(0, "Room_Width", item.UniqueKey)
+                        }
+                        onRoomMeasurementValueChange((val), "Room_Width", item.UniqueKey)
+                      }}
+                      readOnly={readOnly}
+                      value={width ?? 0}
+                    />
+                    <CustomFormInput
+                      label="Misc"
+                      placeholder="Misc"
+                      onChangeText={val => {
+                        if (val === "") { // * for negative numbers
+                          return onRoomMeasurementValueChange(0, "Room_Misc_SF", item.UniqueKey)
+                        }
+                        onRoomMeasurementValueChange((val), "Room_Misc_SF", item.UniqueKey)
+                      }}
+                      readOnly={readOnly}
+                      value={misc ?? 0}
+                    />
+                    <CustomFormInput
+                      label="Total SqFt"
+                      placeholder="Total"
+                      readOnly={true}
+                      value={total}
+                    />
+
+                  </View>
+                </Animated.View>
+              </Animated.View>
+            </Animated.View>
+          </ComposedGestureWrapper>
+        </Modal>
       </>
 
     )
@@ -180,127 +324,274 @@ export default function FormLineItem({ isSubmittedByReviewer, handleAcceptLineIt
 
   if (isForReviewerView) {
     return (
-      <ContractorViewLineItem {...{ inspId, isSubmittedByReviewer, handleAcceptLineItem, item, onOtherFormValueChange,setIsEditModalClosed }} />
+      <ContractorViewLineItem {...{ inspId, isSubmittedByReviewer, handleAcceptLineItem, item, onOtherFormValueChange, setIsEditModalClosed }} />
     )
 
   }
 
+  // SWIPE FOR OTHER FORM LINE ITEMS
+
+  const animation = React.useRef(null);
+
+  React.useEffect(() => {
+    animation.current?.reset();
+    animation.current?.play();
+  }, []);
+
+
+  const offset = useSharedValue({ x: 0 });
+  const start = useSharedValue({ x: 0 });
+
+  const [show, setShow] = React.useState(false);
+
+  const handleLongPressState = (state) => {
+    setShow(state);
+  }
+
+
+  const longPressGesture = Gesture.LongPress()
+    .onEnd(() => {
+      runOnJS(handleLongPressState)(true)
+    })
+
+
+
+  const dragGesture = Gesture.Pan()
+    .averageTouches(true)
+    .onUpdate((e) => {
+      console.log(e.translationY);
+      offset.value = {
+        x: (e.translationY + start.value.x)
+      };
+    })
+    .onEnd(() => {
+      start.value = {
+        x: offset.value.x,
+      };
+    });
+
+  const animatedStyles = useAnimatedStyle(() => {
+    return {
+      transform: [
+        { translateY: offset.value.x },
+      ],
+    };
+  });
+
+
+  const obj = useDerivedValue(() => {
+    if (offset.value.x > 0) {
+      return {
+        color: "red",
+        limit: 180
+      }
+    }
+    if (offset.value.x < 0) {
+      return {
+        color: "green",
+        limit: -180
+      }
+    }
+  }, [offset.value.x])
+
+  const animatedStyleforBackground = useAnimatedStyle(() => {
+
+    let bColor = "#c4c4c490";
+
+    if (obj.value) {
+      bColor = interpolateColor(offset.value.x, [0, obj.value.limit], ["grey", obj.value.color])
+    }
+
+    return {
+      backgroundColor: bColor,
+    }
+  });
+
+
+  const handleAlert = () => {
+    if (offset.value.x < -20 && offset.value.x > -40) {
+      item && handleOnSave(true, item); // * Call SAVE TO CONTEXT FUNCTION
+      setOverlayVisible(false);
+      showMessage({
+        message: "Saved",
+        type: "success",
+      });
+      offset.value = {
+        x: 0
+      }
+      start.value = {
+        x: 0
+      }
+      setShow(false)
+    }
+
+    if (offset.value.x > 20) {
+      // console.log("INSIDE", v);
+      refreshData(); // * Reset Old Data
+      setOverlayVisible(false);
+      showMessage({
+        message: "Cancelled",
+        type: "default",
+      });
+      offset.value = {
+        x: 0
+      }
+      start.value = {
+        x: 0
+      }
+      setShow(false)
+    }
+  }
+
+  useDerivedValue(() => {
+
+    if ((offset.value.x > 20) || (offset.value.x < 0 && offset.value.x > -40)) {
+      runOnJS(handleAlert)(offset.value.x)
+    }
+
+  }, [offset.value.x, item])
+
+
+
+  const composed = Gesture.Simultaneous(longPressGesture, dragGesture);
+
+
+
 
   return (
     <>
-      {item?.Matrix_Price && item?.Matrix_Price.length >0 &&  
-      <Swipeable onRef={(ref) => swipeableRef.current = ref} rightButtons={Sub_Category_Keys.includes(item?.Sub_Category) ? rightButtons : null}>
-        <LineItemWrapper onPress={() => setOverlayVisible(true)} >
-          <View style={{ flex: 1 }}>
-            {
-              <LineItemHeading>
-                {item?.Matrix_Price}
-              </LineItemHeading>
-            }
-            <LineItemInputGroup>
-              {/* QTY */}
-              <LineItemInputText>Qty {item.Quantity}</LineItemInputText>
-              {/* RATE */}
-              <LineItemInputText >Rate {getFormattedValue("Rate", item.Rate)}</LineItemInputText>
-              {/* NOTES */}
-              <LineItemInputText >Total {getFormattedValue("Total", item.Total)}</LineItemInputText>
-            </LineItemInputGroup>
-          </View>
-          {/* Icon */}
-          {
-            !readOnly &&
-            <Ionicons name="camera" onPress={() => navigation.navigate("CameraScreen", { inspId: { inspId }, lineItemId: item.Id })} size={24} />
-          }
-
-        </LineItemWrapper>
-      </Swipeable>
-      }
-      <Overlay visible={overlayVisible} onClose={() => setOverlayVisible(false)} >
-        <Ionicons style={{ marginLeft: "auto" }} onPress={() => setOverlayVisible(false)} name="close" size={24} />
-        {
-          Sub_Category_Keys.includes(item?.Sub_Category)
-            ?
-            <>
-              <StyledTextInputLabel>Matrix Price</StyledTextInputLabel>
-              <StyledTextInput
-                onChangeText={val => onOtherFormValueChange((val), "Matrix_Price", item.UniqueKey)}
-                value={`${item?.Matrix_Price ?? 0}`}
-              />
-            </>
-            :
-            <LineItemHeading>
-              {item?.Matrix_Price}
-            </LineItemHeading>
-        }
-
-        <View style={{ flexDirection: "row" }}>
-
-          <CustomFormInput
-            label="Quantity"
-            placeholder="QTY"
-            onChangeText={text => {
-              if (text === "") { // * for negative numbers
-                return onOtherFormValueChange(0, "Quantity", item.UniqueKey)
+      {item?.Matrix_Price && item?.Matrix_Price.length > 0 &&
+        <Swipeable onRef={(ref) => swipeableRef.current = ref} rightButtons={Sub_Category_Keys.includes(item?.Sub_Category) ? rightButtons : null}>
+          <LineItemWrapper onPress={() => setOverlayVisible(true)} >
+            <View style={{ flex: 1 }}>
+              {
+                <LineItemHeading>
+                  {item?.Matrix_Price}
+                </LineItemHeading>
               }
-              onOtherFormValueChange(text, "Quantity", item.UniqueKey)
-            }}
-            // onChangeText={val => onOtherFormValueChange((val), "Quantity", item.UniqueKey)}
-            readOnly={readOnly}
-            value={item.Quantity ?? 0}
-          />
+              <LineItemInputGroup>
+                {/* QTY */}
+                <LineItemInputText>Qty {item.Quantity}</LineItemInputText>
+                {/* RATE */}
+                <LineItemInputText >Rate {getFormattedValue("Rate", item.Rate)}</LineItemInputText>
+                {/* NOTES */}
+                <LineItemInputText >Total {getFormattedValue("Total", item.Total)}</LineItemInputText>
+              </LineItemInputGroup>
+            </View>
+            {/* Icon */}
+            {
+              !readOnly &&
+              <Ionicons name="camera" onPress={() => navigation.navigate("CameraScreen", { inspId: { inspId }, lineItemId: item.Id })} size={24} />
+            }
 
-          <CustomFormInput
-            label="U/A"
-            placeholder="U/A"
-            onChangeText={val => onOtherFormValueChange((val), "U_M", item.UniqueKey)}
-            readOnly={readOnly}
-            value={item.U_M ?? 0}
-            keyboardType={"default"}
-          />
+          </LineItemWrapper>
+        </Swipeable>
+      }
+      <Modal transparent visible={overlayVisible} onDismiss={() => setOverlayVisible(false)}>
+        <ComposedGestureWrapper gesture={composed}>
+          <Animated.View style={[{ backgroundColor: "white", height: "100%", justifyContent: 'center', alignItems: 'center', padding: 16 }, animatedStyleforBackground]}>
+            {
+              show &&
+              <Animated.View style={{ position: 'absolute', bottom: 120, width: "100%", paddingHorizontal: 12 }}>
+                <Animated.View style={{ marginLeft: "auto", justifyContent: 'center', alignItems: 'center', marginBottom: 16 }}>
+                  <Text style={{ backgroundColor: "#8477EB", padding: 8, color: "white", fontFamily: "URBAN_BOLD", fontSize: 16 }}>Swipe Up to save</Text>
+                </Animated.View>
+                <Animated.View style={{ marginRight: "auto", justifyContent: 'center', alignItems: 'center' }}>
+                  <Text style={{ backgroundColor: "#8477EB", padding: 8, color: "white", fontFamily: "URBAN_BOLD", fontSize: 16 }}>Swipe Down to Cancel</Text>
+                </Animated.View>
+              </Animated.View>
+            }
 
-        </View>
+            <Animated.View style={[{ width: "100%", backgroundColor: "white", padding: 16, borderRadius: 8 }, animatedStyles]}>
 
-        <View style={{ flexDirection: "row" }}>
+              {
+                Sub_Category_Keys.includes(item?.Sub_Category)
+                  ?
+                  <>
+                    <StyledTextInputLabel>Matrix Price</StyledTextInputLabel>
+                    <StyledTextInput
+                      onChangeText={val => onOtherFormValueChange((val), "Matrix_Price", item.UniqueKey)}
+                      value={`${item?.Matrix_Price ?? 0}`}
+                    />
+                  </>
+                  :
+                  <LineItemHeading>
+                    {item?.Matrix_Price}
+                  </LineItemHeading>
+              }
 
-          <View style={{ width: '100%', flex: 1, marginHorizontal: 4 }}>
-            <StyledTextInputLabel>Rate ($)</StyledTextInputLabel>
-            <StyledTextInput
-              editable={!readOnly && requiredSubCategories.includes(item.Sub_Category)}
-              onChangeText={val => {
-                onOtherFormValueChange((val), "Rate", item.UniqueKey)
-              }}
-              value={`${item.Rate}`}
-              keyboardType="number-pad"
-            />
-          </View>
+              <View style={{ flexDirection: "row" }}>
 
-          <CustomFormInput
-            label="Total"
-            readOnly={true}
-            value={item.Total}
-          />
+                <CustomFormInput
+                  label="Quantity"
+                  placeholder="QTY"
+                  onChangeText={text => {
+                    if (text === "") { // * for negative numbers
+                      return onOtherFormValueChange(0, "Quantity", item.UniqueKey)
+                    }
+                    onOtherFormValueChange(text, "Quantity", item.UniqueKey)
+                  }}
+                  // onChangeText={val => onOtherFormValueChange((val), "Quantity", item.UniqueKey)}
+                  readOnly={readOnly}
+                  value={item.Quantity ?? 0}
+                />
 
-        </View>
+                <CustomFormInput
+                  label="U/A"
+                  placeholder="U/A"
+                  onChangeText={val => onOtherFormValueChange((val), "U_M", item.UniqueKey)}
+                  readOnly={readOnly}
+                  value={item.U_M ?? 0}
+                  keyboardType={"default"}
+                />
 
-        <View style={{ flexDirection: "row" }}>
-          <CustomFormInput
-            label="Scope Notes"
-            placeholder="Scope Notes"
-            onChangeText={val => onOtherFormValueChange((val), "Scope_Notes", item.UniqueKey)}
-            readOnly={readOnly}
-            value={item.Scope_Notes ?? ""}
-            keyboardType={"default"}
-          />
-        </View>
+              </View>
 
-        {!readOnly &&
-          <StyledSaveButton onPress={() => { item && handleOnSave(false,item); setOverlayVisible(false) }} mode="contained">
+              <View style={{ flexDirection: "row" }}>
+
+                <View style={{ width: '100%', flex: 1, marginHorizontal: 4 }}>
+                  <StyledTextInputLabel>Rate ($)</StyledTextInputLabel>
+                  <StyledTextInput
+                    editable={!readOnly && requiredSubCategories.includes(item.Sub_Category)}
+                    onChangeText={val => {
+                      onOtherFormValueChange((val), "Rate", item.UniqueKey)
+                    }}
+                    value={`${item.Rate}`}
+                    keyboardType="number-pad"
+                  />
+                </View>
+
+                <CustomFormInput
+                  label="Total"
+                  readOnly={true}
+                  value={item.Total}
+                />
+
+              </View>
+
+              <View style={{ flexDirection: "row" }}>
+                <CustomFormInput
+                  label="Scope Notes"
+                  placeholder="Scope Notes"
+                  onChangeText={val => onOtherFormValueChange((val), "Scope_Notes", item.UniqueKey)}
+                  readOnly={readOnly}
+                  value={item.Scope_Notes ?? ""}
+                  keyboardType={"default"}
+                />
+              </View>
+
+            </Animated.View>
+
+          </Animated.View>
+
+          {/* {!readOnly &&
+          <StyledSaveButton onPress={() => { item && handleOnSave(false, item); setOverlayVisible(false) }} mode="contained">
             <Text style={{ color: 'white', fontWeight: 'bold', fontFamily: "URBAN_BOLD", fontSize: 18 }}>
               Save
             </Text>
-          </StyledSaveButton>}
-
-      </Overlay>
+          </StyledSaveButton>} */}
+        </ComposedGestureWrapper>
+      </Modal>
     </>
 
   )
@@ -376,7 +667,7 @@ function SubmittedFormLineItem({ status, title, rate, quantity, total, notes, ad
   )
 }
 
-function ContractorViewLineItem({ inspId, isSubmittedByReviewer, handleAcceptLineItem, item, onOtherFormValueChange,setIsEditModalClosed }) {
+function ContractorViewLineItem({ inspId, isSubmittedByReviewer, handleAcceptLineItem, item, onOtherFormValueChange, setIsEditModalClosed }) {
 
   const {
     UniqueKey,
@@ -429,13 +720,13 @@ function ContractorViewLineItem({ inspId, isSubmittedByReviewer, handleAcceptLin
   const showModal = () => setVisible(true);
   const hideModal = () => setVisible(false);
 
-  useEffect(()=>{
+  useEffect(() => {
     setIsEditModalClosed(visible)
-  },[visible])
+  }, [visible])
 
   function acceptLineItem() {
     setSelectedStatus("Approved");
-    item && handleAcceptLineItem(id, "Approved",item);
+    item && handleAcceptLineItem(id, "Approved", item);
   }
 
   function reviewLineItem() {
@@ -444,12 +735,12 @@ function ContractorViewLineItem({ inspId, isSubmittedByReviewer, handleAcceptLin
 
   function deleteLineItem() {
     setSelectedStatus("Declined");
-    item && handleAcceptLineItem(id, "Declined",item);
+    item && handleAcceptLineItem(id, "Declined", item);
   }
 
   function handleApproveAsNoted() {
     setSelectedStatus("Approved as Noted");
-    item && handleAcceptLineItem(id, "Approved as Noted",item);
+    item && handleAcceptLineItem(id, "Approved as Noted", item);
     hideModal();
   }
 
@@ -466,7 +757,7 @@ function ContractorViewLineItem({ inspId, isSubmittedByReviewer, handleAcceptLin
     }
     return orgColor;
   }
-//remove code after verification
+  //remove code after verification
   function isDisabled(status) {
     return isSubmittedByReviewer || selectedStatus === status;
   }
@@ -474,46 +765,46 @@ function ContractorViewLineItem({ inspId, isSubmittedByReviewer, handleAcceptLin
 
   return (
     <>
-      {title && title.length >0 &&  
-      <Card style={{ padding: 16, backgroundColor: getBackgroundColor(), borderBottomWidth: 2, borderColor: '#EEBC7B' }}>
-        <LineItemHeading>{title}</LineItemHeading>
-        {/* <LineItemHeading>{item.Approval_Status}</LineItemHeading> */}
-        <LineItemHeading>Scope Notes : {item.Scope_Notes}</LineItemHeading>
-        <View style={{ flexDirection: 'row' }}>
-          {/* Details */}
-          <View style={{ flex: .4 }}>
-            <StyledContractorText>QTY: {quantity}</StyledContractorText>
-            <StyledContractorText>RATE: {getCurrencyFormattedValue(rate)}</StyledContractorText>
-            <StyledContractorText>TOTAL: {getCurrencyFormattedValue(total)}</StyledContractorText>
+      {title && title.length > 0 &&
+        <Card style={{ padding: 16, backgroundColor: getBackgroundColor(), borderBottomWidth: 2, borderColor: '#EEBC7B' }}>
+          <LineItemHeading>{title}</LineItemHeading>
+          {/* <LineItemHeading>{item.Approval_Status}</LineItemHeading> */}
+          <LineItemHeading>Scope Notes : {item.Scope_Notes}</LineItemHeading>
+          <View style={{ flexDirection: 'row' }}>
+            {/* Details */}
+            <View style={{ flex: .4 }}>
+              <StyledContractorText>QTY: {quantity}</StyledContractorText>
+              <StyledContractorText>RATE: {getCurrencyFormattedValue(rate)}</StyledContractorText>
+              <StyledContractorText>TOTAL: {getCurrencyFormattedValue(total)}</StyledContractorText>
+            </View>
+            <View style={{ flex: .6, flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
+              <StyledContractorButton
+                labelStyle={{ fontSize: 16, fontFamily: 'URBAN_BOLD' }}
+                disabled={Approval_Status === "Approved"}
+                backgroundColor={Approval_Status === "Approved" ? "grey" : "#7CDD9B"}
+                mode="contained"
+                onPress={() => acceptLineItem()}>
+                A
+              </StyledContractorButton>
+              <StyledContractorButton
+                labelStyle={{ fontSize: 16, fontFamily: 'URBAN_BOLD' }}
+                disabled={Approval_Status === "Approved as Noted"}
+                backgroundColor={Approval_Status === "Approved as Noted" ? "grey" : "#3983EF"}
+                mode="contained"
+                onPress={() => reviewLineItem()}>
+                R
+              </StyledContractorButton>
+              <StyledContractorButton
+                labelStyle={{ fontSize: 16, fontFamily: 'URBAN_BOLD' }}
+                disabled={Approval_Status === "Declined"}
+                backgroundColor={Approval_Status === "Declined" ? "grey" : "#E02E2E"}
+                mode="contained"
+                onPress={() => deleteLineItem()}>
+                D
+              </StyledContractorButton>
+            </View>
           </View>
-          <View style={{ flex: .6, flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
-            <StyledContractorButton
-              labelStyle={{ fontSize: 16, fontFamily: 'URBAN_BOLD' }}
-              disabled={Approval_Status==="Approved"}
-              backgroundColor={Approval_Status==="Approved" ?"grey":"#7CDD9B"}
-              mode="contained"
-              onPress={() => acceptLineItem()}>
-              A
-            </StyledContractorButton>
-            <StyledContractorButton
-              labelStyle={{ fontSize: 16, fontFamily: 'URBAN_BOLD' }}
-              disabled={Approval_Status==="Approved as Noted"}
-              backgroundColor={Approval_Status==="Approved as Noted" ?"grey": "#3983EF"}
-              mode="contained"
-              onPress={() => reviewLineItem()}>
-              R
-            </StyledContractorButton>
-            <StyledContractorButton
-              labelStyle={{ fontSize: 16, fontFamily: 'URBAN_BOLD' }}
-              disabled={Approval_Status==="Declined"}
-              backgroundColor={Approval_Status==="Declined" ?"grey":"#E02E2E"}
-              mode="contained"
-              onPress={() => deleteLineItem()}>
-              D
-            </StyledContractorButton>
-          </View>
-        </View>
-      </Card>
+        </Card>
       }
       <Overlay childrenWrapperStyle={{ padding: 18 }} containerStyle={{ backgroundColor: '#dbdad960' }} visible={visible} onClose={() => setVisible(false)} closeOnTouchOutside >
         <Ionicons onPress={() => hideModal()} name="close" size={24} style={{ marginLeft: "auto" }} />
@@ -668,8 +959,6 @@ color: #EEC690;
 font-family: URBAN_BOLD;
 font-size: 20px;
 `;
-
-
 
 
 
