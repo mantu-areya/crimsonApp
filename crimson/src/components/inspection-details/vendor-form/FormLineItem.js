@@ -160,8 +160,8 @@ export default function FormLineItem({ refreshData, isSubmittedByReviewer, handl
     });
 
 
-    const handleAlert = (v) => {
-      if (v < -20 && v > -40) {
+    const handleAlert = () => {
+      if (offset.value.x  < -20 && offset.value.x  > -40) {
         item && handleOnSave(true, item); // * Call SAVE TO CONTEXT FUNCTION
         setOverlayVisible(false);
         showMessage({
@@ -177,8 +177,8 @@ export default function FormLineItem({ refreshData, isSubmittedByReviewer, handl
         setShow(false)
       }
 
-      if (offset.value.x < 80 && offset.value.x > 20) {
-        console.log("INSIDE", v);
+      if (offset.value.x > 20) {
+        // console.log("INSIDE", v);
         refreshData(); // * Reset Old Data
         setOverlayVisible(false);
         showMessage({

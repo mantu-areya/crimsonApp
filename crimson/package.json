@@ -42,7 +42,7 @@
     "firebase": "7.9.0",
     "image-to-base64": "^2.2.0",
     "jsforce": "^1.11.0",
-    "lottie-react-native": "5.0.1",
+    "lottie-react-native": "^5.1.4",
     "qs": "^6.10.5",
     "react": "17.0.2",
     "react-bootstrap": "^2.4.0",
