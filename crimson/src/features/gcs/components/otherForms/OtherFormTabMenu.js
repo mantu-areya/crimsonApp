@@ -16,9 +16,10 @@ import OtherCategoryForm from "./OtherCategoryForm";
         return toatalSF
     }
 
-    React.useEffect(() => {
-         updateToSf(inspId)
-      }, [currentForm])
+    //code commented for Sync issue
+    // React.useEffect(() => {
+    //      updateToSf(inspId)
+    //   }, [currentForm])
 
     return (
         <View style={{ borderRadius: 8, padding: 8, marginBottom: 32, backgroundColor: "#D9D9D9", }}>
