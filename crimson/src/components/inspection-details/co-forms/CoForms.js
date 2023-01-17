@@ -9,6 +9,7 @@ import { Button } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import EntypoIcon from 'react-native-vector-icons/Entypo'
 import NetInfo from "@react-native-community/netinfo";
+import { getCoForms } from '../../../services/co-forms/co-form-apis';
 
 
 
@@ -33,6 +34,16 @@ const CoForms = ({ isSubmitted, readOnly, inspectionData, navigation }) => {
         setSearchQuery(query);
     }
 
+
+    const handleGetCoForms = async () => {
+        const res = await getCoForms();
+        console.log({res});
+    }
+
+
+    React.useEffect(() => {
+        handleGetCoForms();
+    },[])
 
 
 
