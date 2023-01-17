@@ -93,7 +93,6 @@ export default function FormLineItem({ refreshData, isSubmittedByReviewer, handl
     const start = useSharedValue({ x: 0 });
 
     const [show, setShow] = React.useState(false);
-    const [showModal, setShowModal] = React.useState(false);
 
     const handleLongPressState = (state) => {
       setShow(state);
@@ -161,7 +160,7 @@ export default function FormLineItem({ refreshData, isSubmittedByReviewer, handl
 
 
     const handleAlert = () => {
-      if (offset.value.x  < -20 && offset.value.x  > -40) {
+      if (offset.value.x < -20 && offset.value.x > -40) {
         item && handleOnSave(true, item); // * Call SAVE TO CONTEXT FUNCTION
         setOverlayVisible(false);
         showMessage({
@@ -199,7 +198,7 @@ export default function FormLineItem({ refreshData, isSubmittedByReviewer, handl
 
       if ((offset.value.x > 20) || (offset.value.x < 0 && offset.value.x > -40)) {
         runOnJS(handleAlert)(offset.value.x)
-      } 
+      }
 
     }, [offset.value.x, item])
 
@@ -249,29 +248,9 @@ export default function FormLineItem({ refreshData, isSubmittedByReviewer, handl
                   <Animated.View style={{ position: 'absolute', bottom: 120, width: "100%", paddingHorizontal: 12 }}>
                     <Animated.View style={{ marginLeft: "auto", justifyContent: 'center', alignItems: 'center', marginBottom: 16 }}>
                       <Text style={{ backgroundColor: "#8477EB", padding: 8, color: "white", fontFamily: "URBAN_BOLD", fontSize: 16 }}>Swipe Up to save</Text>
-                      {/* <LottieView
-                        autoPlay
-                        ref={animation}
-                        style={{
-                          width: 60,
-                          height: 60,
-                          backgroundColor: 'transparent',
-                        }}
-                        source={require('../../../../assets/animations/swipe-right.json')}
-                      /> */}
                     </Animated.View>
                     <Animated.View style={{ marginRight: "auto", justifyContent: 'center', alignItems: 'center' }}>
                       <Text style={{ backgroundColor: "#8477EB", padding: 8, color: "white", fontFamily: "URBAN_BOLD", fontSize: 16 }}>Swipe Down to Cancel</Text>
-                      {/* <LottieView
-                        autoPlay
-                        ref={animation}
-                        style={{
-                          width: 60,
-                          height: 60,
-                          backgroundColor: 'transparent',
-                        }}
-                        source={require('../../../../assets/animations/swipe-left.json')}
-                      /> */}
                     </Animated.View>
                   </Animated.View>
                 }
@@ -284,8 +263,6 @@ export default function FormLineItem({ refreshData, isSubmittedByReviewer, handl
                       <StyledTextInput
                         onChangeText={val => onRoomMeasurementValueChange((val), "Sub_Category", item.UniqueKey)}
                         value={`${item.Sub_Category}`}
-                      // onChangeText={val => handleTempValueChange("Sub_Category", val)}
-                      // value={`${temp.Sub_Category}`}
                       />
                   }
                   <View style={[{ flexDirection: 'row' }]}>
@@ -300,8 +277,6 @@ export default function FormLineItem({ refreshData, isSubmittedByReviewer, handl
                       }}
                       readOnly={readOnly}
                       value={length ?? 0}
-                    // onChangeText={val => handleTempValueChange("Room_Length", val)}
-                    // value={`${temp.Room_Length}`}
 
                     />
 
@@ -316,8 +291,6 @@ export default function FormLineItem({ refreshData, isSubmittedByReviewer, handl
                       }}
                       readOnly={readOnly}
                       value={width ?? 0}
-                    // onChangeText={val => handleTempValueChange("Room_Width", val)}
-                    // value={`${temp.Room_Width}`}
                     />
                     <CustomFormInput
                       label="Misc"
@@ -330,8 +303,6 @@ export default function FormLineItem({ refreshData, isSubmittedByReviewer, handl
                       }}
                       readOnly={readOnly}
                       value={misc ?? 0}
-                    // onChangeText={val => handleTempValueChange("Room_Misc_SF", val)}
-                    // value={`${temp.Room_Misc_SF}`}
                     />
                     <CustomFormInput
                       label="Total SqFt"
@@ -342,11 +313,6 @@ export default function FormLineItem({ refreshData, isSubmittedByReviewer, handl
 
                   </View>
                 </Animated.View>
-                {/* Instructions */}
-                {/* <View style={{ position: "absolute", bottom: 120, width: "100%" }}>
-                  <Text style={{ marginLeft: "auto", padding: 8, fontSize: 16, backgroundColor: "#8477EB", color: "white", fontFamily: "URBAN_BOLD" }}>Swipe Right to Save</Text>
-                  <Text style={{ marginRight: "auto", padding: 8, fontSize: 16, backgroundColor: "#8477EB", color: "white", fontFamily: "URBAN_BOLD", marginTop: 36 }}>Swipe Left to Cancel</Text>
-                </View> */}
               </Animated.View>
             </Animated.View>
           </ComposedGestureWrapper>
@@ -363,6 +329,134 @@ export default function FormLineItem({ refreshData, isSubmittedByReviewer, handl
     )
 
   }
+
+  // SWIPE FOR OTHER FORM LINE ITEMS
+
+  const animation = React.useRef(null);
+
+  React.useEffect(() => {
+    animation.current?.reset();
+    animation.current?.play();
+  }, []);
+
+
+  const offset = useSharedValue({ x: 0 });
+  const start = useSharedValue({ x: 0 });
+
+  const [show, setShow] = React.useState(false);
+
+  const handleLongPressState = (state) => {
+    setShow(state);
+  }
+
+
+  const longPressGesture = Gesture.LongPress()
+    .onEnd(() => {
+      runOnJS(handleLongPressState)(true)
+    })
+
+
+
+  const dragGesture = Gesture.Pan()
+    .averageTouches(true)
+    .onUpdate((e) => {
+      console.log(e.translationY);
+      offset.value = {
+        x: (e.translationY + start.value.x)
+      };
+    })
+    .onEnd(() => {
+      start.value = {
+        x: offset.value.x,
+      };
+    });
+
+  const animatedStyles = useAnimatedStyle(() => {
+    return {
+      transform: [
+        { translateY: offset.value.x },
+      ],
+    };
+  });
+
+
+  const obj = useDerivedValue(() => {
+    if (offset.value.x > 0) {
+      return {
+        color: "red",
+        limit: 180
+      }
+    }
+    if (offset.value.x < 0) {
+      return {
+        color: "green",
+        limit: -180
+      }
+    }
+  }, [offset.value.x])
+
+  const animatedStyleforBackground = useAnimatedStyle(() => {
+
+    let bColor = "#c4c4c490";
+
+    if (obj.value) {
+      bColor = interpolateColor(offset.value.x, [0, obj.value.limit], ["grey", obj.value.color])
+    }
+
+    return {
+      backgroundColor: bColor,
+    }
+  });
+
+
+  const handleAlert = () => {
+    if (offset.value.x < -20 && offset.value.x > -40) {
+      item && handleOnSave(true, item); // * Call SAVE TO CONTEXT FUNCTION
+      setOverlayVisible(false);
+      showMessage({
+        message: "Saved",
+        type: "success",
+      });
+      offset.value = {
+        x: 0
+      }
+      start.value = {
+        x: 0
+      }
+      setShow(false)
+    }
+
+    if (offset.value.x > 20) {
+      // console.log("INSIDE", v);
+      refreshData(); // * Reset Old Data
+      setOverlayVisible(false);
+      showMessage({
+        message: "Cancelled",
+        type: "default",
+      });
+      offset.value = {
+        x: 0
+      }
+      start.value = {
+        x: 0
+      }
+      setShow(false)
+    }
+  }
+
+  useDerivedValue(() => {
+
+    if ((offset.value.x > 20) || (offset.value.x < 0 && offset.value.x > -40)) {
+      runOnJS(handleAlert)(offset.value.x)
+    }
+
+  }, [offset.value.x, item])
+
+
+
+  const composed = Gesture.Simultaneous(longPressGesture, dragGesture);
+
+
 
 
   return (
@@ -394,92 +488,111 @@ export default function FormLineItem({ refreshData, isSubmittedByReviewer, handl
           </LineItemWrapper>
         </Swipeable>
       }
-      <Overlay visible={overlayVisible} onClose={() => setOverlayVisible(false)} >
-        <Ionicons style={{ marginLeft: "auto" }} onPress={() => setOverlayVisible(false)} name="close" size={24} />
-        {
-          Sub_Category_Keys.includes(item?.Sub_Category)
-            ?
-            <>
-              <StyledTextInputLabel>Matrix Price</StyledTextInputLabel>
-              <StyledTextInput
-                onChangeText={val => onOtherFormValueChange((val), "Matrix_Price", item.UniqueKey)}
-                value={`${item?.Matrix_Price ?? 0}`}
-              />
-            </>
-            :
-            <LineItemHeading>
-              {item?.Matrix_Price}
-            </LineItemHeading>
-        }
+      <Modal transparent visible={overlayVisible} onDismiss={() => setOverlayVisible(false)}>
+        <ComposedGestureWrapper gesture={composed}>
+          <Animated.View style={[{ backgroundColor: "white", height: "100%", justifyContent: 'center', alignItems: 'center', padding: 16 }, animatedStyleforBackground]}>
+            {
+              show &&
+              <Animated.View style={{ position: 'absolute', bottom: 120, width: "100%", paddingHorizontal: 12 }}>
+                <Animated.View style={{ marginLeft: "auto", justifyContent: 'center', alignItems: 'center', marginBottom: 16 }}>
+                  <Text style={{ backgroundColor: "#8477EB", padding: 8, color: "white", fontFamily: "URBAN_BOLD", fontSize: 16 }}>Swipe Up to save</Text>
+                </Animated.View>
+                <Animated.View style={{ marginRight: "auto", justifyContent: 'center', alignItems: 'center' }}>
+                  <Text style={{ backgroundColor: "#8477EB", padding: 8, color: "white", fontFamily: "URBAN_BOLD", fontSize: 16 }}>Swipe Down to Cancel</Text>
+                </Animated.View>
+              </Animated.View>
+            }
 
-        <View style={{ flexDirection: "row" }}>
+            <Animated.View style={[{ width: "100%", backgroundColor: "white", padding: 16, borderRadius: 8 }, animatedStyles]}>
 
-          <CustomFormInput
-            label="Quantity"
-            placeholder="QTY"
-            onChangeText={text => {
-              if (text === "") { // * for negative numbers
-                return onOtherFormValueChange(0, "Quantity", item.UniqueKey)
+              {
+                Sub_Category_Keys.includes(item?.Sub_Category)
+                  ?
+                  <>
+                    <StyledTextInputLabel>Matrix Price</StyledTextInputLabel>
+                    <StyledTextInput
+                      onChangeText={val => onOtherFormValueChange((val), "Matrix_Price", item.UniqueKey)}
+                      value={`${item?.Matrix_Price ?? 0}`}
+                    />
+                  </>
+                  :
+                  <LineItemHeading>
+                    {item?.Matrix_Price}
+                  </LineItemHeading>
               }
-              onOtherFormValueChange(text, "Quantity", item.UniqueKey)
-            }}
-            // onChangeText={val => onOtherFormValueChange((val), "Quantity", item.UniqueKey)}
-            readOnly={readOnly}
-            value={item.Quantity ?? 0}
-          />
 
-          <CustomFormInput
-            label="U/A"
-            placeholder="U/A"
-            onChangeText={val => onOtherFormValueChange((val), "U_M", item.UniqueKey)}
-            readOnly={readOnly}
-            value={item.U_M ?? 0}
-            keyboardType={"default"}
-          />
+              <View style={{ flexDirection: "row" }}>
 
-        </View>
+                <CustomFormInput
+                  label="Quantity"
+                  placeholder="QTY"
+                  onChangeText={text => {
+                    if (text === "") { // * for negative numbers
+                      return onOtherFormValueChange(0, "Quantity", item.UniqueKey)
+                    }
+                    onOtherFormValueChange(text, "Quantity", item.UniqueKey)
+                  }}
+                  // onChangeText={val => onOtherFormValueChange((val), "Quantity", item.UniqueKey)}
+                  readOnly={readOnly}
+                  value={item.Quantity ?? 0}
+                />
 
-        <View style={{ flexDirection: "row" }}>
+                <CustomFormInput
+                  label="U/A"
+                  placeholder="U/A"
+                  onChangeText={val => onOtherFormValueChange((val), "U_M", item.UniqueKey)}
+                  readOnly={readOnly}
+                  value={item.U_M ?? 0}
+                  keyboardType={"default"}
+                />
 
-          <View style={{ width: '100%', flex: 1, marginHorizontal: 4 }}>
-            <StyledTextInputLabel>Rate ($)</StyledTextInputLabel>
-            <StyledTextInput
-              editable={!readOnly && requiredSubCategories.includes(item.Sub_Category)}
-              onChangeText={val => {
-                onOtherFormValueChange((val), "Rate", item.UniqueKey)
-              }}
-              value={`${item.Rate}`}
-              keyboardType="number-pad"
-            />
-          </View>
+              </View>
 
-          <CustomFormInput
-            label="Total"
-            readOnly={true}
-            value={item.Total}
-          />
+              <View style={{ flexDirection: "row" }}>
 
-        </View>
+                <View style={{ width: '100%', flex: 1, marginHorizontal: 4 }}>
+                  <StyledTextInputLabel>Rate ($)</StyledTextInputLabel>
+                  <StyledTextInput
+                    editable={!readOnly && requiredSubCategories.includes(item.Sub_Category)}
+                    onChangeText={val => {
+                      onOtherFormValueChange((val), "Rate", item.UniqueKey)
+                    }}
+                    value={`${item.Rate}`}
+                    keyboardType="number-pad"
+                  />
+                </View>
 
-        <View style={{ flexDirection: "row" }}>
-          <CustomFormInput
-            label="Scope Notes"
-            placeholder="Scope Notes"
-            onChangeText={val => onOtherFormValueChange((val), "Scope_Notes", item.UniqueKey)}
-            readOnly={readOnly}
-            value={item.Scope_Notes ?? ""}
-            keyboardType={"default"}
-          />
-        </View>
+                <CustomFormInput
+                  label="Total"
+                  readOnly={true}
+                  value={item.Total}
+                />
 
-        {!readOnly &&
+              </View>
+
+              <View style={{ flexDirection: "row" }}>
+                <CustomFormInput
+                  label="Scope Notes"
+                  placeholder="Scope Notes"
+                  onChangeText={val => onOtherFormValueChange((val), "Scope_Notes", item.UniqueKey)}
+                  readOnly={readOnly}
+                  value={item.Scope_Notes ?? ""}
+                  keyboardType={"default"}
+                />
+              </View>
+
+            </Animated.View>
+
+          </Animated.View>
+
+          {/* {!readOnly &&
           <StyledSaveButton onPress={() => { item && handleOnSave(false, item); setOverlayVisible(false) }} mode="contained">
             <Text style={{ color: 'white', fontWeight: 'bold', fontFamily: "URBAN_BOLD", fontSize: 18 }}>
               Save
             </Text>
-          </StyledSaveButton>}
-
-      </Overlay>
+          </StyledSaveButton>} */}
+        </ComposedGestureWrapper>
+      </Modal>
     </>
 
   )
