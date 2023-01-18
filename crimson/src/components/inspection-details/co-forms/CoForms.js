@@ -1,4 +1,4 @@
-import { View, Text, FlatList, ActivityIndicator, Dimensions, Platform, ScrollView, TextInput, TouchableOpacity } from 'react-native'
+import { View, Text, FlatList, ActivityIndicator, Dimensions, Platform, ScrollView, TextInput, TouchableOpacity, Modal } from 'react-native'
 import React from 'react'
 import styled from 'styled-components/native';
 import { useIsFocused } from '@react-navigation/native';
@@ -10,19 +10,19 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import EntypoIcon from 'react-native-vector-icons/Entypo'
 import NetInfo from "@react-native-community/netinfo";
 import { getCoForms } from '../../../services/co-forms/co-form-apis';
-
+import { CoFormContext } from '../../../services/co-forms/co-context';
+import Swipeable from 'react-native-swipeable';
 
 
 
 const CoForms = ({ isSubmitted, readOnly, inspectionData, navigation }) => {
 
-    const { vendorFormDetails, updateToSf, deleteNewItem, refreshVfData, updateModifiedLineItemToSf, updateVfContect, addNewItem } = React.useContext(VendorFormContext);
+    const { allCo1Forms, getAllCo1Forms } = React.useContext(CoFormContext);
 
 
     const [currentForm, setCurrentForm] = React.useState(0);
 
 
-    const [dataList, setDatalist] = React.useState([]);
     const [NewItemAdded, setNewItemAdded] = React.useState(0);
     const [showAddButton, setShowAddButton] = React.useState(false)
 
@@ -35,15 +35,10 @@ const CoForms = ({ isSubmitted, readOnly, inspectionData, navigation }) => {
     }
 
 
-    const handleGetCoForms = async () => {
-        const res = await getCoForms();
-        console.log({res});
-    }
-
 
     React.useEffect(() => {
-        handleGetCoForms();
-    },[])
+        getAllCo1Forms();
+    }, [])
 
 
 
@@ -67,7 +62,7 @@ const CoForms = ({ isSubmitted, readOnly, inspectionData, navigation }) => {
                                     onPress={() => setCurrentForm(i)}
                                     style={{
                                         flex: 1,
-                                        backgroundColor:currentForm === i ? "#8477EB" : "white",
+                                        backgroundColor: currentForm === i ? "#8477EB" : "white",
                                         padding: 8,
                                         justifyContent: "center",
                                         alignItems: "center",
@@ -88,9 +83,96 @@ const CoForms = ({ isSubmitted, readOnly, inspectionData, navigation }) => {
                             <EntypoIcon onPress={() => setSearchQuery("")} name="cross" color="grey" style={{ flex: .1 }} size={24} />
                         }
                     </View>
+                    {/* CO Line Items */}
+                    <ScrollView style={{ minHeight: 240 }}>
+                        {
+                            allCo1Forms.length > 0 && allCo1Forms.map((item, i) => <CoFormLineItem key={i} item={item} />)
+                        }
+                    </ScrollView>
                 </>
             }
         </View>
+    )
+}
+
+function CoFormLineItem({ item, isForReviewer }) {
+
+
+
+    const rightButtons = [
+        <TouchableOpacity onPress={() => handleDelGest(item.Id, inspId, item.UniqueKey)} style={{ backgroundColor: '#F3206F', justifyContent: 'center', alignItems: 'center', width: 64, flex: 1 }}>
+            <View>
+                <MaterialCommunityIcons name="delete" size={24} color="white" />
+                {/* <Text>Delete</Text> */}
+            </View>
+        </TouchableOpacity>
+    ];
+
+    const swipeableRef = React.useRef();
+
+    const [showModal, setShowModal] = React.useState(false);
+
+    const {
+        U_M,
+        Total,
+        Sub_Category,
+        Scope_Notes,
+        Rate,
+        Quantity,
+        Owner_Clarification,
+        Don_t_Charge_Client,
+        Cost_Category,
+        Category,
+    } = item
+
+
+    if (isForReviewer) {
+        return;
+    }
+    return (
+        <>
+            <Swipeable onRef={(ref) => swipeableRef.current = ref} rightButtons={rightButtons}>
+                <TouchableOpacity onPress={() => setShowModal(true)}>
+                    <CurrentFormHeading>{Scope_Notes}</CurrentFormHeading>
+                    <View style={{ flexDirection: "row" }}>
+                        <View style={{ flex: .2 }}>
+                            <Text>QTY {Quantity}</Text>
+                            <Text>RATE {Rate}</Text>
+                            <Text>TOTAL {Total}</Text>
+                        </View>
+                        <View style={{ flexDirection: "row", flex: .8 }}>
+                            <Text>A</Text>
+                            <Text>R</Text>
+                            <Text>D</Text>
+                        </View>
+                    </View>
+                </TouchableOpacity>
+            </Swipeable>
+            <Modal transparent visible={showModal} onClose={() => setShowModal(false)} >
+                <View style={{ backgroundColor: "#d4d4d490", flex: 1, justifyContent: "center", alignItems: "center", paddingHorizontal: 48 }}>
+                    <View style={{ backgroundColor: "white", padding: 12, width: "100%", borderRadius: 8 }}>
+                        <View>
+                            <FormLabel style={{ fontSize: 12 }}>Scope Notes</FormLabel>
+                            <FormInput style={{ fontSize: 16 }} value={Scope_Notes} />
+                        </View>
+                        <View style={{ flexDirection: "row", marginVertical: 8 }}>
+                            <View style={{ flex: 1, marginHorizontal: 2 }}>
+                                <FormLabel style={{ fontSize: 12 }}>Quantity</FormLabel>
+                                <FormInput style={{ fontSize: 16 }} value={`${Quantity}`} />
+                            </View>
+                            <View style={{ flex: 1, marginHorizontal: 2 }}>
+                                <FormLabel style={{ fontSize: 12 }}>Rate</FormLabel>
+                                <FormInput style={{ fontSize: 16 }} value={`${Rate}`} />
+                            </View>
+                            <View style={{ flex: 1, marginHorizontal: 2 }}>
+                                <FormLabel style={{ fontSize: 12 }}>Total</FormLabel>
+                                <FormInput style={{ fontSize: 16 }} value={`${Total}`} />
+                            </View>
+                        </View>
+                    </View>
+                </View>
+            </Modal>
+        </>
     )
 }
 
@@ -106,13 +188,6 @@ width: ${windowWidth}px ;
 `;
 
 
-const MenuItem = styled.TouchableOpacity`
-margin: 0 ${Platform.OS === "android" ? 12 : 16}px;
-border: ${props => props.isActive ? "2px solid white" : "none"};
-border-radius: 4px;
-padding:4px;
-`;
-
 const CurrentFormHeading = styled.Text`
 font-family: 'URBAN_BOLD';
 text-transform: uppercase;
@@ -121,20 +196,18 @@ margin-left: 16px;
 
 `;
 
-const AddNewLineItemButton = styled(Button)`
-padding: 8px;
-margin: 16px;
-`;
 
-const DescriptionWrapper = styled.View`
-padding: 4px;
-`
-
-const DescriptionText = styled.Text`
-
-color: #96A1AC;
+const FormLabel = styled.Text`
 font-family: 'URBAN_BOLD';
-font-size: 16px;
+font-size: ${Platform.OS === "android" ? 12 : 16}px;
+margin-bottom: 4px;
 `
+
+const FormInput = styled.TextInput`
+background-color: #f1f4f8;
+padding: 8px;
+font-family: 'URBAN_MEDIUM';
+border-radius: 4px;
+`;
 
 export default CoForms
