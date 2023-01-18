@@ -1,4 +1,4 @@
-import { View, Text, ImageBackground, Image, Dimensions, Platform } from 'react-native'
+import { View, Text, ImageBackground, Image, Dimensions, Platform, TouchableOpacity } from 'react-native'
 import React from 'react'
 import styled from 'styled-components/native'
 import Ionicons from "react-native-vector-icons/Ionicons"
@@ -13,8 +13,9 @@ import * as Linking from "expo-linking";
 
 
 const image = require("../../../assets/black-bg.jpg");
+const img2 = require("../../../assets/images/DetailsCardBg.webp");
 
-const Hero = ({totalBidSubmitted, roomMeasurementTotal,data, isSubmitted, sectionTotals }) => {
+const Hero = ({ totalBidSubmitted, roomMeasurementTotal, data, isSubmitted, sectionTotals, handleViewImageGallery }) => {
 
     const navigation = useNavigation()
     const [overlayVisible, setOverlayVisible] = React.useState(false);
@@ -141,6 +142,8 @@ const Hero = ({totalBidSubmitted, roomMeasurementTotal,data, isSubmitted, sectio
                 <Ionicons onPress={() => setOverlayVisible(false)} name="close" color="white" size={32} />
                 <Image source={image} style={{ width: 320, height: 320, borderRadius: 16 }} />
             </Overlay>
+            {/* Image Gallery */}
+            <ImageGallery handleViewImageGallery={handleViewImageGallery} />
             {/* Description */}
             <DescriptionWrapper>
                 <Text style={{ color: 'black', fontFamily: 'URBAN_BOLD', fontSize: 16 }}>DESCRIPTION</Text>
@@ -164,6 +167,40 @@ const Hero = ({totalBidSubmitted, roomMeasurementTotal,data, isSubmitted, sectio
     )
 }
 
+function ImageGallery({ handleViewImageGallery }) {
+    return (
+        <View style={{ paddingHorizontal: 16, }}>
+            <View style={{ flexDirection: "row" }}>
+                {
+                    [1, 2, 3, 4, 5].map((img, i) =>
+                        <TouchableOpacity key={i}>
+                            <Image
+                                source={img2}
+                                style={{
+                                    height: 48,
+                                    width: (Dimensions.get("screen").width - 86) / 6,
+                                    marginHorizontal: 2,
+                                    borderRadius: 4
+                                }} />
+                        </TouchableOpacity>)
+                }
+                < TouchableOpacity
+                    onPress={handleViewImageGallery}
+                    style={{
+                        height: 48,
+                        width: (Dimensions.get("screen").width - 86) / 6,
+                        marginHorizontal: 2,
+                        backgroundColor: "#00000070",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        borderRadius: 4
+                    }}>
+                    <Text style={{ fontSize: "12", color: "white", fontFamily: "URBAN_BOLD" }}>See More</Text>
+                </TouchableOpacity>
+            </View>
+        </View>
+    )
+}
 
 
 
