@@ -8,6 +8,7 @@ import { AlertBoX } from '../../utilities/AlertBoX'
 import { BackHandler, Image } from "react-native";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import { AppNavigator } from "../../infrastructure/navigation/app.navigator";
+import { CoFormContextProvider } from "../co-forms/co-context";
 
 export const DeviceAuthentication = () => {
   const [authenticationError, setAuthenticationError] = React.useState('')
@@ -44,14 +45,16 @@ export const DeviceAuthentication = () => {
       {showImage && <Image style={{ width: '100%', height: '100%', borderRadius: 16 }} source={require("../../assets/images/splash.png")} />}
       {
         deviceauthenticated != undefined &&
-        (deviceauthenticated ? 
+        (deviceauthenticated ?
           <InspectionsContextProvider>
             <VendorFormContextProvider>
-              <UploadOfflineData />
-              <AppNavigator />
+              <CoFormContextProvider>
+                <UploadOfflineData />
+                <AppNavigator />
+              </CoFormContextProvider>
             </VendorFormContextProvider>
           </InspectionsContextProvider>
-       
+
           : authenticationError == "user_cancel" && <AlertBoX message={"For your security, you can onlu use this app when it's unlocked"} callback={authenticate} />
         )
       }

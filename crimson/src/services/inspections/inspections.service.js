@@ -102,7 +102,7 @@ export const setTokenoninterval = (userName) => setInterval(() => {
 
 
 
-let getStoredToken = () => {
+export const getStoredToken = () => {
   return AsyncStorage.getItem('Token').then(
     (value) => {
       return value

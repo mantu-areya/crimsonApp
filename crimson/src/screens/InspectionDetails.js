@@ -16,6 +16,7 @@ import { ActivityIndicator, Button, } from 'react-native-paper'
 import Sign from '../features/gcs/components/workAuth/Sign.js';
 import * as ImagePicker from "expo-image-picker";
 import KeyboardSpacer from 'react-native-keyboard-spacer';
+import CoForms from '../components/ co-forms/CoForms'
 
 
 
@@ -178,6 +179,10 @@ const InspectionDetails = ({ route, navigation }) => {
   // add sign to modal and provide cross button to close modal
 
 
+  // Handle CO FORM CHANGE VIEW
+  const [showCoForm, setShowCoForm] = React.useState(false);
+
+
   return (
     <SafeAreaView style={{ flex: 1 }}>
       {
@@ -201,11 +206,16 @@ const InspectionDetails = ({ route, navigation }) => {
               {/* Hero */}
               <Hero totalBidSubmitted={getTotalBidSubmitted()} roomMeasurementTotal={getRoomMeasurementTotal()} data={inspectionData} sectionTotals={sectionTotals} isSubmitted={isSubmitted} />
               {/* CTA's */}
-              <CTA hasRequiredSign={hasRequiredSign} formStatus={inspectionData?.Inspection_Form_Stage__c} role={userRole} handleOnChat={() => navigation.navigate("Chat", { inspId: inspectionData.Id, chatTitleName: userRole === "Contractor" ? inspectionData?.HHM_Field_PM__r?.Name : inspectionData.General_Contractor__r?.Name })} isReadOnly={readOnly} isForReviewerView={userRole === "Reviewer"} handleSignature={handleSignature} handleViewImages={handleViewImages} isSubmitted={isSubmitted} handleOnSubmit={handleSubmit} />
+              <CTA showCoForms={showCoForm} handleShowCoForms={() => setShowCoForm(!showCoForm)} hasRequiredSign={hasRequiredSign} formStatus={inspectionData?.Inspection_Form_Stage__c} role={userRole} handleOnChat={() => navigation.navigate("Chat", { inspId: inspectionData.Id, chatTitleName: userRole === "Contractor" ? inspectionData?.HHM_Field_PM__r?.Name : inspectionData.General_Contractor__r?.Name })} isReadOnly={readOnly} isForReviewerView={userRole === "Reviewer"} handleSignature={handleSignature} handleViewImages={handleViewImages} isSubmitted={isSubmitted} handleOnSubmit={handleSubmit} />
               {/* Sigantures */}
               {(isSubmitted && showSiganturesView) && <Signatures navigation={navigation} inspId={inspectionData.Id} role={userRole} hasRequiredSign={hasRequiredSign} setHasRequiredSign={setHasRequiredSign} />}
               {/* Forms */}
-              <OtherForms sectionTotals={sectionTotals} gTotal={gTotal} isSubmitted={isSubmitted} readOnly={readOnly} isForReviewerView={userRole === "Reviewer"} formStatus={inspectionData?.Inspection_Form_Stage__c} inspectionData={inspectionData} navigation={navigation} setVendorFormData={setVendorFormData} />
+              {
+                showCoForm
+                  ? <CoForms sectionTotals={sectionTotals} gTotal={gTotal} isSubmitted={isSubmitted} readOnly={readOnly} isForReviewerView={userRole === "Reviewer"} formStatus={inspectionData?.Inspection_Form_Stage__c} inspectionData={inspectionData} navigation={navigation} setVendorFormData={setVendorFormData} />
+                  : <OtherForms sectionTotals={sectionTotals} gTotal={gTotal} isSubmitted={isSubmitted} readOnly={readOnly} isForReviewerView={userRole === "Reviewer"} formStatus={inspectionData?.Inspection_Form_Stage__c} inspectionData={inspectionData} navigation={navigation} setVendorFormData={setVendorFormData} />
+
+              }
             </ScrollView>
             {Platform.OS == 'ios' && <KeyboardSpacer />}
             {/* Call Now */}
