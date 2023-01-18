@@ -3,7 +3,7 @@ import React, { useCallback } from 'react'
 import styled from 'styled-components/native';
 import { useIsFocused } from '@react-navigation/native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
-import { Button } from 'react-native-paper';
+import { Button, Menu, Portal, Provider } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import EntypoIcon from 'react-native-vector-icons/Entypo'
 import NetInfo from "@react-native-community/netinfo";
@@ -41,7 +41,6 @@ const CoForms = ({ isSubmitted, readOnly, inspectionData, navigation }) => {
 
 
     React.useEffect(() => {
-        console.log({currentForm});
         if (currentForm === 1) {
             setDataList(allCo1Forms);
         }
@@ -52,7 +51,7 @@ const CoForms = ({ isSubmitted, readOnly, inspectionData, navigation }) => {
         if (currentForm === 3) {
             setDataList(allCo3Forms);
         }
-    }, [currentForm,allCo1Forms])
+    }, [currentForm, allCo1Forms])
 
 
     React.useEffect(() => {
@@ -112,7 +111,7 @@ const CoForms = ({ isSubmitted, readOnly, inspectionData, navigation }) => {
                     {/* CO Line Items */}
                     <ScrollView style={{ minHeight: 240 }}>
                         {
-                            dataList.length > 0 ?  dataList.map((item, i) => <CoFormLineItem key={i} item={item} />) : <ActivityIndicator />
+                            dataList.length > 0 ? dataList.map((item, i) => <CoFormLineItem isForReviewer={true} key={i} item={item} />) : <ActivityIndicator />
                         }
                     </ScrollView>
                 </>
@@ -122,6 +121,7 @@ const CoForms = ({ isSubmitted, readOnly, inspectionData, navigation }) => {
 }
 
 function CoFormLineItem({ item, isForReviewer }) {
+
 
 
 
@@ -149,11 +149,137 @@ function CoFormLineItem({ item, isForReviewer }) {
         Don_t_Charge_Client,
         Cost_Category,
         Category,
+        Approval_Status
     } = item
+
+    function getBackgroundColor() {
+        if (Approval_Status === "Approved") {
+            return "#7CDD9B";
+        } else if (Approval_Status === "Declined") {
+            return "#E02E2E";
+        } else {
+            return "#3983EF";
+        }
+    }
+    function getCardBackgroundColor() {
+        if (Approval_Status === "Approved") {
+            return "#E7F5CE";
+        } else if (Approval_Status === "Declined") {
+            return "#F9DAD4";
+        } else {
+            return "#FDF2BF";
+        }
+    }
+
+    const [showCostCategoryMenu, setShowCostCategoryMenu] = React.useState(false);
 
 
     if (isForReviewer) {
-        return;
+        return (
+            <Provider>
+                <Swipeable onRef={(ref) => swipeableRef.current = ref} rightButtons={rightButtons}>
+                    <ReviewerLineItemWrapper backgroundColor={getCardBackgroundColor()} >
+                        <Text style={{ fontSize: 12, fontFamily: "URBAN_MEDIUM" }}>Cost Category</Text>
+                        <CurrentFormHeading>{Scope_Notes}</CurrentFormHeading>
+                        <View style={{ flexDirection: "row" }}>
+                            <View style={{ flex: .2 }}>
+                                <ReviewerPreviewLabel>Qty {Quantity}</ReviewerPreviewLabel>
+                                <ReviewerPreviewLabel>Rate {Rate}</ReviewerPreviewLabel>
+                                <ReviewerPreviewLabel>Total {Total}</ReviewerPreviewLabel>
+                            </View>
+                            <View style={{ flex: .8, flexDirection: "row", alignItems: "center" }}>
+                                <ReviewerActionBtn backgroundColor={Approval_Status === "Approved" ? "grey" : "#7CDD9B"}>
+                                    <Text>A</Text>
+                                </ReviewerActionBtn>
+                                <ReviewerActionBtn onPress={() => setShowModal(true)} backgroundColor={Approval_Status === "Approved as Noted" ? "grey" : "#3983EF"} >
+                                    <Text>R</Text>
+                                </ReviewerActionBtn>
+                                <ReviewerActionBtn backgroundColor={Approval_Status === "Declined" ? "grey" : "#E02E2E"}>
+                                    <Text>D</Text>
+                                </ReviewerActionBtn>
+                            </View>
+                        </View>
+                    </ReviewerLineItemWrapper>
+                </Swipeable>
+                <Modal transparent visible={showModal} onClose={() => setShowModal(false)} >
+                    <Portal.Host>
+                        <View style={{ backgroundColor: "#d4d4d490", flex: 1, justifyContent: "center", alignItems: "center", paddingHorizontal: 48 }}>
+                            <View style={{ backgroundColor: "white", padding: 12, width: "100%", borderRadius: 8 }}>
+                                <View>
+                                    <FormLabel style={{ fontSize: 12 }}>Scope Notes</FormLabel>
+                                    <FormInput style={{ fontSize: 16 }} value={Scope_Notes} />
+                                </View>
+                                <View style={{ flexDirection: "row", marginVertical: 8 }}>
+                                    <View style={{ flex: 1, marginHorizontal: 2 }}>
+                                        <FormLabel style={{ fontSize: 12 }}>Quantity</FormLabel>
+                                        <Text style={{ fontSize: 16 }}>{`${Quantity}`} </Text>
+
+                                    </View>
+                                    <View style={{ flex: 1, marginHorizontal: 2 }}>
+                                        <FormLabel style={{ fontSize: 12 }}>UM</FormLabel>
+                                        <Text style={{ fontSize: 16 }}>{`${U_M}`} </Text>
+
+                                    </View>
+                                    <View style={{ flex: 1, marginHorizontal: 2 }}>
+                                        <FormLabel style={{ fontSize: 12 }}>Rate</FormLabel>
+                                        <Text style={{ fontSize: 16 }}>{`${Rate}`} </Text>
+
+                                    </View>
+                                    <View style={{ flex: 1, marginHorizontal: 2 }}>
+                                        <FormLabel style={{ fontSize: 12 }}>Total</FormLabel>
+                                        <Text style={{ fontSize: 16 }}>{`${Total}`} </Text>
+
+                                    </View>
+                                </View>
+                                <View style={{ flexDirection: "row", marginVertical: 8 }}>
+                                    <View style={{ flex: 1, marginHorizontal: 2 }}>
+                                        <FormLabel style={{ fontSize: 12 }}>Adj Qty</FormLabel>
+                                        <FormInput style={{ fontSize: 16 }} value={`${Quantity}`} />
+                                    </View>
+                                    <View style={{ flex: 1, marginHorizontal: 2 }}>
+                                        <FormLabel style={{ fontSize: 12 }}>Adj UM</FormLabel>
+                                        <FormInput style={{ fontSize: 16 }} value={`${U_M}`} />
+                                    </View>
+                                    <View style={{ flex: 1, marginHorizontal: 2 }}>
+                                        <FormLabel style={{ fontSize: 12 }}>Adj Rate</FormLabel>
+                                        <FormInput style={{ fontSize: 16 }} value={`${Rate}`} />
+                                    </View>
+                                </View>
+                                <View style={{ flexDirection: "row", marginVertical: 8 }}>
+                                    <View style={{ flex: 1, marginHorizontal: 2 }}>
+                                        <FormLabel style={{ fontSize: 12 }}>Cost Category</FormLabel>
+                                        <Menu
+                                            visible={showCostCategoryMenu}
+                                            onDismiss={() => setShowCostCategoryMenu(false)}
+                                            anchor={
+                                                <TouchableOpacity style={{ backgroundColor: "#f1f4f8", padding: 8, borderRadius: 4 }} onPress={() => setShowCostCategoryMenu(true)}>
+                                                    <Text style={{ fontSize: 16, fontFamily: "URBAN_MEDIUM" }} >{Cost_Category}</Text>
+
+                                                </TouchableOpacity>
+                                            }
+                                        >
+                                            {
+                                                [1, 2, 3].map((option, index) =>
+                                                    <Menu.Item key={index} onPress={() => { setShowCostCategoryMenu(false) }} title={option} />
+                                                )
+                                            }
+                                        </Menu>
+                                    </View>
+                                </View>
+                                <View style={{ flexDirection: "row", marginVertical: 8 }}>
+                                    <View style={{ flex: 1, marginHorizontal: 2 }}>
+                                        <FormLabel style={{ fontSize: 12 }}>Owner Clarification</FormLabel>
+                                        <FormInput style={{ fontSize: 16 }} value={`${Owner_Clarification}`} />
+                                    </View>
+                                </View>
+                            </View>
+                        </View>
+                    </Portal.Host>
+                </Modal>
+
+
+            </Provider>
+        )
     }
     return (
         <>
@@ -220,7 +346,6 @@ font-family: 'URBAN_MEDIUM';
 font-size: ${Platform.OS === "android" ? 12 : 16}px;
 color: green;
 flex: 1;
-
 `;
 
 const AddNewBtn = styled.TouchableOpacity`
@@ -244,5 +369,26 @@ padding: 8px;
 font-family: 'URBAN_MEDIUM';
 border-radius: 4px;
 `;
+
+const ReviewerActionBtn = styled.TouchableOpacity`
+background-color: ${props => props.backgroundColor};
+flex: 1;
+margin: 0 16px;
+padding: 8px 16px;
+border-radius: 16px;
+justify-content: center;
+align-items:center;
+`;
+
+const ReviewerLineItemWrapper = styled.TouchableOpacity`
+padding: 8px;
+background-color: ${props => props.backgroundColor};
+`;
+
+const ReviewerPreviewLabel = styled(PreviewLabel)`
+font-size: ${Platform.OS === "android" ? 10 : 12}px;
+`;
+
+
 
 export default CoForms
