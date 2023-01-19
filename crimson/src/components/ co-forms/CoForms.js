@@ -1,9 +1,9 @@
-import { View, Text, FlatList, ActivityIndicator, Dimensions, Platform, ScrollView, TextInput, TouchableOpacity, Modal } from 'react-native'
+import { View, Text, Button, ActivityIndicator, Dimensions, Platform, ScrollView, TextInput, TouchableOpacity, Modal } from 'react-native'
 import React, { useCallback } from 'react'
 import styled from 'styled-components/native';
 import { useIsFocused } from '@react-navigation/native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
-import { Button, Menu, Portal, Provider } from 'react-native-paper';
+import { Menu, Portal, Provider } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import EntypoIcon from 'react-native-vector-icons/Entypo'
 import NetInfo from "@react-native-community/netinfo";
@@ -13,9 +13,10 @@ import Swipeable from 'react-native-swipeable';
 
 
 
-const CoForms = ({ isSubmitted, readOnly, inspectionData, navigation }) => {
+const CoForms = ({ isForReviewerView, isSubmitted, readOnly, inspectionData, navigation }) => {
 
     const {
+        isDataLoading,
         allCo1Forms,
         allCo2Forms,
         allCo3Forms,
@@ -55,7 +56,9 @@ const CoForms = ({ isSubmitted, readOnly, inspectionData, navigation }) => {
 
 
     React.useEffect(() => {
-        getAllCoForms();
+        if (inspectionData.Id) {
+            getAllCoForms(inspectionData.Id);
+        }
     }, [])
 
 
@@ -111,7 +114,9 @@ const CoForms = ({ isSubmitted, readOnly, inspectionData, navigation }) => {
                     {/* CO Line Items */}
                     <ScrollView style={{ minHeight: 240 }}>
                         {
-                            dataList.length > 0 ? dataList.map((item, i) => <CoFormLineItem isForReviewer={true} key={i} item={item} />) : <ActivityIndicator />
+                            isDataLoading ?
+                                <ActivityIndicator /> :
+                                dataList.map((item, i) => <CoFormLineItem isForReviewer={isForReviewerView} key={i} item={item} />)
                         }
                     </ScrollView>
                 </>
@@ -306,14 +311,31 @@ function CoFormLineItem({ item, isForReviewer }) {
                                 <FormInput style={{ fontSize: 16 }} value={`${Quantity}`} />
                             </View>
                             <View style={{ flex: 1, marginHorizontal: 2 }}>
+                                <FormLabel style={{ fontSize: 12 }}>U/M</FormLabel>
+                                <FormInput style={{ fontSize: 16 }} value={`${U_M}`} />
+                            </View>
+                            <View style={{ flex: 1, marginHorizontal: 2 }}>
                                 <FormLabel style={{ fontSize: 12 }}>Rate</FormLabel>
                                 <FormInput style={{ fontSize: 16 }} value={`${Rate}`} />
                             </View>
                             <View style={{ flex: 1, marginHorizontal: 2 }}>
                                 <FormLabel style={{ fontSize: 12 }}>Total</FormLabel>
-                                <FormInput style={{ fontSize: 16 }} value={`${Total}`} />
+                                <Text style={{ fontSize: 16, padding: 8 }}>{`${Total}`} </Text>
                             </View>
                         </View>
+                        <View >
+                            <FormLabel style={{ fontSize: 12 }}>Approval Status</FormLabel>
+                            <Text style={{ fontSize: 16, padding: 8 }}>{`${Approval_Status}`} </Text>
+                        </View>
+                        <View >
+                            <FormLabel style={{ fontSize: 12 }}>Cost Category</FormLabel>
+                            <Text style={{ fontSize: 16, padding: 8 }}>{`${Cost_Category}`} </Text>
+                        </View>
+                        <View>
+                            <FormLabel style={{ fontSize: 12 }}>Owner Clarification</FormLabel>
+                            <Text style={{ fontSize: 16, padding: 8 }}>{`${Owner_Clarification}`} </Text>
+                        </View>
+                        <Button title="Save" />
                     </View>
                 </View>
             </Modal>

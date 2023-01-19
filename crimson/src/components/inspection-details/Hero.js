@@ -195,7 +195,7 @@ function ImageGallery({ handleViewImageGallery }) {
                         alignItems: "center",
                         borderRadius: 4
                     }}>
-                    <Text style={{ fontSize: "12", color: "white", fontFamily: "URBAN_BOLD" }}>See More</Text>
+                    <Text style={{ fontSize: 12, color: "white", fontFamily: "URBAN_BOLD" }}>See More</Text>
                 </TouchableOpacity>
             </View>
         </View>
