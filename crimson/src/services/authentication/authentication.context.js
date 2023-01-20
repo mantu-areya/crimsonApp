@@ -1,5 +1,4 @@
 import React, { useState, createContext, useEffect } from "react";
-import * as firebase from "firebase";
 
 
 import { setOrgToken } from "./authentication.service";

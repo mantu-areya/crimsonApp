@@ -1,4 +1,3 @@
-// import * as firebase from "firebase";
 import AsyncStorage from "@react-native-async-storage/async-storage"
 import NetInfo, { useNetInfo } from "@react-native-community/netinfo";
 import { apiPost, apiPut, apiGet, apiPatch } from '../api/api';
