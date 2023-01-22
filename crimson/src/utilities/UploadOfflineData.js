@@ -14,7 +14,7 @@ export const UploadOfflineData = () => {
   const [offlineUploadStart, setOfflineUploadStart] = useState("NS")
 
   const { addToVfContex, setAscynDataToApp, vendorFormDetails, deletedLineItems } = useContext(VendorFormContext)
-  const { inspections } = useContext(InspectionsContext);
+  const { inspections,userRole } = useContext(InspectionsContext);
 
   useEffect(() => {
     if (AppState.currentState == 'background' || AppState.currentState == 'inactive') {
@@ -47,7 +47,7 @@ export const UploadOfflineData = () => {
 
   const addDataToAsync = async (data) => {
     try {
-      inspections && await AsyncStorage.multiSet([['inspection', JSON.stringify(inspections)], ['vendorForm', JSON.stringify(data)]]);
+      inspections &&  await AsyncStorage.multiSet([['inspection', JSON.stringify(inspections)], ['vendorForm', JSON.stringify(data)],['userRole', userRole]]);
     }
     catch (err) {
       console.log(err);
