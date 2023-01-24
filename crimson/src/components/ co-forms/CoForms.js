@@ -10,27 +10,35 @@ import NetInfo from "@react-native-community/netinfo";
 import { getCoForms } from '../../services/co-forms/co-api';
 import { CoFormContext } from '../../services/co-forms/co-context';
 import Swipeable from 'react-native-swipeable';
+import Animated, { interpolateColor, runOnJS, useAnimatedStyle, useDerivedValue, useSharedValue } from 'react-native-reanimated';
+import { Gesture } from 'react-native-gesture-handler';
+import ComposedGestureWrapper from '../animated/ComposedGestureWrapper';
+import CostCategory from '../../constants/ cost-category';
 
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 
 const CoForms = ({ isForReviewerView, isSubmitted, readOnly, inspectionData, navigation }) => {
 
     const {
         isDataLoading,
-        allCo1Forms,
-        allCo2Forms,
-        allCo3Forms,
-        getAllCoForms
+        coForms,
+        getAllCoForms,
+        updateCoFormContext,
+        updateCoLineItemToSf,
+        initRehabId,
+        addNewLineItem
     }
         = React.useContext(CoFormContext);
 
 
-    const [currentForm, setCurrentForm] = React.useState(1);
+    const [currentForm, setCurrentForm] = React.useState(0);
     const [dataList, setDataList] = React.useState([])
-
+    const [sequenceCo1, setSequenceCo1] = React.useState()
+    const [sequenceCo2, setSequenceCo2] = React.useState()
+    const [sequenceCo3, setSequenceCo3] = React.useState()
 
     const [NewItemAdded, setNewItemAdded] = React.useState(0);
-    const [showAddButton, setShowAddButton] = React.useState(false)
 
 
     const [searchQuery, setSearchQuery] = React.useState('');
@@ -40,19 +48,34 @@ const CoForms = ({ isForReviewerView, isSubmitted, readOnly, inspectionData, nav
         setSearchQuery(query);
     }
 
+    const getLastSequence = (form) => {
+        const seq = [];
+        if (form.length === 0) {
+            return 0;
+        }
+        form.forEach(item => {
+            seq.push(item.Sequence)
+        })
+        return seq.sort(function (a, b) { return a - b; }).pop()
+    }
+
+    const setSequenceByForms = (forms) => {
+        console.log("1", getLastSequence(forms[0].lstCOFormsData));
+        console.log("2", getLastSequence(forms[1].lstCOFormsData));
+        console.log("3", getLastSequence(forms[2].lstCOFormsData));
+        setSequenceCo1(getLastSequence(forms[0].lstCOFormsData))
+        setSequenceCo2(getLastSequence(forms[1].lstCOFormsData))
+        setSequenceCo3(getLastSequence(forms[2].lstCOFormsData))
+
+
+    }
 
     React.useEffect(() => {
-        if (currentForm === 1) {
-            setDataList(allCo1Forms);
+        if (coForms && coForms.length > 0) {
+            setDataList(coForms[currentForm].lstCOFormsData)
+            setSequenceByForms(coForms)
         }
-        if (currentForm === 2) {
-            console.log("yes");
-            setDataList(allCo2Forms);
-        }
-        if (currentForm === 3) {
-            setDataList(allCo3Forms);
-        }
-    }, [currentForm, allCo1Forms])
+    }, [currentForm, coForms])
 
 
     React.useEffect(() => {
@@ -60,6 +83,147 @@ const CoForms = ({ isForReviewerView, isSubmitted, readOnly, inspectionData, nav
             getAllCoForms(inspectionData.Id);
         }
     }, [])
+
+
+    // const getNewUniqueKey = (currentForm) => {
+    //     let
+    //     if (currentForm === 0) {
+    //         let currSeq = Number(sequenceCo1 + 1);
+    //         setSequenceCo1(currSeq)
+    //         return {
+    //             inspectionData.Id + "#" + `CO-1` + "#" + currSeq
+    //         }
+    //     }
+    //     if (currentForm === 1) {
+    //         let currSeq = Number(sequenceCo2 + 1);
+    //         setSequenceCo2(currSeq)
+    //         return inspectionData.Id + "#" + `CO-2` + "#" + currSeq
+    //     }
+    //     if (currentForm === 2) {
+    //         let currSeq = Number(sequenceCo3 + 1);
+    //         setSequenceCo3(currSeq)
+    //         return inspectionData.Id + "#" + `CO-3` + "#" + currSeq
+    //     }
+    // }
+
+    // const getDynamicPropsForNewLineItem = (currentForm) => {
+    //     if (currentForm === 2) {
+    //         let currSeq = Number(sequenceCo1 + 1);
+    //         setSequenceCo3(currSeq)
+    //         return {
+    //            UniqueKey:  inspectionData.Id + "#" + `CO-1` + "#" + currSeq,
+    //            Scope_Notes : "New Line Item" + " " + sequenceCo3,
+    //         }
+    //     }
+    //     // if (currentForm === 1) {
+    //     //      currSeq = Number(sequenceCo2 + 1);
+    //     //     setSequenceCo2(currSeq)
+    //     //     return inspectionData.Id + "#" + `CO-2` + "#" + currSeq
+    //     // }
+    //     // if (currentForm === 2) {
+    //     //      currSeq = Number(sequenceCo3 + 1);
+    //     //     setSequenceCo3(currSeq)
+    //     //     return inspectionData.Id + "#" + `CO-3` + "#" + currSeq
+    //     // }
+    // }
+
+    const getDynamicPropsForNewLineItem = (currentForm) => {
+
+        let seq;
+
+        if (currentForm === 0) {
+            seq = sequenceCo1
+        }
+        if (currentForm === 1) {
+            seq = sequenceCo2
+        }
+        if (currentForm === 2) {
+            seq = sequenceCo3
+        }
+
+        return {
+            "Scope_Notes": "New Line Item #" + Number(seq + 1),
+            "Sequence": Number(seq + 1),
+            "Contract_Type": `CO-${currentForm + 1}`,
+            "UniqueKey": inspectionData.Id + "#" + `CO-${currentForm + 1}` + "#" + Number(seq + 1),
+            "Lookup_To_Parent": initRehabId,
+            "Total": 0,
+            "Rate": 0,
+            "Quantity": 0,
+
+        }
+    }
+
+    const handleAddNewLineItem = async () => {
+        let newItem = getDynamicPropsForNewLineItem(currentForm)
+        if (currentForm === 0) {
+            setSequenceCo1(prev => Number(prev + 1))
+        }
+        if (currentForm === 1) {
+            setSequenceCo2(prev => Number(prev + 1))
+        }
+        if (currentForm === 2) {
+            setSequenceCo3(prev => Number(prev + 1))
+        }
+        console.log({ newItem });
+        addNewLineItem(newItem);
+        getAllCoForms(inspectionData.Id)
+    };
+
+    const handleOnChangeLineItem = async (field, value, key) => {
+        const updatedDataList = dataList.map((obj) => {
+            if (obj.UniqueKey === key) {
+                let formatedVal = ["Scope_Notes", "Cost_Category", "Adj_U_M", "U_M", "Owner_Clarification"].includes(field) ? value : parseFloat(value)
+                let newValues = { ...obj, [field]: formatedVal };
+                let newTotal, approvedAmt;
+
+                if (field === "Adj_Quantity" || field === "Adj_Rate" || field === 'Owner_Clarification') {
+                    approvedAmt = newValues && (newValues.Adj_Quantity * newValues.Adj_Rate)
+                    return { ...obj, [field]: formatedVal, ["Total"]: obj?.Total, ["Approved_Amount"]: approvedAmt };
+
+                } else {
+                    newTotal = newValues && (newValues.Quantity * newValues.Rate)
+                    // added = (oldTotal > newTotal);
+                    // let diff = (oldTotal - newTotal);
+                    // let newGrandTotal = added ? grandTotal + diff : grandTotal - diff;
+                    // newGrandTotal && setGrandTotal(newGrandTotal);
+                    return { ...obj, [field]: formatedVal, ["Total"]: newTotal, ["Approved_Amount"]: obj?.Approved_Amount };
+                }
+            }
+            return obj;
+        })
+        setDataList(updatedDataList);
+        updateCoFormContext(updatedDataList, currentForm);
+    }
+
+    function handleOnSave(modifiedLineItem) {
+        updateCoFormContext(dataList, currentForm);
+        modifiedLineItem && updateCoLineItemToSf(modifiedLineItem)
+    }
+
+    function handleApprovedAsNoted(modifiedLineItem) {
+        updateCoFormContext(dataList, currentForm);
+        modifiedLineItem && updateCoLineItemToSf({
+            ...modifiedLineItem,
+            "Approval_Status": "Approved as Noted"
+        })
+    }
+
+    function handleApproveALineItem(item) {
+        updateCoFormContext(dataList, currentForm);
+        item && updateCoLineItemToSf({
+            ...item,
+            "Approval_Status": "Approved"
+        })
+    }
+
+    function handleDeclineALineItem(item) {
+        updateCoFormContext(dataList, currentForm);
+        item && updateCoLineItemToSf({
+            ...item,
+            "Approval_Status": "Declined"
+        })
+    }
 
 
     return (
@@ -76,7 +240,7 @@ const CoForms = ({ isForReviewerView, isSubmitted, readOnly, inspectionData, nav
                     {/* CO Tabs */}
                     <View style={{ flexDirection: "row" }}>
                         {
-                            [1, 2, 3].map((item, i) =>
+                            [0, 1, 2].map((item, i) =>
                                 <TouchableOpacity
                                     key={i}
                                     onPress={() => setCurrentForm(item)}
@@ -90,7 +254,7 @@ const CoForms = ({ isForReviewerView, isSubmitted, readOnly, inspectionData, nav
                                     <Text style={{
                                         color: currentForm === item ? "white" : "#8477EB",
                                         fontFamily: "URBAN_BOLD", fontSize: 16
-                                    }}>CO {item}</Text>
+                                    }}>CO {item + 1}</Text>
                                 </TouchableOpacity>)
                         }
                     </View>
@@ -105,7 +269,7 @@ const CoForms = ({ isForReviewerView, isSubmitted, readOnly, inspectionData, nav
                             }
                         </View>
                         <View style={{ flex: .3, marginHorizontal: 4 }}>
-                            <AddNewBtn>
+                            <AddNewBtn onPress={handleAddNewLineItem}>
                                 <Text style={{ fontFamily: "URBAN_BOLD", color: "white" }}> Add New</Text>
                             </AddNewBtn>
                         </View>
@@ -116,7 +280,7 @@ const CoForms = ({ isForReviewerView, isSubmitted, readOnly, inspectionData, nav
                         {
                             isDataLoading ?
                                 <ActivityIndicator /> :
-                                dataList.map((item, i) => <CoFormLineItem isForReviewer={isForReviewerView} key={i} item={item} />)
+                                dataList.map((item, i) => <CoFormLineItem handleDeclineALineItem={handleDeclineALineItem} handleApproveALineItem={handleApproveALineItem} handleApprovedAsNoted={handleApprovedAsNoted} handleOnChangeLineItem={handleOnChangeLineItem} isForReviewer={false} key={i} item={item} handleOnSave={handleOnSave} />)
                         }
                     </ScrollView>
                 </>
@@ -125,9 +289,9 @@ const CoForms = ({ isForReviewerView, isSubmitted, readOnly, inspectionData, nav
     )
 }
 
-function CoFormLineItem({ item, isForReviewer }) {
+function CoFormLineItem({ item, isForReviewer, handleApproveALineItem, handleDeclineALineItem, handleOnChangeLineItem, handleOnSave, handleApprovedAsNoted }) {
 
-
+    const insets = useSafeAreaInsets()
 
 
     const rightButtons = [
@@ -146,15 +310,17 @@ function CoFormLineItem({ item, isForReviewer }) {
     const {
         U_M,
         Total,
-        Sub_Category,
         Scope_Notes,
         Rate,
         Quantity,
+        Adj_Quantity,
+        Adj_Rate,
+        Adj_U_M,
         Owner_Clarification,
-        Don_t_Charge_Client,
         Cost_Category,
-        Category,
-        Approval_Status
+        Approval_Status,
+        UniqueKey,
+        Approved_Amount
     } = item
 
     function getBackgroundColor() {
@@ -171,20 +337,145 @@ function CoFormLineItem({ item, isForReviewer }) {
             return "#E7F5CE";
         } else if (Approval_Status === "Declined") {
             return "#F9DAD4";
-        } else {
+        } else if (Approval_Status === "Approved as Noted") {
             return "#FDF2BF";
+        } else {
+            return "#fff"
         }
     }
 
     const [showCostCategoryMenu, setShowCostCategoryMenu] = React.useState(false);
 
+    const [text, setText] = React.useState(Owner_Clarification)
+
 
     if (isForReviewer) {
+        const offset = useSharedValue({ x: 0 });
+        const start = useSharedValue({ x: 0 });
+
+        const [show, setShow] = React.useState(false);
+
+        const handleLongPressState = (state) => {
+            setShow(state);
+        }
+
+
+        const longPressGesture = Gesture.LongPress()
+            .onEnd(() => {
+                runOnJS(handleLongPressState)(true)
+            })
+
+
+
+        const dragGesture = Gesture.Pan()
+            .averageTouches(true)
+            .onUpdate((e) => {
+                console.log(e.translationY);
+                offset.value = {
+                    x: (e.translationY + start.value.x)
+                };
+            })
+            .onEnd(() => {
+                start.value = {
+                    x: offset.value.x,
+                };
+            });
+
+        const animatedStyles = useAnimatedStyle(() => {
+            return {
+                transform: [
+                    { translateY: offset.value.x },
+                ],
+            };
+        });
+
+
+        const obj = useDerivedValue(() => {
+            if (offset.value.x > 0) {
+                return {
+                    color: "red",
+                    limit: 180
+                }
+            }
+            if (offset.value.x < 0) {
+                return {
+                    color: "green",
+                    limit: -180
+                }
+            }
+        }, [offset.value.x])
+
+        const animatedStyleforBackground = useAnimatedStyle(() => {
+
+            let bColor = "#c4c4c490";
+
+            if (obj.value) {
+                bColor = interpolateColor(offset.value.x, [0, obj.value.limit], ["grey", obj.value.color])
+            }
+
+            return {
+                backgroundColor: bColor,
+            }
+        });
+
+
+        const handleAlert = () => {
+            if (offset.value.x < -100 && offset.value.x > -200) {
+                console.log("SAVING..");
+                // item && handleOnSave(item); // * Call SAVE TO CONTEXT FUNCTION
+                item && handleApprovedAsNoted(item)
+                setShowModal(false);
+                // showMessage({
+                //     message: "Saved",
+                //     type: "success",
+                // });
+                offset.value = {
+                    x: 0
+                }
+                start.value = {
+                    x: 0
+                }
+                setShow(false)
+            }
+
+            if (offset.value.x > 120) {
+                console.log("INSIDE CANCEL");
+                // refreshData(); // * Reset Old Data
+                setShowModal(false);
+                // showMessage({
+                //     message: "Cancelled",
+                //     type: "default",
+                // });
+                offset.value = {
+                    x: 0
+                }
+                start.value = {
+                    x: 0
+                }
+                setShow(false)
+            }
+        }
+
+        useDerivedValue(() => {
+
+            if ((offset.value.x > 120) || (offset.value.x < 0 && offset.value.x > -200)) {
+                runOnJS(handleAlert)(offset.value.x)
+            }
+
+        }, [offset.value.x, item])
+
+
+
+        const composed = Gesture.Simultaneous(longPressGesture, dragGesture);
+
+        const [costCategory, setCostCategory] = React.useState(Cost_Category);
+
+
         return (
             <Provider>
                 <Swipeable onRef={(ref) => swipeableRef.current = ref} rightButtons={rightButtons}>
                     <ReviewerLineItemWrapper backgroundColor={getCardBackgroundColor()} >
-                        <Text style={{ fontSize: 12, fontFamily: "URBAN_MEDIUM" }}>Cost Category</Text>
+                        <Text style={{ fontSize: 12, fontFamily: "URBAN_MEDIUM" }}>Cost Category : {Cost_Category}</Text>
                         <CurrentFormHeading>{Scope_Notes}</CurrentFormHeading>
                         <View style={{ flexDirection: "row" }}>
                             <View style={{ flex: .2 }}>
@@ -193,13 +484,13 @@ function CoFormLineItem({ item, isForReviewer }) {
                                 <ReviewerPreviewLabel>Total {Total}</ReviewerPreviewLabel>
                             </View>
                             <View style={{ flex: .8, flexDirection: "row", alignItems: "center" }}>
-                                <ReviewerActionBtn backgroundColor={Approval_Status === "Approved" ? "grey" : "#7CDD9B"}>
+                                <ReviewerActionBtn onPress={() => handleApproveALineItem(item)} backgroundColor={Approval_Status === "Approved" ? "grey" : "#7CDD9B"}>
                                     <Text>A</Text>
                                 </ReviewerActionBtn>
                                 <ReviewerActionBtn onPress={() => setShowModal(true)} backgroundColor={Approval_Status === "Approved as Noted" ? "grey" : "#3983EF"} >
                                     <Text>R</Text>
                                 </ReviewerActionBtn>
-                                <ReviewerActionBtn backgroundColor={Approval_Status === "Declined" ? "grey" : "#E02E2E"}>
+                                <ReviewerActionBtn onPress={() => handleDeclineALineItem(item)} backgroundColor={Approval_Status === "Declined" ? "grey" : "#E02E2E"}>
                                     <Text>D</Text>
                                 </ReviewerActionBtn>
                             </View>
@@ -208,77 +499,123 @@ function CoFormLineItem({ item, isForReviewer }) {
                 </Swipeable>
                 <Modal transparent visible={showModal} onClose={() => setShowModal(false)} >
                     <Portal.Host>
-                        <View style={{ backgroundColor: "#d4d4d490", flex: 1, justifyContent: "center", alignItems: "center", paddingHorizontal: 48 }}>
-                            <View style={{ backgroundColor: "white", padding: 12, width: "100%", borderRadius: 8 }}>
-                                <View>
-                                    <FormLabel style={{ fontSize: 12 }}>Scope Notes</FormLabel>
-                                    <FormInput style={{ fontSize: 16 }} value={Scope_Notes} />
-                                </View>
-                                <View style={{ flexDirection: "row", marginVertical: 8 }}>
-                                    <View style={{ flex: 1, marginHorizontal: 2 }}>
-                                        <FormLabel style={{ fontSize: 12 }}>Quantity</FormLabel>
-                                        <Text style={{ fontSize: 16 }}>{`${Quantity}`} </Text>
+                        <ComposedGestureWrapper gesture={composed}>
+                            <>
+                                {/* MESSAGE */}
+                                {
+                                    show &&
+                                    <Animated.View style={{ position: 'absolute', bottom: 120, width: "100%", paddingHorizontal: 12 }}>
+                                        <Animated.View style={{ marginLeft: "auto", justifyContent: 'center', alignItems: 'center', marginBottom: 16 }}>
+                                            <Text style={{ backgroundColor: "#8477EB", padding: 8, color: "white", fontFamily: "URBAN_BOLD", fontSize: 16 }}>Swipe Up to save</Text>
+                                        </Animated.View>
+                                        <Animated.View style={{ marginRight: "auto", justifyContent: 'center', alignItems: 'center' }}>
+                                            <Text style={{ backgroundColor: "#8477EB", padding: 8, color: "white", fontFamily: "URBAN_BOLD", fontSize: 16 }}>Swipe Down to Cancel</Text>
+                                        </Animated.View>
+                                    </Animated.View>
+                                }
+                                <Animated.View style={[{ backgroundColor: "#d4d4d490", flex: 1, justifyContent: "center", alignItems: "center", paddingHorizontal: 36 }, animatedStyleforBackground]}>
 
+                                    {/* Fixed Banner */}
+                                    <View style={{ padding: 8, paddingTop: insets.top, position: "absolute", top: 0, backgroundColor: "#000", width: Dimensions.get("screen").width }}>
+                                        <View>
+                                            <FormLabel style={{ fontSize: 12, color: "white", fontFamily: "URBAN_BOLD" }}>Scope Notes</FormLabel>
+                                            <ScrollView showsVerticalScrollIndicator style={{ height: 26, marginBottom: 12 }}>
+                                                <Text style={{ fontSize: 18, color: "white", fontFamily: "URBAN_BOLD" }}>{Scope_Notes}</Text>
+                                            </ScrollView>
+                                        </View>
+                                        <View style={{ flexDirection: "row" }}>
+                                            <View style={{ flex: 1, marginHorizontal: 2 }}>
+                                                <FormLabel style={{ fontSize: 12, color: "white" }}>Qty</FormLabel>
+                                                <FormValue >{`${Quantity}`} </FormValue>
+                                            </View>
+                                            <View style={{ flex: 1, marginHorizontal: 2 }}>
+                                                <FormLabel style={{ fontSize: 12, color: "white" }}>UM</FormLabel>
+                                                <FormValue >{`${U_M ?? ''}`}</FormValue>
+                                            </View>
+                                            <View style={{ flex: 1, marginHorizontal: 2 }}>
+                                                <FormLabel style={{ fontSize: 12, color: "white" }}>Rate</FormLabel>
+                                                <FormValue >{`${Rate}`}</FormValue>
+                                            </View>
+                                            <View style={{ flex: 1, marginHorizontal: 2 }}>
+                                                <FormLabel style={{ fontSize: 12, color: "white" }}>Total</FormLabel>
+                                                <FormValue >{`${Total}`}</FormValue>
+                                            </View>
+                                        </View>
                                     </View>
-                                    <View style={{ flex: 1, marginHorizontal: 2 }}>
-                                        <FormLabel style={{ fontSize: 12 }}>UM</FormLabel>
-                                        <Text style={{ fontSize: 16 }}>{`${U_M}`} </Text>
 
-                                    </View>
-                                    <View style={{ flex: 1, marginHorizontal: 2 }}>
-                                        <FormLabel style={{ fontSize: 12 }}>Rate</FormLabel>
-                                        <Text style={{ fontSize: 16 }}>{`${Rate}`} </Text>
+                                    <Animated.View style={[{ backgroundColor: "white", padding: 12, width: "100%", borderRadius: 8 }, animatedStyles]}>
 
-                                    </View>
-                                    <View style={{ flex: 1, marginHorizontal: 2 }}>
-                                        <FormLabel style={{ fontSize: 12 }}>Total</FormLabel>
-                                        <Text style={{ fontSize: 16 }}>{`${Total}`} </Text>
+                                        <View>
+                                            <FormLabel style={{ fontSize: 12 }}>Owner Clarification</FormLabel>
+                                            <View
+                                                style={{
+                                                    backgroundColor: "#f1f4f8",
+                                                    borderRadius: 8
 
-                                    </View>
-                                </View>
-                                <View style={{ flexDirection: "row", marginVertical: 8 }}>
-                                    <View style={{ flex: 1, marginHorizontal: 2 }}>
-                                        <FormLabel style={{ fontSize: 12 }}>Adj Qty</FormLabel>
-                                        <FormInput style={{ fontSize: 16 }} value={`${Quantity}`} />
-                                    </View>
-                                    <View style={{ flex: 1, marginHorizontal: 2 }}>
-                                        <FormLabel style={{ fontSize: 12 }}>Adj UM</FormLabel>
-                                        <FormInput style={{ fontSize: 16 }} value={`${U_M}`} />
-                                    </View>
-                                    <View style={{ flex: 1, marginHorizontal: 2 }}>
-                                        <FormLabel style={{ fontSize: 12 }}>Adj Rate</FormLabel>
-                                        <FormInput style={{ fontSize: 16 }} value={`${Rate}`} />
-                                    </View>
-                                </View>
-                                <View style={{ flexDirection: "row", marginVertical: 8 }}>
-                                    <View style={{ flex: 1, marginHorizontal: 2 }}>
-                                        <FormLabel style={{ fontSize: 12 }}>Cost Category</FormLabel>
-                                        <Menu
-                                            visible={showCostCategoryMenu}
-                                            onDismiss={() => setShowCostCategoryMenu(false)}
-                                            anchor={
-                                                <TouchableOpacity style={{ backgroundColor: "#f1f4f8", padding: 8, borderRadius: 4 }} onPress={() => setShowCostCategoryMenu(true)}>
-                                                    <Text style={{ fontSize: 16, fontFamily: "URBAN_MEDIUM" }} >{Cost_Category}</Text>
+                                                }}>
+                                                <TextInput
+                                                    editable
+                                                    multiline
+                                                    onChangeText={(text) => {
+                                                        handleOnChangeLineItem("Owner_Clarification", text, UniqueKey)
+                                                    }}
+                                                    value={text}
+                                                    style={{ padding: 10, height: 96 }}
+                                                />
+                                            </View>
+                                        </View>
 
-                                                </TouchableOpacity>
-                                            }
-                                        >
-                                            {
-                                                [1, 2, 3].map((option, index) =>
-                                                    <Menu.Item key={index} onPress={() => { setShowCostCategoryMenu(false) }} title={option} />
-                                                )
-                                            }
-                                        </Menu>
-                                    </View>
-                                </View>
-                                <View style={{ flexDirection: "row", marginVertical: 8 }}>
-                                    <View style={{ flex: 1, marginHorizontal: 2 }}>
-                                        <FormLabel style={{ fontSize: 12 }}>Owner Clarification</FormLabel>
-                                        <FormInput style={{ fontSize: 16 }} value={`${Owner_Clarification}`} />
-                                    </View>
-                                </View>
-                            </View>
-                        </View>
+                                        <View style={{ flexDirection: "row", marginVertical: 8 }}>
+                                            <View style={{ flex: 1, marginHorizontal: 2 }}>
+                                                <FormLabel style={{ fontSize: 12 }}>Adj Qty</FormLabel>
+                                                <FormInput onChangeText={(text) => {
+                                                    handleOnChangeLineItem("Adj_Quantity", text, UniqueKey)
+                                                }} style={{ fontSize: 16 }} keyboardType="number-pad" value={`${Adj_Quantity ?? 0}`} />
+                                            </View>
+                                            <View style={{ flex: 1, marginHorizontal: 2 }}>
+                                                <FormLabel style={{ fontSize: 12 }}>Adj UM</FormLabel>
+                                                <FormInput onChangeText={(text) => {
+                                                    handleOnChangeLineItem("Adj_U_M", text, UniqueKey)
+                                                }} style={{ fontSize: 16 }} value={`${Adj_U_M ?? ''}`} />
+                                            </View>
+                                            <View style={{ flex: 1, marginHorizontal: 2 }}>
+                                                <FormLabel style={{ fontSize: 12 }}>Adj Rate</FormLabel>
+                                                <FormInput onChangeText={(text) => {
+                                                    handleOnChangeLineItem("Adj_Rate", text, UniqueKey)
+                                                }} style={{ fontSize: 16 }} keyboardType="number-pad" value={`${Adj_Rate ?? 0}`} />
+                                            </View>
+                                            <View style={{ flex: 1, marginHorizontal: 2 }}>
+                                                <FormLabel style={{ fontSize: 12 }}>Appr. Amt</FormLabel>
+                                                <FormValue style={{ color: "black", padding: 8, fontSize: 16 }}>{`${Approved_Amount ?? 0}`} </FormValue>
+                                            </View>
+                                        </View>
+                                        <View style={{ flexDirection: "row", marginVertical: 8 }}>
+                                            <View style={{ flex: 1, marginHorizontal: 2 }}>
+                                                <FormLabel style={{ fontSize: 12 }}>Cost Category</FormLabel>
+                                                <Menu
+                                                    visible={showCostCategoryMenu}
+                                                    onDismiss={() => setShowCostCategoryMenu(false)}
+                                                    anchor={
+                                                        <TouchableOpacity style={{ backgroundColor: "#f1f4f8", padding: 8, borderRadius: 4 }} onPress={() => setShowCostCategoryMenu(true)}>
+                                                            <Text style={{ fontSize: 16, fontFamily: "URBAN_MEDIUM" }} >{Cost_Category}</Text>
+                                                        </TouchableOpacity>
+                                                    }
+                                                >
+                                                    {
+                                                        CostCategory.map((option, index) =>
+                                                            <Menu.Item key={index} onPress={() => {
+                                                                handleOnChangeLineItem("Cost_Category", option, UniqueKey)
+                                                                setShowCostCategoryMenu(false)
+                                                            }} title={option} />
+                                                        )
+                                                    }
+                                                </Menu>
+                                            </View>
+                                        </View>
+                                    </Animated.View>
+                                </Animated.View>
+                            </>
+                        </ComposedGestureWrapper>
                     </Portal.Host>
                 </Modal>
 
@@ -286,6 +623,127 @@ function CoFormLineItem({ item, isForReviewer }) {
             </Provider>
         )
     }
+
+
+    const offset = useSharedValue({ x: 0 });
+    const start = useSharedValue({ x: 0 });
+
+    const [show, setShow] = React.useState(false);
+
+    const handleLongPressState = (state) => {
+        setShow(state);
+    }
+
+
+    const longPressGesture = Gesture.LongPress()
+        .onEnd(() => {
+            runOnJS(handleLongPressState)(true)
+        })
+
+
+
+    const dragGesture = Gesture.Pan()
+        .averageTouches(true)
+        .onUpdate((e) => {
+            console.log(e.translationY);
+            offset.value = {
+                x: (e.translationY + start.value.x)
+            };
+        })
+        .onEnd(() => {
+            start.value = {
+                x: offset.value.x,
+            };
+        });
+
+    const animatedStyles = useAnimatedStyle(() => {
+        return {
+            transform: [
+                { translateY: offset.value.x },
+            ],
+        };
+    });
+
+
+    const obj = useDerivedValue(() => {
+        if (offset.value.x > 0) {
+            return {
+                color: "red",
+                limit: 180
+            }
+        }
+        if (offset.value.x < 0) {
+            return {
+                color: "green",
+                limit: -180
+            }
+        }
+    }, [offset.value.x])
+
+    const animatedStyleforBackground = useAnimatedStyle(() => {
+
+        let bColor = "#c4c4c490";
+
+        if (obj.value) {
+            bColor = interpolateColor(offset.value.x, [0, obj.value.limit], ["grey", obj.value.color])
+        }
+
+        return {
+            backgroundColor: bColor,
+        }
+    });
+
+
+    const handleAlert = () => {
+        if (offset.value.x < -100 && offset.value.x > -200) {
+            console.log("SAVING..");
+            item && handleOnSave(item); // * Call SAVE TO CONTEXT FUNCTION
+            setShowModal(false);
+            // showMessage({
+            //     message: "Saved",
+            //     type: "success",
+            // });
+            offset.value = {
+                x: 0
+            }
+            start.value = {
+                x: 0
+            }
+            setShow(false)
+        }
+
+        if (offset.value.x > 120) {
+            console.log("INSIDE CANCEL");
+            // refreshData(); // * Reset Old Data
+            setShowModal(false);
+            // showMessage({
+            //     message: "Cancelled",
+            //     type: "default",
+            // });
+            offset.value = {
+                x: 0
+            }
+            start.value = {
+                x: 0
+            }
+            setShow(false)
+        }
+    }
+
+    useDerivedValue(() => {
+
+        if ((offset.value.x > 120) || (offset.value.x < 0 && offset.value.x > -200)) {
+            runOnJS(handleAlert)(offset.value.x)
+        }
+
+    }, [offset.value.x, item])
+
+
+
+    const composed = Gesture.Simultaneous(longPressGesture, dragGesture);
+
+
+
     return (
         <>
             <Swipeable onRef={(ref) => swipeableRef.current = ref} rightButtons={rightButtons}>
@@ -298,46 +756,71 @@ function CoFormLineItem({ item, isForReviewer }) {
                     </View>
                 </TouchableOpacity>
             </Swipeable>
-            <Modal transparent visible={showModal} onClose={() => setShowModal(false)} >
-                <View style={{ backgroundColor: "#d4d4d490", flex: 1, justifyContent: "center", alignItems: "center", paddingHorizontal: 48 }}>
-                    <View style={{ backgroundColor: "white", padding: 12, width: "100%", borderRadius: 8 }}>
-                        <View>
-                            <FormLabel style={{ fontSize: 12 }}>Scope Notes</FormLabel>
-                            <FormInput style={{ fontSize: 16 }} value={Scope_Notes} />
-                        </View>
-                        <View style={{ flexDirection: "row", marginVertical: 8 }}>
-                            <View style={{ flex: 1, marginHorizontal: 2 }}>
-                                <FormLabel style={{ fontSize: 12 }}>Quantity</FormLabel>
-                                <FormInput style={{ fontSize: 16 }} value={`${Quantity}`} />
-                            </View>
-                            <View style={{ flex: 1, marginHorizontal: 2 }}>
-                                <FormLabel style={{ fontSize: 12 }}>U/M</FormLabel>
-                                <FormInput style={{ fontSize: 16 }} value={`${U_M}`} />
-                            </View>
-                            <View style={{ flex: 1, marginHorizontal: 2 }}>
-                                <FormLabel style={{ fontSize: 12 }}>Rate</FormLabel>
-                                <FormInput style={{ fontSize: 16 }} value={`${Rate}`} />
-                            </View>
-                            <View style={{ flex: 1, marginHorizontal: 2 }}>
-                                <FormLabel style={{ fontSize: 12 }}>Total</FormLabel>
-                                <Text style={{ fontSize: 16, padding: 8 }}>{`${Total}`} </Text>
-                            </View>
-                        </View>
-                        <View >
-                            <FormLabel style={{ fontSize: 12 }}>Approval Status</FormLabel>
-                            <Text style={{ fontSize: 16, padding: 8 }}>{`${Approval_Status}`} </Text>
-                        </View>
-                        <View >
-                            <FormLabel style={{ fontSize: 12 }}>Cost Category</FormLabel>
-                            <Text style={{ fontSize: 16, padding: 8 }}>{`${Cost_Category}`} </Text>
-                        </View>
-                        <View>
-                            <FormLabel style={{ fontSize: 12 }}>Owner Clarification</FormLabel>
-                            <Text style={{ fontSize: 16, padding: 8 }}>{`${Owner_Clarification}`} </Text>
-                        </View>
-                        <Button title="Save" />
-                    </View>
-                </View>
+            <Modal transparent visible={showModal} onDismiss={() => setShowModal(false)} >
+                <ComposedGestureWrapper gesture={composed}>
+                    {/* Animated Message */}
+                    <>
+                        {
+                            show &&
+                            <Animated.View style={{ position: 'absolute', bottom: 120, width: "100%", paddingHorizontal: 12 }}>
+                                <Animated.View style={{ marginLeft: "auto", justifyContent: 'center', alignItems: 'center', marginBottom: 16 }}>
+                                    <Text style={{ backgroundColor: "#8477EB", padding: 8, color: "white", fontFamily: "URBAN_BOLD", fontSize: 16 }}>Swipe Up to save</Text>
+                                </Animated.View>
+                                <Animated.View style={{ marginRight: "auto", justifyContent: 'center', alignItems: 'center' }}>
+                                    <Text style={{ backgroundColor: "#8477EB", padding: 8, color: "white", fontFamily: "URBAN_BOLD", fontSize: 16 }}>Swipe Down to Cancel</Text>
+                                </Animated.View>
+                            </Animated.View>
+                        }
+
+                        <Animated.View style={[{ backgroundColor: "#d4d4d490", flex: 1, justifyContent: "center", alignItems: "center", paddingHorizontal: 48 }, animatedStyleforBackground]}>
+                            <Animated.View style={[{ backgroundColor: "white", padding: 12, width: "100%", borderRadius: 8 }, animatedStyles]}>
+                                <View>
+                                    <FormLabel style={{ fontSize: 12 }}>Scope Notes</FormLabel>
+                                    <FormInput onChangeText={(text) => {
+                                        handleOnChangeLineItem("Scope_Notes", text, UniqueKey)
+                                    }} style={{ fontSize: 16 }} value={Scope_Notes} />
+                                </View>
+                                <View style={{ flexDirection: "row", marginVertical: 8 }}>
+                                    <View style={{ flex: 1, marginHorizontal: 2 }}>
+                                        <FormLabel style={{ fontSize: 12 }}>Quantity</FormLabel>
+                                        <FormInput keyboardType="number-pad" onChangeText={(text) => {
+                                            handleOnChangeLineItem("Quantity", text, UniqueKey)
+                                        }} style={{ fontSize: 16 }} value={`${Quantity}`} />
+                                    </View>
+                                    <View style={{ flex: 1, marginHorizontal: 2 }}>
+                                        <FormLabel style={{ fontSize: 12 }}>U/M</FormLabel>
+                                        <FormInput onChangeText={(text) => {
+                                            handleOnChangeLineItem("U_M", text, UniqueKey)
+                                        }} style={{ fontSize: 16 }} value={`${U_M ?? ""}`} />
+                                    </View>
+                                    <View style={{ flex: 1, marginHorizontal: 2 }}>
+                                        <FormLabel style={{ fontSize: 12 }}>Rate</FormLabel>
+                                        <FormInput keyboardType="decimal-pad" onChangeText={(text) => {
+                                            handleOnChangeLineItem("Rate", text, UniqueKey)
+                                        }} style={{ fontSize: 16 }} value={`${Rate}`} />
+                                    </View>
+                                    <View style={{ flex: 1, marginHorizontal: 2 }}>
+                                        <FormLabel style={{ fontSize: 12 }}>Total</FormLabel>
+                                        <Text style={{ fontSize: 16, padding: 8 }}>{`${Total}`} </Text>
+                                    </View>
+                                </View>
+                                <View >
+                                    <FormLabel style={{ fontSize: 12 }}>Approval Status</FormLabel>
+                                    <Text style={{ fontSize: 16, padding: 8 }}>{`${Approval_Status ?? ""}`} </Text>
+                                </View>
+                                <View >
+                                    <FormLabel style={{ fontSize: 12 }}>Cost Category</FormLabel>
+                                    <Text style={{ fontSize: 16, padding: 8 }}>{`${Cost_Category ?? "none"}`} </Text>
+                                </View>
+                                <View>
+                                    <FormLabel style={{ fontSize: 12 }}>Owner Clarification</FormLabel>
+                                    <Text style={{ fontSize: 16, padding: 8 }}>{`${Owner_Clarification ?? ""}`} </Text>
+                                </View>
+                                {/* <Button  title="SAVE" onPress={() => handleSave()} /> */}
+                            </Animated.View>
+                        </Animated.View>
+                    </>
+                </ComposedGestureWrapper>
             </Modal>
         </>
     )
@@ -390,6 +873,12 @@ background-color: #f1f4f8;
 padding: 8px;
 font-family: 'URBAN_MEDIUM';
 border-radius: 4px;
+`;
+
+const FormValue = styled.Text`
+font-family: 'URBAN_MEDIUM';
+color: #fff;
+font-size: 18px;
 `;
 
 const ReviewerActionBtn = styled.TouchableOpacity`

@@ -26,6 +26,46 @@ const getCoForms = async (inspId) => {
 }
 
 
+const updateLineItem = async (item) => {
+    const token = await getStoredToken();
+    const url = `https://hudsonhomesmgmt--uat.sandbox.my.salesforce.com/services/apexrest/COFORMS/Add`;
+
+    return apiPut(
+        url,
+        item,
+        {
+            headers: {
+                'Authorization': `Bearer ${token}`,
+            }
+        },
+    )
+        .then(response => {
+            return response.data;
+        })
+
+}
+
+const addANewCoLineItem = async (item) => {
+    const token = await getStoredToken();
+    const url = `https://hudsonhomesmgmt--uat.sandbox.my.salesforce.com/services/apexrest/COFORMS/Add`;
+
+    return apiPut(
+        url,
+        item,
+        {
+            headers: {
+                'Authorization': `Bearer ${token}`,
+            }
+        },
+    )
+        .then(response => {
+            return response.data;
+        })
+}
+
+
 export {
-    getCoForms
+    getCoForms,
+    updateLineItem,
+    addANewCoLineItem
 }
