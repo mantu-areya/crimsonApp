@@ -14,6 +14,7 @@ import Animated, { interpolateColor, runOnJS, useAnimatedStyle, useDerivedValue,
 import { Gesture } from 'react-native-gesture-handler';
 import ComposedGestureWrapper from '../animated/ComposedGestureWrapper';
 import CostCategory from '../../constants/ cost-category';
+import { showMessage } from "react-native-flash-message";
 
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
@@ -83,6 +84,12 @@ const CoForms = ({ isForReviewerView, isSubmitted, readOnly, inspectionData, nav
             getAllCoForms(inspectionData.Id);
         }
     }, [])
+
+    function refreshCOData() {
+        if (inspectionData.Id) {
+            getAllCoForms(inspectionData.Id);
+        }
+    }
 
 
     // const getNewUniqueKey = (currentForm) => {
@@ -280,7 +287,7 @@ const CoForms = ({ isForReviewerView, isSubmitted, readOnly, inspectionData, nav
                         {
                             isDataLoading ?
                                 <ActivityIndicator /> :
-                                dataList.map((item, i) => <CoFormLineItem handleDeclineALineItem={handleDeclineALineItem} handleApproveALineItem={handleApproveALineItem} handleApprovedAsNoted={handleApprovedAsNoted} handleOnChangeLineItem={handleOnChangeLineItem} isForReviewer={false} key={i} item={item} handleOnSave={handleOnSave} />)
+                                dataList.map((item, i) => <CoFormLineItem refreshCOData={refreshCOData} handleDeclineALineItem={handleDeclineALineItem} handleApproveALineItem={handleApproveALineItem} handleApprovedAsNoted={handleApprovedAsNoted} handleOnChangeLineItem={handleOnChangeLineItem} isForReviewer={isForReviewerView} key={i} item={item} handleOnSave={handleOnSave} />)
                         }
                     </ScrollView>
                 </>
@@ -289,7 +296,7 @@ const CoForms = ({ isForReviewerView, isSubmitted, readOnly, inspectionData, nav
     )
 }
 
-function CoFormLineItem({ item, isForReviewer, handleApproveALineItem, handleDeclineALineItem, handleOnChangeLineItem, handleOnSave, handleApprovedAsNoted }) {
+function CoFormLineItem({refreshCOData, item, isForReviewer, handleApproveALineItem, handleDeclineALineItem, handleOnChangeLineItem, handleOnSave, handleApprovedAsNoted }) {
 
     const insets = useSafeAreaInsets()
 
@@ -345,8 +352,6 @@ function CoFormLineItem({ item, isForReviewer, handleApproveALineItem, handleDec
     }
 
     const [showCostCategoryMenu, setShowCostCategoryMenu] = React.useState(false);
-
-    const [text, setText] = React.useState(Owner_Clarification)
 
 
     if (isForReviewer) {
@@ -559,7 +564,7 @@ function CoFormLineItem({ item, isForReviewer, handleApproveALineItem, handleDec
                                                     onChangeText={(text) => {
                                                         handleOnChangeLineItem("Owner_Clarification", text, UniqueKey)
                                                     }}
-                                                    value={text}
+                                                    value={Owner_Clarification}
                                                     style={{ padding: 10, height: 96 }}
                                                 />
                                             </View>
@@ -645,9 +650,9 @@ function CoFormLineItem({ item, isForReviewer, handleApproveALineItem, handleDec
     const dragGesture = Gesture.Pan()
         .averageTouches(true)
         .onUpdate((e) => {
-            console.log(e.translationY);
+            console.log(e.translationX);
             offset.value = {
-                x: (e.translationY + start.value.x)
+                x: (e.translationX + start.value.x)
             };
         })
         .onEnd(() => {
@@ -659,23 +664,23 @@ function CoFormLineItem({ item, isForReviewer, handleApproveALineItem, handleDec
     const animatedStyles = useAnimatedStyle(() => {
         return {
             transform: [
-                { translateY: offset.value.x },
+                { translateX: offset.value.x },
             ],
         };
     });
 
 
     const obj = useDerivedValue(() => {
-        if (offset.value.x > 0) {
-            return {
-                color: "red",
-                limit: 180
-            }
-        }
         if (offset.value.x < 0) {
             return {
+                color: "red",
+                limit: -200
+            }
+        }
+        if (offset.value.x > 0) {
+            return {
                 color: "green",
-                limit: -180
+                limit: 100
             }
         }
     }, [offset.value.x])
@@ -685,7 +690,7 @@ function CoFormLineItem({ item, isForReviewer, handleApproveALineItem, handleDec
         let bColor = "#c4c4c490";
 
         if (obj.value) {
-            bColor = interpolateColor(offset.value.x, [0, obj.value.limit], ["grey", obj.value.color])
+            bColor = interpolateColor(offset.value.x, [0, obj.value.limit], ["#c4c4c490", obj.value.color])
         }
 
         return {
@@ -693,16 +698,31 @@ function CoFormLineItem({ item, isForReviewer, handleApproveALineItem, handleDec
         }
     });
 
-
     const handleAlert = () => {
         if (offset.value.x < -100 && offset.value.x > -200) {
+            console.log("INSIDE CANCEL");
+            refreshCOData()// * Reset Old Data
+            setShowModal(false);
+            showMessage({
+                message: "Discarding changes...",
+                type: "danger",
+            });
+            offset.value = {
+                x: 0
+            }
+            start.value = {
+                x: 0
+            }
+            setShow(false)
+        }
+        if (offset.value.x > 100) {
             console.log("SAVING..");
             item && handleOnSave(item); // * Call SAVE TO CONTEXT FUNCTION
             setShowModal(false);
-            // showMessage({
-            //     message: "Saved",
-            //     type: "success",
-            // });
+            showMessage({
+                message: "Saving Changes...",
+                type: "success",
+            });
             offset.value = {
                 x: 0
             }
@@ -712,27 +732,12 @@ function CoFormLineItem({ item, isForReviewer, handleApproveALineItem, handleDec
             setShow(false)
         }
 
-        if (offset.value.x > 120) {
-            console.log("INSIDE CANCEL");
-            // refreshData(); // * Reset Old Data
-            setShowModal(false);
-            // showMessage({
-            //     message: "Cancelled",
-            //     type: "default",
-            // });
-            offset.value = {
-                x: 0
-            }
-            start.value = {
-                x: 0
-            }
-            setShow(false)
-        }
+
     }
 
     useDerivedValue(() => {
 
-        if ((offset.value.x > 120) || (offset.value.x < 0 && offset.value.x > -200)) {
+        if ((offset.value.x > 100) || (offset.value.x < 0 && offset.value.x > -200)) {
             runOnJS(handleAlert)(offset.value.x)
         }
 
@@ -764,10 +769,10 @@ function CoFormLineItem({ item, isForReviewer, handleApproveALineItem, handleDec
                             show &&
                             <Animated.View style={{ position: 'absolute', bottom: 120, width: "100%", paddingHorizontal: 12 }}>
                                 <Animated.View style={{ marginLeft: "auto", justifyContent: 'center', alignItems: 'center', marginBottom: 16 }}>
-                                    <Text style={{ backgroundColor: "#8477EB", padding: 8, color: "white", fontFamily: "URBAN_BOLD", fontSize: 16 }}>Swipe Up to save</Text>
+                                    <Text style={{ backgroundColor: "#8477EB", padding: 8, color: "white", fontFamily: "URBAN_BOLD", fontSize: 16 }}>Swipe Right to save</Text>
                                 </Animated.View>
                                 <Animated.View style={{ marginRight: "auto", justifyContent: 'center', alignItems: 'center' }}>
-                                    <Text style={{ backgroundColor: "#8477EB", padding: 8, color: "white", fontFamily: "URBAN_BOLD", fontSize: 16 }}>Swipe Down to Cancel</Text>
+                                    <Text style={{ backgroundColor: "#8477EB", padding: 8, color: "white", fontFamily: "URBAN_BOLD", fontSize: 16 }}>Swipe Left to Cancel</Text>
                                 </Animated.View>
                             </Animated.View>
                         }
@@ -776,9 +781,15 @@ function CoFormLineItem({ item, isForReviewer, handleApproveALineItem, handleDec
                             <Animated.View style={[{ backgroundColor: "white", padding: 12, width: "100%", borderRadius: 8 }, animatedStyles]}>
                                 <View>
                                     <FormLabel style={{ fontSize: 12 }}>Scope Notes</FormLabel>
-                                    <FormInput onChangeText={(text) => {
-                                        handleOnChangeLineItem("Scope_Notes", text, UniqueKey)
-                                    }} style={{ fontSize: 16 }} value={Scope_Notes} />
+                                    <TextInput
+                                        editable
+                                        multiline
+                                        onChangeText={(text) => {
+                                            handleOnChangeLineItem("Scope_Notes", text, UniqueKey)
+                                        }}
+                                        value={Scope_Notes}
+                                        style={{ padding: 10, height: 96, backgroundColor: "#f1f4f8", borderRadius: 8 }}
+                                    />
                                 </View>
                                 <View style={{ flexDirection: "row", marginVertical: 8 }}>
                                     <View style={{ flex: 1, marginHorizontal: 2 }}>
@@ -804,20 +815,8 @@ function CoFormLineItem({ item, isForReviewer, handleApproveALineItem, handleDec
                                         <Text style={{ fontSize: 16, padding: 8 }}>{`${Total}`} </Text>
                                     </View>
                                 </View>
-                                <View >
-                                    <FormLabel style={{ fontSize: 12 }}>Approval Status</FormLabel>
-                                    <Text style={{ fontSize: 16, padding: 8 }}>{`${Approval_Status ?? ""}`} </Text>
-                                </View>
-                                <View >
-                                    <FormLabel style={{ fontSize: 12 }}>Cost Category</FormLabel>
-                                    <Text style={{ fontSize: 16, padding: 8 }}>{`${Cost_Category ?? "none"}`} </Text>
-                                </View>
-                                <View>
-                                    <FormLabel style={{ fontSize: 12 }}>Owner Clarification</FormLabel>
-                                    <Text style={{ fontSize: 16, padding: 8 }}>{`${Owner_Clarification ?? ""}`} </Text>
-                                </View>
-                                {/* <Button  title="SAVE" onPress={() => handleSave()} /> */}
                             </Animated.View>
+                            
                         </Animated.View>
                     </>
                 </ComposedGestureWrapper>

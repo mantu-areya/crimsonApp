@@ -11,6 +11,7 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 import { AuthenticationContextProvider } from "./src/services/authentication/authentication.context";
 import * as firebase from "firebase";
 import { Provider } from "react-native-paper";
+import FlashMessage from "react-native-flash-message";
 
 const firebaseConfig = {
   apiKey: "AIzaSyCFLpOHzySZk_bngknbxy1jLOuaOZsY8pg",
@@ -53,6 +54,7 @@ export default function App() {
           </AuthenticationContextProvider>
         </Provider>
       </ThemeProvider>
+      <FlashMessage position={"bottom"} />
       <ExpoStatusBar style={"inverted"} backgroundColor="#2B243E" />
     </>
   );

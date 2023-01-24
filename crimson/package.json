@@ -55,6 +55,7 @@
     "react-native-check-box": "^2.1.7",
     "react-native-collapsible": "^1.6.0",
     "react-native-dropdownalert": "^4.5.1",
+    "react-native-flash-message": "^0.4.0",
     "react-native-fs": "^2.20.0",
     "react-native-gesture-handler": "~2.2.1",
     "react-native-get-random-values": "^1.8.0",

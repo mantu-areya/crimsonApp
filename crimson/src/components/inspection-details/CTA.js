@@ -74,35 +74,18 @@ const CTA = ({ handleShowCoForms, showCoForms, hasRequiredSign, formStatus, hand
 
             }
             {
-                isSubmitted && <>
-                    {
-                        !hasRequiredSign ?
-                            <SubmitButtonWrapper
-                                onPress={handleShowCoForms}
-                                style={[shadowStyle, {
-                                    marginHorizontal: 16
-                                }]} >
-                                <ButtonText style={{ textAlign: 'center' }} color="white">
-                                   {!showCoForms ? "Show CO Forms" : "Show Work Auth" } 
-                                </ButtonText>
-                            </SubmitButtonWrapper>
-                            :
-                            <SubmitButtonWrapper style={[shadowStyle, { marginHorizontal: 16 }]} onPress={handleSignature}>
-                                <ButtonText style={{ textAlign: 'center' }} color="white">
-                                    Sign
-                                </ButtonText>
-                            </SubmitButtonWrapper>
-
-                    }
-                    {/* <ChatButtonWrapper style={shadowStyle} onPress={handleViewImages}>
-                        <Ionicons name="list" size={24} color="black" />
-                        <ButtonText marginLeft={8} >
-                            View Images
-                        </ButtonText>
-                    </ChatButtonWrapper> */}
-                </>
+                (isSubmitted && hasRequiredSign) &&
+                <SubmitButtonWrapper
+                    onPress={handleShowCoForms}
+                    style={[shadowStyle, {
+                        marginHorizontal: 16
+                    }]} >
+                    <ButtonText style={{ textAlign: 'center' }} color="white">
+                        {!showCoForms ? "Show CO Forms" : "Show Work Auth"}
+                    </ButtonText>
+                </SubmitButtonWrapper>
             }
-        </Wrapper>
+        </Wrapper >
     )
 }
 
