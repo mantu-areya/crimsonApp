@@ -7,7 +7,7 @@ import { Menu, Portal, Provider } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import EntypoIcon from 'react-native-vector-icons/Entypo'
 import NetInfo from "@react-native-community/netinfo";
-import { getCoForms } from '../../services/co-forms/co-api';
+import { getCoForms, submitForApproval } from '../../services/co-forms/co-api';
 import { CoFormContext } from '../../services/co-forms/co-context';
 import Swipeable from 'react-native-swipeable';
 import Animated, { interpolateColor, runOnJS, useAnimatedStyle, useDerivedValue, useSharedValue } from 'react-native-reanimated';
@@ -35,6 +35,8 @@ const CoForms = ({ isForReviewerView, isSubmitted, readOnly, inspectionData, nav
 
     const [currentForm, setCurrentForm] = React.useState(0);
     const [dataList, setDataList] = React.useState([])
+    const [isSubmittedForGC, setIsSubmittedForGC] = React.useState(false)
+    const [isSubmittedForRV, setIsSubmittedForRV] = React.useState(false)
     const [sequenceCo1, setSequenceCo1] = React.useState()
     const [sequenceCo2, setSequenceCo2] = React.useState()
     const [sequenceCo3, setSequenceCo3] = React.useState()
@@ -75,6 +77,8 @@ const CoForms = ({ isForReviewerView, isSubmitted, readOnly, inspectionData, nav
         if (coForms && coForms.length > 0) {
             setDataList(coForms[currentForm].lstCOFormsData)
             setSequenceByForms(coForms)
+            setIsSubmittedForGC(coForms[currentForm].SubmissionComplete)
+            setIsSubmittedForRV(coForms[currentForm].SubmittedForApproval)
         }
     }, [currentForm, coForms])
 
@@ -232,6 +236,59 @@ const CoForms = ({ isForReviewerView, isSubmitted, readOnly, inspectionData, nav
         })
     }
 
+    function getSubmitForGCData() {
+        if (currentForm === 0) {
+            return {
+                "Id": initRehabId,
+                "CO1SubmissionComplete": true,
+                "CO1SubmittedForApproval": false
+            }
+        } else if (currentForm === 1) {
+            return {
+                "Id": initRehabId,
+                "CO2SubmissionComplete": true,
+                "CO2SubmittedForApproval": false
+            }
+        } else if (currentForm === 2) {
+            return {
+                "Id": initRehabId,
+                "CO3SubmissionComplete": true,
+                "CO3SubmittedForApproval": false
+            }
+        }
+    }
+
+
+    const [isSubmitting, setIsSubmitting] = React.useState(false);
+
+
+    async function handleCOSubmit() {
+        setIsSubmitting(true)
+        try {
+            const data = getSubmitForGCData();
+            const res = await submitForApproval(data)
+            showMessage({
+                type: "success",
+                message: "Submitted for approval"
+            })
+            navigation.goBack();
+            console.log({ res });
+        } catch (error) {
+            console.log("SUBMIT CO ERROR");
+        } finally {
+            setIsSubmitting(false);
+        }
+    }
+
+
+    function getCurrentCoFormTotal() {
+        let total = 0;
+        dataList.length > 0 && dataList.forEach(item => {
+            total = total + item.Total
+        })
+        return total
+    }
+
 
     return (
         <View>
@@ -265,9 +322,33 @@ const CoForms = ({ isForReviewerView, isSubmitted, readOnly, inspectionData, nav
                                 </TouchableOpacity>)
                         }
                     </View>
+                    {/* Total & Submit */}
+                    <View style={{ marginTop: 16, marginBottom: 8, flexDirection: "row", paddingHorizontal: 8 }}>
+                        <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center' }}>
+                            <Text style={{ fontFamily: "URBAN_BOLD", fontSize: 16 }}>TOTAL : {getCurrentCoFormTotal()}</Text>
+                        </View>
+
+
+                        <View style={{ flex: 1 }}>
+                            {
+                                !isSubmittedForGC ?
+                                    !isSubmitting ?
+                                        <TouchableOpacity style={{ padding: 8, backgroundColor: "#8477EB", borderRadius: 4 }} onPress={handleCOSubmit}>
+                                            <Text style={{ fontFamily: "URBAN_BOLD", color: "white", fontSize: 16, textAlign: "center" }}> Submit For Approval</Text>
+                                        </TouchableOpacity>
+                                        :
+                                        <ActivityIndicator />
+                                    :
+                                    <TouchableOpacity style={{ padding: 8, backgroundColor: "grey", borderRadius: 4, }}>
+                                        <Text style={{ fontFamily: "URBAN_BOLD", color: "white", fontSize: 16, textAlign: "center" }}> Submitted</Text>
+                                    </TouchableOpacity>
+                            }
+                        </View>
+
+                    </View>
                     {/* Search & Add */}
                     <View style={{ margin: 8, flexDirection: "row" }}>
-                        <View style={{ flexDirection: 'row', alignItems: 'center', padding: 4, paddingHorizontal: 16, backgroundColor: "white", flex: .7, borderRadius: 4 }}>
+                        <View style={{ flexDirection: 'row', alignItems: 'center', padding: 4, paddingHorizontal: 16, backgroundColor: "white", flex: 1, borderRadius: 4 }}>
                             <Icon name="search" color="grey" style={{ flex: .1, }} size={18} />
                             <TextInput value={searchQuery} onChangeText={onChangeSearch} placeholder={"Search Scope Notes ..."} style={{ flex: .8, fontFamily: "URBAN_BOLD", backgroundColor: "transparent", fontSize: 18, padding: 12, width: "100%" }} />
                             {
@@ -275,11 +356,13 @@ const CoForms = ({ isForReviewerView, isSubmitted, readOnly, inspectionData, nav
                                 <EntypoIcon onPress={() => setSearchQuery("")} name="cross" color="grey" style={{ flex: .1 }} size={24} />
                             }
                         </View>
-                        <View style={{ flex: .3, marginHorizontal: 4 }}>
-                            <AddNewBtn onPress={handleAddNewLineItem}>
-                                <Text style={{ fontFamily: "URBAN_BOLD", color: "white" }}> Add New</Text>
-                            </AddNewBtn>
-                        </View>
+                        {
+                            !isSubmittedForGC && <View style={{ flex: .3, marginHorizontal: 4 }}>
+                                <AddNewBtn onPress={handleAddNewLineItem}>
+                                    <Text style={{ fontFamily: "URBAN_BOLD", color: "white" }}> Add New</Text>
+                                </AddNewBtn>
+                            </View>
+                        }
                     </View>
 
                     {/* CO Line Items */}
@@ -287,7 +370,7 @@ const CoForms = ({ isForReviewerView, isSubmitted, readOnly, inspectionData, nav
                         {
                             isDataLoading ?
                                 <ActivityIndicator /> :
-                                dataList.map((item, i) => <CoFormLineItem refreshCOData={refreshCOData} handleDeclineALineItem={handleDeclineALineItem} handleApproveALineItem={handleApproveALineItem} handleApprovedAsNoted={handleApprovedAsNoted} handleOnChangeLineItem={handleOnChangeLineItem} isForReviewer={isForReviewerView} key={i} item={item} handleOnSave={handleOnSave} />)
+                                dataList.map((item, i) => <CoFormLineItem isSubmittedForGC={isSubmittedForGC} refreshCOData={refreshCOData} handleDeclineALineItem={handleDeclineALineItem} handleApproveALineItem={handleApproveALineItem} handleApprovedAsNoted={handleApprovedAsNoted} handleOnChangeLineItem={handleOnChangeLineItem} isForReviewer={isForReviewerView} key={i} item={item} handleOnSave={handleOnSave} />)
                         }
                     </ScrollView>
                 </>
@@ -296,7 +379,7 @@ const CoForms = ({ isForReviewerView, isSubmitted, readOnly, inspectionData, nav
     )
 }
 
-function CoFormLineItem({refreshCOData, item, isForReviewer, handleApproveALineItem, handleDeclineALineItem, handleOnChangeLineItem, handleOnSave, handleApprovedAsNoted }) {
+function CoFormLineItem({ refreshCOData, item, isSubmittedForGC, isForReviewer, handleApproveALineItem, handleDeclineALineItem, handleOnChangeLineItem, handleOnSave, handleApprovedAsNoted }) {
 
     const insets = useSafeAreaInsets()
 
@@ -699,7 +782,19 @@ function CoFormLineItem({refreshCOData, item, isForReviewer, handleApproveALineI
     });
 
     const handleAlert = () => {
+
         if (offset.value.x < -100 && offset.value.x > -200) {
+            if (isSubmittedForGC) {
+                setShowModal(false);
+                offset.value = {
+                    x: 0
+                }
+                start.value = {
+                    x: 0
+                }
+                setShow(false)
+                return;
+            }
             console.log("INSIDE CANCEL");
             refreshCOData()// * Reset Old Data
             setShowModal(false);
@@ -716,6 +811,17 @@ function CoFormLineItem({refreshCOData, item, isForReviewer, handleApproveALineI
             setShow(false)
         }
         if (offset.value.x > 100) {
+            if (isSubmittedForGC) {
+                setShowModal(false);
+                offset.value = {
+                    x: 0
+                }
+                start.value = {
+                    x: 0
+                }
+                setShow(false)
+                return;
+            }
             console.log("SAVING..");
             item && handleOnSave(item); // * Call SAVE TO CONTEXT FUNCTION
             setShowModal(false);
@@ -752,7 +858,9 @@ function CoFormLineItem({refreshCOData, item, isForReviewer, handleApproveALineI
     return (
         <>
             <Swipeable onRef={(ref) => swipeableRef.current = ref} rightButtons={rightButtons}>
-                <TouchableOpacity style={{ padding: 8 }} onPress={() => setShowModal(true)}>
+                <TouchableOpacity style={{ padding: 8 }} onPress={() => {
+                    !isSubmittedForGC && setShowModal(true);
+                }}>
                     <CurrentFormHeading>{Scope_Notes}</CurrentFormHeading>
                     <View style={{ flexDirection: "row" }}>
                         <PreviewLabel>Qty {Quantity}</PreviewLabel>
@@ -761,6 +869,7 @@ function CoFormLineItem({refreshCOData, item, isForReviewer, handleApproveALineI
                     </View>
                 </TouchableOpacity>
             </Swipeable>
+
             <Modal transparent visible={showModal} onDismiss={() => setShowModal(false)} >
                 <ComposedGestureWrapper gesture={composed}>
                     {/* Animated Message */}
@@ -777,46 +886,45 @@ function CoFormLineItem({refreshCOData, item, isForReviewer, handleApproveALineI
                             </Animated.View>
                         }
 
-                        <Animated.View style={[{ backgroundColor: "#d4d4d490", flex: 1, justifyContent: "center", alignItems: "center", paddingHorizontal: 48 }, animatedStyleforBackground]}>
-                            <Animated.View style={[{ backgroundColor: "white", padding: 12, width: "100%", borderRadius: 8 }, animatedStyles]}>
-                                <View>
-                                    <FormLabel style={{ fontSize: 12 }}>Scope Notes</FormLabel>
-                                    <TextInput
-                                        editable
-                                        multiline
-                                        onChangeText={(text) => {
-                                            handleOnChangeLineItem("Scope_Notes", text, UniqueKey)
-                                        }}
-                                        value={Scope_Notes}
-                                        style={{ padding: 10, height: 96, backgroundColor: "#f1f4f8", borderRadius: 8 }}
-                                    />
-                                </View>
-                                <View style={{ flexDirection: "row", marginVertical: 8 }}>
-                                    <View style={{ flex: 1, marginHorizontal: 2 }}>
-                                        <FormLabel style={{ fontSize: 12 }}>Quantity</FormLabel>
-                                        <FormInput keyboardType="number-pad" onChangeText={(text) => {
-                                            handleOnChangeLineItem("Quantity", text, UniqueKey)
-                                        }} style={{ fontSize: 16 }} value={`${Quantity}`} />
+                        <Animated.View style={[{ backgroundColor: "#d4d4d490", flex: 1, justifyContent: "center", alignItems: "center", paddingHorizontal: 48 },animatedStyleforBackground]}>
+                                <Animated.View style={[{ backgroundColor: "white", padding: 12, width: "100%", borderRadius: 8 }, animatedStyles]}>
+                                    <View>
+                                        <FormLabel style={{ fontSize: 12 }}>Scope Notes</FormLabel>
+                                        <TextInput
+                                            editable
+                                            multiline
+                                            onChangeText={(text) => {
+                                                handleOnChangeLineItem("Scope_Notes", text, UniqueKey)
+                                            }}
+                                            value={Scope_Notes}
+                                            style={{ padding: 10, height: 96, backgroundColor: "#f1f4f8", borderRadius: 8 }}
+                                        />
                                     </View>
-                                    <View style={{ flex: 1, marginHorizontal: 2 }}>
-                                        <FormLabel style={{ fontSize: 12 }}>U/M</FormLabel>
-                                        <FormInput onChangeText={(text) => {
-                                            handleOnChangeLineItem("U_M", text, UniqueKey)
-                                        }} style={{ fontSize: 16 }} value={`${U_M ?? ""}`} />
+                                    <View style={{ flexDirection: "row", marginVertical: 8 }}>
+                                        <View style={{ flex: 1, marginHorizontal: 2 }}>
+                                            <FormLabel style={{ fontSize: 12 }}>Quantity</FormLabel>
+                                            <FormInput keyboardType="number-pad" onChangeText={(text) => {
+                                                handleOnChangeLineItem("Quantity", text, UniqueKey)
+                                            }} style={{ fontSize: 16 }} value={`${Quantity}`} />
+                                        </View>
+                                        <View style={{ flex: 1, marginHorizontal: 2 }}>
+                                            <FormLabel style={{ fontSize: 12 }}>U/M</FormLabel>
+                                            <FormInput onChangeText={(text) => {
+                                                handleOnChangeLineItem("U_M", text, UniqueKey)
+                                            }} style={{ fontSize: 16 }} value={`${U_M ?? ""}`} />
+                                        </View>
+                                        <View style={{ flex: 1, marginHorizontal: 2 }}>
+                                            <FormLabel style={{ fontSize: 12 }}>Rate</FormLabel>
+                                            <FormInput keyboardType="decimal-pad" onChangeText={(text) => {
+                                                handleOnChangeLineItem("Rate", text, UniqueKey)
+                                            }} style={{ fontSize: 16 }} value={`${Rate}`} />
+                                        </View>
+                                        <View style={{ flex: 1, marginHorizontal: 2 }}>
+                                            <FormLabel style={{ fontSize: 12 }}>Total</FormLabel>
+                                            <Text style={{ fontSize: 16, padding: 8 }}>{`${Total}`} </Text>
+                                        </View>
                                     </View>
-                                    <View style={{ flex: 1, marginHorizontal: 2 }}>
-                                        <FormLabel style={{ fontSize: 12 }}>Rate</FormLabel>
-                                        <FormInput keyboardType="decimal-pad" onChangeText={(text) => {
-                                            handleOnChangeLineItem("Rate", text, UniqueKey)
-                                        }} style={{ fontSize: 16 }} value={`${Rate}`} />
-                                    </View>
-                                    <View style={{ flex: 1, marginHorizontal: 2 }}>
-                                        <FormLabel style={{ fontSize: 12 }}>Total</FormLabel>
-                                        <Text style={{ fontSize: 16, padding: 8 }}>{`${Total}`} </Text>
-                                    </View>
-                                </View>
-                            </Animated.View>
-                            
+                                </Animated.View>
                         </Animated.View>
                     </>
                 </ComposedGestureWrapper>

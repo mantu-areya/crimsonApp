@@ -63,9 +63,28 @@ const addANewCoLineItem = async (item) => {
         })
 }
 
+const submitForApproval = async (data) => {
+    const token = await getStoredToken();
+    const url = `https://hudsonhomesmgmt--uat.sandbox.my.salesforce.com/services/apexrest/COFORMS/UpdateFormStage`;
+
+    return apiPost(
+        url,
+        data,
+        {
+            headers: {
+                'Authorization': `Bearer ${token}`,
+            }
+        },
+    )
+        .then(response => {
+            return response.data;
+        })
+}
+
 
 export {
     getCoForms,
     updateLineItem,
-    addANewCoLineItem
+    addANewCoLineItem,
+    submitForApproval
 }
