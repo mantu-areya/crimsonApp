@@ -180,31 +180,28 @@ const CoForms = ({ isForReviewerView, isSubmitted, readOnly, inspectionData, nav
         modifiedLineItem && updateCoLineItemToSf(modifiedLineItem)
     }
 
-    function handleApprovedAsNoted(modifiedLineItem) {
-        console.log({
-            modifiedLineItem
-        });
+   async function handleApprovedAsNoted(modifiedLineItem) {
         updateCoFormContext(dataList, currentForm);
-        modifiedLineItem && updateCoLineItemToSf({
+        modifiedLineItem && await updateCoLineItemToSf({
             ...modifiedLineItem,
             "Approval_Status": "Approved as Noted"
         })
         refreshCOData();
     }
 
-    function handleApproveALineItem(item) {
+    async function handleApproveALineItem(item) {
 
         updateCoFormContext(dataList, currentForm);
-        item && updateCoLineItemToSf({
+        item && await updateCoLineItemToSf({
             ...item,
             "Approval_Status": "Approved"
         })
         refreshCOData();
     }
 
-    function handleDeclineALineItem(item) {
+   async function handleDeclineALineItem(item) {
         updateCoFormContext(dataList, currentForm);
-        item && updateCoLineItemToSf({
+        item && await updateCoLineItemToSf({
             ...item,
             "Approval_Status": "Declined"
         })
@@ -346,7 +343,7 @@ const CoForms = ({ isForReviewerView, isSubmitted, readOnly, inspectionData, nav
                                         {
                                             !isSubmittedForGC ?
                                                 !isSubmitting ?
-                                                    <TouchableOpacity style={{ padding: 8, backgroundColor: "#ffb600", borderRadius: 4 }} onPress={handleCOSubmit}>
+                                                    <TouchableOpacity style={{ padding: 8, backgroundColor: "#e50d59", borderRadius: 4 }} onPress={handleCOSubmit}>
                                                         <Text style={{ fontFamily: "URBAN_BOLD", color: "white", fontSize: 16, textAlign: "center" }}> Submit For Review</Text>
                                                     </TouchableOpacity>
                                                     :
@@ -364,7 +361,7 @@ const CoForms = ({ isForReviewerView, isSubmitted, readOnly, inspectionData, nav
                                         {
                                             !isSubmittedForRV ?
                                                 !isSubmitting ?
-                                                    <TouchableOpacity style={{ padding: 8, backgroundColor: "#ffb600", borderRadius: 4 }} onPress={handleCOSubmitByRV}>
+                                                    <TouchableOpacity style={{ padding: 8, backgroundColor: "#e50d59", borderRadius: 4 }} onPress={handleCOSubmitByRV}>
                                                         <Text style={{ fontFamily: "URBAN_BOLD", color: "white", fontSize: 16, textAlign: "center" }}> Submit For Approval</Text>
                                                     </TouchableOpacity>
                                                     :
@@ -384,7 +381,7 @@ const CoForms = ({ isForReviewerView, isSubmitted, readOnly, inspectionData, nav
                     <View style={{ margin: 8, flexDirection: "row" }}>
                         <View style={{ flexDirection: 'row', alignItems: 'center', padding: 4, paddingHorizontal: 16, backgroundColor: "white", flex: 1, borderRadius: 4 }}>
                             <Icon name="search" color="grey" style={{ flex: .1, }} size={18} />
-                            <TextInput value={searchQuery} onChangeText={onChangeSearch} placeholder={"Search Scope Notes ..."} style={{ flex: .8, fontFamily: "URBAN_BOLD", backgroundColor: "transparent", fontSize: 18, padding: 12, width: "100%" }} />
+                            <TextInput value={searchQuery} onChangeText={onChangeSearch} placeholder={"Search Scope Notes ..."} style={{ flex: .8, fontFamily: "URBAN_REGULAR", backgroundColor: "transparent", fontSize: 18, padding: 12, width: "100%" }} />
                             {
                                 searchQuery.length > 0 &&
                                 <EntypoIcon onPress={() => setSearchQuery("")} name="cross" color="grey" style={{ flex: .1 }} size={24} />
@@ -420,7 +417,7 @@ const CoForms = ({ isForReviewerView, isSubmitted, readOnly, inspectionData, nav
                         {
                             isDataLoading ?
                                 <ActivityIndicator /> :
-                                dataList.map((item, i) => <CoFormLineItem navigation={navigation} inspId={inspectionData.Id} handleDeleteLineItem={handleDeleteLineItem} isSubmittedForRV={isSubmittedForRV} isSubmittedForGC={isSubmittedForGC} refreshCOData={refreshCOData} handleDeclineALineItem={handleDeclineALineItem} handleApproveALineItem={handleApproveALineItem} handleApprovedAsNoted={handleApprovedAsNoted} handleOnChangeLineItem={handleOnChangeLineItem} isForReviewer={isForReviewerView} key={i} item={item} handleOnSave={handleOnSave} />)
+                                dataList.filter(item => item?.Scope_Notes?.includes(searchQuery)).map((item, i) => <CoFormLineItem navigation={navigation} inspId={inspectionData.Id} handleDeleteLineItem={handleDeleteLineItem} isSubmittedForRV={isSubmittedForRV} isSubmittedForGC={isSubmittedForGC} refreshCOData={refreshCOData} handleDeclineALineItem={handleDeclineALineItem} handleApproveALineItem={handleApproveALineItem} handleApprovedAsNoted={handleApprovedAsNoted} handleOnChangeLineItem={handleOnChangeLineItem} isForReviewer={isForReviewerView} key={i} item={item} handleOnSave={handleOnSave} />)
                         }
                     </ScrollView>
                 </>
@@ -639,8 +636,8 @@ function CoFormLineItem({ handleDeleteLineItem, refreshCOData, item, isSubmitted
                 <Provider>
                     <Swipeable onRef={(ref) => swipeableRef.current = ref} rightButtons={rightButtons}>
                         <ReviewerLineItemWrapper backgroundColor={getCardBackgroundColor()} >
-                            <Text style={{ fontSize: 12, fontFamily: "URBAN_MEDIUM" }}>Cost Category : {Cost_Category}</Text>
                             <CurrentFormHeading>{Scope_Notes}</CurrentFormHeading>
+                            <Text style={{ fontSize: 12, fontFamily: "URBAN_MEDIUM" }}>Cost Category : {Cost_Category}</Text>
                             <View style={{ flexDirection: "row" }}>
                                 <View style={{ flex: .2 }}>
                                     <ReviewerPreviewLabel>Qty {Quantity}</ReviewerPreviewLabel>
