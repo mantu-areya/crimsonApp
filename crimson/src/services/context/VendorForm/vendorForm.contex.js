@@ -10,6 +10,7 @@ export const VendorFormContextProvider = ({ children }) => {
   const [vendorFormDetails, setVendorFormDetails] = useState({});
   const [deletedLineItems, setDeletedLineItems] = useState([])
   const [contextImages, setContextImages] = useState({});
+  const [modifiedItemsinOffline, setModifiedItemsinOffline] = useState({});
   const add = (dataset, inspData) => inspData ? setVendorFormDetails({ ...vendorFormDetails, [inspData.Id]: dataset.length > 0 ? dataset : "NA" })
     : setVendorFormDetails(dataset)
 
@@ -77,7 +78,31 @@ export const VendorFormContextProvider = ({ children }) => {
         }).catch(error=>{
           console.log("eroor in updateModifiedLineItemToSf ");
         })
+      } else {
+      if (modifiedItemsinOffline[inspId]) {
+        console.log("inspId exist");
+        let hasRecord = null
+        modifiedItemsinOffline[inspId].map(ele => {
+          if (ele.UniqueKey == modifiedrecord.UniqueKey) {
+            hasRecord = true
+            console.log(ele.UniqueKey, "recY");
+          } else {
+            hasRecord = false
+            console.log(ele.UniqueKey, "recN");
+          }
+        })
+        if (hasRecord == false) {
+          let dvdsArray = modifiedItemsinOffline[inspId]
+          dvdsArray && dvdsArray.push(modifiedrecord) && setModifiedItemsinOffline({ ...modifiedItemsinOffline, [inspId]: dvdsArray })
+
+        }
+      } else {
+        let updatedrecord = []
+        updatedrecord.push(modifiedrecord)
+        updatedrecord && setModifiedItemsinOffline({ ...modifiedItemsinOffline, [inspId]: updatedrecord })
+        console.log("inspId not exist");
       }
+    }
       return
     })
   }
@@ -190,9 +215,12 @@ export const VendorFormContextProvider = ({ children }) => {
         deleteNewItem,
         deletedLineItems,
         refreshVfData,
-        updateModifiedLineItemToSf
+        updateModifiedLineItemToSf,
+        modifiedItemsinOffline,
+        setModifiedItemsinOffline
       }}
     >
+      {/* {console.log({modifiedItemsinOffline})} */}
       {children}
     </VendorFormContext.Provider>
   );

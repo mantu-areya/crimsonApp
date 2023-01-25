@@ -13,8 +13,8 @@ export const UploadOfflineData = () => {
   const [netStateChange, setNetStateChange] = useState('');
   const [offlineUploadStart, setOfflineUploadStart] = useState("NS")
 
-  const { addToVfContex, setAscynDataToApp, vendorFormDetails, deletedLineItems } = useContext(VendorFormContext)
-  const { inspections } = useContext(InspectionsContext);
+  const { addToVfContex, setAscynDataToApp, vendorFormDetails, deletedLineItems,setModifiedItemsinOffline,modifiedItemsinOffline } = useContext(VendorFormContext)
+  const { inspections,userRole } = useContext(InspectionsContext);
 
   useEffect(() => {
     if (AppState.currentState == 'background' || AppState.currentState == 'inactive') {
@@ -47,7 +47,7 @@ export const UploadOfflineData = () => {
 
   const addDataToAsync = async (data) => {
     try {
-      inspections && await AsyncStorage.multiSet([['inspection', JSON.stringify(inspections)], ['vendorForm', JSON.stringify(data)]]);
+      inspections && await AsyncStorage.multiSet([['inspection', JSON.stringify(inspections)], ['vendorForm', JSON.stringify(data)],['userRole', userRole],['modifiedItemsinOffline',JSON.stringify(modifiedItemsinOffline)]]);
     }
     catch (err) {
       console.log(err);
@@ -66,16 +66,16 @@ export const UploadOfflineData = () => {
       setOfflineUploadStar("END")
     })
     let vFData = []
-     Object.keys(vendorFormDetails).length > 0 &&  Object.keys(vendorFormDetails).map(ele => {
-       return  vendorFormDetails[ele] !="NA" && vendorFormDetails[ele].map(obj=>{
+     Object.keys(modifiedItemsinOffline).length > 0 &&  Object.keys(modifiedItemsinOffline).map(ele => {
+       return  modifiedItemsinOffline[ele] !="NA" && modifiedItemsinOffline[ele].map(obj=>{
          return vFData.push(obj)
        })
     })
-    vFData.length>0 && updateSfVendorFormDetails(vFData,"BulkDvt").then(
+    vFData.length>0 ? updateSfVendorFormDetails(vFData,"BulkDvt").then(
       setOfflineUploadStart("UPLD")
     ).catch(error=>{
       setOfflineUploadStar("END")
-    })
+    }):setOfflineUploadStart("END")
   }
 
   return <>
