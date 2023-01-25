@@ -346,7 +346,7 @@ const CoForms = ({ isForReviewerView, isSubmitted, readOnly, inspectionData, nav
                                         {
                                             !isSubmittedForGC ?
                                                 !isSubmitting ?
-                                                    <TouchableOpacity style={{ padding: 8, backgroundColor: "#8477EB", borderRadius: 4 }} onPress={handleCOSubmit}>
+                                                    <TouchableOpacity style={{ padding: 8, backgroundColor: "#ffb600", borderRadius: 4 }} onPress={handleCOSubmit}>
                                                         <Text style={{ fontFamily: "URBAN_BOLD", color: "white", fontSize: 16, textAlign: "center" }}> Submit For Review</Text>
                                                     </TouchableOpacity>
                                                     :
@@ -364,7 +364,7 @@ const CoForms = ({ isForReviewerView, isSubmitted, readOnly, inspectionData, nav
                                         {
                                             !isSubmittedForRV ?
                                                 !isSubmitting ?
-                                                    <TouchableOpacity style={{ padding: 8, backgroundColor: "#8477EB", borderRadius: 4 }} onPress={handleCOSubmitByRV}>
+                                                    <TouchableOpacity style={{ padding: 8, backgroundColor: "#ffb600", borderRadius: 4 }} onPress={handleCOSubmitByRV}>
                                                         <Text style={{ fontFamily: "URBAN_BOLD", color: "white", fontSize: 16, textAlign: "center" }}> Submit For Approval</Text>
                                                     </TouchableOpacity>
                                                     :
