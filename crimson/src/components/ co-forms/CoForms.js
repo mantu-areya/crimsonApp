@@ -420,7 +420,7 @@ const CoForms = ({ isForReviewerView, isSubmitted, readOnly, inspectionData, nav
                         {
                             isDataLoading ?
                                 <ActivityIndicator /> :
-                                dataList.map((item, i) => <CoFormLineItem handleDeleteLineItem={handleDeleteLineItem} isSubmittedForRV={isSubmittedForRV} isSubmittedForGC={isSubmittedForGC} refreshCOData={refreshCOData} handleDeclineALineItem={handleDeclineALineItem} handleApproveALineItem={handleApproveALineItem} handleApprovedAsNoted={handleApprovedAsNoted} handleOnChangeLineItem={handleOnChangeLineItem} isForReviewer={isForReviewerView} key={i} item={item} handleOnSave={handleOnSave} />)
+                                dataList.map((item, i) => <CoFormLineItem navigation={navigation} inspId={inspectionData.Id} handleDeleteLineItem={handleDeleteLineItem} isSubmittedForRV={isSubmittedForRV} isSubmittedForGC={isSubmittedForGC} refreshCOData={refreshCOData} handleDeclineALineItem={handleDeclineALineItem} handleApproveALineItem={handleApproveALineItem} handleApprovedAsNoted={handleApprovedAsNoted} handleOnChangeLineItem={handleOnChangeLineItem} isForReviewer={isForReviewerView} key={i} item={item} handleOnSave={handleOnSave} />)
                         }
                     </ScrollView>
                 </>
@@ -429,7 +429,7 @@ const CoForms = ({ isForReviewerView, isSubmitted, readOnly, inspectionData, nav
     )
 }
 
-function CoFormLineItem({ handleDeleteLineItem, refreshCOData, item, isSubmittedForRV, isSubmittedForGC, isForReviewer, handleApproveALineItem, handleDeclineALineItem, handleOnChangeLineItem, handleOnSave, handleApprovedAsNoted }) {
+function CoFormLineItem({ handleDeleteLineItem, refreshCOData, item, isSubmittedForRV, isSubmittedForGC, isForReviewer, handleApproveALineItem, handleDeclineALineItem, handleOnChangeLineItem, handleOnSave, handleApprovedAsNoted, inspId, navigation }) {
 
     const insets = useSafeAreaInsets()
 
@@ -438,10 +438,15 @@ function CoFormLineItem({ handleDeleteLineItem, refreshCOData, item, isSubmitted
         <TouchableOpacity onPress={() => handleDeleteLineItem(item.id)} style={{ backgroundColor: '#F3206F', justifyContent: 'center', alignItems: 'center', width: 64, flex: 1 }}>
             <View>
                 <MaterialCommunityIcons name="delete" size={24} color="white" />
-                {/* <Text>Delete</Text> */}
+            </View>
+        </TouchableOpacity>,
+        <TouchableOpacity onPress={() => navigation.navigate("CameraScreen", { inspId: { inspId }, lineItemId: item.id })} style={{ backgroundColor: '#1d1f69', justifyContent: 'center', alignItems: 'center', width: 64, flex: 1 }}>
+            <View>
+                <MaterialCommunityIcons name="camera" size={24} color="white" />
             </View>
         </TouchableOpacity>
     ];
+
 
     const swipeableRef = React.useRef();
 
