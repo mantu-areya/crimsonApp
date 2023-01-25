@@ -10,6 +10,7 @@ import { useFonts } from 'expo-font';
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { AuthenticationContextProvider } from "./src/services/authentication/authentication.context";
 import { Provider } from "react-native-paper";
+import { BackgroundTasks } from "./src/utilities/BackgroundTasks";
 
 
 
@@ -31,6 +32,8 @@ export default function App() {
     <>
       <ThemeProvider theme={theme}>
         <Provider>
+        {/* <UploadOfflineData /> */}
+        <BackgroundTasks/>
           <AuthenticationContextProvider>
             <SafeAreaProvider>
               <Navigation />

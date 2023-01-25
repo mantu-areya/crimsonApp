@@ -1,11 +1,10 @@
 {
   "name": "crimson",
   "version": "1.0.0",
-  "main": "node_modules/expo/AppEntry.js",
   "scripts": {
-    "start": "expo start",
-    "android": "expo start --android",
-    "ios": "expo start --ios",
+    "start": "expo start --dev-client",
+    "android": "expo run:android",
+    "ios": "expo run:ios",
     "web": "expo start --web",
     "eject": "expo eject",
     "build-apk": "eas build -p android --profile preview"
@@ -74,7 +73,8 @@
     "react-native-web": "0.17.7",
     "react-native-webview": "^11.18.1",
     "styled-components": "^5.3.5",
-    "uuid": "^9.0.0"
+    "uuid": "^9.0.0",
+    "expo-splash-screen": "~0.15.1"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9"
