@@ -135,7 +135,7 @@ const CoForms = ({ isForReviewerView, isSubmitted, readOnly, inspectionData, nav
             setSequenceCo3(prev => Number(prev + 1))
         }
         console.log({ newItem });
-        addNewLineItem(newItem);
+        await addNewLineItem(newItem);
         getAllCoForms(inspectionData.Id)
     };
 
