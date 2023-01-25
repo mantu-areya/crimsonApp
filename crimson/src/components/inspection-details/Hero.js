@@ -5,7 +5,7 @@ import Ionicons from "react-native-vector-icons/Ionicons"
 import { differenceInDays } from 'date-fns'
 import { useNavigation } from '@react-navigation/native';
 import Overlay from 'react-native-modal-overlay';
-import { postSendFileEmail } from '../../services/inspections/inspections.service';
+import { getVendorFormDetails, postSendFileEmail } from '../../services/inspections/inspections.service';
 import Carousel, { Pagination } from 'react-native-snap-carousel'
 import { Map } from './maps/Map'
 import * as Linking from "expo-linking";
@@ -25,6 +25,19 @@ const Hero = ({ totalBidSubmitted, roomMeasurementTotal, data, isSubmitted, sect
         alert("WAF sent to Email Address")
         console.log("FILE EMAIl SEND", res);
     }
+
+    const [allImages, setAllImages] = React.useState([]);
+
+    async function getLineItemImages(inspId) {
+        const res = await getVendorFormDetails(inspId);
+        setAllImages(res.Images)
+    }
+
+    React.useEffect(() => {
+        if (data && data.Id) {
+            getLineItemImages(data.Id);
+        }
+    }, [data])
 
 
     const {
@@ -143,7 +156,7 @@ const Hero = ({ totalBidSubmitted, roomMeasurementTotal, data, isSubmitted, sect
                 <Image source={image} style={{ width: 320, height: 320, borderRadius: 16 }} />
             </Overlay>
             {/* Image Gallery */}
-            <ImageGallery handleViewImageGallery={handleViewImageGallery} />
+            <ImageGallery handleViewImageGallery={handleViewImageGallery} allImages={allImages} />
             {/* Description */}
             <DescriptionWrapper>
                 <Text style={{ color: 'black', fontFamily: 'URBAN_BOLD', fontSize: 16 }}>DESCRIPTION</Text>
@@ -167,41 +180,66 @@ const Hero = ({ totalBidSubmitted, roomMeasurementTotal, data, isSubmitted, sect
     )
 }
 
-function ImageGallery({ handleViewImageGallery }) {
+function ImageGallery({ handleViewImageGallery, allImages }) {
+
+    let initialImages = [];
+
+    if (allImages.length > 5) {
+        initialImages = allImages.slice(0, 5)
+    } else {
+        initialImages = allImages
+    }
+
     return (
         <View style={{ paddingHorizontal: 16, }}>
-            <View style={{ flexDirection: "row" }}>
+            <View style={{ flexDirection: "row", justifyContent: allImages.length < 5 ? "center" : "start" }}>
                 {
-                    [1, 2, 3, 4, 5].map((img, i) =>
-                        <TouchableOpacity key={i}>
-                            <Image
-                                source={img2}
-                                style={{
-                                    height: 48,
-                                    width: (Dimensions.get("screen").width - 86) / 6,
-                                    marginHorizontal: 2,
-                                    borderRadius: 4
-                                }} />
-                        </TouchableOpacity>)
+                    initialImages.map((img, i) => <GalleryImageItem key={i} img={img} />)
                 }
-                < TouchableOpacity
-                    onPress={handleViewImageGallery}
-                    style={{
-                        height: 48,
-                        width: (Dimensions.get("screen").width - 86) / 6,
-                        marginHorizontal: 2,
-                        backgroundColor: "#00000070",
-                        justifyContent: "center",
-                        alignItems: "center",
-                        borderRadius: 4
-                    }}>
-                    <Text style={{ fontSize: 12, color: "white", fontFamily: "URBAN_BOLD" }}>See More</Text>
-                </TouchableOpacity>
+                {
+                    allImages.length > 5 &&
+
+                    < TouchableOpacity
+                        onPress={handleViewImageGallery}
+                        style={{
+                            height: 48,
+                            width: (Dimensions.get("screen").width - 86) / 6,
+                            marginHorizontal: 2,
+                            backgroundColor: "#00000070",
+                            justifyContent: "center",
+                            alignItems: "center",
+                            borderRadius: 4
+                        }}>
+                        <Text style={{ fontSize: 12, color: "white", fontFamily: "URBAN_BOLD" }}>See More</Text>
+                    </TouchableOpacity>
+                }
             </View>
         </View>
     )
 }
 
+
+function GalleryImageItem({ img }) {
+
+    const [showPreview, setShowPreview] = React.useState(false);
+
+    return (
+        <TouchableOpacity onPress={() => setShowPreview(true)}>
+            <Image
+                source={{ uri: img.file_public_url }}
+                style={{
+                    height: 48,
+                    width: (Dimensions.get("screen").width - 86) / 6,
+                    marginHorizontal: 2,
+                    borderRadius: 4
+                }} />
+            <Overlay childrenWrapperStyle={{ backgroundColor: 'black' }} containerStyle={{ backgroundColor: 'black' }} visible={showPreview} onClose={() => setShowPreview(false)} closeOnTouchOutside >
+                <Ionicons onPress={() => setShowPreview(false)} name="close" color="white" size={32} />
+                <Image source={{ uri: img.file_public_url }} style={{ width: 480, height: 480, borderRadius: 16 }} />
+            </Overlay>
+        </TouchableOpacity>
+    )
+}
 
 
 function GoBackButton({ handleGoBack }) {
