@@ -7,7 +7,7 @@ import { Menu, Portal, Provider } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import EntypoIcon from 'react-native-vector-icons/Entypo'
 import NetInfo from "@react-native-community/netinfo";
-import { getCoForms, submitForApproval } from '../../services/co-forms/co-api';
+import { deleteLineItem, getCoForms, submitForApproval } from '../../services/co-forms/co-api';
 import { CoFormContext } from '../../services/co-forms/co-context';
 import Swipeable from 'react-native-swipeable';
 import Animated, { interpolateColor, runOnJS, useAnimatedStyle, useDerivedValue, useSharedValue } from 'react-native-reanimated';
@@ -138,6 +138,16 @@ const CoForms = ({ isForReviewerView, isSubmitted, readOnly, inspectionData, nav
         addNewLineItem(newItem);
         getAllCoForms(inspectionData.Id)
     };
+
+    const handleDeleteLineItem = async (id) => {
+        try {
+            const res = await deleteLineItem(id);
+            console.log({ res });
+            refreshCOData();
+        } catch (error) {
+            console.log("DELETE LI ERROR");
+        }
+    }
 
     const handleOnChangeLineItem = async (field, value, key) => {
         const updatedDataList = dataList.map((obj) => {
@@ -403,13 +413,6 @@ const CoForms = ({ isForReviewerView, isSubmitted, readOnly, inspectionData, nav
                                     }
                                 </>
                         }
-                        {
-                            !isSubmittedForGC && <View style={{ flex: .3, marginHorizontal: 4 }}>
-                                <AddNewBtn onPress={handleAddNewLineItem}>
-                                    <Text style={{ fontFamily: "URBAN_BOLD", color: "white" }}> Add New</Text>
-                                </AddNewBtn>
-                            </View>
-                        }
                     </View>
 
                     {/* CO Line Items */}
@@ -417,7 +420,7 @@ const CoForms = ({ isForReviewerView, isSubmitted, readOnly, inspectionData, nav
                         {
                             isDataLoading ?
                                 <ActivityIndicator /> :
-                                dataList.map((item, i) => <CoFormLineItem isSubmittedForRV={isSubmittedForRV} isSubmittedForGC={isSubmittedForGC} refreshCOData={refreshCOData} handleDeclineALineItem={handleDeclineALineItem} handleApproveALineItem={handleApproveALineItem} handleApprovedAsNoted={handleApprovedAsNoted} handleOnChangeLineItem={handleOnChangeLineItem} isForReviewer={isForReviewerView} key={i} item={item} handleOnSave={handleOnSave} />)
+                                dataList.map((item, i) => <CoFormLineItem handleDeleteLineItem={handleDeleteLineItem} isSubmittedForRV={isSubmittedForRV} isSubmittedForGC={isSubmittedForGC} refreshCOData={refreshCOData} handleDeclineALineItem={handleDeclineALineItem} handleApproveALineItem={handleApproveALineItem} handleApprovedAsNoted={handleApprovedAsNoted} handleOnChangeLineItem={handleOnChangeLineItem} isForReviewer={isForReviewerView} key={i} item={item} handleOnSave={handleOnSave} />)
                         }
                     </ScrollView>
                 </>
@@ -426,13 +429,13 @@ const CoForms = ({ isForReviewerView, isSubmitted, readOnly, inspectionData, nav
     )
 }
 
-function CoFormLineItem({ refreshCOData, item, isSubmittedForRV, isSubmittedForGC, isForReviewer, handleApproveALineItem, handleDeclineALineItem, handleOnChangeLineItem, handleOnSave, handleApprovedAsNoted }) {
+function CoFormLineItem({ handleDeleteLineItem, refreshCOData, item, isSubmittedForRV, isSubmittedForGC, isForReviewer, handleApproveALineItem, handleDeclineALineItem, handleOnChangeLineItem, handleOnSave, handleApprovedAsNoted }) {
 
     const insets = useSafeAreaInsets()
 
 
     const rightButtons = [
-        <TouchableOpacity onPress={() => handleDelGest(item.Id, inspId, item.UniqueKey)} style={{ backgroundColor: '#F3206F', justifyContent: 'center', alignItems: 'center', width: 64, flex: 1 }}>
+        <TouchableOpacity onPress={() => handleDeleteLineItem(item.id)} style={{ backgroundColor: '#F3206F', justifyContent: 'center', alignItems: 'center', width: 64, flex: 1 }}>
             <View>
                 <MaterialCommunityIcons name="delete" size={24} color="white" />
                 {/* <Text>Delete</Text> */}
@@ -1050,7 +1053,7 @@ function CoFormLineItem({ refreshCOData, item, isSubmittedForRV, isSubmittedForG
 
     return (
         <>
-            <Swipeable onRef={(ref) => swipeableRef.current = ref} rightButtons={rightButtons}>
+            <Swipeable onRef={(ref) => swipeableRef.current = ref} rightButtons={isSubmittedForGC ? null : rightButtons}>
                 <TouchableOpacity style={{ padding: 8 }} onPress={() => {
                     !isSubmittedForGC && setShowModal(true);
                 }}>
