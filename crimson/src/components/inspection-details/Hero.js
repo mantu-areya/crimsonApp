@@ -9,6 +9,7 @@ import { getVendorFormDetails, postSendFileEmail } from '../../services/inspecti
 import Carousel, { Pagination } from 'react-native-snap-carousel'
 import { Map } from './maps/Map'
 import * as Linking from "expo-linking";
+import { ActivityIndicator } from 'react-native-paper'
 
 
 
@@ -27,10 +28,19 @@ const Hero = ({ totalBidSubmitted, roomMeasurementTotal, data, isSubmitted, sect
     }
 
     const [allImages, setAllImages] = React.useState([]);
+    const [imagesLoading, setImagesLoading] = React.useState(false);
 
     async function getLineItemImages(inspId) {
-        const res = await getVendorFormDetails(inspId);
-        setAllImages(res.Images)
+        try {
+            setImagesLoading(true);
+            const res = await getVendorFormDetails(inspId);
+            setAllImages(res.Images)
+        } catch (error) {
+            console.log("GET LINE ITEM IMAGES ERROR", error);
+        } finally {
+            setImagesLoading(false);
+        }
+
     }
 
     React.useEffect(() => {
@@ -156,7 +166,11 @@ const Hero = ({ totalBidSubmitted, roomMeasurementTotal, data, isSubmitted, sect
                 <Image source={image} style={{ width: 320, height: 320, borderRadius: 16 }} />
             </Overlay>
             {/* Image Gallery */}
-            <ImageGallery handleViewImageGallery={handleViewImageGallery} allImages={allImages} />
+            {
+                imagesLoading
+                    ? <ActivityIndicator />
+                    : <ImageGallery handleViewImageGallery={handleViewImageGallery} allImages={allImages} />
+            }
             {/* Description */}
             <DescriptionWrapper>
                 <Text style={{ color: 'black', fontFamily: 'URBAN_BOLD', fontSize: 16 }}>DESCRIPTION</Text>
