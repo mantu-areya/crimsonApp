@@ -31,8 +31,13 @@ export const UploadOfflineData = () => {
     });
   })
 
+  useEffect(()=>{
+
+  },[offlineUploadStart])
+
   useEffect(() => {
     addVfData()
+    addOfflineModifiedRecordsToApp()
     AppState.addEventListener("change", nextAppState => {
       if (
         appState.current.match(/inactive|background/) &&
@@ -59,7 +64,13 @@ export const UploadOfflineData = () => {
       JSON.parse(data) !== null && addToVfContex(JSON.parse(data))
     });
   }
-
+  const addOfflineModifiedRecordsToApp = async() =>{
+    return await AsyncStorage.getItem('modifiedItemsinOffline').then(data => {
+      JSON.parse(data) !== null  && console.log(data,"cn2");
+      JSON.parse(data) !== null && setModifiedItemsinOffline({...modifiedItemsinOffline, ...JSON.parse(data)})  && setOfflineUploadStart("END")
+      // Object.keys(modifiedItemsinOffline).length > 0 && AsyncStorage.setItem('modifiedItemsinOffline',JSON.stringify({})) 
+    });
+  }
   const offlineDataToSalesForce = () =>{
     let keyString =  deletedLineItems.length>0 && deletedLineItems.join(',')
     keyString && deleteLineItem(keyString).catch(error=>{
@@ -72,7 +83,7 @@ export const UploadOfflineData = () => {
        })
     })
     vFData.length>0 ? updateSfVendorFormDetails(vFData,"BulkDvt").then(
-      setOfflineUploadStart("UPLD")
+       setModifiedItemsinOffline({})&&setOfflineUploadStart("END")
     ).catch(error=>{
       setOfflineUploadStar("END")
     }):setOfflineUploadStart("END")
