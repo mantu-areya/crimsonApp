@@ -84,6 +84,7 @@ export const InspectionsContextProvider = ({ children }) => {
       } else {
         setIsOnline(networkState.isConnected)
         try {
+          AsyncStorage.getItem('userRole').then(data => setUserRole(data))
           AsyncStorage.getItem('inspection').then(data => {
             setIsLoading(false);
             setInspections(JSON.parse(data))
