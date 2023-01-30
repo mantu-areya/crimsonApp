@@ -1,8 +1,9 @@
-import { View, Text, Button, ActivityIndicator, Dimensions, Platform, ScrollView, TextInput, TouchableOpacity, Modal } from 'react-native'
+import { View, Text, Button, ActivityIndicator, Dimensions, Platform, ScrollView, TextInput, TouchableOpacity, Modal, Image } from 'react-native'
 import React, { useCallback } from 'react'
 import styled from 'styled-components/native';
 import { useIsFocused } from '@react-navigation/native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
+import Ionicons from 'react-native-vector-icons/Ionicons'
 import { Menu, Portal, Provider } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import EntypoIcon from 'react-native-vector-icons/Entypo'
@@ -17,6 +18,7 @@ import CostCategory from '../../constants/ cost-category';
 import { showMessage } from "react-native-flash-message";
 
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
+import Overlay from 'react-native-modal-overlay';
 
 
 const CoForms = ({ isForReviewerView, isSubmitted, readOnly, inspectionData, navigation }) => {
@@ -180,7 +182,7 @@ const CoForms = ({ isForReviewerView, isSubmitted, readOnly, inspectionData, nav
         modifiedLineItem && updateCoLineItemToSf(modifiedLineItem)
     }
 
-   async function handleApprovedAsNoted(modifiedLineItem) {
+    async function handleApprovedAsNoted(modifiedLineItem) {
         updateCoFormContext(dataList, currentForm);
         modifiedLineItem && await updateCoLineItemToSf({
             ...modifiedLineItem,
@@ -199,7 +201,7 @@ const CoForms = ({ isForReviewerView, isSubmitted, readOnly, inspectionData, nav
         refreshCOData();
     }
 
-   async function handleDeclineALineItem(item) {
+    async function handleDeclineALineItem(item) {
         updateCoFormContext(dataList, currentForm);
         item && await updateCoLineItemToSf({
             ...item,
@@ -444,6 +446,15 @@ function CoFormLineItem({ handleDeleteLineItem, refreshCOData, item, isSubmitted
         </TouchableOpacity>
     ];
 
+    const [showReviewerImagePopover, setShowReviewerImagePopover] = React.useState(false);
+
+    const rightButtonsForReviwerSubmit = [
+        <TouchableOpacity onPress={() => setShowReviewerImagePopover(true)} style={{ backgroundColor: '#1d1f69', justifyContent: 'center', alignItems: 'center', width: 64, flex: 1 }}>
+            <View>
+                <MaterialCommunityIcons name="image-multiple" size={24} color="white" />
+            </View>
+        </TouchableOpacity>
+    ];
 
     const swipeableRef = React.useRef();
 
@@ -784,29 +795,32 @@ function CoFormLineItem({ handleDeleteLineItem, refreshCOData, item, isSubmitted
                 </Provider>
                 :
                 <>
-
-                    <ReviewerLineItemWrapper onPress={() => setShowModal(true)} backgroundColor={getCardBackgroundColor()} >
-                        <Text style={{ fontSize: 12, fontFamily: "URBAN_MEDIUM" }}>Cost Category : {Cost_Category}</Text>
-                        <CurrentFormHeading>{Scope_Notes}</CurrentFormHeading>
-                        <View style={{ flexDirection: "row" }}>
-                            <View style={{ flex: 1, flexDirection: "row" }}>
-                                <ReviewerPreviewLabel>Qty {Quantity}</ReviewerPreviewLabel>
-                                <ReviewerPreviewLabel>Rate {Rate}</ReviewerPreviewLabel>
-                                <ReviewerPreviewLabel>Total {Total}</ReviewerPreviewLabel>
+                    <Swipeable onRef={(ref) => swipeableRef.current = ref} rightButtons={rightButtonsForReviwerSubmit}>
+                        <ReviewerLineItemWrapper onPress={() => setShowModal(true)} backgroundColor={getCardBackgroundColor()} >
+                            <CurrentFormHeading>{Scope_Notes}</CurrentFormHeading>
+                            <Text style={{ fontSize: 12, fontFamily: "URBAN_MEDIUM" }}>Cost Category : {Cost_Category}</Text>
+                            <View style={{ flexDirection: "row" }}>
+                                <View style={{ flex: 1, flexDirection: "row" }}>
+                                    <ReviewerPreviewLabel>Qty {Quantity}</ReviewerPreviewLabel>
+                                    <ReviewerPreviewLabel>Rate {Rate}</ReviewerPreviewLabel>
+                                    <ReviewerPreviewLabel>Total {Total}</ReviewerPreviewLabel>
+                                </View>
                             </View>
-                            {/* <View style={{ flex: .8, flexDirection: "row", alignItems: "center" }}>
-                                <ReviewerActionBtn onPress={() => handleApproveALineItem(item)} backgroundColor={Approval_Status === "Approved" ? "grey" : "#7CDD9B"}>
-                                    <Text>A</Text>
-                                </ReviewerActionBtn>
-                                <ReviewerActionBtn onPress={() => setShowModal(true)} backgroundColor={Approval_Status === "Approved as Noted" ? "grey" : "#3983EF"} >
-                                    <Text>R</Text>
-                                </ReviewerActionBtn>
-                                <ReviewerActionBtn onPress={() => handleDeclineALineItem(item)} backgroundColor={Approval_Status === "Declined" ? "grey" : "#E02E2E"}>
-                                    <Text>D</Text>
-                                </ReviewerActionBtn>
-                            </View> */}
+                        </ReviewerLineItemWrapper>
+                    </Swipeable>
+                    <Modal transparent visible={showReviewerImagePopover} onDismiss={() => setShowReviewerImagePopover(false)} >
+
+                        <View style={{ backgroundColor: "#c4c4c490", flex: 1, justifyContent: "center", alignItems: "center", }}>
+                            <MaterialCommunityIcons onPress={() => setShowReviewerImagePopover(false)} name="close" size={24} style={{ position: "absolute", top: 240, right: 48 }} />
+                            <View style={{ flexDirection: "row", paddingHorizontal: 24 }}>
+                                <PopoverImageItem img={require("../../assets/images/Background2.jpg")} />
+                                <PopoverImageItem img={require("../../assets/images/Background2.jpg")} />
+                                <PopoverImageItem img={require("../../assets/images/Background2.jpg")} />
+                            </View>
                         </View>
-                    </ReviewerLineItemWrapper>
+
+                    </Modal>
+
                     <Modal transparent visible={showModal} onClose={() => setShowModal(false)} >
                         <ComposedGestureWrapper gesture={composed}>
                             <>
@@ -870,25 +884,14 @@ function CoFormLineItem({ handleDeleteLineItem, refreshCOData, item, isSubmitted
                                             <View style={{ flex: 1, marginHorizontal: 2 }}>
                                                 <FormLabel style={{ fontSize: 12 }}>Adj Qty</FormLabel>
                                                 <FormValue style={{ color: "black", padding: 8, fontSize: 16 }}>{Adj_Quantity ?? 0}</FormValue>
-                                                {/* <FormInput onChangeText={(text) => {
-                                                    handleOnChangeLineItem("Adj_Quantity", text, UniqueKey)
-                                                }} style={{ fontSize: 16 }} keyboardType="number-pad" value={`${Adj_Quantity ?? 0}`} />
-                                            */}
                                             </View>
                                             <View style={{ flex: 1, marginHorizontal: 2 }}>
                                                 <FormLabel style={{ fontSize: 12 }}>Adj UM</FormLabel>
                                                 <FormValue style={{ color: "black", padding: 8, fontSize: 16 }}>{Adj_U_M ?? ''}</FormValue>
-                                                {/* <FormInput onChangeText={(text) => {
-                                                    handleOnChangeLineItem("Adj_U_M", text, UniqueKey)
-                                                }} style={{ fontSize: 16 }} value={`${Adj_U_M ?? ''}`} /> */}
                                             </View>
                                             <View style={{ flex: 1, marginHorizontal: 2 }}>
                                                 <FormLabel style={{ fontSize: 12 }}>Adj Rate</FormLabel>
                                                 <FormValue style={{ color: "black", padding: 8, fontSize: 16 }}>{Adj_Rate ?? 0}</FormValue>
-
-                                                {/* <FormInput onChangeText={(text) => {
-                                                    handleOnChangeLineItem("Adj_Rate", text, UniqueKey)
-                                                }} style={{ fontSize: 16 }} keyboardType="number-pad" value={`${Adj_Rate ?? 0}`} /> */}
                                             </View>
                                             <View style={{ flex: 1, marginHorizontal: 2 }}>
                                                 <FormLabel style={{ fontSize: 12 }}>Appr. Amt</FormLabel>
@@ -910,6 +913,25 @@ function CoFormLineItem({ handleDeleteLineItem, refreshCOData, item, isSubmitted
         )
     }
 
+    function PopoverImageItem({ img }) {
+
+        const [showPreview, setShowPreview] = React.useState(false);
+
+        return (
+            <TouchableOpacity onPress={() => setShowPreview(true)}>
+                <Image
+                    source={img}
+                    style={{
+                        width: (Dimensions.get("window").width / 3) - 24,
+                        height: 128
+                    }} />
+                <Overlay childrenWrapperStyle={{ backgroundColor: 'black' }} containerStyle={{ backgroundColor: 'black' }} visible={showPreview} onClose={() => setShowPreview(false)} closeOnTouchOutside >
+                    <Ionicons onPress={() => setShowPreview(false)} name="close" color="white" size={32} />
+                    <Image source={img} style={{ width: 480, height: 480, borderRadius: 16 }} />
+                </Overlay>
+            </TouchableOpacity>
+        )
+    }
 
     const offset = useSharedValue({ x: 0 });
     const start = useSharedValue({ x: 0 });
