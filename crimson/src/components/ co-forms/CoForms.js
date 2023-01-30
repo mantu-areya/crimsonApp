@@ -419,7 +419,7 @@ const CoForms = ({ isForReviewerView, isSubmitted, readOnly, inspectionData, nav
                         {
                             isDataLoading ?
                                 <ActivityIndicator /> :
-                                dataList.filter(item => item?.Scope_Notes?.includes(searchQuery)).map((item, i) => <CoFormLineItem navigation={navigation} inspId={inspectionData.Id} handleDeleteLineItem={handleDeleteLineItem} isSubmittedForRV={isSubmittedForRV} isSubmittedForGC={isSubmittedForGC} refreshCOData={refreshCOData} handleDeclineALineItem={handleDeclineALineItem} handleApproveALineItem={handleApproveALineItem} handleApprovedAsNoted={handleApprovedAsNoted} handleOnChangeLineItem={handleOnChangeLineItem} isForReviewer={isForReviewerView} key={i} item={item} handleOnSave={handleOnSave} />)
+                                dataList.filter(item => item?.Scope_Notes?.includes(searchQuery)).map((item, i) => <CoFormLineItem navigation={navigation} currentCOForm={currentForm} inspId={inspectionData.Id} handleDeleteLineItem={handleDeleteLineItem} isSubmittedForRV={isSubmittedForRV} isSubmittedForGC={isSubmittedForGC} refreshCOData={refreshCOData} handleDeclineALineItem={handleDeclineALineItem} handleApproveALineItem={handleApproveALineItem} handleApprovedAsNoted={handleApprovedAsNoted} handleOnChangeLineItem={handleOnChangeLineItem} isForReviewer={isForReviewerView} key={i} item={item} handleOnSave={handleOnSave} />)
                         }
                     </ScrollView>
                 </>
@@ -428,7 +428,7 @@ const CoForms = ({ isForReviewerView, isSubmitted, readOnly, inspectionData, nav
     )
 }
 
-function CoFormLineItem({ handleDeleteLineItem, refreshCOData, item, isSubmittedForRV, isSubmittedForGC, isForReviewer, handleApproveALineItem, handleDeclineALineItem, handleOnChangeLineItem, handleOnSave, handleApprovedAsNoted, inspId, navigation }) {
+function CoFormLineItem({ handleDeleteLineItem, refreshCOData, item, isSubmittedForRV, isSubmittedForGC, isForReviewer, handleApproveALineItem, handleDeclineALineItem, handleOnChangeLineItem, handleOnSave, handleApprovedAsNoted, inspId, navigation, currentCOForm }) {
 
     const insets = useSafeAreaInsets()
 
@@ -439,7 +439,7 @@ function CoFormLineItem({ handleDeleteLineItem, refreshCOData, item, isSubmitted
                 <MaterialCommunityIcons name="delete" size={24} color="white" />
             </View>
         </TouchableOpacity>,
-        <TouchableOpacity onPress={() => navigation.navigate("CameraScreen", { inspId: { inspId }, lineItemId: item.id })} style={{ backgroundColor: '#1d1f69', justifyContent: 'center', alignItems: 'center', width: 64, flex: 1 }}>
+        <TouchableOpacity onPress={() => navigation.navigate("CameraScreen", { inspId: { inspId }, lineItemId: item.id, currentCOForm })} style={{ backgroundColor: '#1d1f69', justifyContent: 'center', alignItems: 'center', width: 64, flex: 1 }}>
             <View>
                 <MaterialCommunityIcons name="camera" size={24} color="white" />
             </View>
@@ -913,25 +913,7 @@ function CoFormLineItem({ handleDeleteLineItem, refreshCOData, item, isSubmitted
         )
     }
 
-    function PopoverImageItem({ img }) {
 
-        const [showPreview, setShowPreview] = React.useState(false);
-
-        return (
-            <TouchableOpacity onPress={() => setShowPreview(true)}>
-                <Image
-                    source={img}
-                    style={{
-                        width: (Dimensions.get("window").width / 3) - 24,
-                        height: 128
-                    }} />
-                <Overlay childrenWrapperStyle={{ backgroundColor: 'black' }} containerStyle={{ backgroundColor: 'black' }} visible={showPreview} onClose={() => setShowPreview(false)} closeOnTouchOutside >
-                    <Ionicons onPress={() => setShowPreview(false)} name="close" color="white" size={32} />
-                    <Image source={img} style={{ width: 480, height: 480, borderRadius: 16 }} />
-                </Overlay>
-            </TouchableOpacity>
-        )
-    }
 
     const offset = useSharedValue({ x: 0 });
     const start = useSharedValue({ x: 0 });
@@ -1150,6 +1132,27 @@ function CoFormLineItem({ handleDeleteLineItem, refreshCOData, item, isSubmitted
                 </ComposedGestureWrapper>
             </Modal>
         </>
+    )
+}
+
+
+function PopoverImageItem({ img }) {
+
+    const [showPreview, setShowPreview] = React.useState(false);
+
+    return (
+        <TouchableOpacity onPress={() => setShowPreview(true)}>
+            <Image
+                source={img}
+                style={{
+                    width: (Dimensions.get("window").width / 3) - 24,
+                    height: 128
+                }} />
+            <Overlay childrenWrapperStyle={{ backgroundColor: 'black' }} containerStyle={{ backgroundColor: 'black' }} visible={showPreview} onClose={() => setShowPreview(false)} closeOnTouchOutside >
+                <Ionicons onPress={() => setShowPreview(false)} name="close" color="white" size={32} />
+                <Image source={img} style={{ width: 480, height: 480, borderRadius: 16 }} />
+            </Overlay>
+        </TouchableOpacity>
     )
 }
 

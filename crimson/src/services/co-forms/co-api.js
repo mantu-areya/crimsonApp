@@ -99,10 +99,34 @@ const submitForApproval = async (data) => {
 }
 
 
+const uploadCOLineItemImages = async (data, recordId) => {
+    const token = await getStoredToken();
+    console.log("uploading CO Line item image");
+    const url = `https://hudsonhomesmgmt--uat.sandbox.my.salesforce.com/services/apexrest/COFORMS/UploadImage?recordId=${recordId}`;
+    return apiPost(
+        url,
+        data,
+        {
+            headers: {
+                'Authorization': `Bearer ${token}`,
+            },
+        },
+    )
+        .then(response => {
+            console.log("CO IMG UPLOAD", response.data);
+            return response.data
+        })
+        .catch(err => {
+            console.log("CO IMG UPLOAD", err);
+        });
+
+}
+
 export {
     getCoForms,
     updateLineItem,
     addANewCoLineItem,
     submitForApproval,
-    deleteLineItem
+    deleteLineItem,
+    uploadCOLineItemImages,
 }
