@@ -3,11 +3,17 @@ import Overlay from 'react-native-modal-overlay';
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { Button, Card, Portal, Provider } from "react-native-paper";
 import Swipeable from 'react-native-swipeable';
-import { View, TouchableOpacity, Text, TextInput, Image, Dimensions, Modal, Pressable } from 'react-native'
+import { View, TouchableOpacity, Text, TextInput, Image, Dimensions, Modal, Pressable, ScrollView } from 'react-native'
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import React, { useEffect } from "react";
 import AntDesign from "react-native-vector-icons/AntDesign"
 import { getVendorFormDetails } from "../../../services/inspections/inspections.service";
+import ComposedGestureWrapper from "../../animated/ComposedGestureWrapper";
+import Animated, { interpolateColor, runOnJS, useAnimatedStyle, useDerivedValue, useSharedValue } from 'react-native-reanimated';
+import { Gesture } from 'react-native-gesture-handler';
+import { showMessage } from "react-native-flash-message";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+
 
 
 let requiredSubCategories = [
@@ -30,6 +36,7 @@ export default function FormLineItem({ isSubmittedByReviewer, handleAcceptLineIt
     setIsEditModalClosed(overlayVisible)
   }, [overlayVisible])
 
+  const insets = useSafeAreaInsets()
 
   const rightButtons = [
     <TouchableOpacity onPress={() => handleDelGest(item.Id, inspId, item.UniqueKey)} style={{ backgroundColor: '#F3206F', justifyContent: 'center', alignItems: 'center', width: 64, flex: 1 }}>
@@ -59,131 +66,159 @@ export default function FormLineItem({ isSubmittedByReviewer, handleAcceptLineIt
   }
 
   if (isForRoomMeasurement) {
-
-    let length, width, misc, total;
-    const Sub_Category_List = ["Garage", "Foyed", "Family Room", "Breakfast Nook", "Kitchen", "Laundry Room", "Formal Living Room", "Hallway 1", "Hallway 2", "Half Bathroom", "Master Bathroom", "Bathroom 2", "Bathroom 3", "Master Bedroom", "Bedroom 2", "Bedroom 3", "Bedroom 4", "Gameroom", "Office/Study", "Basement", "master closet", "Dining Room",]
-
-
-    function getFormatedRowValues(value) {
-      if (value === undefined || value === null) {
-        return 0;
-      }
-      return value > 1 ? value.toString().replace(/^0+/, '') : value;
-    }
-
-    length = getFormatedRowValues(item.Room_Length);
-    width = getFormatedRowValues(item.Room_Width);
-    misc = getFormatedRowValues(item.Room_Misc_SF);
-    total = getFormatedRowValues(item.Room_Total);
-
-
-
-    return (
-      <>
-        <Swipeable onRef={(ref) => swipeableRef.current = ref}>
-          <LineItemWrapper onPress={() => setOverlayVisible(true)} >
-            <View style={{ flex: 1 }}>
-              {/* Room */}
-              {(Sub_Category_List.includes(item.Sub_Category) || readOnly)
-                ?
-                <StyledText>{item.Sub_Category}</StyledText>
-                :
-                <StyledTextInput
-                  onChangeText={val => onRoomMeasurementValueChange((val), "Sub_Category", item.UniqueKey)}
-                  value={`${item.Sub_Category}`}
-                />}
-              <LineItemInputGroup>
-                {/* Length */}
-                <LineItemInputText>Length: {length}</LineItemInputText>
-                {/* Width */}
-                <LineItemInputText>Width: {width}</LineItemInputText>
-                {/* Misc */}
-                <LineItemInputText>Misc: {misc}</LineItemInputText>
-                {/* Total */}
-                <LineItemInputText>Total: {total} sqft</LineItemInputText>
-              </LineItemInputGroup>
-            </View>
-          </LineItemWrapper>
-        </Swipeable>
-        <Overlay visible={overlayVisible} onClose={() => setOverlayVisible(false)}  >
-          <Ionicons style={{ marginLeft: "auto" }} onPress={() => setOverlayVisible(false)} name="close" size={24} />
-          {
-            (Sub_Category_List.includes(item.Sub_Category) || readOnly)
-              ?
-              <StyledText>{item.Sub_Category}</StyledText>
-              :
-              <StyledTextInput
-                onChangeText={val => onRoomMeasurementValueChange((val), "Sub_Category", item.UniqueKey)}
-                value={`${item.Sub_Category}`}
-              />
-          }
-          <View style={{ flexDirection: 'row' }}>
-            <CustomFormInput
-              label="Length"
-              placeholder="Length"
-              onChangeText={val => {
-                if (val === "") { // * for negative numbers
-                  return onRoomMeasurementValueChange(0, "Room_Length", item.UniqueKey)
-                }
-                onRoomMeasurementValueChange((val), "Room_Length", item.UniqueKey)
-              }}
-              readOnly={readOnly}
-              value={length ?? 0}
-            />
-
-            <CustomFormInput
-              label="Width"
-              placeholder="Width"
-              onChangeText={val => {
-                if (val === "") { // * for negative numbers
-                  return onRoomMeasurementValueChange(0, "Room_Width", item.UniqueKey)
-                }
-                onRoomMeasurementValueChange((val), "Room_Width", item.UniqueKey)
-              }}
-              readOnly={readOnly}
-              value={width ?? 0}
-            />
-            <CustomFormInput
-              label="Misc"
-              placeholder="Misc"
-              onChangeText={val => {
-                if (val === "") { // * for negative numbers
-                  return onRoomMeasurementValueChange(0, "Room_Misc_SF", item.UniqueKey)
-                }
-                onRoomMeasurementValueChange((val), "Room_Misc_SF", item.UniqueKey)
-              }} readOnly={readOnly}
-              value={misc ?? 0}
-            />
-            <CustomFormInput
-              label="Total SqFt"
-              placeholder="Total"
-              readOnly={true}
-              value={total}
-            />
-          </View>
-          {!readOnly &&
-            <Button
-              onPress={() => {
-                item && handleOnSave(true, item);
-                setOverlayVisible(false);
-
-              }} mode="contained">
-              Save
-            </Button>
-          }
-        </Overlay>
-      </>
-
-    )
-
+    return <RoomMeasurementLineItem {...{ item, handleOnSave, onRoomMeasurementValueChange, setOverlayVisible, overlayVisible, readOnly, swipeableRef,isSubmittedByReviewer }} />
   }
 
   if (isForReviewerView) {
     return (
-      <ContractorViewLineItem {...{ inspId, isSubmittedByReviewer, handleAcceptLineItem, item, onOtherFormValueChange, setIsEditModalClosed }} />
+      <ContractorViewLineItem {...{ insets, inspId, isSubmittedByReviewer, handleAcceptLineItem, item, onOtherFormValueChange, setIsEditModalClosed }} />
     )
 
   }
+
+
+
+  const offset = useSharedValue({ x: 0 });
+  const start = useSharedValue({ x: 0 });
+
+  const [show, setShow] = React.useState(false);
+
+  const handleLongPressState = (state) => {
+    setShow(state);
+  }
+
+
+  const longPressGesture = Gesture.LongPress()
+    .onEnd(() => {
+      runOnJS(handleLongPressState)(true)
+    })
+
+
+
+  const dragGesture = Gesture.Pan()
+    .averageTouches(true)
+    .onUpdate((e) => {
+      console.log(e.translationX);
+      offset.value = {
+        x: (e.translationX + start.value.x)
+      };
+    })
+    .onEnd(() => {
+      start.value = {
+        x: offset.value.x,
+      };
+    });
+
+  const animatedStyles = useAnimatedStyle(() => {
+    return {
+      transform: [
+        { translateX: offset.value.x },
+      ],
+    };
+  });
+
+
+  const obj = useDerivedValue(() => {
+    if (offset.value.x < 0) {
+      return {
+        color: "red",
+        limit: -200
+      }
+    }
+    if (offset.value.x > 0) {
+      return {
+        color: "green",
+        limit: 100
+      }
+    }
+  }, [offset.value.x])
+
+  const animatedStyleforBackground = useAnimatedStyle(() => {
+
+    let bColor = "#c4c4c490";
+
+    if (obj.value) {
+      bColor = interpolateColor(offset.value.x, [0, obj.value.limit], ["#c4c4c490", obj.value.color])
+    }
+
+    return {
+      backgroundColor: bColor,
+    }
+  });
+
+  const handleAlert = () => {
+
+    if (offset.value.x < -100 && offset.value.x > -200) {
+      if (readOnly) {
+        setOverlayVisible(false);
+        offset.value = {
+          x: 0
+        }
+        start.value = {
+          x: 0
+        }
+        setShow(false)
+        return;
+      }
+      console.log("INSIDE CANCEL");
+      // refreshCOData()// * Reset Old Data
+      setOverlayVisible(false);
+      showMessage({
+        message: "Discarding changes...",
+        type: "danger",
+      });
+      offset.value = {
+        x: 0
+      }
+      start.value = {
+        x: 0
+      }
+      setShow(false)
+    }
+    if (offset.value.x > 100) {
+      if (readOnly) {
+        setOverlayVisible(false);
+        offset.value = {
+          x: 0
+        }
+        start.value = {
+          x: 0
+        }
+        setShow(false)
+        return;
+      }
+      console.log("SAVING..");
+      item && handleOnSave(item); // * Call SAVE TO CONTEXT FUNCTION
+      setOverlayVisible(false);
+      showMessage({
+        message: "Saving Changes...",
+        type: "success",
+      });
+      offset.value = {
+        x: 0
+      }
+      start.value = {
+        x: 0
+      }
+      setShow(false)
+    }
+
+
+  }
+
+  useDerivedValue(() => {
+
+    if ((offset.value.x > 100) || (offset.value.x < 0 && offset.value.x > -200)) {
+      runOnJS(handleAlert)(offset.value.x)
+    }
+
+  }, [offset.value.x, item])
+
+
+
+  const composed = Gesture.Simultaneous(longPressGesture, dragGesture);
+
+
 
 
   return (
@@ -215,92 +250,79 @@ export default function FormLineItem({ isSubmittedByReviewer, handleAcceptLineIt
           </LineItemWrapper>
         </Swipeable>
       }
-      <Overlay visible={overlayVisible} onClose={() => setOverlayVisible(false)} >
-        <Ionicons style={{ marginLeft: "auto" }} onPress={() => setOverlayVisible(false)} name="close" size={24} />
-        {
-          Sub_Category_Keys.includes(item?.Sub_Category)
-            ?
-            <>
-              <StyledTextInputLabel>Matrix Price</StyledTextInputLabel>
-              <StyledTextInput
-                onChangeText={val => onOtherFormValueChange((val), "Matrix_Price", item.UniqueKey)}
-                value={`${item?.Matrix_Price ?? 0}`}
-              />
-            </>
-            :
-            <LineItemHeading>
-              {item?.Matrix_Price}
-            </LineItemHeading>
-        }
+      <Modal transparent visible={overlayVisible} onClose={() => overlayVisible(false)} >
+        <ComposedGestureWrapper gesture={composed}>
+          <>
+            {/* MESSAGE */}
+            {
+              show &&
+              <Animated.View style={{ position: 'absolute', bottom: 120, width: "100%", paddingHorizontal: 12 }}>
+                <Animated.View style={{ marginLeft: "auto", justifyContent: 'center', alignItems: 'center', marginBottom: 16 }}>
+                  <Text style={{ backgroundColor: "#8477EB", padding: 8, color: "white", fontFamily: "URBAN_BOLD", fontSize: 16 }}>Swipe Up to save</Text>
+                </Animated.View>
+                <Animated.View style={{ marginRight: "auto", justifyContent: 'center', alignItems: 'center' }}>
+                  <Text style={{ backgroundColor: "#8477EB", padding: 8, color: "white", fontFamily: "URBAN_BOLD", fontSize: 16 }}>Swipe Down to Cancel</Text>
+                </Animated.View>
+              </Animated.View>
+            }
+            <Animated.View style={[{ backgroundColor: "#d4d4d490", flex: 1, justifyContent: "center", alignItems: "center", paddingHorizontal: 36 }, animatedStyleforBackground]}>
 
-        <View style={{ flexDirection: "row" }}>
-
-          <CustomFormInput
-            label="Quantity"
-            placeholder="QTY"
-            onChangeText={text => {
-              if (text === "") { // * for negative numbers
-                return onOtherFormValueChange(0, "Quantity", item.UniqueKey)
-              }
-              onOtherFormValueChange(text, "Quantity", item.UniqueKey)
-            }}
-            // onChangeText={val => onOtherFormValueChange((val), "Quantity", item.UniqueKey)}
-            readOnly={readOnly}
-            value={item.Quantity ?? 0}
-          />
-
-          <CustomFormInput
-            label="U/A"
-            placeholder="U/A"
-            onChangeText={val => onOtherFormValueChange((val), "U_M", item.UniqueKey)}
-            readOnly={readOnly}
-            value={item.U_M ?? 0}
-            keyboardType={"default"}
-          />
-
-        </View>
-
-        <View style={{ flexDirection: "row" }}>
-
-          <View style={{ width: '100%', flex: 1, marginHorizontal: 4 }}>
-            <StyledTextInputLabel>Rate ($)</StyledTextInputLabel>
-            <StyledTextInput
-              editable={!readOnly && requiredSubCategories.includes(item.Sub_Category)}
-              onChangeText={val => {
-                onOtherFormValueChange((val), "Rate", item.UniqueKey)
-              }}
-              value={`${item.Rate}`}
-              keyboardType="number-pad"
-            />
-          </View>
-
-          <CustomFormInput
-            label="Total"
-            readOnly={true}
-            value={item.Total}
-          />
-
-        </View>
-
-        <View style={{ flexDirection: "row" }}>
-          <CustomFormInput
-            label="Scope Notes"
-            placeholder="Scope Notes"
-            onChangeText={val => onOtherFormValueChange((val), "Scope_Notes", item.UniqueKey)}
-            readOnly={readOnly}
-            value={item.Scope_Notes ?? ""}
-            keyboardType={"default"}
-          />
-        </View>
-
-        {!readOnly &&
-          <StyledSaveButton onPress={() => { item && handleOnSave(false, item); setOverlayVisible(false) }} mode="contained">
-            <Text style={{ color: 'white', fontWeight: 'bold', fontFamily: "URBAN_BOLD", fontSize: 18 }}>
-              Save
-            </Text>
-          </StyledSaveButton>}
-
-      </Overlay>
+              <Animated.View style={[{ backgroundColor: "white", padding: 12, width: "100%", borderRadius: 8 }, animatedStyles]}>
+                {
+                  Sub_Category_Keys.includes(item?.Sub_Category)
+                    ?
+                    <>
+                      <StyledTextInputLabel>Matrix Price</StyledTextInputLabel>
+                      <StyledTextInput
+                        onChangeText={val => onOtherFormValueChange((val), "Matrix_Price", item.UniqueKey)}
+                        value={`${item?.Matrix_Price ?? 0}`}
+                      />
+                    </>
+                    :
+                    <LineItemHeading>
+                      {item?.Matrix_Price}
+                    </LineItemHeading>
+                }
+                <View>
+                  <FormLabel style={{ fontSize: 12 }}>Scope Notes</FormLabel>
+                  <View>
+                    <TextInput
+                      multiline
+                      value={item.Scope_Notes}
+                      onChangeText={(text) => onOtherFormValueChange(text, "Scope_Notes", item.UniqueKey)}
+                      style={{ padding: 10, height: 96, backgroundColor: "#f1f4f8", borderRadius: 8 }}
+                    />
+                  </View>
+                </View>
+                <View style={{ flexDirection: "row", marginVertical: 8 }}>
+                  <View style={{ flex: 1, marginHorizontal: 2 }}>
+                    <FormLabel style={{ fontSize: 12 }}>Qty</FormLabel>
+                    <FormInput onChangeText={(text) => {
+                      onOtherFormValueChange(text, "Quantity", item.UniqueKey)
+                    }} style={{ fontSize: 16 }} keyboardType="number-pad" value={`${item.Quantity ?? 0}`} />
+                  </View>
+                  <View style={{ flex: 1, marginHorizontal: 2 }}>
+                    <FormLabel style={{ fontSize: 12 }}>U_M</FormLabel>
+                    <FormInput onChangeText={(text) => {
+                      onOtherFormValueChange(text, "U_M", item.UniqueKey)
+                    }} style={{ fontSize: 16 }} value={`${item.U_M ?? ''}`} />
+                  </View>
+                  <View style={{ flex: 1, marginHorizontal: 2 }}>
+                    <FormLabel style={{ fontSize: 12 }}>Rate</FormLabel>
+                    <FormInput onChangeText={(text) => {
+                      onOtherFormValueChange(text, "Rate", item.UniqueKey)
+                    }} style={{ fontSize: 16 }} keyboardType="number-pad" value={`${item.Rate ?? 0}`} />
+                  </View>
+                  <View style={{ flex: 1, marginHorizontal: 2 }}>
+                    <FormLabel style={{ fontSize: 12 }}>Total</FormLabel>
+                    <FormValue style={{ color: "black", padding: 8, fontSize: 16 }}>{`${item.Total ?? 0}`} </FormValue>
+                  </View>
+                </View>
+              </Animated.View>
+            </Animated.View>
+          </>
+        </ComposedGestureWrapper>
+      </Modal>
     </>
 
   )
@@ -391,35 +413,289 @@ function SubmittedFormLineItem({ status, title, rate, quantity, total, notes, ad
   )
 }
 
-function ContractorViewLineItem({ inspId, isSubmittedByReviewer, handleAcceptLineItem, item, onOtherFormValueChange, setIsEditModalClosed }) {
+function RoomMeasurementLineItem({ item, handleOnSave, onRoomMeasurementValueChange, setOverlayVisible, overlayVisible, readOnly,swipeableRef,isSubmittedByReviewer }) {
+
+  let length, width, misc, total;
+  const Sub_Category_List = ["Garage", "Foyed", "Family Room", "Breakfast Nook", "Kitchen", "Laundry Room", "Formal Living Room", "Hallway 1", "Hallway 2", "Half Bathroom", "Master Bathroom", "Bathroom 2", "Bathroom 3", "Master Bedroom", "Bedroom 2", "Bedroom 3", "Bedroom 4", "Gameroom", "Office/Study", "Basement", "master closet", "Dining Room",]
+
+
+  function getFormatedRowValues(value) {
+    if (value === undefined || value === null) {
+      return 0;
+    }
+    return value > 1 ? value.toString().replace(/^0+/, '') : value;
+  }
+
+  length = getFormatedRowValues(item.Room_Length);
+  width = getFormatedRowValues(item.Room_Width);
+  misc = getFormatedRowValues(item.Room_Misc_SF);
+  total = getFormatedRowValues(item.Room_Total);
+
+  const offset = useSharedValue({ x: 0 });
+  const start = useSharedValue({ x: 0 });
+
+  const [show, setShow] = React.useState(false);
+
+  const handleLongPressState = (state) => {
+    setShow(state);
+  }
+
+
+  const longPressGesture = Gesture.LongPress()
+    .onEnd(() => {
+      runOnJS(handleLongPressState)(true)
+    })
+
+
+
+  const dragGesture = Gesture.Pan()
+    .averageTouches(true)
+    .onUpdate((e) => {
+      console.log(e.translationX);
+      offset.value = {
+        x: (e.translationX + start.value.x)
+      };
+    })
+    .onEnd(() => {
+      start.value = {
+        x: offset.value.x,
+      };
+    });
+
+  const animatedStyles = useAnimatedStyle(() => {
+    return {
+      transform: [
+        { translateX: offset.value.x },
+      ],
+    };
+  });
+
+
+  const obj = useDerivedValue(() => {
+    if (offset.value.x < 0) {
+      return {
+        color: "red",
+        limit: -200
+      }
+    }
+    if (offset.value.x > 0) {
+      return {
+        color: "green",
+        limit: 100
+      }
+    }
+  }, [offset.value.x])
+
+  const animatedStyleforBackground = useAnimatedStyle(() => {
+
+    let bColor = "#c4c4c490";
+
+    if (obj.value) {
+      bColor = interpolateColor(offset.value.x, [0, obj.value.limit], ["#c4c4c490", obj.value.color])
+    }
+
+    return {
+      backgroundColor: bColor,
+    }
+  });
+
+  const handleAlert = () => {
+
+    if (offset.value.x < -100 && offset.value.x > -200) {
+      if (isSubmittedByReviewer) {
+        setOverlayVisible(false);
+        offset.value = {
+          x: 0
+        }
+        start.value = {
+          x: 0
+        }
+        setShow(false)
+        return;
+      }
+      console.log("INSIDE CANCEL");
+      // refreshCOData()// * Reset Old Data
+      setOverlayVisible(false);
+      showMessage({
+        message: "Discarding changes...",
+        type: "danger",
+      });
+      offset.value = {
+        x: 0
+      }
+      start.value = {
+        x: 0
+      }
+      setShow(false)
+    }
+    if (offset.value.x > 100) {
+      if (isSubmittedByReviewer) {
+        setOverlayVisible(false);
+        offset.value = {
+          x: 0
+        }
+        start.value = {
+          x: 0
+        }
+        setShow(false)
+        return;
+      }
+      console.log("SAVING..");
+      item && handleOnSave(true, item);; // * Call SAVE TO CONTEXT FUNCTION
+      setOverlayVisible(false);
+      showMessage({
+        message: "Saving Changes...",
+        type: "success",
+      });
+      offset.value = {
+        x: 0
+      }
+      start.value = {
+        x: 0
+      }
+      setShow(false)
+    }
+
+
+  }
+
+  useDerivedValue(() => {
+
+    if ((offset.value.x > 100) || (offset.value.x < 0 && offset.value.x > -200)) {
+      runOnJS(handleAlert)(offset.value.x)
+    }
+
+  }, [offset.value.x, item])
+
+
+  const composed = Gesture.Simultaneous(longPressGesture, dragGesture);
+
+  return (
+    <>
+      <Swipeable onRef={(ref) => swipeableRef.current = ref}>
+        <LineItemWrapper onPress={() => setOverlayVisible(true)} >
+          <View style={{ flex: 1 }}>
+            {/* Room */}
+            {(Sub_Category_List.includes(item.Sub_Category) || readOnly)
+              ?
+              <StyledText>{item.Sub_Category}</StyledText>
+              :
+              <StyledTextInput
+                onChangeText={val => onRoomMeasurementValueChange((val), "Sub_Category", item.UniqueKey)}
+                value={`${item.Sub_Category}`}
+              />}
+            <LineItemInputGroup>
+              {/* Length */}
+              <LineItemInputText>Length: {length}</LineItemInputText>
+              {/* Width */}
+              <LineItemInputText>Width: {width}</LineItemInputText>
+              {/* Misc */}
+              <LineItemInputText>Misc: {misc}</LineItemInputText>
+              {/* Total */}
+              <LineItemInputText>Total: {total} sqft</LineItemInputText>
+            </LineItemInputGroup>
+          </View>
+        </LineItemWrapper>
+      </Swipeable>
+
+
+      <Modal transparent visible={overlayVisible} onClose={() => setOverlayVisible(false)} >
+        <ComposedGestureWrapper gesture={composed}>
+          <>
+            {/* MESSAGE */}
+            {
+              show &&
+              <Animated.View style={{ position: 'absolute', bottom: 120, width: "100%", paddingHorizontal: 12 }}>
+                <Animated.View style={{ marginLeft: "auto", justifyContent: 'center', alignItems: 'center', marginBottom: 16 }}>
+                  <Text style={{ backgroundColor: "#8477EB", padding: 8, color: "white", fontFamily: "URBAN_BOLD", fontSize: 16 }}>Swipe Up to save</Text>
+                </Animated.View>
+                <Animated.View style={{ marginRight: "auto", justifyContent: 'center', alignItems: 'center' }}>
+                  <Text style={{ backgroundColor: "#8477EB", padding: 8, color: "white", fontFamily: "URBAN_BOLD", fontSize: 16 }}>Swipe Down to Cancel</Text>
+                </Animated.View>
+              </Animated.View>
+            }
+            <Animated.View style={[{ backgroundColor: "#d4d4d490", flex: 1, justifyContent: "center", alignItems: "center", paddingHorizontal: 36 }, animatedStyleforBackground]}>
+
+              <Animated.View style={[{ backgroundColor: "white", padding: 12, width: "100%", borderRadius: 8 }, animatedStyles]}>
+                {
+                  (Sub_Category_List.includes(item.Sub_Category) || readOnly)
+                    ?
+                    <StyledText>{item.Sub_Category}</StyledText>
+                    :
+                    <StyledTextInput
+                      onChangeText={val => onRoomMeasurementValueChange((val), "Sub_Category", item.UniqueKey)}
+                      value={`${item.Sub_Category}`}
+                    />
+                }
+
+                <View style={{ flexDirection: "row", marginVertical: 8 }}>
+                  <View style={{ flex: 1, marginHorizontal: 2 }}>
+                    <FormLabel style={{ fontSize: 12 }}>Length</FormLabel>
+                    <FormInput onChangeText={(text) => {
+                      onRoomMeasurementValueChange(text, "Room_Length", item.UniqueKey)
+                    }} style={{ fontSize: 16 }} keyboardType="number-pad" value={`${length ?? 0}`} />
+                  </View>
+                  <View style={{ flex: 1, marginHorizontal: 2 }}>
+                    <FormLabel style={{ fontSize: 12 }}>Width</FormLabel>
+                    <FormInput onChangeText={(text) => {
+                      onRoomMeasurementValueChange(text, "Room_Width", item.UniqueKey)
+                    }} style={{ fontSize: 16 }} keyboardType="number-pad" value={`${width ?? ''}`} />
+                  </View>
+                  <View style={{ flex: 1, marginHorizontal: 2 }}>
+                    <FormLabel style={{ fontSize: 12 }}>Misc</FormLabel>
+                    <FormInput onChangeText={(text) => {
+                      onRoomMeasurementValueChange(text, "Room_Misc_SF", item.UniqueKey)
+                    }} style={{ fontSize: 16 }} keyboardType="number-pad" value={`${misc ?? 0}`} />
+                  </View>
+                  <View style={{ flex: 1, marginHorizontal: 2 }}>
+                    <FormLabel style={{ fontSize: 12 }}>Total</FormLabel>
+                    <FormValue style={{ color: "black", padding: 8, fontSize: 16 }}>{`${total ?? 0}`} </FormValue>
+                  </View>
+                </View>
+              </Animated.View>
+            </Animated.View>
+          </>
+        </ComposedGestureWrapper>
+      </Modal>
+
+    </>
+
+  )
+
+}
+
+function ContractorViewLineItem({ insets, inspId, isSubmittedByReviewer, handleAcceptLineItem, item, onOtherFormValueChange, setIsEditModalClosed }) {
 
   const {
     UniqueKey,
     Adj_Quantity,
     Adj_Rate,
+    Adj_U_M,
     Owner_Clarification,
     Approved_Amount,
     Id: id,
     Matrix_Price: title,
-    Rate: rate,
-    Quantity: quantity,
-    Total: total,
-    Approval_Status
+    Rate,
+    Quantity,
+    Total,
+    Approval_Status,
+    Scope_Notes,
+    U_M,
   } = item
 
   //  * GET LINE ITEM IMAGES 
-  // TODO - getting all images , select only line item images
-  const [allLineItemImages, setAllLineImages] = React.useState([]);
+  // // TODO - getting all images , select only line item imagess
+  // const [allLineItemImages, setAllLineImages] = React.useState([]);
 
-  async function getLineItemImages() {
-    const data = await getVendorFormDetails(inspId);
-    const filterImages = data?.Images?.filter(image => image.file_name.includes(id))
-    setAllLineImages(filterImages ?? [])
-  }
+  // async function getLineItemImages() {
+  //   const data = await getVendorFormDetails(inspId);
+  //   const filterImages = data?.Images?.filter(image => image.file_name.includes(id))
+  //   setAllLineImages(filterImages ?? [])
+  // }
 
-  React.useEffect(() => {
-    getLineItemImages();
-  }, [inspId])
+  // React.useEffect(() => {
+  //   getLineItemImages();
+  // }, [inspId])
 
 
 
@@ -487,19 +763,161 @@ function ContractorViewLineItem({ inspId, isSubmittedByReviewer, handleAcceptLin
   }
 
 
+  const offset = useSharedValue({ x: 0 });
+  const start = useSharedValue({ x: 0 });
+
+  const [show, setShow] = React.useState(false);
+
+  const handleLongPressState = (state) => {
+    setShow(state);
+  }
+
+
+  const longPressGesture = Gesture.LongPress()
+    .onEnd(() => {
+      runOnJS(handleLongPressState)(true)
+    })
+
+
+
+  const dragGesture = Gesture.Pan()
+    .averageTouches(true)
+    .onUpdate((e) => {
+      console.log(e.translationX);
+      offset.value = {
+        x: (e.translationX + start.value.x)
+      };
+    })
+    .onEnd(() => {
+      start.value = {
+        x: offset.value.x,
+      };
+    });
+
+  const animatedStyles = useAnimatedStyle(() => {
+    return {
+      transform: [
+        { translateX: offset.value.x },
+      ],
+    };
+  });
+
+
+  const obj = useDerivedValue(() => {
+    if (offset.value.x < 0) {
+      return {
+        color: "red",
+        limit: -200
+      }
+    }
+    if (offset.value.x > 0) {
+      return {
+        color: "green",
+        limit: 100
+      }
+    }
+  }, [offset.value.x])
+
+  const animatedStyleforBackground = useAnimatedStyle(() => {
+
+    let bColor = "#c4c4c490";
+
+    if (obj.value) {
+      bColor = interpolateColor(offset.value.x, [0, obj.value.limit], ["#c4c4c490", obj.value.color])
+    }
+
+    return {
+      backgroundColor: bColor,
+    }
+  });
+
+  const handleAlert = () => {
+
+    if (offset.value.x < -100 && offset.value.x > -200) {
+      if (isSubmittedByReviewer) {
+        setVisible(false);
+        offset.value = {
+          x: 0
+        }
+        start.value = {
+          x: 0
+        }
+        setShow(false)
+        return;
+      }
+      console.log("INSIDE CANCEL");
+      // refreshCOData()// * Reset Old Data
+      setVisible(false);
+      showMessage({
+        message: "Discarding changes...",
+        type: "danger",
+      });
+      offset.value = {
+        x: 0
+      }
+      start.value = {
+        x: 0
+      }
+      setShow(false)
+    }
+    if (offset.value.x > 100) {
+      if (isSubmittedByReviewer) {
+        setVisible(false);
+        offset.value = {
+          x: 0
+        }
+        start.value = {
+          x: 0
+        }
+        setShow(false)
+        return;
+      }
+      console.log("SAVING..");
+      item && handleApproveAsNoted(); // * Call SAVE TO CONTEXT FUNCTION
+      setVisible(false);
+      showMessage({
+        message: "Saving Changes...",
+        type: "success",
+      });
+      offset.value = {
+        x: 0
+      }
+      start.value = {
+        x: 0
+      }
+      setShow(false)
+    }
+
+
+  }
+
+  useDerivedValue(() => {
+
+    if ((offset.value.x > 100) || (offset.value.x < 0 && offset.value.x > -200)) {
+      runOnJS(handleAlert)(offset.value.x)
+    }
+
+  }, [offset.value.x, item])
+
+
+
+  const composed = Gesture.Simultaneous(longPressGesture, dragGesture);
+
+
+
   return (
     <>
       {title && title.length > 0 &&
         <Card style={{ padding: 16, backgroundColor: getBackgroundColor(), borderBottomWidth: 2, borderColor: '#EEBC7B' }}>
           <LineItemHeading>{title}</LineItemHeading>
           {/* <LineItemHeading>{item.Approval_Status}</LineItemHeading> */}
-          <LineItemHeading>Scope Notes : {item.Scope_Notes}</LineItemHeading>
+          <LineItemHeading>Scope Notes : {Scope_Notes}</LineItemHeading>
           <View style={{ flexDirection: 'row' }}>
             {/* Details */}
             <View style={{ flex: .4 }}>
-              <StyledContractorText>QTY: {quantity}</StyledContractorText>
-              <StyledContractorText>RATE: {getCurrencyFormattedValue(rate)}</StyledContractorText>
-              <StyledContractorText>TOTAL: {getCurrencyFormattedValue(total)}</StyledContractorText>
+              <StyledContractorText>QTY: {Quantity}</StyledContractorText>
+              <StyledContractorText>RATE: {getCurrencyFormattedValue(Rate)}</StyledContractorText>
+              <StyledContractorText>TOTAL: {getCurrencyFormattedValue(Total)}</StyledContractorText>
             </View>
             <View style={{ flex: .6, flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
               <StyledContractorButton
@@ -530,98 +948,105 @@ function ContractorViewLineItem({ inspId, isSubmittedByReviewer, handleAcceptLin
           </View>
         </Card>
       }
-      <Overlay childrenWrapperStyle={{ padding: 18 }} containerStyle={{ backgroundColor: '#dbdad960' }} visible={visible} onClose={() => setVisible(false)} closeOnTouchOutside >
-        <Ionicons onPress={() => hideModal()} name="close" size={24} style={{ marginLeft: "auto" }} />
-        <GalleryWrapper>
-          <View style={{ flexDirection: "row", flexWrap: "wrap", justifyContent: "center" }}>
+
+
+      <Modal transparent visible={visible} onClose={() => setVisible(false)} >
+        <ComposedGestureWrapper gesture={composed}>
+          <>
+            {/* MESSAGE */}
             {
-              allLineItemImages.length > 0 && allLineItemImages.map((item, i) =>
-                <GalleryImageItem key={i} img={item} />
-              )
+              show &&
+              <Animated.View style={{ position: 'absolute', bottom: 120, width: "100%", paddingHorizontal: 12 }}>
+                <Animated.View style={{ marginLeft: "auto", justifyContent: 'center', alignItems: 'center', marginBottom: 16 }}>
+                  <Text style={{ backgroundColor: "#8477EB", padding: 8, color: "white", fontFamily: "URBAN_BOLD", fontSize: 16 }}>Swipe Up to save</Text>
+                </Animated.View>
+                <Animated.View style={{ marginRight: "auto", justifyContent: 'center', alignItems: 'center' }}>
+                  <Text style={{ backgroundColor: "#8477EB", padding: 8, color: "white", fontFamily: "URBAN_BOLD", fontSize: 16 }}>Swipe Down to Cancel</Text>
+                </Animated.View>
+              </Animated.View>
             }
+            <Animated.View style={[{ backgroundColor: "#d4d4d490", flex: 1, justifyContent: "center", alignItems: "center", paddingHorizontal: 36 }, animatedStyleforBackground]}>
 
-          </View>
+              {/* Fixed Banner */}
+              <View style={{ padding: 8, paddingTop: insets.top, position: "absolute", top: 0, backgroundColor: "#000", width: Dimensions.get("screen").width }}>
+                <View>
+                  <FormLabel style={{ fontSize: 12, color: "white", fontFamily: "URBAN_BOLD" }}>Scope Notes</FormLabel>
+                  <ScrollView showsVerticalScrollIndicator style={{ height: 26, marginBottom: 12 }}>
+                    <Text style={{ fontSize: 18, color: "white", fontFamily: "URBAN_BOLD" }}>{Scope_Notes}</Text>
+                  </ScrollView>
+                </View>
+                <View style={{ flexDirection: "row" }}>
+                  <View style={{ flex: 1, marginHorizontal: 2 }}>
+                    <FormLabel style={{ fontSize: 12, color: "white" }}>Qty</FormLabel>
+                    <FormValue >{`${Quantity}`} </FormValue>
+                  </View>
+                  <View style={{ flex: 1, marginHorizontal: 2 }}>
+                    <FormLabel style={{ fontSize: 12, color: "white" }}>UM</FormLabel>
+                    <FormValue >{`${U_M ?? ''}`}</FormValue>
+                  </View>
+                  <View style={{ flex: 1, marginHorizontal: 2 }}>
+                    <FormLabel style={{ fontSize: 12, color: "white" }}>Rate</FormLabel>
+                    <FormValue >{`${Rate}`}</FormValue>
+                  </View>
+                  <View style={{ flex: 1, marginHorizontal: 2 }}>
+                    <FormLabel style={{ fontSize: 12, color: "white" }}>Total</FormLabel>
+                    <FormValue >{`${Total}`}</FormValue>
+                  </View>
+                </View>
+              </View>
 
-          {
-            allLineItemImages.length <= 0 &&
-            <View style={{ padding: 16 }}>
-              <Text style={{ fontFamily: 'URBAN_BOLD', fontSize: 16, textAlign: "center" }}>No Line Item images to Show</Text>
-            </View>
-          }
+              <Animated.View style={[{ backgroundColor: "white", padding: 12, width: "100%", borderRadius: 8 }, animatedStyles]}>
 
-        </GalleryWrapper>
-        <Text style={{ width: "100%", padding: 10, fontFamily: 'URBAN_MEDIUM', fontSize: 16, color: "#BDC5CD" }}>{title}</Text>
-        <View style={{ padding: 16, flexDirection: 'row', justifyContent: "space-evenly", width: "100%" }}>
-          <StyledOverlayText >QTY: {quantity}</StyledOverlayText>
-          <StyledOverlayText style={{ flex: 1 }}>RATE: {getCurrencyFormattedValue(rate)}</StyledOverlayText>
-          <StyledOverlayText style={{ flex: 1 }}>TOTAL: {getCurrencyFormattedValue(total)}</StyledOverlayText>
-        </View>
-        {/* ADJ QTY, RATE, TOTAL */}
-        <View style={{ flexDirection: 'row' }}>
-          {/* ADJ QTY */}
-          <View style={{ flex: 1, padding: 4 }}>
-            <StyledOverlayInputLabel>ADJ QTY</StyledOverlayInputLabel>
-            <TextInput
-              keyboardType="number-pad"
-              onChangeText={text => {
-                if (text === "") { // * for negative numbers
-                  return onOtherFormValueChange(0, "Adj_Quantity", UniqueKey)
-                }
-                onOtherFormValueChange(text, "Adj_Quantity", UniqueKey)
-              }}
-              value={`${Adj_Quantity ?? 0}`}
-              style={{ padding: 8, borderRadius: 4, backgroundColor: "#d4d4d470", fontFamily: 'URBAN_MEDIUM', fontSize: 16, color: "#000" }}
-            />
-          </View>
-          {/* ADJ RATE */}
-          <View style={{ flex: 1, padding: 4 }}>
-            <StyledOverlayInputLabel>ADJ RATE ($)</StyledOverlayInputLabel>
-            <TextInput
-              keyboardType="number-pad"
-              onChangeText={text => {
-                if (Platform.OS === 'ios') {
-                  return onOtherFormValueChange(text, "Adj_Rate", UniqueKey)
-                }
-                onOtherFormValueChange(text, "Adj_Rate", UniqueKey)
-              }}
-              value={`${Adj_Rate ?? 0}`}
-              style={{ padding: 8, borderRadius: 4, backgroundColor: "#d4d4d470", fontFamily: 'URBAN_MEDIUM', fontSize: 16, color: "#000" }}
-            />
-          </View>
-        </View>
-        <View style={{ flexDirection: 'row' }}>
-          {/* ADJ TOTAL */}
-          <View style={{ flex: 1, padding: 4 }}>
-            <StyledOverlayInputLabel>ADJ TOTAL</StyledOverlayInputLabel>
-            <TextInput
-              value={`${getCurrencyFormattedValue(Approved_Amount)}` ?? 0}
-              editable={false}
-              style={{ borderRadius: 4, fontFamily: 'URBAN_MEDIUM', fontSize: 20, color: "#000" }}
-            />
-          </View>
-        </View>
+                <View>
+                  <FormLabel style={{ fontSize: 12 }}>Owner Clarification</FormLabel>
+                  <View
+                    style={{
+                      backgroundColor: "#f1f4f8",
+                      borderRadius: 8
 
+                    }}>
+                    <TextInput
+                      editable
+                      multiline
+                      onChangeText={(text) => {
+                        onOtherFormValueChange(text, "Owner_Clarification", UniqueKey)
+                      }}
+                      value={Owner_Clarification}
+                      style={{ padding: 10, height: 96, backgroundColor: "#f1f4f8", borderRadius:8 }}
+                    />
+                  </View>
+                </View>
 
-        <View style={{ width: "100%", marginVertical: 8 }}>
-          <Text style={{ fontSize: 16, fontFamily: 'URBAN_BOLD', color: '#BDC5CD', marginVertical: 8 }}>OWNER CLARIFICATIONS:</Text>
-          <TextInput
-            style={{ padding: 16, paddingLeft: 16, borderRadius: 4, backgroundColor: "#d4d4d470", fontFamily: 'URBAN_MEDIUM', fontSize: 16, color: "#000" }}
-            multiline
-            numberOfLines={4}
-            onChangeText={text => {
-              console.log("TEXT: " + text);
-              onOtherFormValueChange(text, "Owner_Clarification", UniqueKey)
-            }}
-            value={`${Owner_Clarification ?? ""}`}
-          />
-        </View>
+                <View style={{ flexDirection: "row", marginVertical: 8 }}>
+                  <View style={{ flex: 1, marginHorizontal: 2 }}>
+                    <FormLabel style={{ fontSize: 12 }}>Adj Qty</FormLabel>
+                    <FormInput onChangeText={(text) => {
+                      onOtherFormValueChange(text, "Adj_Quantity", UniqueKey)
+                    }} style={{ fontSize: 16 }} keyboardType="number-pad" value={`${Adj_Quantity ?? 0}`} />
+                  </View>
+                  <View style={{ flex: 1, marginHorizontal: 2 }}>
+                    <FormLabel style={{ fontSize: 12 }}>Adj UM</FormLabel>
+                    <FormInput onChangeText={(text) => {
+                      onOtherFormValueChange(text, "Adj_U_M", UniqueKey)
+                    }} style={{ fontSize: 16 }} value={`${Adj_U_M ?? ''}`} />
+                  </View>
+                  <View style={{ flex: 1, marginHorizontal: 2 }}>
+                    <FormLabel style={{ fontSize: 12 }}>Adj Rate</FormLabel>
+                    <FormInput onChangeText={(text) => {
+                      onOtherFormValueChange(text, "Adj_Rate", UniqueKey)
+                    }} style={{ fontSize: 16 }} keyboardType="number-pad" value={`${Adj_Rate ?? 0}`} />
+                  </View>
+                  <View style={{ flex: 1, marginHorizontal: 2 }}>
+                    <FormLabel style={{ fontSize: 12 }}>Appr. Amt</FormLabel>
+                    <FormValue style={{ color: "black", padding: 8, fontSize: 16 }}>{`${Approved_Amount ?? 0}`} </FormValue>
+                  </View>
+                </View>
+              </Animated.View>
+            </Animated.View>
+          </>
+        </ComposedGestureWrapper>
+      </Modal>
 
-        <View style={{ flexDirection: "row" }}>
-          <Button onPress={() => hideModal()} mode="contained" labelStyle={{ fontSize: 18, fontFamily: 'URBAN_BOLD' }} style={{ backgroundColor: "#EF39A0", padding: 4 }}>Cancel</Button>
-          <Button onPress={handleApproveAsNoted} mode="contained" labelStyle={{ fontSize: 18, fontFamily: 'URBAN_BOLD' }} style={{ backgroundColor: "#ABDF8C", padding: 4, marginLeft: 16 }}>Approve</Button>
-        </View>
-
-      </Overlay>
     </>
   )
 }
@@ -682,6 +1107,25 @@ const StyledOverlayInput = styled.TextInput`
 color: #EEC690;
 font-family: URBAN_BOLD;
 font-size: 20px;
+`;
+
+const FormLabel = styled.Text`
+font-family: 'URBAN_BOLD';
+font-size: ${Platform.OS === "android" ? 12 : 16}px;
+margin-bottom: 4px;
+`
+
+const FormInput = styled.TextInput`
+background-color: #f1f4f8;
+padding: 8px;
+font-family: 'URBAN_MEDIUM';
+border-radius: 4px;
+`;
+
+const FormValue = styled.Text`
+font-family: 'URBAN_MEDIUM';
+color: #fff;
+font-size: 18px;
 `;
 
 
