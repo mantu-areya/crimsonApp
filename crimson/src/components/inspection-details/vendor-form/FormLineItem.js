@@ -71,18 +71,18 @@ export default function FormLineItem({ isSubmittedByReviewer, handleAcceptLineIt
 
   if (isForReviewerView) {
     return (
-      <ContractorViewLineItem {...{ insets, inspId, isSubmittedByReviewer, handleAcceptLineItem, item, onOtherFormValueChange, setIsEditModalClosed }} />
+      <ContractorViewLineItem {...{ swipeableRef, insets, inspId, isSubmittedByReviewer, handleAcceptLineItem, item, onOtherFormValueChange, setIsEditModalClosed }} />
     )
 
   }
 
   return (
-    <OtherFormLineItems {...{Sub_Category_Keys, item, readOnly, handleOnSave, onOtherFormValueChange, setOverlayVisible, overlayVisible, swipeableRef }} />
+    <OtherFormLineItems {...{ Sub_Category_Keys, item, readOnly, handleOnSave, onOtherFormValueChange, setOverlayVisible, overlayVisible, swipeableRef }} />
   )
 
 }
 
-function OtherFormLineItems({ Sub_Category_Keys,item, readOnly, handleOnSave, onOtherFormValueChange, setOverlayVisible, overlayVisible, swipeableRef }) {
+function OtherFormLineItems({ Sub_Category_Keys, item, readOnly, handleOnSave, onOtherFormValueChange, setOverlayVisible, overlayVisible, swipeableRef }) {
 
   const offset = useSharedValue({ x: 0 });
   const start = useSharedValue({ x: 0 });
@@ -668,7 +668,7 @@ function RoomMeasurementLineItem({ item, handleOnSave, onRoomMeasurementValueCha
 
 }
 
-function ContractorViewLineItem({ insets, inspId, isSubmittedByReviewer, handleAcceptLineItem, item, onOtherFormValueChange, setIsEditModalClosed }) {
+function ContractorViewLineItem({ swipeableRef, insets, inspId, isSubmittedByReviewer, handleAcceptLineItem, item, onOtherFormValueChange, setIsEditModalClosed }) {
 
   const {
     UniqueKey,
@@ -689,17 +689,17 @@ function ContractorViewLineItem({ insets, inspId, isSubmittedByReviewer, handleA
 
   //  * GET LINE ITEM IMAGES 
   // // TODO - getting all images , select only line item imagess
-  // const [allLineItemImages, setAllLineImages] = React.useState([]);
+  const [allLineItemImages, setAllLineImages] = React.useState([]);
 
-  // async function getLineItemImages() {
-  //   const data = await getVendorFormDetails(inspId);
-  //   const filterImages = data?.Images?.filter(image => image.file_name.includes(id))
-  //   setAllLineImages(filterImages ?? [])
-  // }
+  async function getLineItemImages() {
+    const data = await getVendorFormDetails(inspId);
+    const filterImages = data?.Images?.filter(image => image.file_name.includes(id))
+    setAllLineImages(filterImages ?? [])
+  }
 
-  // React.useEffect(() => {
-  //   getLineItemImages();
-  // }, [inspId])
+  React.useEffect(() => {
+    getLineItemImages();
+  }, [inspId])
 
 
 
@@ -908,51 +908,78 @@ function ContractorViewLineItem({ insets, inspId, isSubmittedByReviewer, handleA
   const composed = Gesture.Simultaneous(longPressGesture, dragGesture);
 
 
+  const [showReviewerImagePopover, setShowReviewerImagePopover] = React.useState(false);
+
+  const rightButtonsForReviwerSubmit = [
+    <TouchableOpacity onPress={() => setShowReviewerImagePopover(true)} style={{ backgroundColor: '#1d1f69', justifyContent: 'center', alignItems: 'center', width: 64, flex: 1 }}>
+      <View>
+        <MaterialCommunityIcons name="image-multiple" size={24} color="white" />
+      </View>
+    </TouchableOpacity>
+  ];
+
+
 
   return (
     <>
       {title && title.length > 0 &&
-        <Card style={{ padding: 16, backgroundColor: getBackgroundColor(), borderBottomWidth: 2, borderColor: '#EEBC7B' }}>
-          <LineItemHeading>{title}</LineItemHeading>
-          {/* <LineItemHeading>{item.Approval_Status}</LineItemHeading> */}
-          <LineItemHeading>Scope Notes : {Scope_Notes}</LineItemHeading>
-          <View style={{ flexDirection: 'row' }}>
-            {/* Details */}
-            <View style={{ flex: .4 }}>
-              <StyledContractorText>QTY: {Quantity}</StyledContractorText>
-              <StyledContractorText>RATE: {getCurrencyFormattedValue(Rate)}</StyledContractorText>
-              <StyledContractorText>TOTAL: {getCurrencyFormattedValue(Total)}</StyledContractorText>
+        <Swipeable onRef={(ref) => swipeableRef.current = ref} rightButtons={rightButtonsForReviwerSubmit}>
+          <Card style={{ padding: 16, backgroundColor: getBackgroundColor(), borderBottomWidth: 2, borderColor: '#EEBC7B' }}>
+            <LineItemHeading>{title}</LineItemHeading>
+            {/* <LineItemHeading>{item.Approval_Status}</LineItemHeading> */}
+            <LineItemHeading>Scope Notes : {Scope_Notes}</LineItemHeading>
+            <View style={{ flexDirection: 'row' }}>
+              {/* Details */}
+              <View style={{ flex: .4 }}>
+                <StyledContractorText>QTY: {Quantity}</StyledContractorText>
+                <StyledContractorText>RATE: {getCurrencyFormattedValue(Rate)}</StyledContractorText>
+                <StyledContractorText>TOTAL: {getCurrencyFormattedValue(Total)}</StyledContractorText>
+              </View>
+              <View style={{ flex: .6, flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
+                <StyledContractorButton
+                  labelStyle={{ fontSize: 16, fontFamily: 'URBAN_BOLD' }}
+                  disabled={Approval_Status === "Approved"}
+                  backgroundColor={Approval_Status === "Approved" ? "grey" : "#7CDD9B"}
+                  mode="contained"
+                  onPress={() => acceptLineItem()}>
+                  A
+                </StyledContractorButton>
+                <StyledContractorButton
+                  labelStyle={{ fontSize: 16, fontFamily: 'URBAN_BOLD' }}
+                  disabled={Approval_Status === "Approved as Noted"}
+                  backgroundColor={Approval_Status === "Approved as Noted" ? "grey" : "#3983EF"}
+                  mode="contained"
+                  onPress={() => reviewLineItem()}>
+                  R
+                </StyledContractorButton>
+                <StyledContractorButton
+                  labelStyle={{ fontSize: 16, fontFamily: 'URBAN_BOLD' }}
+                  disabled={Approval_Status === "Declined"}
+                  backgroundColor={Approval_Status === "Declined" ? "grey" : "#E02E2E"}
+                  mode="contained"
+                  onPress={() => deleteLineItem()}>
+                  D
+                </StyledContractorButton>
+              </View>
             </View>
-            <View style={{ flex: .6, flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
-              <StyledContractorButton
-                labelStyle={{ fontSize: 16, fontFamily: 'URBAN_BOLD' }}
-                disabled={Approval_Status === "Approved"}
-                backgroundColor={Approval_Status === "Approved" ? "grey" : "#7CDD9B"}
-                mode="contained"
-                onPress={() => acceptLineItem()}>
-                A
-              </StyledContractorButton>
-              <StyledContractorButton
-                labelStyle={{ fontSize: 16, fontFamily: 'URBAN_BOLD' }}
-                disabled={Approval_Status === "Approved as Noted"}
-                backgroundColor={Approval_Status === "Approved as Noted" ? "grey" : "#3983EF"}
-                mode="contained"
-                onPress={() => reviewLineItem()}>
-                R
-              </StyledContractorButton>
-              <StyledContractorButton
-                labelStyle={{ fontSize: 16, fontFamily: 'URBAN_BOLD' }}
-                disabled={Approval_Status === "Declined"}
-                backgroundColor={Approval_Status === "Declined" ? "grey" : "#E02E2E"}
-                mode="contained"
-                onPress={() => deleteLineItem()}>
-                D
-              </StyledContractorButton>
-            </View>
-          </View>
-        </Card>
+          </Card>
+        </Swipeable>
       }
 
+      <Modal transparent visible={showReviewerImagePopover} onDismiss={() => setShowReviewerImagePopover(false)} >
+
+        <View style={{ backgroundColor: "#c4c4c490", flex: 1, justifyContent: "center", alignItems: "center", }}>
+          <MaterialCommunityIcons onPress={() => setShowReviewerImagePopover(false)} name="close" size={24} style={{ position: "absolute", top: 240, right: 48 }} />
+          <View style={{ flexDirection: "row", paddingHorizontal: 24 }}>
+            {
+              allLineItemImages.length > 0
+                ? allLineItemImages.map((img, key) => <PopoverImageItem key={key} img={img} />)
+                : <Text style={{ backgroundColor: "black", color: "white", padding: 8, fontFamily: "URBAN_BOLD" }}>No images to preview</Text>
+            }
+          </View>
+        </View>
+
+      </Modal>
 
       <Modal transparent visible={visible} onClose={() => setVisible(false)} >
         <ComposedGestureWrapper gesture={composed}>
@@ -1055,6 +1082,25 @@ function ContractorViewLineItem({ insets, inspId, isSubmittedByReviewer, handleA
   )
 }
 
+function PopoverImageItem({ img }) {
+
+  const [showPreview, setShowPreview] = React.useState(false);
+
+  return (
+    <TouchableOpacity onPress={() => setShowPreview(true)}>
+      <Image
+        source={{ uri: img.file_public_url }}
+        style={{
+          width: (Dimensions.get("window").width / 3) - 24,
+          height: 128
+        }} />
+      <Overlay childrenWrapperStyle={{ backgroundColor: 'black' }} containerStyle={{ backgroundColor: 'black' }} visible={showPreview} onClose={() => setShowPreview(false)} closeOnTouchOutside >
+        <Ionicons onPress={() => setShowPreview(false)} name="close" color="white" size={32} />
+        <Image source={{ uri: img.file_public_url }} style={{ width: 480, height: 480, borderRadius: 16 }} />
+      </Overlay>
+    </TouchableOpacity>
+  )
+}
 
 function getCurrencyFormattedValue(value) {
   return value ? value?.toLocaleString("en-IN", { style: "currency", currency: 'USD' }) : 0
