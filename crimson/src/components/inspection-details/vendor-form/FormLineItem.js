@@ -66,7 +66,7 @@ export default function FormLineItem({ isSubmittedByReviewer, handleAcceptLineIt
   }
 
   if (isForRoomMeasurement) {
-    return <RoomMeasurementLineItem {...{ item, handleOnSave, onRoomMeasurementValueChange, setOverlayVisible, overlayVisible, readOnly, swipeableRef,isSubmittedByReviewer }} />
+    return <RoomMeasurementLineItem {...{ item, handleOnSave, onRoomMeasurementValueChange, setOverlayVisible, overlayVisible, readOnly, swipeableRef, isSubmittedByReviewer }} />
   }
 
   if (isForReviewerView) {
@@ -76,7 +76,13 @@ export default function FormLineItem({ isSubmittedByReviewer, handleAcceptLineIt
 
   }
 
+  return (
+    <OtherFormLineItems {...{Sub_Category_Keys, item, readOnly, handleOnSave, onOtherFormValueChange, setOverlayVisible, overlayVisible, swipeableRef }} />
+  )
 
+}
+
+function OtherFormLineItems({ Sub_Category_Keys,item, readOnly, handleOnSave, onOtherFormValueChange, setOverlayVisible, overlayVisible, swipeableRef }) {
 
   const offset = useSharedValue({ x: 0 });
   const start = useSharedValue({ x: 0 });
@@ -326,9 +332,7 @@ export default function FormLineItem({ isSubmittedByReviewer, handleAcceptLineIt
     </>
 
   )
-
 }
-
 
 function SubmittedFormLineItem({ status, title, rate, quantity, total, notes, adjQuantity, adjRate, approvedAmt, ownerClarification }) {
   function getBackgroundColor() {
@@ -413,7 +417,7 @@ function SubmittedFormLineItem({ status, title, rate, quantity, total, notes, ad
   )
 }
 
-function RoomMeasurementLineItem({ item, handleOnSave, onRoomMeasurementValueChange, setOverlayVisible, overlayVisible, readOnly,swipeableRef,isSubmittedByReviewer }) {
+function RoomMeasurementLineItem({ item, handleOnSave, onRoomMeasurementValueChange, setOverlayVisible, overlayVisible, readOnly, swipeableRef, isSubmittedByReviewer }) {
 
   let length, width, misc, total;
   const Sub_Category_List = ["Garage", "Foyed", "Family Room", "Breakfast Nook", "Kitchen", "Laundry Room", "Formal Living Room", "Hallway 1", "Hallway 2", "Half Bathroom", "Master Bathroom", "Bathroom 2", "Bathroom 3", "Master Bedroom", "Bedroom 2", "Bedroom 3", "Bedroom 4", "Gameroom", "Office/Study", "Basement", "master closet", "Dining Room",]
@@ -1012,7 +1016,7 @@ function ContractorViewLineItem({ insets, inspId, isSubmittedByReviewer, handleA
                         onOtherFormValueChange(text, "Owner_Clarification", UniqueKey)
                       }}
                       value={Owner_Clarification}
-                      style={{ padding: 10, height: 96, backgroundColor: "#f1f4f8", borderRadius:8 }}
+                      style={{ padding: 10, height: 96, backgroundColor: "#f1f4f8", borderRadius: 8 }}
                     />
                   </View>
                 </View>
