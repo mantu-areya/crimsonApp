@@ -24,7 +24,7 @@ let requiredSubCategories = [
 ]
 
 
-export default function FormLineItem({ isSubmittedByReviewer, handleAcceptLineItem, isSubmitted, isForReviewerView, inspId, item, onRoomMeasurementValueChange, onOtherFormValueChange, isForRoomMeasurement, deleteNewItem, navigation, readOnly, setShowAddButton, handleOnSave, setIsEditModalClosed }) {
+export default function FormLineItem({reloadVfData, isSubmittedByReviewer, handleAcceptLineItem, isSubmitted, isForReviewerView, inspId, item, onRoomMeasurementValueChange, onOtherFormValueChange, isForRoomMeasurement, deleteNewItem, navigation, readOnly, setShowAddButton, handleOnSave, setIsEditModalClosed }) {
   const [overlayVisible, setOverlayVisible] = React.useState(false)
 
   const handleDelGest = (Id, inspId, UniqueKey) => {
@@ -77,12 +77,12 @@ export default function FormLineItem({ isSubmittedByReviewer, handleAcceptLineIt
   }
 
   return (
-    <OtherFormLineItems {...{ Sub_Category_Keys, item, readOnly, handleOnSave, onOtherFormValueChange, setOverlayVisible, overlayVisible, swipeableRef }} />
+    <OtherFormLineItems {...{reloadVfData, Sub_Category_Keys, item, readOnly, handleOnSave, onOtherFormValueChange, setOverlayVisible, overlayVisible, swipeableRef }} />
   )
 
 }
 
-function OtherFormLineItems({ Sub_Category_Keys, item, readOnly, handleOnSave, onOtherFormValueChange, setOverlayVisible, overlayVisible, swipeableRef }) {
+function OtherFormLineItems({ reloadVfData,Sub_Category_Keys, item, readOnly, handleOnSave, onOtherFormValueChange, setOverlayVisible, overlayVisible, swipeableRef }) {
 
   const offset = useSharedValue({ x: 0 });
   const start = useSharedValue({ x: 0 });
@@ -167,7 +167,7 @@ function OtherFormLineItems({ Sub_Category_Keys, item, readOnly, handleOnSave, o
         return;
       }
       console.log("INSIDE CANCEL");
-      // refreshCOData()// * Reset Old Data
+      reloadVfData() // reload old data
       setOverlayVisible(false);
       showMessage({
         message: "Discarding changes...",
@@ -194,7 +194,7 @@ function OtherFormLineItems({ Sub_Category_Keys, item, readOnly, handleOnSave, o
         return;
       }
       console.log("SAVING..");
-      item && handleOnSave(item); // * Call SAVE TO CONTEXT FUNCTION
+      item && handleOnSave(false,item); // * Call SAVE TO CONTEXT FUNCTION
       setOverlayVisible(false);
       showMessage({
         message: "Saving Changes...",
