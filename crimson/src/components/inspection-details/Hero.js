@@ -59,12 +59,16 @@ const Hero = ({ totalBidSubmitted, roomMeasurementTotal, data, isSubmitted, sect
         Prospect_ID__r: { Baths__c, Bed__c, Square_Feet__c, Year_Built__c },
         doCreateWAF__c,
         Is_New_Construction__c,
+        Work_Authorization_Signed_Date_GC__c: gcSignDate,
+        Work_Authorization_Date_Signed__c: rSignDate
     } = data;
 
     const pendingDays = differenceInDays(
         new Date(GC_Inspection_Due_Date__c),
         new Date()
     )
+
+    const areBothSignPresent = gcSignDate && rSignDate
 
 
     const isCarousel = React.useRef(null);
@@ -84,7 +88,7 @@ const Hero = ({ totalBidSubmitted, roomMeasurementTotal, data, isSubmitted, sect
                             {/* Back Icon */}
                             <GoBackButton handleGoBack={() => navigation.goBack()} />
                             {/* Meta Info */}
-                            <MetaInfo {...{ pendingDays, Inspection_Form_Stage__c, handleFileDownload, doCreateWAF__c }} />
+                            <MetaInfo {...{ areBothSignPresent, pendingDays, Inspection_Form_Stage__c, handleFileDownload, doCreateWAF__c }} />
                         </View>
                         {/* Short Summary */}
                         <ShortSummary {...{ Property_Street_Address__c, Baths__c, Bed__c, Square_Feet__c }} />
@@ -264,11 +268,20 @@ function GoBackButton({ handleGoBack }) {
     )
 }
 
-function MetaInfo({ pendingDays, Inspection_Form_Stage__c, handleFileDownload, doCreateWAF__c }) {
+function MetaInfo({ areBothSignPresent, pendingDays, Inspection_Form_Stage__c, handleFileDownload, doCreateWAF__c }) {
     return (
         <MetaInfoWrapper>
-            <MetaInfoText>{Inspection_Form_Stage__c}</MetaInfoText>
-            <MetaInfoText>{pendingDays} days pending</MetaInfoText>
+            {
+                areBothSignPresent
+                    ?
+                    <MetaInfoText>Signed</MetaInfoText>
+                    :
+                    <>
+                        <MetaInfoText>{Inspection_Form_Stage__c}</MetaInfoText>
+                        <MetaInfoText>{pendingDays} days pending</MetaInfoText>
+                    </>
+            }
+
             {doCreateWAF__c && <Ionicons onPress={handleFileDownload} style={{ marginTop: 16 }} name="cloud-download" size={32} color="white" />}
         </MetaInfoWrapper>
     )
