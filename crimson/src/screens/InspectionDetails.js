@@ -210,7 +210,7 @@ const InspectionDetails = ({ route, navigation }) => {
               {/* CTA's */}
               <CTA showCoForms={showCoForm} handleShowCoForms={() => setShowCoForm(!showCoForm)} hasRequiredSign={hasRequiredSign} formStatus={inspectionData?.Inspection_Form_Stage__c} role={userRole} handleOnChat={() => navigation.navigate("Chat", { inspId: inspectionData.Id, chatTitleName: userRole === "Contractor" ? inspectionData?.HHM_Field_PM__r?.Name : inspectionData.General_Contractor__r?.Name })} isReadOnly={readOnly} isForReviewerView={userRole === "Reviewer"} handleSignature={handleSignature} handleViewImages={handleViewImages} isSubmitted={isSubmitted} handleOnSubmit={handleSubmit} />
               {/* Sigantures */}
-              {isSubmitted && <Signatures navigation={navigation} inspectionData={inspectionData} inspId={inspectionData.Id} role={userRole} hasRequiredSign={hasRequiredSign} setHasRequiredSign={setHasRequiredSign} />}
+              {(isSubmitted && !hasRequiredSign) && <Signatures navigation={navigation} inspectionData={inspectionData} inspId={inspectionData.Id} role={userRole} hasRequiredSign={hasRequiredSign} setHasRequiredSign={setHasRequiredSign} />}
               {/* Forms */}
               {
                 showCoForm
@@ -299,10 +299,15 @@ function Signatures({ navigation, inspId, role, inspectionData, hasRequiredSign,
     Work_Authorization_Date_Signed__c: rSignDate
   } = inspectionData
 
+  console.log({
+    gcSignDate,
+    rSignDate
+  });
 
 
   React.useEffect(() => {
     if (gcSignDate && role === "Contractor") {
+      console.log("true...");
       setHasRequiredSign(true);
     }
     if (rSignDate && role === "Reviewer") {
@@ -326,7 +331,7 @@ function Signatures({ navigation, inspId, role, inspectionData, hasRequiredSign,
   return (
 
     <View >
-      <View style={{ padding: 16  }}>
+      <View style={{ padding: 16 }}>
         <SubmitButtonWrapper mode="contained" onPress={() => setModalVisible(true)}>
           <ButtonText style={{ textAlign: 'center' }} color="white">
             Add Signature
@@ -345,7 +350,7 @@ function Signatures({ navigation, inspId, role, inspectionData, hasRequiredSign,
               setModalVisible(!modalVisible);
               updateSignToContext(bs64dataArray[1])
               showMessage({
-                type:"success",
+                type: "success",
                 message: "Signature added successfully"
               })
               navigation.goBack()
