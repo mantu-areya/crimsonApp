@@ -4,7 +4,7 @@ import Ionicons from "react-native-vector-icons/Ionicons"
 import { Platform } from 'react-native'
 
 
-const CTA = ({ hasRequiredSign, formStatus, handleOnSubmit, role, handleOnChat, handleViewImages, handleSignature, isSubmitted }) => {
+const CTA = ({ handleShowCoForms, showCoForms, hasRequiredSign, formStatus, handleOnSubmit, role, handleOnChat, handleViewImages, handleSignature, isSubmitted }) => {
     const shadowStyle = {
         shadowColor: "#000",
         shadowOffset: {
@@ -74,33 +74,18 @@ const CTA = ({ hasRequiredSign, formStatus, handleOnSubmit, role, handleOnChat, 
 
             }
             {
-                isSubmitted && <>
-                    {
-                        hasRequiredSign ?
-                            <SubmitButtonWrapper style={[shadowStyle, {
-                                backgroundColor: "grey"
-                            }]} >
-                                <ButtonText style={{ textAlign: 'center' }} color="white">
-                                    Signed
-                                </ButtonText>
-                            </SubmitButtonWrapper>
-                            :
-                            <SubmitButtonWrapper style={shadowStyle} onPress={handleSignature}>
-                                <ButtonText style={{ textAlign: 'center' }} color="white">
-                                    Sign
-                                </ButtonText>
-                            </SubmitButtonWrapper>
-
-                    }
-                    <ChatButtonWrapper style={shadowStyle} onPress={handleViewImages}>
-                        <Ionicons name="list" size={24} color="black" />
-                        <ButtonText marginLeft={8} >
-                            View Images
-                        </ButtonText>
-                    </ChatButtonWrapper>
-                </>
+                (isSubmitted && hasRequiredSign) &&
+                <SubmitButtonWrapper
+                    onPress={handleShowCoForms}
+                    style={[shadowStyle, {
+                        marginHorizontal: 16
+                    }]} >
+                    <ButtonText style={{ textAlign: 'center' }} color="white">
+                        {!showCoForms ? "Show CO Forms" : "Show Work Auth"}
+                    </ButtonText>
+                </SubmitButtonWrapper>
             }
-        </Wrapper>
+        </Wrapper >
     )
 }
 
@@ -129,7 +114,7 @@ align-items: center;
 const ButtonText = styled.Text`
 font-size:${Platform.OS === "android" ? 16 : 18}px;
 font-family: 'URBAN_BOLD';
-text-transform: uppercase;
+/* text-transform: uppercase; */
 color: ${props => props.color || 'black'};
 margin-left: ${props => `${props.marginLeft || 0}px`} ;
 `;

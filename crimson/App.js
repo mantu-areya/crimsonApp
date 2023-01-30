@@ -10,6 +10,7 @@ import { useFonts } from 'expo-font';
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { AuthenticationContextProvider } from "./src/services/authentication/authentication.context";
 import { Provider } from "react-native-paper";
+import FlashMessage from "react-native-flash-message";
 
 
 
@@ -38,6 +39,7 @@ export default function App() {
           </AuthenticationContextProvider>
         </Provider>
       </ThemeProvider>
+      <FlashMessage position={"bottom"} />
       <ExpoStatusBar style={"inverted"} backgroundColor="#2B243E" />
     </>
   );

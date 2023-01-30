@@ -9,6 +9,7 @@ import { StyleSheet, View, TouchableOpacity, Alert, ImageBackground, Image, Flat
 import { Spacer } from "../../components/spacer/spacer.component";
 import { uploadSignImage } from "../../services/inspections/inspections.service";
 import { Col, Row } from "react-native-responsive-grid-system";
+import { uploadCOLineItemImages } from "../../services/co-forms/co-api";
 let w = Dimensions.get("window").width;
 let h = Dimensions.get("window").height;
 const CameraView = styled(Camera)`
@@ -43,13 +44,14 @@ const LoadingContainer = styled.View`
 margin-top:50%;
 `;
 
-export const CameraScreen = ({ navigation }) => {
+export const CameraScreen = ({ navigation, route }) => {
   const [hasPermission, setHasPermission] = useState(null);
   const cameraRef = useRef();
   const [startCamera, setStartCamera] = React.useState(false)
   const [previewVisible, setPreviewVisible] = React.useState(false)
   const [capturedImage, setCapturedImage] = React.useState(null)
   const [images, setImages] = useState([]);
+  const { params } = route
 
 
   useEffect(() => {
@@ -101,6 +103,27 @@ export const CameraScreen = ({ navigation }) => {
       }
     });
     var i = 1;
+    // FOR CO's
+    if (params.currentCOForm) {
+      images.forEach(img => {
+
+        var imageData = {
+          "file_name": linItemId + '_' + i,
+          "image_data": img.imagData,
+          "parent_record_id": recId,
+          "image_type": "CO_line_item",
+          "line_item_id": linItemId,
+        }
+        imagelst.push(imageData);
+        i++;
+      })
+      uploadCOLineItemImages(imagelst, recId).then(result => {
+        console.log('CO IMAGE RES', result)
+      })
+      return navigation.goBack();
+    }
+
+    // FOR VENDOR FORMS
     images.forEach(img => {
 
       var imageData = {

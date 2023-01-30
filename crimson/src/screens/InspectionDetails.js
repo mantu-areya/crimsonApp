@@ -1,5 +1,6 @@
 import { ScrollView, Text, View, TextInput, Modal, Image, Platform } from 'react-native'
 import React from 'react'
+import styled from "styled-components/native"
 import { SafeAreaView } from "react-native-safe-area-context"
 import CallNow from '../components/inspection-details/CallNow'
 import Hero from '../components/inspection-details/Hero'
@@ -16,6 +17,8 @@ import { ActivityIndicator, Button, } from 'react-native-paper'
 import Sign from '../features/gcs/components/workAuth/Sign.js';
 import * as ImagePicker from "expo-image-picker";
 import KeyboardSpacer from 'react-native-keyboard-spacer';
+import CoForms from '../components/ co-forms/CoForms'
+import { showMessage } from 'react-native-flash-message'
 
 
 
@@ -87,12 +90,12 @@ const InspectionDetails = ({ route, navigation }) => {
   console.log("CURRENT INSPECTION", inspectionData.Id);
 
 
-  React.useEffect(() => {
-    if (contextImages[inspectionData.Id]?.length > 0) {
-      const index = contextImages[inspectionData.Id].findIndex(file => file.file_name.includes("Signature"))
-      setShowSiganturesView(index > -1);
-    }
-  }, [contextImages[inspectionData.Id]?.length])
+  // React.useEffect(() => {
+  //   if (contextImages[inspectionData.Id]?.length > 0) {
+  //     const index = contextImages[inspectionData.Id].findIndex(file => file.file_name.includes("Signature"))
+  //     setShowSiganturesView(index > -1);
+  //   }
+  // }, [contextImages[inspectionData.Id]?.length])
 
 
   const [currentRecord, setCurrentRecord] = React.useState();
@@ -178,6 +181,10 @@ const InspectionDetails = ({ route, navigation }) => {
   // add sign to modal and provide cross button to close modal
 
 
+  // Handle CO FORM CHANGE VIEW
+  const [showCoForm, setShowCoForm] = React.useState(false);
+
+
   return (
     <SafeAreaView style={{ flex: 1 }}>
       {
@@ -199,13 +206,18 @@ const InspectionDetails = ({ route, navigation }) => {
               </Overlay>
               {/* } */}
               {/* Hero */}
-              <Hero totalBidSubmitted={getTotalBidSubmitted()} roomMeasurementTotal={getRoomMeasurementTotal()} data={inspectionData} sectionTotals={sectionTotals} isSubmitted={isSubmitted} />
+              <Hero handleViewImageGallery={handleViewImages} totalBidSubmitted={getTotalBidSubmitted()} roomMeasurementTotal={getRoomMeasurementTotal()} data={inspectionData} sectionTotals={sectionTotals} isSubmitted={isSubmitted} />
               {/* CTA's */}
-              <CTA hasRequiredSign={hasRequiredSign} formStatus={inspectionData?.Inspection_Form_Stage__c} role={userRole} handleOnChat={() => navigation.navigate("Chat", { inspId: inspectionData.Id, chatTitleName: userRole === "Contractor" ? inspectionData?.HHM_Field_PM__r?.Name : inspectionData.General_Contractor__r?.Name })} isReadOnly={readOnly} isForReviewerView={userRole === "Reviewer"} handleSignature={handleSignature} handleViewImages={handleViewImages} isSubmitted={isSubmitted} handleOnSubmit={handleSubmit} />
+              <CTA showCoForms={showCoForm} handleShowCoForms={() => setShowCoForm(!showCoForm)} hasRequiredSign={hasRequiredSign} formStatus={inspectionData?.Inspection_Form_Stage__c} role={userRole} handleOnChat={() => navigation.navigate("Chat", { inspId: inspectionData.Id, chatTitleName: userRole === "Contractor" ? inspectionData?.HHM_Field_PM__r?.Name : inspectionData.General_Contractor__r?.Name })} isReadOnly={readOnly} isForReviewerView={userRole === "Reviewer"} handleSignature={handleSignature} handleViewImages={handleViewImages} isSubmitted={isSubmitted} handleOnSubmit={handleSubmit} />
               {/* Sigantures */}
-              {(isSubmitted && showSiganturesView) && <Signatures navigation={navigation} inspId={inspectionData.Id} role={userRole} hasRequiredSign={hasRequiredSign} setHasRequiredSign={setHasRequiredSign} />}
+              {(isSubmitted && !hasRequiredSign) && <Signatures navigation={navigation} inspectionData={inspectionData} inspId={inspectionData.Id} role={userRole} hasRequiredSign={hasRequiredSign} setHasRequiredSign={setHasRequiredSign} />}
               {/* Forms */}
-              <OtherForms sectionTotals={sectionTotals} gTotal={gTotal} isSubmitted={isSubmitted} readOnly={readOnly} isForReviewerView={userRole === "Reviewer"} formStatus={inspectionData?.Inspection_Form_Stage__c} inspectionData={inspectionData} navigation={navigation} setVendorFormData={setVendorFormData} />
+              {
+                showCoForm
+                  ? <CoForms sectionTotals={sectionTotals} gTotal={gTotal} isSubmitted={isSubmitted} readOnly={readOnly} isForReviewerView={userRole === "Reviewer"} formStatus={inspectionData?.Inspection_Form_Stage__c} inspectionData={inspectionData} navigation={navigation} setVendorFormData={setVendorFormData} />
+                  : <OtherForms sectionTotals={sectionTotals} gTotal={gTotal} isSubmitted={isSubmitted} readOnly={readOnly} isForReviewerView={userRole === "Reviewer"} formStatus={inspectionData?.Inspection_Form_Stage__c} inspectionData={inspectionData} navigation={navigation} setVendorFormData={setVendorFormData} />
+
+              }
             </ScrollView>
             {Platform.OS == 'ios' && <KeyboardSpacer />}
             {/* Call Now */}
@@ -274,7 +286,7 @@ function ReviewerSubmitModal({ inspId, handleCloseModal, navigation, bidApproval
 }
 
 
-function Signatures({ navigation, inspId, role, hasRequiredSign, setHasRequiredSign }) {
+function Signatures({ navigation, inspId, role, inspectionData, hasRequiredSign, setHasRequiredSign }) {
 
 
   const updateSignToContext = (image) => {
@@ -282,80 +294,33 @@ function Signatures({ navigation, inspId, role, hasRequiredSign, setHasRequiredS
   }
 
 
+  const {
+    Work_Authorization_Signed_Date_GC__c: gcSignDate,
+    Work_Authorization_Date_Signed__c: rSignDate
+  } = inspectionData
+
+  console.log({
+    gcSignDate,
+    rSignDate
+  });
 
 
   React.useEffect(() => {
-    contextImages[inspId] && contextImages[inspId].map(ele => {
-      let string = ele.file_name;
-      let substring1 = "Company_Signature";
-      let substring2 = "Contractor_Signature";
-      console.log("FILEE", string);
-      if (string.includes(substring1)) {
-        // console.log(ele.file_public_url, "vfvfvfv");
-        console.log("string1");
-        setReviewerSignDate(ele.file_name.split(/["Company_Signature_  " .jpg]+/)[1])
-        if (role === "Reviewer") {
-          setHasRequiredSign(true);
-        }
-        setReviewerImg(ele.file_public_url)
-        return
-      } else if (string.includes(substring2)) {
-        console.log("string2");
-        console.log("HAS CON SIGN", ele.file_name.split(/["Contractor_Signature_  " .jpg]+/)[1]);
-        if (role === "Contractor") {
-          setHasRequiredSign(true);
-        }
-        setSignDate(ele.file_name.split(/["Contractor_Signature_  " .jpg]+/)[1])
-        setImg(ele.file_public_url)
-        return
-      }
-    })
-  }, [contextImages])
-
-
-  const { addSignature, contextImages } = React.useContext(VendorFormContext);
-
-  const [img, setImg] = React.useState(null)
-  const [reviewerImg, setReviewerImg] = React.useState(null);
-
-  const [modalVisible, setModalVisible] = React.useState(false);
-
-  const [isLoading, setIsLoading] = React.useState(false)
-  const [signDate, setSignDate] = React.useState()
-  const [reviewerSignDate, setReviewerSignDate] = React.useState()
-
-  const uploadImage = async () => {
-
-    try {
-
-      setIsLoading(true);
-      let result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: "Images",
-        aspect: [4, 3],
-        quality: 1,
-        base64: true,
-      });
-
-      result = result.base64
-
-      if (result) {
-        console.log(result, "kkk");
-        role === "Reviewer" ? setReviewerImg(result) : setImg(result);
-        updateSignToContext(result)
-        setIsLoading(false);
-        alert("Signature Uploaded successfully")
-        navigation.goBack();
-      }
-
-    } catch (error) {
-
-      setIsLoading(false);
-      console.log(error);
-      alert('Upload Error' + error)
-
+    if (gcSignDate && role === "Contractor") {
+      console.log("true...");
+      setHasRequiredSign(true);
+    }
+    if (rSignDate && role === "Reviewer") {
+      console.log("SETTING...");
+      setHasRequiredSign(true);
     }
 
-  }
+  }, [gcSignDate, rSignDate])
+
+
+  const { addSignature } = React.useContext(VendorFormContext);
+
+  const [modalVisible, setModalVisible] = React.useState(false);
 
   if (hasRequiredSign) {
     console.log("HIDING SIGNATURES");
@@ -363,86 +328,15 @@ function Signatures({ navigation, inspId, role, hasRequiredSign, setHasRequiredS
   }
 
 
-  if (role === "Reviewer") {
-    return (
-      <View style={{ flexDirection: "row", justifyContent: "flex-end" }}>
-        {/* HHM Signature */}
-        <View style={{ padding: 16, flex: 1, alignItems: "flex-end" }}>
-          <Text style={{ fontSize: 12, fontFamily: 'URBAN_BOLD', color: 'black' }}>HHM Signature</Text>
-          {!reviewerImg && <>
-            <Button style={{
-              backgroundColor: 'black',
-              color: "white",
-              marginVertical: 2,
-              marginTop: 4,
-              width: 100,
-              fontSize: 28
-            }} mode="contained" onPress={() => setModalVisible(true)}>
-              Sign
-            </Button>
-            <Button style={{
-              backgroundColor: 'black',
-              color: "white",
-              marginVertical: 2,
-              width: 100,
-            }} loading={isLoading} mode="contained" onPress={uploadImage}>
-              Upload
-            </Button>
-          </>}
-          <Modal
-            animationType="slide"
-            transparent={true}
-            visible={modalVisible}
-            onRequestClose={() => {
-              setModalVisible(!modalVisible);
-            }}>
-
-
-            <Sign
-              onOK={(e) => {
-                let bs64dataArray = e.split(',')
-                setModalVisible(!modalVisible);
-                updateSignToContext(bs64dataArray[1])
-                alert("Signed successfully")
-                navigation.goBack()
-              }} text='HHM Signature'
-              handleOnCancel={() => setModalVisible(false)}
-            />
-
-          </Modal>
-        </View>
-
-      </View>
-    )
-  }
-
-
   return (
 
-    <View style={{ flexDirection: "row" }}>
-      {/* Contractor Signature */}
-      <View style={{ padding: 16, flex: .5 }}>
-        <Text style={{ fontSize: 12, fontFamily: 'URBAN_BOLD', color: 'black' }}>Contractor Signature</Text>
-        {!img && <>
-          <Button style={{
-            backgroundColor: 'black',
-            color: "white",
-            marginVertical: 2,
-            marginTop: 4,
-            width: 100,
-            fontSize: 28
-          }} mode="contained" onPress={() => setModalVisible(true)}>
-            Sign
-          </Button>
-          <Button style={{
-            backgroundColor: 'black',
-            color: "white",
-            marginVertical: 2,
-            width: 100,
-          }} loading={isLoading} mode="contained" onPress={uploadImage}>
-            Upload
-          </Button>
-        </>}
+    <View >
+      <View style={{ padding: 16 }}>
+        <SubmitButtonWrapper mode="contained" onPress={() => setModalVisible(true)}>
+          <ButtonText style={{ textAlign: 'center' }} color="white">
+            Add Signature
+          </ButtonText>
+        </SubmitButtonWrapper>
         <Modal
           animationType="slide"
           transparent={true}
@@ -455,9 +349,12 @@ function Signatures({ navigation, inspId, role, hasRequiredSign, setHasRequiredS
               let bs64dataArray = e.split(',')
               setModalVisible(!modalVisible);
               updateSignToContext(bs64dataArray[1])
-              alert("Signed successfully")
+              showMessage({
+                type: "success",
+                message: "Signature added successfully"
+              })
               navigation.goBack()
-            }} text='Contractor Signature'
+            }} text={role === "Reviewer" ? "HHM Signature" : "Contractor Signature"}
             handleOnCancel={() => setModalVisible(false)}
           />
 
@@ -469,6 +366,22 @@ function Signatures({ navigation, inspId, role, hasRequiredSign, setHasRequiredS
 
 
 
+const SubmitButtonWrapper = styled.TouchableOpacity`
+background-color:#8477EB;
+padding: 8px 16px;
+justify-content:center;
+align-items:center;
+width: 248px;
+margin: 0 auto;
+`;
+
+const ButtonText = styled.Text`
+font-size:${Platform.OS === "android" ? 16 : 18}px;
+font-family: 'URBAN_BOLD';
+/* text-transform: uppercase; */
+color: ${props => props.color || 'black'};
+margin-left: ${props => `${props.marginLeft || 0}px`} ;
+`;
 
 
 

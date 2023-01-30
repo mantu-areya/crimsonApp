@@ -1,20 +1,22 @@
-import { View, Text, ImageBackground, Image, Dimensions, Platform } from 'react-native'
+import { View, Text, ImageBackground, Image, Dimensions, Platform, TouchableOpacity } from 'react-native'
 import React from 'react'
 import styled from 'styled-components/native'
 import Ionicons from "react-native-vector-icons/Ionicons"
 import { differenceInDays } from 'date-fns'
 import { useNavigation } from '@react-navigation/native';
 import Overlay from 'react-native-modal-overlay';
-import { postSendFileEmail } from '../../services/inspections/inspections.service';
+import { getVendorFormDetails, postSendFileEmail } from '../../services/inspections/inspections.service';
 import Carousel, { Pagination } from 'react-native-snap-carousel'
 import { Map } from './maps/Map'
 import * as Linking from "expo-linking";
+import { ActivityIndicator } from 'react-native-paper'
 
 
 
 const image = require("../../../assets/black-bg.jpg");
+const img2 = require("../../../assets/images/DetailsCardBg.webp");
 
-const Hero = ({totalBidSubmitted, roomMeasurementTotal,data, isSubmitted, sectionTotals }) => {
+const Hero = ({ totalBidSubmitted, roomMeasurementTotal, data, isSubmitted, sectionTotals, handleViewImageGallery }) => {
 
     const navigation = useNavigation()
     const [overlayVisible, setOverlayVisible] = React.useState(false);
@@ -24,6 +26,28 @@ const Hero = ({totalBidSubmitted, roomMeasurementTotal,data, isSubmitted, sectio
         alert("WAF sent to Email Address")
         console.log("FILE EMAIl SEND", res);
     }
+
+    const [allImages, setAllImages] = React.useState([]);
+    const [imagesLoading, setImagesLoading] = React.useState(false);
+
+    async function getLineItemImages(inspId) {
+        try {
+            setImagesLoading(true);
+            const res = await getVendorFormDetails(inspId);
+            setAllImages(res.Images)
+        } catch (error) {
+            console.log("GET LINE ITEM IMAGES ERROR", error);
+        } finally {
+            setImagesLoading(false);
+        }
+
+    }
+
+    React.useEffect(() => {
+        if (data && data.Id) {
+            getLineItemImages(data.Id);
+        }
+    }, [data])
 
 
     const {
@@ -35,12 +59,16 @@ const Hero = ({totalBidSubmitted, roomMeasurementTotal,data, isSubmitted, sectio
         Prospect_ID__r: { Baths__c, Bed__c, Square_Feet__c, Year_Built__c },
         doCreateWAF__c,
         Is_New_Construction__c,
+        Work_Authorization_Signed_Date_GC__c: gcSignDate,
+        Work_Authorization_Date_Signed__c: rSignDate
     } = data;
 
     const pendingDays = differenceInDays(
         new Date(GC_Inspection_Due_Date__c),
         new Date()
     )
+
+    const areBothSignPresent = gcSignDate && rSignDate
 
 
     const isCarousel = React.useRef(null);
@@ -60,7 +88,7 @@ const Hero = ({totalBidSubmitted, roomMeasurementTotal,data, isSubmitted, sectio
                             {/* Back Icon */}
                             <GoBackButton handleGoBack={() => navigation.goBack()} />
                             {/* Meta Info */}
-                            <MetaInfo {...{ pendingDays, Inspection_Form_Stage__c, handleFileDownload, doCreateWAF__c }} />
+                            <MetaInfo {...{ areBothSignPresent, pendingDays, Inspection_Form_Stage__c, handleFileDownload, doCreateWAF__c }} />
                         </View>
                         {/* Short Summary */}
                         <ShortSummary {...{ Property_Street_Address__c, Baths__c, Bed__c, Square_Feet__c }} />
@@ -141,6 +169,12 @@ const Hero = ({totalBidSubmitted, roomMeasurementTotal,data, isSubmitted, sectio
                 <Ionicons onPress={() => setOverlayVisible(false)} name="close" color="white" size={32} />
                 <Image source={image} style={{ width: 320, height: 320, borderRadius: 16 }} />
             </Overlay>
+            {/* Image Gallery */}
+            {
+                imagesLoading
+                    ? <ActivityIndicator />
+                    : <ImageGallery handleViewImageGallery={handleViewImageGallery} allImages={allImages} />
+            }
             {/* Description */}
             <DescriptionWrapper>
                 <Text style={{ color: 'black', fontFamily: 'URBAN_BOLD', fontSize: 16 }}>DESCRIPTION</Text>
@@ -164,7 +198,66 @@ const Hero = ({totalBidSubmitted, roomMeasurementTotal,data, isSubmitted, sectio
     )
 }
 
+function ImageGallery({ handleViewImageGallery, allImages }) {
 
+    let initialImages = [];
+
+    if (allImages.length > 5) {
+        initialImages = allImages.slice(0, 5)
+    } else {
+        initialImages = allImages
+    }
+
+    return (
+        <View style={{ paddingHorizontal: 16, }}>
+            <View style={{ flexDirection: "row", justifyContent: allImages.length < 5 ? "center" : "start" }}>
+                {
+                    initialImages.map((img, i) => <GalleryImageItem key={i} img={img} />)
+                }
+                {
+                    allImages.length > 5 &&
+
+                    < TouchableOpacity
+                        onPress={handleViewImageGallery}
+                        style={{
+                            height: 48,
+                            width: (Dimensions.get("screen").width - 86) / 6,
+                            marginHorizontal: 2,
+                            backgroundColor: "#00000070",
+                            justifyContent: "center",
+                            alignItems: "center",
+                            borderRadius: 4
+                        }}>
+                        <Text style={{ fontSize: 12, color: "white", fontFamily: "URBAN_BOLD" }}>See More</Text>
+                    </TouchableOpacity>
+                }
+            </View>
+        </View>
+    )
+}
+
+
+function GalleryImageItem({ img }) {
+
+    const [showPreview, setShowPreview] = React.useState(false);
+
+    return (
+        <TouchableOpacity onPress={() => setShowPreview(true)}>
+            <Image
+                source={{ uri: img.file_public_url }}
+                style={{
+                    height: 48,
+                    width: (Dimensions.get("screen").width - 86) / 6,
+                    marginHorizontal: 2,
+                    borderRadius: 4
+                }} />
+            <Overlay childrenWrapperStyle={{ backgroundColor: 'black' }} containerStyle={{ backgroundColor: 'black' }} visible={showPreview} onClose={() => setShowPreview(false)} closeOnTouchOutside >
+                <Ionicons onPress={() => setShowPreview(false)} name="close" color="white" size={32} />
+                <Image source={{ uri: img.file_public_url }} style={{ width: 480, height: 480, borderRadius: 16 }} />
+            </Overlay>
+        </TouchableOpacity>
+    )
+}
 
 
 function GoBackButton({ handleGoBack }) {
@@ -175,11 +268,20 @@ function GoBackButton({ handleGoBack }) {
     )
 }
 
-function MetaInfo({ pendingDays, Inspection_Form_Stage__c, handleFileDownload, doCreateWAF__c }) {
+function MetaInfo({ areBothSignPresent, pendingDays, Inspection_Form_Stage__c, handleFileDownload, doCreateWAF__c }) {
     return (
         <MetaInfoWrapper>
-            <MetaInfoText>{Inspection_Form_Stage__c}</MetaInfoText>
-            <MetaInfoText>{pendingDays} days pending</MetaInfoText>
+            {
+                areBothSignPresent
+                    ?
+                    <MetaInfoText>Signed</MetaInfoText>
+                    :
+                    <>
+                        <MetaInfoText>{Inspection_Form_Stage__c}</MetaInfoText>
+                        <MetaInfoText>{pendingDays} days pending</MetaInfoText>
+                    </>
+            }
+
             {doCreateWAF__c && <Ionicons onPress={handleFileDownload} style={{ marginTop: 16 }} name="cloud-download" size={32} color="white" />}
         </MetaInfoWrapper>
     )

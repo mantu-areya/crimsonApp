@@ -2,7 +2,7 @@ import axios from 'axios'
 
 
 export const apiPost = (url, data, additionalParams = {}) =>
-axios({
+  axios({
     method: 'post',
     url,
     data,
@@ -23,10 +23,17 @@ export const apiGet = (url, additionalParams) =>
     ...additionalParams,
   });
 
-  export const apiPatch = (url, data, additionalParams = {}) =>
+export const apiPatch = (url, data, additionalParams = {}) =>
   axios({
-      method: 'PATCH',
-      url,
-      data,
-      ...additionalParams,
-    })
+    method: 'PATCH',
+    url,
+    data,
+    ...additionalParams,
+  })
+
+export const apiDelete = (url, additionalParams = {}) =>
+  axios({
+    method: 'DELETE',
+    url,
+    ...additionalParams,
+  });
