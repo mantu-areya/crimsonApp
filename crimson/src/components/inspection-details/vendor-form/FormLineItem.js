@@ -1,9 +1,9 @@
 import styled from "styled-components/native";
 import Overlay from 'react-native-modal-overlay';
 import Ionicons from "react-native-vector-icons/Ionicons";
-import { Button, Card, Modal, Portal, Provider } from "react-native-paper";
+import { Button, Card, Portal, Provider } from "react-native-paper";
 import Swipeable from 'react-native-swipeable';
-import { View, TouchableOpacity, Text, TextInput, Image, Dimensions } from 'react-native'
+import { View, TouchableOpacity, Text, TextInput, Image, Dimensions, Modal, Pressable } from 'react-native'
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import React, { useEffect } from "react";
 import AntDesign from "react-native-vector-icons/AntDesign"
@@ -18,7 +18,7 @@ let requiredSubCategories = [
 ]
 
 
-export default function FormLineItem({ isSubmittedByReviewer, handleAcceptLineItem, isSubmitted, isForReviewerView, inspId, item, onRoomMeasurementValueChange, onOtherFormValueChange, isForRoomMeasurement, deleteNewItem, navigation, readOnly, setShowAddButton, handleOnSave,setIsEditModalClosed }) {
+export default function FormLineItem({ isSubmittedByReviewer, handleAcceptLineItem, isSubmitted, isForReviewerView, inspId, item, onRoomMeasurementValueChange, onOtherFormValueChange, isForRoomMeasurement, deleteNewItem, navigation, readOnly, setShowAddButton, handleOnSave, setIsEditModalClosed }) {
   const [overlayVisible, setOverlayVisible] = React.useState(false)
 
   const handleDelGest = (Id, inspId, UniqueKey) => {
@@ -26,9 +26,9 @@ export default function FormLineItem({ isSubmittedByReviewer, handleAcceptLineIt
     swipeableRef.current.recenter();
   }
 
-  useEffect(()=>{
+  useEffect(() => {
     setIsEditModalClosed(overlayVisible)
-  },[overlayVisible])
+  }, [overlayVisible])
 
 
   const rightButtons = [
@@ -55,7 +55,7 @@ export default function FormLineItem({ isSubmittedByReviewer, handleAcceptLineIt
   }
 
   if (isSubmitted) {
-    return <SubmittedFormLineItem {...{ status: item?.Approval_Status, title: item.Matrix_Price, rate: item.Rate, quantity: item.Quantity, notes: item.Scope_Notes, adjQuantity: item.Adj_Quantity, adjRate: item.Adj_Rate, approvedAmt: item.Approved_Amount }} />
+    return <SubmittedFormLineItem {...{ status: item?.Approval_Status, title: item.Matrix_Price, rate: item.Rate, quantity: item.Quantity, notes: item.Scope_Notes, adjQuantity: item.Adj_Quantity, adjRate: item.Adj_Rate, approvedAmt: item.Approved_Amount, ownerClarification: item.Owner_Clarification }} />
   }
 
   if (isForRoomMeasurement) {
@@ -164,7 +164,7 @@ export default function FormLineItem({ isSubmittedByReviewer, handleAcceptLineIt
           {!readOnly &&
             <Button
               onPress={() => {
-                item && handleOnSave(true,item);
+                item && handleOnSave(true, item);
                 setOverlayVisible(false);
 
               }} mode="contained">
@@ -180,7 +180,7 @@ export default function FormLineItem({ isSubmittedByReviewer, handleAcceptLineIt
 
   if (isForReviewerView) {
     return (
-      <ContractorViewLineItem {...{ inspId, isSubmittedByReviewer, handleAcceptLineItem, item, onOtherFormValueChange,setIsEditModalClosed }} />
+      <ContractorViewLineItem {...{ inspId, isSubmittedByReviewer, handleAcceptLineItem, item, onOtherFormValueChange, setIsEditModalClosed }} />
     )
 
   }
@@ -188,32 +188,32 @@ export default function FormLineItem({ isSubmittedByReviewer, handleAcceptLineIt
 
   return (
     <>
-      {item?.Matrix_Price && item?.Matrix_Price.length >0 &&  
-      <Swipeable onRef={(ref) => swipeableRef.current = ref} rightButtons={Sub_Category_Keys.includes(item?.Sub_Category) ? rightButtons : null}>
-        <LineItemWrapper onPress={() => setOverlayVisible(true)} >
-          <View style={{ flex: 1 }}>
+      {item?.Matrix_Price && item?.Matrix_Price.length > 0 &&
+        <Swipeable onRef={(ref) => swipeableRef.current = ref} rightButtons={Sub_Category_Keys.includes(item?.Sub_Category) ? rightButtons : null}>
+          <LineItemWrapper onPress={() => setOverlayVisible(true)} >
+            <View style={{ flex: 1 }}>
+              {
+                <LineItemHeading>
+                  {item?.Matrix_Price}
+                </LineItemHeading>
+              }
+              <LineItemInputGroup>
+                {/* QTY */}
+                <LineItemInputText>Qty {item.Quantity}</LineItemInputText>
+                {/* RATE */}
+                <LineItemInputText >Rate {getFormattedValue("Rate", item.Rate)}</LineItemInputText>
+                {/* NOTES */}
+                <LineItemInputText >Total {getFormattedValue("Total", item.Total)}</LineItemInputText>
+              </LineItemInputGroup>
+            </View>
+            {/* Icon */}
             {
-              <LineItemHeading>
-                {item?.Matrix_Price}
-              </LineItemHeading>
+              !readOnly &&
+              <Ionicons name="camera" onPress={() => navigation.navigate("CameraScreen", { inspId: { inspId }, lineItemId: item.Id })} size={24} />
             }
-            <LineItemInputGroup>
-              {/* QTY */}
-              <LineItemInputText>Qty {item.Quantity}</LineItemInputText>
-              {/* RATE */}
-              <LineItemInputText >Rate {getFormattedValue("Rate", item.Rate)}</LineItemInputText>
-              {/* NOTES */}
-              <LineItemInputText >Total {getFormattedValue("Total", item.Total)}</LineItemInputText>
-            </LineItemInputGroup>
-          </View>
-          {/* Icon */}
-          {
-            !readOnly &&
-            <Ionicons name="camera" onPress={() => navigation.navigate("CameraScreen", { inspId: { inspId }, lineItemId: item.Id })} size={24} />
-          }
 
-        </LineItemWrapper>
-      </Swipeable>
+          </LineItemWrapper>
+        </Swipeable>
       }
       <Overlay visible={overlayVisible} onClose={() => setOverlayVisible(false)} >
         <Ionicons style={{ marginLeft: "auto" }} onPress={() => setOverlayVisible(false)} name="close" size={24} />
@@ -294,7 +294,7 @@ export default function FormLineItem({ isSubmittedByReviewer, handleAcceptLineIt
         </View>
 
         {!readOnly &&
-          <StyledSaveButton onPress={() => { item && handleOnSave(false,item); setOverlayVisible(false) }} mode="contained">
+          <StyledSaveButton onPress={() => { item && handleOnSave(false, item); setOverlayVisible(false) }} mode="contained">
             <Text style={{ color: 'white', fontWeight: 'bold', fontFamily: "URBAN_BOLD", fontSize: 18 }}>
               Save
             </Text>
@@ -308,7 +308,7 @@ export default function FormLineItem({ isSubmittedByReviewer, handleAcceptLineIt
 }
 
 
-function SubmittedFormLineItem({ status, title, rate, quantity, total, notes, adjQuantity, adjRate, approvedAmt }) {
+function SubmittedFormLineItem({ status, title, rate, quantity, total, notes, adjQuantity, adjRate, approvedAmt, ownerClarification }) {
   function getBackgroundColor() {
     if (status === "Approved") {
       return "#7CDD9B";
@@ -332,51 +332,66 @@ function SubmittedFormLineItem({ status, title, rate, quantity, total, notes, ad
   let showQuantity = adjQuantity;
   let showAmount = approvedAmt;
 
+  const [showWAPopup, setShowWAPopup] = React.useState(false);
+
 
   return (
-    // <Card style={{ padding: 16, backgroundColor: getCardBackgroundColor(), borderBottomWidth: 2, borderColor: '#EEBC7B' }}>
-    //   <LineItemHeading style={{}}>{title}</LineItemHeading>
-    //   <LineItemHeading style={{}}>Scope Notes : {notes}</LineItemHeading>
-    //   <View >
-    //     {/* Details */}
-    //     <View style={{ flexDirection: 'row' }}>
-    //       <StyledContractorText style={{ flex: 1, fontSize: 14, }}>QTY: {quantity}</StyledContractorText>
-    //       <StyledContractorText style={{ flex: 1, fontSize: 14, }} >RATE: {rate ? rate?.toLocaleString("en-IN", { style: "currency", currency: 'USD' }) : 0}</StyledContractorText>
-    //       <StyledContractorText style={{ flex: 1, fontSize: 14, }}>TOTAL: {total ? total?.toLocaleString("en-IN", { style: "currency", currency: 'USD' }) : 0}</StyledContractorText>
-    //       <StyledContractorButton style={{ fontSize: 16, fontFamily: 'URBAN_BOLD', backgroundColor: getBackgroundColor(), padding: 4 }} mode="contained">{status}</StyledContractorButton>
-    //     </View>
-    //     <View style={{ flexDirection: 'row', marginTop: 8 }}>
-    //       <StyledContractorText style={{ flex: 1, fontSize: 18, }}>ADJ QTY: {showQuantity}</StyledContractorText>
-    //       <StyledContractorText style={{ flex: 1, fontSize: 18, }} >RATE: {showRate ? showRate?.toLocaleString("en-IN", { style: "currency", currency: 'USD' }) : 0}</StyledContractorText>
-    //       <StyledContractorText style={{ flex: 1, fontSize: 18, }}>TOTAL: {showAmount ? showAmount?.toLocaleString("en-IN", { style: "currency", currency: 'USD' }) : 0}</StyledContractorText>
-    //     </View>
-    //   </View>
-    // </Card>
-    <Card style={{ padding: 12, backgroundColor: getCardBackgroundColor(), borderBottomWidth: 2, borderColor: '#EEBC7B' }}>
-      <View style={{ alignSelf: 'flex-start', marginVertical: 4, padding: 8, borderRadius: 8, backgroundColor: getBackgroundColor() }}>
-        <Text style={{ fontSize: 12, fontFamily: 'URBAN_BOLD' }}>{status}</Text>
-      </View>
-      <LineItemHeading style={{ fontFamily: 'URBAN_BOLD' }}>{title}</LineItemHeading>
-      <LineItemHeading style={{}}>Scope Notes : {notes}</LineItemHeading>
-      <View >
-        {/* Details */}
-        <View style={{ flexDirection: 'row' }}>
-          <StyledContractorText style={{ flex: 1, fontSize: 14, }}>QTY: {quantity}</StyledContractorText>
-          <StyledContractorText style={{ flex: 1, fontSize: 14, }} >RATE: {rate ? rate?.toLocaleString("en-IN", { style: "currency", currency: 'USD' }) : 0}</StyledContractorText>
-          <StyledContractorText style={{ flex: 1, fontSize: 14, }}>TOTAL: {total ? total?.toLocaleString("en-IN", { style: "currency", currency: 'USD' }) : 0}</StyledContractorText>
+    <>
+      <Card onPress={() => setShowWAPopup(true)} style={{ padding: 12, backgroundColor: getCardBackgroundColor(), borderBottomWidth: 2, borderColor: '#EEBC7B' }}>
+        <View style={{ alignSelf: 'flex-start', marginVertical: 4, padding: 8, borderRadius: 8, backgroundColor: getBackgroundColor() }}>
+          <Text style={{ fontSize: 12, fontFamily: 'URBAN_BOLD' }}>{status}</Text>
         </View>
-        <View style={{ flexDirection: 'row', marginTop: 8 }}>
-          <StyledContractorText style={{ flex: 1, fontSize: 18, fontFamily: 'URBAN_MEDIUM' }}>ADJ QTY: {showQuantity}</StyledContractorText>
-          <StyledContractorText style={{ flex: 1, fontSize: 18, fontFamily: 'URBAN_MEDIUM' }} >RATE: {showRate ? showRate?.toLocaleString("en-IN", { style: "currency", currency: 'USD' }) : 0}</StyledContractorText>
-          <StyledContractorText style={{ flex: 1, fontSize: 18, fontFamily: 'URBAN_MEDIUM' }}>TOTAL: {showAmount ? showAmount?.toLocaleString("en-IN", { style: "currency", currency: 'USD' }) : 0}</StyledContractorText>
+        <LineItemHeading style={{ fontFamily: 'URBAN_BOLD' }}>{title}</LineItemHeading>
+        <LineItemHeading style={{}}>Scope Notes : {notes}</LineItemHeading>
+        <View >
+          {/* Details */}
+          <View style={{ flexDirection: 'row' }}>
+            <StyledContractorText style={{ flex: 1, fontSize: 14, }}>QTY: {quantity}</StyledContractorText>
+            <StyledContractorText style={{ flex: 1, fontSize: 14, }} >RATE: {rate ? rate?.toLocaleString("en-IN", { style: "currency", currency: 'USD' }) : 0}</StyledContractorText>
+            <StyledContractorText style={{ flex: 1, fontSize: 14, }}>TOTAL: {total ? total?.toLocaleString("en-IN", { style: "currency", currency: 'USD' }) : 0}</StyledContractorText>
+          </View>
+          <View style={{ flexDirection: 'row', marginTop: 8 }}>
+            <StyledContractorText style={{ flex: 1, fontSize: 18, fontFamily: 'URBAN_MEDIUM' }}>ADJ QTY: {showQuantity}</StyledContractorText>
+            <StyledContractorText style={{ flex: 1, fontSize: 18, fontFamily: 'URBAN_MEDIUM' }} >RATE: {showRate ? showRate?.toLocaleString("en-IN", { style: "currency", currency: 'USD' }) : 0}</StyledContractorText>
+            <StyledContractorText style={{ flex: 1, fontSize: 18, fontFamily: 'URBAN_MEDIUM' }}>TOTAL: {showAmount ? showAmount?.toLocaleString("en-IN", { style: "currency", currency: 'USD' }) : 0}</StyledContractorText>
+          </View>
         </View>
-      </View>
-    </Card>
+      </Card>
+      {/* Popup Modal */}
+      <Modal transparent visible={showWAPopup} onDismiss={() => setShowWAPopup(false)}>
+        <View style={{ flex: 1, backgroundColor: "#d4d4d470", paddingHorizontal: 32, justifyContent: "center", alignItems: "center" }}>
+          <Pressable style={{ marginLeft: "auto" }} onPress={() => setShowWAPopup(false)}>
+            <Ionicons name="close" size={32} color={"black"} />
+          </Pressable>
+          <View style={{ backgroundColor: "white", borderRadius: 8, padding: 16, width: "100%" }}>
+            <View>
+              <Text style={{ fontFamily: "URBAN_BOLD" }}>Scope Notes</Text>
+              <TextInput
+                editable={false}
+                multiline
+                value={notes}
+                style={{ height: 96, fontFamily: "URBAN_REGULAR" }}
+              />
+            </View>
+            <View>
+              <Text style={{ fontFamily: "URBAN_BOLD" }}>Owner Clarification</Text>
+              <TextInput
+                editable={false}
+                multiline
+                value={ownerClarification}
+                style={{ padding: 10, height: 96 }}
+              />
+            </View>
+          </View>
+        </View>
+      </Modal>
+    </>
+
 
   )
 }
 
-function ContractorViewLineItem({ inspId, isSubmittedByReviewer, handleAcceptLineItem, item, onOtherFormValueChange,setIsEditModalClosed }) {
+function ContractorViewLineItem({ inspId, isSubmittedByReviewer, handleAcceptLineItem, item, onOtherFormValueChange, setIsEditModalClosed }) {
 
   const {
     UniqueKey,
@@ -429,13 +444,13 @@ function ContractorViewLineItem({ inspId, isSubmittedByReviewer, handleAcceptLin
   const showModal = () => setVisible(true);
   const hideModal = () => setVisible(false);
 
-  useEffect(()=>{
+  useEffect(() => {
     setIsEditModalClosed(visible)
-  },[visible])
+  }, [visible])
 
   function acceptLineItem() {
     setSelectedStatus("Approved");
-    item && handleAcceptLineItem(id, "Approved",item);
+    item && handleAcceptLineItem(id, "Approved", item);
   }
 
   function reviewLineItem() {
@@ -444,12 +459,12 @@ function ContractorViewLineItem({ inspId, isSubmittedByReviewer, handleAcceptLin
 
   function deleteLineItem() {
     setSelectedStatus("Declined");
-    item && handleAcceptLineItem(id, "Declined",item);
+    item && handleAcceptLineItem(id, "Declined", item);
   }
 
   function handleApproveAsNoted() {
     setSelectedStatus("Approved as Noted");
-    item && handleAcceptLineItem(id, "Approved as Noted",item);
+    item && handleAcceptLineItem(id, "Approved as Noted", item);
     hideModal();
   }
 
@@ -466,7 +481,7 @@ function ContractorViewLineItem({ inspId, isSubmittedByReviewer, handleAcceptLin
     }
     return orgColor;
   }
-//remove code after verification
+  //remove code after verification
   function isDisabled(status) {
     return isSubmittedByReviewer || selectedStatus === status;
   }
@@ -474,46 +489,46 @@ function ContractorViewLineItem({ inspId, isSubmittedByReviewer, handleAcceptLin
 
   return (
     <>
-      {title && title.length >0 &&  
-      <Card style={{ padding: 16, backgroundColor: getBackgroundColor(), borderBottomWidth: 2, borderColor: '#EEBC7B' }}>
-        <LineItemHeading>{title}</LineItemHeading>
-        {/* <LineItemHeading>{item.Approval_Status}</LineItemHeading> */}
-        <LineItemHeading>Scope Notes : {item.Scope_Notes}</LineItemHeading>
-        <View style={{ flexDirection: 'row' }}>
-          {/* Details */}
-          <View style={{ flex: .4 }}>
-            <StyledContractorText>QTY: {quantity}</StyledContractorText>
-            <StyledContractorText>RATE: {getCurrencyFormattedValue(rate)}</StyledContractorText>
-            <StyledContractorText>TOTAL: {getCurrencyFormattedValue(total)}</StyledContractorText>
+      {title && title.length > 0 &&
+        <Card style={{ padding: 16, backgroundColor: getBackgroundColor(), borderBottomWidth: 2, borderColor: '#EEBC7B' }}>
+          <LineItemHeading>{title}</LineItemHeading>
+          {/* <LineItemHeading>{item.Approval_Status}</LineItemHeading> */}
+          <LineItemHeading>Scope Notes : {item.Scope_Notes}</LineItemHeading>
+          <View style={{ flexDirection: 'row' }}>
+            {/* Details */}
+            <View style={{ flex: .4 }}>
+              <StyledContractorText>QTY: {quantity}</StyledContractorText>
+              <StyledContractorText>RATE: {getCurrencyFormattedValue(rate)}</StyledContractorText>
+              <StyledContractorText>TOTAL: {getCurrencyFormattedValue(total)}</StyledContractorText>
+            </View>
+            <View style={{ flex: .6, flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
+              <StyledContractorButton
+                labelStyle={{ fontSize: 16, fontFamily: 'URBAN_BOLD' }}
+                disabled={Approval_Status === "Approved"}
+                backgroundColor={Approval_Status === "Approved" ? "grey" : "#7CDD9B"}
+                mode="contained"
+                onPress={() => acceptLineItem()}>
+                A
+              </StyledContractorButton>
+              <StyledContractorButton
+                labelStyle={{ fontSize: 16, fontFamily: 'URBAN_BOLD' }}
+                disabled={Approval_Status === "Approved as Noted"}
+                backgroundColor={Approval_Status === "Approved as Noted" ? "grey" : "#3983EF"}
+                mode="contained"
+                onPress={() => reviewLineItem()}>
+                R
+              </StyledContractorButton>
+              <StyledContractorButton
+                labelStyle={{ fontSize: 16, fontFamily: 'URBAN_BOLD' }}
+                disabled={Approval_Status === "Declined"}
+                backgroundColor={Approval_Status === "Declined" ? "grey" : "#E02E2E"}
+                mode="contained"
+                onPress={() => deleteLineItem()}>
+                D
+              </StyledContractorButton>
+            </View>
           </View>
-          <View style={{ flex: .6, flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
-            <StyledContractorButton
-              labelStyle={{ fontSize: 16, fontFamily: 'URBAN_BOLD' }}
-              disabled={Approval_Status==="Approved"}
-              backgroundColor={Approval_Status==="Approved" ?"grey":"#7CDD9B"}
-              mode="contained"
-              onPress={() => acceptLineItem()}>
-              A
-            </StyledContractorButton>
-            <StyledContractorButton
-              labelStyle={{ fontSize: 16, fontFamily: 'URBAN_BOLD' }}
-              disabled={Approval_Status==="Approved as Noted"}
-              backgroundColor={Approval_Status==="Approved as Noted" ?"grey": "#3983EF"}
-              mode="contained"
-              onPress={() => reviewLineItem()}>
-              R
-            </StyledContractorButton>
-            <StyledContractorButton
-              labelStyle={{ fontSize: 16, fontFamily: 'URBAN_BOLD' }}
-              disabled={Approval_Status==="Declined"}
-              backgroundColor={Approval_Status==="Declined" ?"grey":"#E02E2E"}
-              mode="contained"
-              onPress={() => deleteLineItem()}>
-              D
-            </StyledContractorButton>
-          </View>
-        </View>
-      </Card>
+        </Card>
       }
       <Overlay childrenWrapperStyle={{ padding: 18 }} containerStyle={{ backgroundColor: '#dbdad960' }} visible={visible} onClose={() => setVisible(false)} closeOnTouchOutside >
         <Ionicons onPress={() => hideModal()} name="close" size={24} style={{ marginLeft: "auto" }} />
