@@ -210,7 +210,7 @@ function ImageGallery({ handleViewImageGallery, allImages }) {
 
     return (
         <View style={{ paddingHorizontal: 16, }}>
-            <View style={{ flexDirection: "row", justifyContent: allImages.length < 5 ? "center" : "start" }}>
+            <View style={{ flexDirection: "row", justifyContent: "center" }}>
                 {
                     initialImages.map((img, i) => <GalleryImageItem key={i} img={img} />)
                 }

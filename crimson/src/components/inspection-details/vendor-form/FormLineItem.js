@@ -77,12 +77,12 @@ export default function FormLineItem({reloadVfData, isSubmittedByReviewer, handl
   }
 
   return (
-    <OtherFormLineItems {...{reloadVfData, Sub_Category_Keys, item, readOnly, handleOnSave, onOtherFormValueChange, setOverlayVisible, overlayVisible, swipeableRef }} />
+    <OtherFormLineItems {...{reloadVfData, Sub_Category_Keys, item, readOnly, handleOnSave, onOtherFormValueChange, setOverlayVisible, overlayVisible, swipeableRef, rightButtons, navigation, inspId, }} />
   )
 
 }
 
-function OtherFormLineItems({ reloadVfData,Sub_Category_Keys, item, readOnly, handleOnSave, onOtherFormValueChange, setOverlayVisible, overlayVisible, swipeableRef }) {
+function OtherFormLineItems({ reloadVfData,Sub_Category_Keys, item, readOnly, handleOnSave, onOtherFormValueChange, setOverlayVisible, overlayVisible, swipeableRef, rightButtons, navigation, inspId }) {
 
   const offset = useSharedValue({ x: 0 });
   const start = useSharedValue({ x: 0 });
