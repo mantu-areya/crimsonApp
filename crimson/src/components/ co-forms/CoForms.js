@@ -4,10 +4,10 @@ import styled from 'styled-components/native';
 import { useIsFocused } from '@react-navigation/native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import Ionicons from 'react-native-vector-icons/Ionicons'
-import { Menu, Portal, Provider } from 'react-native-paper';
+import { Banner, Menu, Portal, Provider } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import EntypoIcon from 'react-native-vector-icons/Entypo'
-import NetInfo from "@react-native-community/netinfo";
+import NetInfo, { useNetInfo } from "@react-native-community/netinfo";
 import { deleteLineItem, getCoForms, submitForApproval } from '../../services/co-forms/co-api';
 import { CoFormContext } from '../../services/co-forms/co-context';
 import Swipeable from 'react-native-swipeable';
@@ -43,6 +43,7 @@ const CoForms = ({ isForReviewerView, isSubmitted, readOnly, inspectionData, nav
     const [sequenceCo2, setSequenceCo2] = React.useState()
     const [sequenceCo3, setSequenceCo3] = React.useState()
 
+    const netInfo = useNetInfo();
 
 
     const [searchQuery, setSearchQuery] = React.useState('');
@@ -297,6 +298,24 @@ const CoForms = ({ isForReviewerView, isSubmitted, readOnly, inspectionData, nav
             total = total + item.Total
         })
         return total
+    }
+
+
+    if (netInfo.isConnected) {
+        return (
+            <View style={{ padding: 16, marginBottom: 96 }}>
+                <Banner style={{
+                    backgroundColor: "#ff0000",
+                    borderRadius: 8
+                }} visible actions={[]}>
+                    <Text style={{
+                        fontFamily: "URBAN_BOLD",
+                        fontSize: 16,
+                        color:'white'
+                    }}>You are not connected to the internet. Please visit CO's in web browser</Text>
+                </Banner>
+            </View>
+        )
     }
 
 
