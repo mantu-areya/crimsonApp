@@ -53,6 +53,8 @@ export const CameraScreen = ({ navigation, route }) => {
   const [images, setImages] = useState([]);
   const { params } = route
 
+  console.log({params});
+
 
   useEffect(() => {
     (async () => {
@@ -105,10 +107,11 @@ export const CameraScreen = ({ navigation, route }) => {
     var i = 1;
     // FOR CO's
     if (params.currentCOForm) {
+      console.log("INSIDE CO ", params.currentCOForm);
       images.forEach(img => {
 
         var imageData = {
-          "file_name": linItemId + '_' + i,
+          "file_name": linItemId + '_' + Date.now() + i,
           "image_data": img.imagData,
           "parent_record_id": recId,
           "image_type": "CO_line_item",

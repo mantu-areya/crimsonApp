@@ -8,7 +8,7 @@ import { Banner, Menu, Portal, Provider } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import EntypoIcon from 'react-native-vector-icons/Entypo'
 import NetInfo, { useNetInfo } from "@react-native-community/netinfo";
-import { deleteLineItem, getCoForms, submitForApproval } from '../../services/co-forms/co-api';
+import { deleteLineItem, getCoForms, getCoLineItemImage, submitForApproval } from '../../services/co-forms/co-api';
 import { CoFormContext } from '../../services/co-forms/co-context';
 import Swipeable from 'react-native-swipeable';
 import Animated, { interpolateColor, runOnJS, useAnimatedStyle, useDerivedValue, useSharedValue } from 'react-native-reanimated';
@@ -19,6 +19,7 @@ import { showMessage } from "react-native-flash-message";
 
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import Overlay from 'react-native-modal-overlay';
+import { apiGet } from '../../services/api/api';
 
 
 const CoForms = ({ isForReviewerView, isSubmitted, readOnly, inspectionData, navigation }) => {
@@ -301,7 +302,7 @@ const CoForms = ({ isForReviewerView, isSubmitted, readOnly, inspectionData, nav
     }
 
 
-    if (netInfo.isConnected) {
+    if (!netInfo.isConnected) {
         return (
             <View style={{ padding: 16, marginBottom: 96 }}>
                 <Banner style={{
@@ -311,7 +312,7 @@ const CoForms = ({ isForReviewerView, isSubmitted, readOnly, inspectionData, nav
                     <Text style={{
                         fontFamily: "URBAN_BOLD",
                         fontSize: 16,
-                        color:'white'
+                        color: 'white'
                     }}>You are not connected to the internet. Please visit CO's in web browser</Text>
                 </Banner>
             </View>
@@ -458,7 +459,7 @@ function CoFormLineItem({ handleDeleteLineItem, refreshCOData, item, isSubmitted
                 <MaterialCommunityIcons name="delete" size={24} color="white" />
             </View>
         </TouchableOpacity>,
-        <TouchableOpacity onPress={() => navigation.navigate("CameraScreen", { inspId: { inspId }, lineItemId: item.id, currentCOForm })} style={{ backgroundColor: '#1d1f69', justifyContent: 'center', alignItems: 'center', width: 64, flex: 1 }}>
+        <TouchableOpacity onPress={() => navigation.navigate("CameraScreen", { inspId: { inspId }, lineItemId: item.id, currentCOForm: currentCOForm + 1 })} style={{ backgroundColor: '#1d1f69', justifyContent: 'center', alignItems: 'center', width: 64, flex: 1 }}>
             <View>
                 <MaterialCommunityIcons name="camera" size={24} color="white" />
             </View>
@@ -468,12 +469,30 @@ function CoFormLineItem({ handleDeleteLineItem, refreshCOData, item, isSubmitted
     const [showReviewerImagePopover, setShowReviewerImagePopover] = React.useState(false);
 
     const rightButtonsForReviwerSubmit = [
-        <TouchableOpacity onPress={() => setShowReviewerImagePopover(true)} style={{ backgroundColor: '#1d1f69', justifyContent: 'center', alignItems: 'center', width: 64, flex: 1 }}>
+        <TouchableOpacity onPress={() => {
+            setShowReviewerImagePopover(true);
+            handleGetCoLineLineItemImages()
+        }} style={{ backgroundColor: '#1d1f69', justifyContent: 'center', alignItems: 'center', width: 64, flex: 1 }}>
             <View>
                 <MaterialCommunityIcons name="image-multiple" size={24} color="white" />
             </View>
         </TouchableOpacity>
     ];
+
+    const [coLineItemImages, setCOLineImage] = React.useState([]);
+    const [loading, setLoading] = React.useState(false);
+
+    async function handleGetCoLineLineItemImages() {
+        try {
+            setLoading(true);
+            const data = await getCoLineItemImage(item.id)
+            setCOLineImage(data.Images)
+        } catch (error) {
+            console.log(error);
+        } finally {
+            setLoading(false);
+        }
+    }
 
     const swipeableRef = React.useRef();
 
@@ -660,11 +679,12 @@ function CoFormLineItem({ handleDeleteLineItem, refreshCOData, item, isSubmitted
 
 
 
+
         return (
 
             (!isSubmittedForRV) ?
                 <Provider>
-                    <Swipeable onRef={(ref) => swipeableRef.current = ref} rightButtons={rightButtons}>
+                    <Swipeable onRef={(ref) => swipeableRef.current = ref} rightButtons={rightButtonsForReviwerSubmit}>
                         <ReviewerLineItemWrapper backgroundColor={getCardBackgroundColor()} >
                             <CurrentFormHeading>{Scope_Notes}</CurrentFormHeading>
                             <Text style={{ fontSize: 12, fontFamily: "URBAN_MEDIUM" }}>Cost Category : {Cost_Category}</Text>
@@ -809,7 +829,25 @@ function CoFormLineItem({ handleDeleteLineItem, refreshCOData, item, isSubmitted
                             </ComposedGestureWrapper>
                         </Portal.Host>
                     </Modal>
+                    <Modal transparent visible={showReviewerImagePopover} onDismiss={() => setShowReviewerImagePopover(false)} >
+                        <View style={{ backgroundColor: "#c4c4c490", flex: 1, justifyContent: "center", alignItems: "center", }}>
+                            <MaterialCommunityIcons onPress={() => setShowReviewerImagePopover(false)} name="close" size={24} style={{ position: "absolute", top: 240, right: 48 }} />
+                            <View style={{ flexDirection: "row", paddingHorizontal: 24 }}>
+                                {
+                                    loading
+                                        ? <ActivityIndicator />
+                                        :
+                                        coLineItemImages.length > 0
+                                            ? coLineItemImages.map((img, key) =>
+                                                <PopoverImageItem img={img} key={key} />
+                                            )
+                                            :
+                                            <Text style={{ fontSize: 24, color: "black", fontFamily: "URBAN_BOLD" }}>No Images to display</Text>
+                                }
+                            </View>
+                        </View>
 
+                    </Modal>
 
                 </Provider>
                 :
@@ -828,13 +866,20 @@ function CoFormLineItem({ handleDeleteLineItem, refreshCOData, item, isSubmitted
                         </ReviewerLineItemWrapper>
                     </Swipeable>
                     <Modal transparent visible={showReviewerImagePopover} onDismiss={() => setShowReviewerImagePopover(false)} >
-
                         <View style={{ backgroundColor: "#c4c4c490", flex: 1, justifyContent: "center", alignItems: "center", }}>
                             <MaterialCommunityIcons onPress={() => setShowReviewerImagePopover(false)} name="close" size={24} style={{ position: "absolute", top: 240, right: 48 }} />
                             <View style={{ flexDirection: "row", paddingHorizontal: 24 }}>
-                                <PopoverImageItem img={require("../../assets/images/Background2.jpg")} />
-                                <PopoverImageItem img={require("../../assets/images/Background2.jpg")} />
-                                <PopoverImageItem img={require("../../assets/images/Background2.jpg")} />
+                                {
+                                    loading
+                                        ? <ActivityIndicator />
+                                        :
+                                        coLineItemImages.length > 0
+                                            ? coLineItemImages.map((img, key) =>
+                                                <PopoverImageItem img={img} key={key} />
+                                            )
+                                            :
+                                            <Text style={{ fontSize: 24, color: "black", fontFamily: "URBAN_BOLD" }}>No Images to display</Text>
+                                }
                             </View>
                         </View>
 
@@ -1162,14 +1207,14 @@ function PopoverImageItem({ img }) {
     return (
         <TouchableOpacity onPress={() => setShowPreview(true)}>
             <Image
-                source={img}
+                source={{ uri: img.file_public_url }}
                 style={{
                     width: (Dimensions.get("window").width / 3) - 24,
                     height: 128
                 }} />
             <Overlay childrenWrapperStyle={{ backgroundColor: 'black' }} containerStyle={{ backgroundColor: 'black' }} visible={showPreview} onClose={() => setShowPreview(false)} closeOnTouchOutside >
                 <Ionicons onPress={() => setShowPreview(false)} name="close" color="white" size={32} />
-                <Image source={img} style={{ width: 480, height: 480, borderRadius: 16 }} />
+                <Image source={{ uri: img.file_public_url }} style={{ width: 480, height: 480, borderRadius: 16 }} />
             </Overlay>
         </TouchableOpacity>
     )

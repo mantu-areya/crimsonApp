@@ -122,6 +122,28 @@ const uploadCOLineItemImages = async (data, recordId) => {
 
 }
 
+
+const getCoLineItemImage = async (lineItemId) => {
+    const token = await getStoredToken();
+    console.log("get CO Line item image");
+    const url = `https://hudsonhomesmgmt--uat.sandbox.my.salesforce.com/services/apexrest/COFORMS/${lineItemId}`;
+    return apiGet(
+        url,
+        {
+            headers: {
+                'Authorization': `Bearer ${token}`,
+            },
+        },
+    )
+        .then(response => {
+            console.log("CO GET IMG");
+            return response.data
+        })
+        .catch(err => {
+            console.log("CO GET IMG ERR ", err);
+        });
+}
+
 export {
     getCoForms,
     updateLineItem,
@@ -129,4 +151,5 @@ export {
     submitForApproval,
     deleteLineItem,
     uploadCOLineItemImages,
+    getCoLineItemImage
 }
