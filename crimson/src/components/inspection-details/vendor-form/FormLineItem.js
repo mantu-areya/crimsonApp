@@ -264,10 +264,10 @@ function OtherFormLineItems({ reloadVfData, Sub_Category_Keys, item, readOnly, h
               show &&
               <Animated.View style={{ position: 'absolute', bottom: 120, width: "100%", paddingHorizontal: 12 }}>
                 <Animated.View style={{ marginLeft: "auto", justifyContent: 'center', alignItems: 'center', marginBottom: 16 }}>
-                  <Text style={{ backgroundColor: "#8477EB", padding: 8, color: "white", fontFamily: "URBAN_BOLD", fontSize: 16 }}>Swipe Up to save</Text>
+                  <Text style={{ backgroundColor: "#8477EB", padding: 8, color: "white", fontFamily: "URBAN_BOLD", fontSize: 16 }}>Swipe right to save</Text>
                 </Animated.View>
                 <Animated.View style={{ marginRight: "auto", justifyContent: 'center', alignItems: 'center' }}>
-                  <Text style={{ backgroundColor: "#8477EB", padding: 8, color: "white", fontFamily: "URBAN_BOLD", fontSize: 16 }}>Swipe Down to Cancel</Text>
+                  <Text style={{ backgroundColor: "#8477EB", padding: 8, color: "white", fontFamily: "URBAN_BOLD", fontSize: 16 }}>Swipe left to Cancel</Text>
                 </Animated.View>
               </Animated.View>
             }
@@ -611,10 +611,10 @@ function RoomMeasurementLineItem({ item, handleOnSave, onRoomMeasurementValueCha
               show &&
               <Animated.View style={{ position: 'absolute', bottom: 120, width: "100%", paddingHorizontal: 12 }}>
                 <Animated.View style={{ marginLeft: "auto", justifyContent: 'center', alignItems: 'center', marginBottom: 16 }}>
-                  <Text style={{ backgroundColor: "#8477EB", padding: 8, color: "white", fontFamily: "URBAN_BOLD", fontSize: 16 }}>Swipe Up to save</Text>
+                  <Text style={{ backgroundColor: "#8477EB", padding: 8, color: "white", fontFamily: "URBAN_BOLD", fontSize: 16 }}>Swipe right to save</Text>
                 </Animated.View>
                 <Animated.View style={{ marginRight: "auto", justifyContent: 'center', alignItems: 'center' }}>
-                  <Text style={{ backgroundColor: "#8477EB", padding: 8, color: "white", fontFamily: "URBAN_BOLD", fontSize: 16 }}>Swipe Down to Cancel</Text>
+                  <Text style={{ backgroundColor: "#8477EB", padding: 8, color: "white", fontFamily: "URBAN_BOLD", fontSize: 16 }}>Swipe left to Cancel</Text>
                 </Animated.View>
               </Animated.View>
             }
@@ -989,10 +989,10 @@ function ContractorViewLineItem({ swipeableRef, insets, inspId, isSubmittedByRev
               show &&
               <Animated.View style={{ position: 'absolute', bottom: 120, width: "100%", paddingHorizontal: 12 }}>
                 <Animated.View style={{ marginLeft: "auto", justifyContent: 'center', alignItems: 'center', marginBottom: 16 }}>
-                  <Text style={{ backgroundColor: "#8477EB", padding: 8, color: "white", fontFamily: "URBAN_BOLD", fontSize: 16 }}>Swipe Up to save</Text>
+                  <Text style={{ backgroundColor: "#8477EB", padding: 8, color: "white", fontFamily: "URBAN_BOLD", fontSize: 16 }}>Swipe right to save</Text>
                 </Animated.View>
                 <Animated.View style={{ marginRight: "auto", justifyContent: 'center', alignItems: 'center' }}>
-                  <Text style={{ backgroundColor: "#8477EB", padding: 8, color: "white", fontFamily: "URBAN_BOLD", fontSize: 16 }}>Swipe Down to Cancel</Text>
+                  <Text style={{ backgroundColor: "#8477EB", padding: 8, color: "white", fontFamily: "URBAN_BOLD", fontSize: 16 }}>Swipe left to Cancel</Text>
                 </Animated.View>
               </Animated.View>
             }
