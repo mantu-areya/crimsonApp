@@ -24,7 +24,7 @@ let requiredSubCategories = [
 ]
 
 
-export default function FormLineItem({reloadVfData, isSubmittedByReviewer, handleAcceptLineItem, isSubmitted, isForReviewerView, inspId, item, onRoomMeasurementValueChange, onOtherFormValueChange, isForRoomMeasurement, deleteNewItem, navigation, readOnly, setShowAddButton, handleOnSave, setIsEditModalClosed }) {
+export default function FormLineItem({ reloadVfData, isSubmittedByReviewer, handleAcceptLineItem, isSubmitted, isForReviewerView, inspId, item, onRoomMeasurementValueChange, onOtherFormValueChange, isForRoomMeasurement, deleteNewItem, navigation, readOnly, setShowAddButton, handleOnSave, setIsEditModalClosed }) {
   const [overlayVisible, setOverlayVisible] = React.useState(false)
 
   const handleDelGest = (Id, inspId, UniqueKey) => {
@@ -77,12 +77,12 @@ export default function FormLineItem({reloadVfData, isSubmittedByReviewer, handl
   }
 
   return (
-    <OtherFormLineItems {...{reloadVfData, Sub_Category_Keys, item, readOnly, handleOnSave, onOtherFormValueChange, setOverlayVisible, overlayVisible, swipeableRef, rightButtons, navigation, inspId, }} />
+    <OtherFormLineItems {...{ reloadVfData, Sub_Category_Keys, item, readOnly, handleOnSave, onOtherFormValueChange, setOverlayVisible, overlayVisible, swipeableRef, rightButtons, navigation, inspId, }} />
   )
 
 }
 
-function OtherFormLineItems({ reloadVfData,Sub_Category_Keys, item, readOnly, handleOnSave, onOtherFormValueChange, setOverlayVisible, overlayVisible, swipeableRef, rightButtons, navigation, inspId }) {
+function OtherFormLineItems({ reloadVfData, Sub_Category_Keys, item, readOnly, handleOnSave, onOtherFormValueChange, setOverlayVisible, overlayVisible, swipeableRef, rightButtons, navigation, inspId }) {
 
   const offset = useSharedValue({ x: 0 });
   const start = useSharedValue({ x: 0 });
@@ -194,7 +194,7 @@ function OtherFormLineItems({ reloadVfData,Sub_Category_Keys, item, readOnly, ha
         return;
       }
       console.log("SAVING..");
-      item && handleOnSave(false,item); // * Call SAVE TO CONTEXT FUNCTION
+      item && handleOnSave(false, item); // * Call SAVE TO CONTEXT FUNCTION
       setOverlayVisible(false);
       showMessage({
         message: "Saving Changes...",
@@ -420,7 +420,7 @@ function SubmittedFormLineItem({ status, title, rate, quantity, total, notes, ad
 function RoomMeasurementLineItem({ item, handleOnSave, onRoomMeasurementValueChange, setOverlayVisible, overlayVisible, readOnly, swipeableRef, isSubmittedByReviewer }) {
 
   let length, width, misc, total;
-  const Sub_Category_List = ["Garage", "Foyed", "Family Room", "Breakfast Nook", "Kitchen", "Laundry Room", "Formal Living Room", "Hallway 1", "Hallway 2", "Half Bathroom", "Master Bathroom", "Bathroom 2", "Bathroom 3", "Master Bedroom", "Bedroom 2", "Bedroom 3", "Bedroom 4", "Gameroom", "Office/Study", "Basement", "master closet", "Dining Room",]
+  const Sub_Category_List = ["Master Closet", "Garage", "Foyer", "Family Room", "Breakfast Nook", "Kitchen", "Laundry Room", "Formal Living Room", "Hallway 1", "Hallway 2", "Half Bathroom", "Master Bathroom", "Bathroom 2", "Bathroom 3", "Master Bedroom", "Bedroom 2", "Bedroom 3", "Bedroom 4", "Gameroom", "Office/Study", "Basement", "master closet", "Dining Room",]
 
 
   function getFormatedRowValues(value) {
