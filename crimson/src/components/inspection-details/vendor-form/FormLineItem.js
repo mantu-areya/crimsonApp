@@ -66,7 +66,7 @@ export default function FormLineItem({ reloadVfData, isSubmittedByReviewer, hand
   }
 
   if (isForRoomMeasurement) {
-    return <RoomMeasurementLineItem {...{ item, handleOnSave, onRoomMeasurementValueChange, setOverlayVisible, overlayVisible, readOnly, swipeableRef, isSubmittedByReviewer }} />
+    return <RoomMeasurementLineItem {...{ reloadVfData, item, handleOnSave, onRoomMeasurementValueChange, setOverlayVisible, overlayVisible, readOnly, swipeableRef, isSubmittedByReviewer }} />
   }
 
   if (isForReviewerView) {
@@ -417,7 +417,7 @@ function SubmittedFormLineItem({ status, title, rate, quantity, total, notes, ad
   )
 }
 
-function RoomMeasurementLineItem({ item, handleOnSave, onRoomMeasurementValueChange, setOverlayVisible, overlayVisible, readOnly, swipeableRef, isSubmittedByReviewer }) {
+function RoomMeasurementLineItem({ reloadVfData, item, handleOnSave, onRoomMeasurementValueChange, setOverlayVisible, overlayVisible, readOnly, swipeableRef, isSubmittedByReviewer }) {
 
   let length, width, misc, total;
   const Sub_Category_List = ["Master Closet", "Garage", "Foyer", "Family Room", "Breakfast Nook", "Kitchen", "Laundry Room", "Formal Living Room", "Hallway 1", "Hallway 2", "Half Bathroom", "Master Bathroom", "Bathroom 2", "Bathroom 3", "Master Bedroom", "Bedroom 2", "Bedroom 3", "Bedroom 4", "Gameroom", "Office/Study", "Basement", "master closet", "Dining Room",]
@@ -518,7 +518,7 @@ function RoomMeasurementLineItem({ item, handleOnSave, onRoomMeasurementValueCha
         return;
       }
       console.log("INSIDE CANCEL");
-      // refreshCOData()// * Reset Old Data
+      reloadVfData()// * Reset Old Data
       setOverlayVisible(false);
       showMessage({
         message: "Discarding changes...",
