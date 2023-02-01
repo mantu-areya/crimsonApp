@@ -151,9 +151,9 @@ const Hero = ({ totalBidSubmitted, roomMeasurementTotal, data, isSubmitted, sect
                     activeDotIndex={index}
                     carouselRef={isCarousel}
                     dotStyle={{
-                        width: 10,
-                        height: 10,
-                        borderRadius: 5,
+                        width: 24,
+                        height: 24,
+                        borderRadius: 24/2,
                         marginHorizontal: 0,
                         backgroundColor: 'rgba(0, 0, 0, 0.92)'
                     }}
