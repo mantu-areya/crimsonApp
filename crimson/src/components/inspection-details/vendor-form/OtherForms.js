@@ -208,11 +208,14 @@ const OtherForms = ({ sectionTotals, formStatus, gTotal, isSubmitted, isForRevie
         const isNotStringValueField = !(["Matrix_Price", "Sub_Category", "U_M", "Scope_Notes", "Owner_Clarification"]?.includes(field))
         if (isNotStringValueField && isNaN(value)) {
             console.log("NAN", isNaN(value));
-            return;
+            value = 0;
         }
         if (parseFloat(value) < 0) {
             console.log("Entered val is negative");
-            return;
+            value = 0;
+        }
+        if (isNotStringValueField && value === "") {
+            value = 0;
         }
         let newState, Sub_Category;
         let newSequence = sequence + 1
@@ -315,11 +318,14 @@ const OtherForms = ({ sectionTotals, formStatus, gTotal, isSubmitted, isForRevie
         const isNotStringValueField = !(["Sub_Category"]?.includes(field))
         if (isNotStringValueField && isNaN(value)) {
             console.log("NAN", isNaN(value));
-            return;
+            value = 0;
         }
         if (parseFloat(value) < 0) {
             console.log("Entered val is negative");
-            return;
+            value = 0;
+        }
+        if (isNotStringValueField && value === "") {
+            value = 0;
         }
 
         let newData;

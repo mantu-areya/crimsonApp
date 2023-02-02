@@ -304,6 +304,7 @@ function OtherFormLineItems({ reloadVfData, Sub_Category_Keys, item, readOnly, h
                   <View style={{ flex: 1, marginHorizontal: 2 }}>
                     <FormLabel style={{ fontSize: 12 }}>Qty</FormLabel>
                     <FormInput onChangeText={(text) => {
+                      console.log("CHANGE", text);
                       onOtherFormValueChange(text, "Quantity", item.UniqueKey)
                     }} style={{ fontSize: 16 }} keyboardType="number-pad" value={`${item.Quantity ?? 0}`} />
                   </View>
@@ -1219,7 +1220,7 @@ function CustomFormInput({ readOnly = false, onChangeText = () => { }, value, la
 
 const LineItemWrapper = styled.TouchableOpacity`
 background-color: #F1F4F8;
-padding: 16px 32px 8px;
+padding: 8px;
 flex-direction: row;
 `;
 

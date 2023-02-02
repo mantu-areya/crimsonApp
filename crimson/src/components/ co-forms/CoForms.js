@@ -154,6 +154,18 @@ const CoForms = ({ isForReviewerView, isSubmitted, readOnly, inspectionData, nav
     }
 
     const handleOnChangeLineItem = async (field, value, key) => {
+        const isNotStringValueField = !(["Scope_Notes", "Cost_Category", "Adj_U_M", "U_M", "Owner_Clarification"]?.includes(field))
+        if (isNotStringValueField && isNaN(value)) {
+            console.log("NAN", isNaN(value));
+            value = 0;
+        }
+        if (parseFloat(value) < 0) {
+            console.log("Entered val is negative");
+            value = 0;
+        }
+        if (isNotStringValueField && value === "") {
+            value = 0;
+        }
         const updatedDataList = dataList.map((obj) => {
             if (obj.UniqueKey === key) {
                 let formatedVal = ["Scope_Notes", "Cost_Category", "Adj_U_M", "U_M", "Owner_Clarification"].includes(field) ? value : parseFloat(value)
