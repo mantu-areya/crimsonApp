@@ -15,6 +15,7 @@ const caretDown = <Icon name="caret-down" size={16} color="white" />;
 import { AuthenticationContext } from "../services/authentication/authentication.context";
 
 import { useIsFocused } from '@react-navigation/native';
+import { useNetInfo } from "@react-native-community/netinfo";
 
 const TopContainer = styled.View`
 background-color:#14181B;
@@ -73,7 +74,7 @@ export const HomePage = ({ navigation }) => {
       isPreConDateEqualToToday = compareAsc(new Date(insp.Initial_Rehab_ID__r.Pre_Con_Meeting_Date__c), new Date(TODAY)) === 0;
     }
     let isValidProjectRehabDate = false;
-    if (insp?.Initial_Rehab_ID__r?.Projected_Rehab_Complete_Date__c ) {
+    if (insp?.Initial_Rehab_ID__r?.Projected_Rehab_Complete_Date__c) {
       isValidProjectRehabDate = differenceInDays(new Date(insp?.Initial_Rehab_ID__r?.Projected_Rehab_Complete_Date__c), new Date(TODAY)) >= 7
     }
     if (isValidRehabStage && (isPreConDateEqualToToday || isValidProjectRehabDate)) {
@@ -89,19 +90,19 @@ export const HomePage = ({ navigation }) => {
     if (userRole) {
       setSelectedOption(allInspectionsTypes[0])
     }
-  },[userRole])
+  }, [userRole])
 
 
   React.useEffect(() => {
 
     if (userRole === "Contractor" && selectedOption === allInspectionsTypes[0]) {
       setCurrentSelectedInspections(pendingInspectionsForGC)
-    } 
-    if (userRole === "Reviewer" && selectedOption === allInspectionsTypes[0])  {
+    }
+    if (userRole === "Reviewer" && selectedOption === allInspectionsTypes[0]) {
       setCurrentSelectedInspections(pendingInspectionsForReviewer)
     }
 
-  },[userRole,inspections])
+  }, [userRole, inspections])
 
 
   const handleOptionSelect = (option) => {
@@ -153,8 +154,18 @@ export const HomePage = ({ navigation }) => {
   }, [isFocused])
 
 
+  const netInfo = useNetInfo();
+
+
   return (
     <View style={{ flex: 1, paddingTop: insets.top, backgroundColor: 'black' }}>
+      {
+        !(netInfo.isConnected) &&
+        <View style={{ width: "100%", zIndex: 48, padding: 8, backgroundColor: "orange", justifyContent: "center", alignItems: "center" }}>
+          <Text style={{ fontFamily: "URBAN_BOLD" }}>No Internet.</Text>
+          <Text style={{ fontFamily: "URBAN_MEDIUM" }}>App working in offline mode</Text>
+        </View>
+      }
       {/* Top */}
       <TopContainer>
         {/* Heading */}

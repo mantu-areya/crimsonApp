@@ -1,13 +1,13 @@
 import { ScrollView, Text, View, TextInput, Modal, Image, Platform } from 'react-native'
 import React from 'react'
 import styled from "styled-components/native"
-import { SafeAreaView } from "react-native-safe-area-context"
+import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context"
 import CallNow from '../components/inspection-details/CallNow'
 import Hero from '../components/inspection-details/Hero'
 import CTA from '../components/inspection-details/CTA'
 import { VendorFormContext } from '../services/context/VendorForm/vendorForm.contex'
 import { getVendorFormDetails, updateSfVendorFormDetails } from '../services/inspections/inspections.service'
-import NetInfo from "@react-native-community/netinfo";
+import NetInfo, { useNetInfo } from "@react-native-community/netinfo";
 import OtherForms from '../components/inspection-details/vendor-form/OtherForms'
 import { SubmitReviewForm } from '../features/gcs/components/SubmitReviewForm'
 import Overlay from 'react-native-modal-overlay'
@@ -184,6 +184,9 @@ const InspectionDetails = ({ route, navigation }) => {
   // Handle CO FORM CHANGE VIEW
   const [showCoForm, setShowCoForm] = React.useState(false);
 
+  // Check if app is offline
+
+  const netInfo = useNetInfo()
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
@@ -194,6 +197,14 @@ const InspectionDetails = ({ route, navigation }) => {
           </View>
           :
           <>
+            {
+              !(netInfo.isConnected) &&
+              <View style={{ width: "100%", zIndex: 48, padding: 8, backgroundColor: "orange", justifyContent: "center", alignItems: "center" }}>
+                <Text style={{ fontFamily: "URBAN_BOLD" }}>No Internet.</Text>
+                <Text style={{ fontFamily: "URBAN_MEDIUM" }}>App working in offline mode</Text>
+              </View>
+            }
+
             <ScrollView onScroll={(e) => e.nativeEvent.contentOffset.y < 500 ? setShow(true) : setShow(false)} scrollEventThrottle={16}>
               {/* {!readOnly && */}
               <Overlay visible={isSubmitModalOpen} onClose={() => setIsSubmitModalOpen(false)}  >
@@ -314,18 +325,16 @@ function Signatures({ navigation, inspId, role, inspectionData, hasRequiredSign,
       console.log("SETTING...");
       setHasRequiredSign(true);
     }
-
-  }, [gcSignDate, rSignDate])
+    console.log("RUNNNING...");
+  }, [gcSignDate,
+    rSignDate])
 
 
   const { addSignature } = React.useContext(VendorFormContext);
 
   const [modalVisible, setModalVisible] = React.useState(false);
 
-  if (hasRequiredSign) {
-    console.log("HIDING SIGNATURES");
-    return null;
-  }
+  // 
 
 
   return (
