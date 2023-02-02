@@ -481,6 +481,11 @@ function CoFormLineItem({ handleDeleteLineItem, refreshCOData, item, isSubmitted
     const [showReviewerImagePopover, setShowReviewerImagePopover] = React.useState(false);
 
     const rightButtonsForReviwerSubmit = [
+        <TouchableOpacity onPress={() => handleDeleteLineItem(item.id)} style={{ backgroundColor: '#F3206F', justifyContent: 'center', alignItems: 'center', width: 64, flex: 1 }}>
+            <View>
+                <MaterialCommunityIcons name="delete" size={24} color="white" />
+            </View>
+        </TouchableOpacity>,
         <TouchableOpacity onPress={() => {
             setShowReviewerImagePopover(true);
             handleGetCoLineLineItemImages()

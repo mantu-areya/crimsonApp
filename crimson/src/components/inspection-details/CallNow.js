@@ -73,17 +73,20 @@ align-items: center;
 z-index: 9999;
 `;
 
-const TextWrapper = styled.View``;
+const TextWrapper = styled.View`
+flex: .9;
+
+`;
 
 const Title = styled.Text`
 color: white;
-font-size: 20px;
+font-size: 14px;
 margin-bottom: 4px;
 font-family: 'URBAN_BOLD';
 `;
 
 const SubTitle = styled.Text`
-font-size: 14px;
+font-size: 12px;
 font-family: 'URBAN_BOLD';
 color: #7A8791;
 `;
