@@ -334,41 +334,54 @@ function Signatures({ navigation, inspId, role, inspectionData, hasRequiredSign,
 
   const [modalVisible, setModalVisible] = React.useState(false);
 
-  // 
+  const [loader, setLoader] = React.useState(false);
+
+
+  const handleOK = (e) => {
+    let bs64dataArray = e.split(',')
+    setLoader(true);
+    updateSignToContext(bs64dataArray[1])
+    setTimeout(() => {
+      setModalVisible(!modalVisible);
+      setLoader(false);
+      showMessage({
+        type: "success",
+        message: "Signature added successfully"
+      })
+      navigation.goBack()
+    }, 5000)
+    // navigation.goBack()
+  }
 
 
   return (
 
     <View >
-      <View style={{ padding: 16 }}>
-        <SubmitButtonWrapper mode="contained" onPress={() => setModalVisible(true)}>
-          <ButtonText style={{ textAlign: 'center' }} color="white">
-            Add Signature
-          </ButtonText>
-        </SubmitButtonWrapper>
-        <Modal
-          animationType="slide"
-          transparent={true}
-          visible={modalVisible}
-          onRequestClose={() => {
-            setModalVisible(!modalVisible);
-          }}>
-          <Sign
-            onOK={(e) => {
-              let bs64dataArray = e.split(',')
-              setModalVisible(!modalVisible);
-              updateSignToContext(bs64dataArray[1])
-              showMessage({
-                type: "success",
-                message: "Signature added successfully"
-              })
-              navigation.goBack()
-            }} text={role === "Reviewer" ? "HHM Signature" : "Contractor Signature"}
-            handleOnCancel={() => setModalVisible(false)}
-          />
+      {
+        loader
+          ? <ActivityIndicator />
+          :
+          <View style={{ padding: 16 }}>
+            <SubmitButtonWrapper mode="contained" onPress={() => setModalVisible(true)}>
+              <ButtonText style={{ textAlign: 'center' }} color="white">
+                Add Signature
+              </ButtonText>
+            </SubmitButtonWrapper>
+            <Modal
+              animationType="slide"
+              transparent={true}
+              visible={modalVisible}
+              onRequestClose={() => {
+                setModalVisible(!modalVisible);
+              }}>
+              <Sign
+                onOK={(e) => handleOK(e)} text={role === "Reviewer" ? "HHM Signature" : "Contractor Signature"}
+                handleOnCancel={() => setModalVisible(false)}
+              />
 
-        </Modal>
-      </View>
+            </Modal>
+          </View>
+      }
     </View>
   )
 }

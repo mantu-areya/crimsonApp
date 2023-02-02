@@ -96,10 +96,12 @@ export const HomePage = ({ navigation }) => {
   React.useEffect(() => {
 
     if (userRole === "Contractor" && selectedOption === allInspectionsTypes[0]) {
-      setCurrentSelectedInspections(pendingInspectionsForGC)
+      let temp = inspections?.filter(insp => insp.Inspection_Stage__c === "Bid Reviewer Assigned" && insp.Inspection_Form_Stage__c !== "Vendor Form Completed")
+      setCurrentSelectedInspections(temp)
     }
     if (userRole === "Reviewer" && selectedOption === allInspectionsTypes[0]) {
-      setCurrentSelectedInspections(pendingInspectionsForReviewer)
+      let temp = inspections?.filter(insp => insp.Inspection_Stage__c === "Bid Reviewer Assigned" && insp.Inspection_Form_Stage__c === "Vendor Form Completed")
+      setCurrentSelectedInspections(temp)
     }
 
   }, [userRole, inspections])
@@ -108,22 +110,50 @@ export const HomePage = ({ navigation }) => {
   const handleOptionSelect = (option) => {
     setSelectedOption(option);
     if (option === "WA Generated") {
-      setCurrentSelectedInspections(waGenerated)
+      let temp = inspections?.filter(insp => insp.Inspection_Stage__c === "Work Authorization Form Created");
+      setCurrentSelectedInspections(temp)
     }
     if (option === "Pending Review") {
-      setCurrentSelectedInspections(pendingInspectionsForReviewer)
+      let temp = inspections?.filter(insp => insp.Inspection_Stage__c === "Bid Reviewer Assigned" && insp.Inspection_Form_Stage__c === "Vendor Form Completed")
+      setCurrentSelectedInspections(temp)
     }
     if (option === "Approval Submitted") {
-      setCurrentSelectedInspections(pendingSubmittedForApprovalByContractor)
+      let temp = inspections?.filter(insp => insp.Inspection_Stage__c === "Inspection Complete" && insp.Inspection_Form_Stage__c === "Reviewer Form Completed")
+      setCurrentSelectedInspections(temp)
     }
     if (option === "Pending Vendor Submission") {
-      setCurrentSelectedInspections(pendingInspectionsForGC)
+      let temp = inspections?.filter(insp => insp.Inspection_Stage__c === "Bid Reviewer Assigned" && insp.Inspection_Form_Stage__c !== "Vendor Form Completed")
+      setCurrentSelectedInspections(temp)
     }
     if (option === "Upcoming Preconstruction") {
-      setCurrentSelectedInspections(upcomingPreconstruction);
+      let temp = inspections?.filter(insp => {
+        let isValidRehabStage = insp?.Initial_Rehab_Operating_Stage__c === "2 - Pre-Construction";
+        let isPreConDateValid = false;
+        if (insp?.Initial_Rehab_ID__r?.Pre_Con_Meeting_Date__c) {
+          isPreConDateValid = compareAsc(new Date(insp.Initial_Rehab_ID__r.Pre_Con_Meeting_Date__c), new Date(TODAY)) === 0 || compareAsc(new Date(insp.Initial_Rehab_ID__r.Pre_Con_Meeting_Date__c), new Date(TODAY)) === 1;
+        }
+        if (isValidRehabStage && isPreConDateValid && insp?.General_Contractor__c) {
+          return insp;
+        }
+      })
+      setCurrentSelectedInspections(temp);
     }
     if (option === "Next 7days Projected Rehab Complete Date") {
-      setCurrentSelectedInspections(next7DaysProjectedRehab);
+      let temp = inspections?.filter(insp => {
+        let isValidRehabStage = insp?.Initial_Rehab_Operating_Stage__c === "3 - Under Rehab";
+        let isPreConDateEqualToToday = false;
+        if (insp?.Initial_Rehab_ID__r?.Pre_Con_Meeting_Date__c) {
+          isPreConDateEqualToToday = compareAsc(new Date(insp.Initial_Rehab_ID__r.Pre_Con_Meeting_Date__c), new Date(TODAY)) === 0;
+        }
+        let isValidProjectRehabDate = false;
+        if (insp?.Initial_Rehab_ID__r?.Projected_Rehab_Complete_Date__c) {
+          isValidProjectRehabDate = differenceInDays(new Date(insp?.Initial_Rehab_ID__r?.Projected_Rehab_Complete_Date__c), new Date(TODAY)) >= 7
+        }
+        if (isValidRehabStage && (isPreConDateEqualToToday || isValidProjectRehabDate)) {
+          return insp;
+        }
+      })
+      setCurrentSelectedInspections(temp);
     }
   }
 
@@ -135,7 +165,9 @@ export const HomePage = ({ navigation }) => {
   const onChangeSearch = query => {
     setSearchQuery(query);
   }
-  const filterInspections = currentSelectedInspections?.filter((ins) => ins?.Name.toLowerCase().includes(searchQuery.toLowerCase()) || ins?.Property_Address__c.toLowerCase().includes(searchQuery.toLowerCase()) || ins?.Property_City__c?.toLowerCase()?.includes(searchQuery.toLowerCase()));
+  // const filterInspections = currentSelectedInspections?.filter((ins) => ins?.Name.toLowerCase().includes(searchQuery.toLowerCase()) || ins?.Property_Address__c.toLowerCase().includes(searchQuery.toLowerCase()) || ins?.Property_City__c?.toLowerCase()?.includes(searchQuery.toLowerCase()));
+
+  const [filterInspections, setFilterInspections] = React.useState()
 
   const insets = useSafeAreaInsets();
 
@@ -153,11 +185,68 @@ export const HomePage = ({ navigation }) => {
     }
   }, [isFocused])
 
+  React.useEffect(() => {
+    let option = selectedOption
+    if (option === "WA Generated") {
+      let temp = inspections?.filter(insp => insp.Inspection_Stage__c === "Work Authorization Form Created");
+      setCurrentSelectedInspections(temp)
+    }
+    if (option === "Pending Review") {
+      let temp = inspections?.filter(insp => insp.Inspection_Stage__c === "Bid Reviewer Assigned" && insp.Inspection_Form_Stage__c === "Vendor Form Completed")
+      setCurrentSelectedInspections(temp)
+    }
+    if (option === "Approval Submitted") {
+      let temp = inspections?.filter(insp => insp.Inspection_Stage__c === "Inspection Complete" && insp.Inspection_Form_Stage__c === "Reviewer Form Completed")
+      setCurrentSelectedInspections(temp)
+    }
+    if (option === "Pending Vendor Submission") {
+      let temp = inspections?.filter(insp => insp.Inspection_Stage__c === "Bid Reviewer Assigned" && insp.Inspection_Form_Stage__c !== "Vendor Form Completed")
+      setCurrentSelectedInspections(temp)
+    }
+    if (option === "Upcoming Preconstruction") {
+      let temp = inspections?.filter(insp => {
+        let isValidRehabStage = insp?.Initial_Rehab_Operating_Stage__c === "2 - Pre-Construction";
+        let isPreConDateValid = false;
+        if (insp?.Initial_Rehab_ID__r?.Pre_Con_Meeting_Date__c) {
+          isPreConDateValid = compareAsc(new Date(insp.Initial_Rehab_ID__r.Pre_Con_Meeting_Date__c), new Date(TODAY)) === 0 || compareAsc(new Date(insp.Initial_Rehab_ID__r.Pre_Con_Meeting_Date__c), new Date(TODAY)) === 1;
+        }
+        if (isValidRehabStage && isPreConDateValid && insp?.General_Contractor__c) {
+          return insp;
+        }
+      })
+      setCurrentSelectedInspections(temp);
+    }
+    if (option === "Next 7days Projected Rehab Complete Date") {
+      let temp = inspections?.filter(insp => {
+        let isValidRehabStage = insp?.Initial_Rehab_Operating_Stage__c === "3 - Under Rehab";
+        let isPreConDateEqualToToday = false;
+        if (insp?.Initial_Rehab_ID__r?.Pre_Con_Meeting_Date__c) {
+          isPreConDateEqualToToday = compareAsc(new Date(insp.Initial_Rehab_ID__r.Pre_Con_Meeting_Date__c), new Date(TODAY)) === 0;
+        }
+        let isValidProjectRehabDate = false;
+        if (insp?.Initial_Rehab_ID__r?.Projected_Rehab_Complete_Date__c) {
+          isValidProjectRehabDate = differenceInDays(new Date(insp?.Initial_Rehab_ID__r?.Projected_Rehab_Complete_Date__c), new Date(TODAY)) >= 7
+        }
+        if (isValidRehabStage && (isPreConDateEqualToToday || isValidProjectRehabDate)) {
+          return insp;
+        }
+      })
+      setCurrentSelectedInspections(temp);
+    }
+  }, [inspections])
+
+  React.useEffect(() => {
+    setFilterInspections(currentSelectedInspections?.filter((ins) => ins?.Name.toLowerCase().includes(searchQuery.toLowerCase()) || ins?.Property_Address__c.toLowerCase().includes(searchQuery.toLowerCase()) || ins?.Property_City__c?.toLowerCase()?.includes(searchQuery.toLowerCase())))
+  }, [currentSelectedInspections])
+
+
 
   const netInfo = useNetInfo();
 
 
+
   return (
+
     <View style={{ flex: 1, paddingTop: insets.top, backgroundColor: 'black' }}>
       {
         !(netInfo.isConnected) &&
@@ -219,9 +308,10 @@ export const HomePage = ({ navigation }) => {
           <FlatList
             data={filterInspections ?? []}
             keyExtractor={(item) => item.Id}
-            renderItem={({ item }) => (
-              <ListViewCard data={item} />
-            )}
+            renderItem={({ item }) => {
+              return <ListViewCard data={item} />
+            }
+            }
           />
         }
 
@@ -242,6 +332,8 @@ function ListViewCard({ data }) {
       <View style={{ display: 'flex', alignItems: "center", flexDirection: "row", padding: 16 }}>
         <View>
           <Text style={{ color: 'black', fontFamily: 'URBAN_MEDIUM', fontSize: 18, marginBottom: 4 }}  >{data?.Property_Address__c === '' ? 'Property Address NA' : data?.Property_Address__c}</Text>
+          <Text style={{ color: 'black', fontFamily: 'URBAN_MEDIUM', fontSize: 18, marginBottom: 4 }}  >{"R Sign date" + data?.Work_Authorization_Date_Signed__c}</Text>
+          <Text style={{ color: 'black', fontFamily: 'URBAN_MEDIUM', fontSize: 18, marginBottom: 4 }}  >{"GC Sign date" + data?.Work_Authorization_Signed_Date_GC__c}</Text>
           <Text style={{ color: '#A6AFB9', fontFamily: 'URBAN_REGULAR', fontSize: 16, marginBottom: 2 }} >GC SUBMITTED BID : {data?.Amount_Submitted_GC__c?.toLocaleString("en-IN", { style: "currency", currency: 'USD' })}</Text>
           <Text style={{ color: '#A6AFB9', fontFamily: 'URBAN_REGULAR', fontSize: 16, marginBottom: 2 }} >TARGET REHAB COMPLETE DATE : {data?.Target_Rehab_Complete_Date__c}</Text>
         </View>
