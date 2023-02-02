@@ -315,11 +315,28 @@ function OtherFormLineItems({ reloadVfData, Sub_Category_Keys, item, readOnly, h
                     }} style={{ fontSize: 16 }} value={`${item.U_M ?? ''}`} />
                   </View>
                   <View style={{ flex: 1, marginHorizontal: 2 }}>
+                    {
+                      Sub_Category_Keys.includes(item?.Sub_Category)
+                        ?
+                        <>
+                          <FormLabel style={{ fontSize: 12 }}>Rate</FormLabel>
+                          <FormInput onChangeText={(text) => {
+                            onOtherFormValueChange(text, "Rate", item.UniqueKey)
+                          }} style={{ fontSize: 16 }} keyboardType="number-pad" value={`${item.Rate ?? 0}`} />
+                        </>
+                        :
+                        <>
+                          <FormLabel style={{ fontSize: 12 }}>Rate</FormLabel>
+                          <FormValue style={{ color: "black", padding: 8, fontSize: 16 }}>{`${item.Rate ?? 0}`} </FormValue>
+                        </>
+                    }
+                  </View>
+                  {/* <View style={{ flex: 1, marginHorizontal: 2 }}>
                     <FormLabel style={{ fontSize: 12 }}>Rate</FormLabel>
                     <FormInput onChangeText={(text) => {
                       onOtherFormValueChange(text, "Rate", item.UniqueKey)
                     }} style={{ fontSize: 16 }} keyboardType="number-pad" value={`${item.Rate ?? 0}`} />
-                  </View>
+                  </View> */}
                   <View style={{ flex: 1, marginHorizontal: 2 }}>
                     <FormLabel style={{ fontSize: 12 }}>Total</FormLabel>
                     <FormValue style={{ color: "black", padding: 8, fontSize: 16 }}>{`${item.Total ?? 0}`} </FormValue>
