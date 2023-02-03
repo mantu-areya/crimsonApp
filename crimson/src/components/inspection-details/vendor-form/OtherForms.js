@@ -10,6 +10,7 @@ import { Button } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import EntypoIcon from 'react-native-vector-icons/Entypo'
 import NetInfo from "@react-native-community/netinfo";
+import { InspectionsContext } from '../../../services/inspections/inspections.contex';
 
 
 
@@ -87,6 +88,27 @@ const OtherForms = ({ sectionTotals, formStatus, gTotal, isSubmitted, isForRevie
 
 
     // comment this useEffeect function while developing to avoid refresh VF loop
+        // comment this useEffeect function while developing to avoid refresh VF loop
+  React.useEffect(() => {
+    let refreshVfDataOnInterval;
+    if (isEditModalClosed == false) {
+       refreshVfDataOnInterval = setInterval(() => {
+        NetInfo.fetch().then(netData => {
+        console.log("VF  interval  REFRESH Started");
+        netData.isConnected && refreshVfData(inspectionData.Id)
+        return
+        })
+      }, 20000);
+    }
+    else {
+      clearInterval(refreshVfDataOnInterval);
+    }
+    return () => {
+      clearInterval(refreshVfDataOnInterval);
+      console.log("Vf REFRESH STOPPED");
+    }
+  }, [isEditModalClosed])
+
     React.useEffect(() => {
         let refreshVfDataOnInterval;
         if (isEditModalClosed == false) {
@@ -253,6 +275,10 @@ const OtherForms = ({ sectionTotals, formStatus, gTotal, isSubmitted, isForRevie
             dataList.push(itemObject[0])
             newState = dataList
             setSequence(newSequence)
+            NetInfo.fetch().then(netData => {
+              !netData.isConnected && updateModifiedLineItemToSf(itemObject[0],inspectionData.Id)
+              return
+              })
             addNewItem(itemObject, inspectionData.Id)
             setNewItemAdded(NewItemAdded + 1)
         } {
@@ -502,7 +528,7 @@ const OtherForms = ({ sectionTotals, formStatus, gTotal, isSubmitted, isForRevie
                                     {
                                         dataList.sort((a, b) => b.Quantity - a.Quantity).filter(item => {
                                             return item?.Sub_Category?.includes(searchQuery) || item?.Matrix_Price?.includes(searchQuery)
-                                        }).map((item, i) => <FormLineItem key={item?.Id}   {...{ reloadVfData, isSubmittedByReviewer, handleAcceptLineItem, isForReviewerView, item, inspId: inspectionData.Id, onRoomMeasurementValueChange, onOtherFormValueChange, navigation, readOnly, setShowAddButton, handleOnSave, deleteNewItem, setIsEditModalClosed }} isForRoomMeasurement={currentFormData.title === "Room Measurements"} />)
+                                        }).map((item, i) => <FormLineItem key={item?.UniqueKey}   {...{ isSubmittedByReviewer, handleAcceptLineItem, isForReviewerView, item, inspId: inspectionData.Id, onRoomMeasurementValueChange, onOtherFormValueChange, navigation, readOnly, setShowAddButton, handleOnSave, deleteNewItem,setIsEditModalClosed }} isForRoomMeasurement={currentFormData.title === "Room Measurements"} />)
                                     }
                                 </ScrollView>
                                 :
@@ -510,7 +536,7 @@ const OtherForms = ({ sectionTotals, formStatus, gTotal, isSubmitted, isForRevie
                                     {
                                         dataList.filter(item => {
                                             return item?.Sub_Category?.includes(searchQuery) || item?.Matrix_Price?.includes(searchQuery)
-                                        }).map((item, i) => <FormLineItem key={item?.Id}   {...{ reloadVfData, isSubmittedByReviewer, handleAcceptLineItem, isForReviewerView, item, inspId: inspectionData.Id, onRoomMeasurementValueChange, onOtherFormValueChange, navigation, readOnly, setShowAddButton, handleOnSave, deleteNewItem, setIsEditModalClosed }} isForRoomMeasurement={currentFormData.title === "Room Measurements"} />)
+                                        }).map((item, i) => <FormLineItem key={item?.UniqueKey}   {...{ isSubmittedByReviewer, handleAcceptLineItem, isForReviewerView, item, inspId: inspectionData.Id, onRoomMeasurementValueChange, onOtherFormValueChange, navigation, readOnly, setShowAddButton, handleOnSave, deleteNewItem,setIsEditModalClosed }} isForRoomMeasurement={currentFormData.title === "Room Measurements"} />)
                                     }
                                 </ScrollView>
                             :
@@ -586,8 +612,8 @@ const OtherForms = ({ sectionTotals, formStatus, gTotal, isSubmitted, isForRevie
                                         }
                                         return item?.Matrix_Price?.includes(searchQuery);
                                     }).filter(item => item.Approval_Status === "Approved" || item.Approval_Status === "Approved as Noted").map((item, i) =>
-                                        <FormLineItem key={item?.Id}
-                                            {...{ isSubmitted, isForReviewerView, item, inspId: inspectionData.Id, onRoomMeasurementValueChange, onOtherFormValueChange, navigation, readOnly, setShowAddButton, handleOnSave, setIsEditModalClosed }} x
+                                        <FormLineItem key={item?.UniqueKey}
+                                            {...{ isSubmitted, isForReviewerView, item, inspId: inspectionData.Id, onRoomMeasurementValueChange, onOtherFormValueChange, navigation, readOnly, setShowAddButton, handleOnSave,setIsEditModalClosed }} x
                                             isForRoomMeasurement={currentFormData.title === "Room Measurements"} />)
                                 }
                             </ScrollView> :

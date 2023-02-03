@@ -107,15 +107,19 @@ export const VendorFormContextProvider = ({ children }) => {
     })
   }
 
-  const addNewItem = (newData, inspId) => {
+  const addNewItem = async (newData, inspId) => {
     let newVfDataArray = vendorFormDetails[inspId]
     newVfDataArray.push(newData[0])
     setVendorFormDetails({ ...vendorFormDetails, [inspId]: newVfDataArray })
-    updateSfVendorFormDetails([newData[0]], inspId,submitStatus=false,role="Contractor").then(data=>{
-          return
-        }).catch(error=>{
-          console.log("eroor in updateModifiedLineItemToSf ");
-        })
+
+    await NetInfo.fetch().then(netData => {
+      netData.isConnected &&  updateSfVendorFormDetails([newData[0]], inspId,submitStatus=false,role="Contractor").then(data=>{
+        return
+      }).catch(error=>{
+        console.log("eroor in updateModifiedLineItemToSf ");
+      })
+      return
+      })
   }
 
   const deleteNewItem = (dvdId, inspId, UniqueKey) => {
@@ -214,6 +218,7 @@ export const VendorFormContextProvider = ({ children }) => {
         addNewItem,
         deleteNewItem,
         deletedLineItems,
+        setDeletedLineItems,
         refreshVfData,
         updateModifiedLineItemToSf,
         modifiedItemsinOffline,
