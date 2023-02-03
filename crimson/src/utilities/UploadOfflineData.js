@@ -13,7 +13,7 @@ export const UploadOfflineData = () => {
   const [netStateChange, setNetStateChange] = useState('');
   const [offlineUploadStart, setOfflineUploadStart] = useState("NS")
 
-  const { addToVfContex, setAscynDataToApp, vendorFormDetails, deletedLineItems,setModifiedItemsinOffline,modifiedItemsinOffline } = useContext(VendorFormContext)
+  const { addToVfContex, setAscynDataToApp, vendorFormDetails, deletedLineItems,setDeletedLineItems,setModifiedItemsinOffline,modifiedItemsinOffline } = useContext(VendorFormContext)
   const { inspections,userRole } = useContext(InspectionsContext);
 
   useEffect(() => {
@@ -38,6 +38,7 @@ export const UploadOfflineData = () => {
   useEffect(() => {
     addVfData()
     addOfflineModifiedRecordsToApp()
+    addOfflineDeletedDvdsToAPp()
     AppState.addEventListener("change", nextAppState => {
       if (
         appState.current.match(/inactive|background/) &&
@@ -52,7 +53,8 @@ export const UploadOfflineData = () => {
 
   const addDataToAsync = async (data) => {
     try {
-      inspections && await AsyncStorage.multiSet([['inspection', JSON.stringify(inspections)], ['vendorForm', JSON.stringify(data)],['userRole', userRole],['modifiedItemsinOffline',JSON.stringify(modifiedItemsinOffline)]]);
+      inspections && await AsyncStorage.multiSet([['inspection', JSON.stringify(inspections)], ['vendorForm', JSON.stringify(data)],['userRole', userRole],['modifiedItemsinOffline',JSON.stringify(modifiedItemsinOffline)],['deletedLineItems',JSON.stringify({deletedLineItems:deletedLineItems})]]);
+      deletedLineItems && deletedLineItems.length > 0&& await AsyncStorage.setItem('deletedLineItems',JSON.stringify({deletedLineItems:deletedLineItems}));
     }
     catch (err) {
       console.log(err);
@@ -71,9 +73,19 @@ export const UploadOfflineData = () => {
       // Object.keys(modifiedItemsinOffline).length > 0 && AsyncStorage.setItem('modifiedItemsinOffline',JSON.stringify({})) 
     });
   }
+  const addOfflineDeletedDvdsToAPp = async() =>{
+    return await AsyncStorage.getItem('deletedLineItems').then(data => {
+      JSON.parse(data) !== null  && console.log(JSON.parse(data),"cn2");
+      JSON.parse(data) !== null && setDeletedLineItems(JSON.parse(data).deletedLineItems)  && setOfflineUploadStart("END")
+      // Object.keys(modifiedItemsinOffline).length > 0 && AsyncStorage.setItem('modifiedItemsinOffline',JSON.stringify({})) 
+    });
+  }
+  
   const offlineDataToSalesForce = () =>{
     let keyString =  deletedLineItems.length>0 && deletedLineItems.join(',')
-    keyString && deleteLineItem(keyString).catch(error=>{
+    keyString && deleteLineItem(keyString)
+    .then(setDeletedLineItems([])&&setOfflineUploadStar("END"))
+    .catch(error=>{
       setOfflineUploadStar("END")
     })
     let vFData = []
