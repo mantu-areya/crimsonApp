@@ -154,6 +154,18 @@ const CoForms = ({ isForReviewerView, isSubmitted, readOnly, inspectionData, nav
     }
 
     const handleOnChangeLineItem = async (field, value, key) => {
+        const isNotStringValueField = !(["Scope_Notes", "Cost_Category", "Adj_U_M", "U_M", "Owner_Clarification"]?.includes(field))
+        if (isNotStringValueField && isNaN(value)) {
+            console.log("NAN", isNaN(value));
+            value = 0;
+        }
+        if (parseFloat(value) < 0) {
+            console.log("Entered val is negative");
+            value = 0;
+        }
+        if (isNotStringValueField && value === "") {
+            value = 0;
+        }
         const updatedDataList = dataList.map((obj) => {
             if (obj.UniqueKey === key) {
                 let formatedVal = ["Scope_Notes", "Cost_Category", "Adj_U_M", "U_M", "Owner_Clarification"].includes(field) ? value : parseFloat(value)
@@ -469,6 +481,11 @@ function CoFormLineItem({ handleDeleteLineItem, refreshCOData, item, isSubmitted
     const [showReviewerImagePopover, setShowReviewerImagePopover] = React.useState(false);
 
     const rightButtonsForReviwerSubmit = [
+        <TouchableOpacity onPress={() => handleDeleteLineItem(item.id)} style={{ backgroundColor: '#F3206F', justifyContent: 'center', alignItems: 'center', width: 64, flex: 1 }}>
+            <View>
+                <MaterialCommunityIcons name="delete" size={24} color="white" />
+            </View>
+        </TouchableOpacity>,
         <TouchableOpacity onPress={() => {
             setShowReviewerImagePopover(true);
             handleGetCoLineLineItemImages()
@@ -717,10 +734,10 @@ function CoFormLineItem({ handleDeleteLineItem, refreshCOData, item, isSubmitted
                                         show &&
                                         <Animated.View style={{ position: 'absolute', bottom: 120, width: "100%", paddingHorizontal: 12 }}>
                                             <Animated.View style={{ marginLeft: "auto", justifyContent: 'center', alignItems: 'center', marginBottom: 16 }}>
-                                                <Text style={{ backgroundColor: "#8477EB", padding: 8, color: "white", fontFamily: "URBAN_BOLD", fontSize: 16 }}>Swipe Up to save</Text>
+                                                <Text style={{ backgroundColor: "#8477EB", padding: 8, color: "white", fontFamily: "URBAN_BOLD", fontSize: 16 }}>Swipe right to save</Text>
                                             </Animated.View>
                                             <Animated.View style={{ marginRight: "auto", justifyContent: 'center', alignItems: 'center' }}>
-                                                <Text style={{ backgroundColor: "#8477EB", padding: 8, color: "white", fontFamily: "URBAN_BOLD", fontSize: 16 }}>Swipe Down to Cancel</Text>
+                                                <Text style={{ backgroundColor: "#8477EB", padding: 8, color: "white", fontFamily: "URBAN_BOLD", fontSize: 16 }}>Swipe left to Cancel</Text>
                                             </Animated.View>
                                         </Animated.View>
                                     }
@@ -893,10 +910,10 @@ function CoFormLineItem({ handleDeleteLineItem, refreshCOData, item, isSubmitted
                                     show &&
                                     <Animated.View style={{ position: 'absolute', bottom: 120, width: "100%", paddingHorizontal: 12 }}>
                                         <Animated.View style={{ marginLeft: "auto", justifyContent: 'center', alignItems: 'center', marginBottom: 16 }}>
-                                            <Text style={{ backgroundColor: "#8477EB", padding: 8, color: "white", fontFamily: "URBAN_BOLD", fontSize: 16 }}>Swipe Up to save</Text>
+                                            <Text style={{ backgroundColor: "#8477EB", padding: 8, color: "white", fontFamily: "URBAN_BOLD", fontSize: 16 }}>Swipe right to save</Text>
                                         </Animated.View>
                                         <Animated.View style={{ marginRight: "auto", justifyContent: 'center', alignItems: 'center' }}>
-                                            <Text style={{ backgroundColor: "#8477EB", padding: 8, color: "white", fontFamily: "URBAN_BOLD", fontSize: 16 }}>Swipe Down to Cancel</Text>
+                                            <Text style={{ backgroundColor: "#8477EB", padding: 8, color: "white", fontFamily: "URBAN_BOLD", fontSize: 16 }}>Swipe left to Cancel</Text>
                                         </Animated.View>
                                     </Animated.View>
                                 }

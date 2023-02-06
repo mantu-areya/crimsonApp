@@ -24,7 +24,7 @@ let requiredSubCategories = [
 ]
 
 
-export default function FormLineItem({reloadVfData, isSubmittedByReviewer, handleAcceptLineItem, isSubmitted, isForReviewerView, inspId, item, onRoomMeasurementValueChange, onOtherFormValueChange, isForRoomMeasurement, deleteNewItem, navigation, readOnly, setShowAddButton, handleOnSave, setIsEditModalClosed }) {
+export default function FormLineItem({ reloadVfData, isSubmittedByReviewer, handleAcceptLineItem, isSubmitted, isForReviewerView, inspId, item, onRoomMeasurementValueChange, onOtherFormValueChange, isForRoomMeasurement, deleteNewItem, navigation, readOnly, setShowAddButton, handleOnSave, setIsEditModalClosed }) {
   const [overlayVisible, setOverlayVisible] = React.useState(false)
 
   const handleDelGest = (Id, inspId, UniqueKey) => {
@@ -66,7 +66,7 @@ export default function FormLineItem({reloadVfData, isSubmittedByReviewer, handl
   }
 
   if (isForRoomMeasurement) {
-    return <RoomMeasurementLineItem {...{ item, handleOnSave, onRoomMeasurementValueChange, setOverlayVisible, overlayVisible, readOnly, swipeableRef, isSubmittedByReviewer }} />
+    return <RoomMeasurementLineItem {...{ reloadVfData, item, handleOnSave, onRoomMeasurementValueChange, setOverlayVisible, overlayVisible, readOnly, swipeableRef, isSubmittedByReviewer }} />
   }
 
   if (isForReviewerView) {
@@ -77,12 +77,12 @@ export default function FormLineItem({reloadVfData, isSubmittedByReviewer, handl
   }
 
   return (
-    <OtherFormLineItems {...{reloadVfData, Sub_Category_Keys, item, readOnly, handleOnSave, onOtherFormValueChange, setOverlayVisible, overlayVisible, swipeableRef, rightButtons, navigation, inspId, }} />
+    <OtherFormLineItems {...{ reloadVfData, Sub_Category_Keys, item, readOnly, handleOnSave, onOtherFormValueChange, setOverlayVisible, overlayVisible, swipeableRef, rightButtons, navigation, inspId, }} />
   )
 
 }
 
-function OtherFormLineItems({ reloadVfData,Sub_Category_Keys, item, readOnly, handleOnSave, onOtherFormValueChange, setOverlayVisible, overlayVisible, swipeableRef, rightButtons, navigation, inspId }) {
+function OtherFormLineItems({ reloadVfData, Sub_Category_Keys, item, readOnly, handleOnSave, onOtherFormValueChange, setOverlayVisible, overlayVisible, swipeableRef, rightButtons, navigation, inspId }) {
 
   const offset = useSharedValue({ x: 0 });
   const start = useSharedValue({ x: 0 });
@@ -194,7 +194,7 @@ function OtherFormLineItems({ reloadVfData,Sub_Category_Keys, item, readOnly, ha
         return;
       }
       console.log("SAVING..");
-      item && handleOnSave(false,item); // * Call SAVE TO CONTEXT FUNCTION
+      item && handleOnSave(false, item); // * Call SAVE TO CONTEXT FUNCTION
       setOverlayVisible(false);
       showMessage({
         message: "Saving Changes...",
@@ -264,10 +264,10 @@ function OtherFormLineItems({ reloadVfData,Sub_Category_Keys, item, readOnly, ha
               show &&
               <Animated.View style={{ position: 'absolute', bottom: 120, width: "100%", paddingHorizontal: 12 }}>
                 <Animated.View style={{ marginLeft: "auto", justifyContent: 'center', alignItems: 'center', marginBottom: 16 }}>
-                  <Text style={{ backgroundColor: "#8477EB", padding: 8, color: "white", fontFamily: "URBAN_BOLD", fontSize: 16 }}>Swipe Up to save</Text>
+                  <Text style={{ backgroundColor: "#8477EB", padding: 8, color: "white", fontFamily: "URBAN_BOLD", fontSize: 16 }}>Swipe right to save</Text>
                 </Animated.View>
                 <Animated.View style={{ marginRight: "auto", justifyContent: 'center', alignItems: 'center' }}>
-                  <Text style={{ backgroundColor: "#8477EB", padding: 8, color: "white", fontFamily: "URBAN_BOLD", fontSize: 16 }}>Swipe Down to Cancel</Text>
+                  <Text style={{ backgroundColor: "#8477EB", padding: 8, color: "white", fontFamily: "URBAN_BOLD", fontSize: 16 }}>Swipe left to Cancel</Text>
                 </Animated.View>
               </Animated.View>
             }
@@ -304,6 +304,7 @@ function OtherFormLineItems({ reloadVfData,Sub_Category_Keys, item, readOnly, ha
                   <View style={{ flex: 1, marginHorizontal: 2 }}>
                     <FormLabel style={{ fontSize: 12 }}>Qty</FormLabel>
                     <FormInput onChangeText={(text) => {
+                      console.log("CHANGE", text);
                       onOtherFormValueChange(text, "Quantity", item.UniqueKey)
                     }} style={{ fontSize: 16 }} keyboardType="number-pad" value={`${item.Quantity ?? 0}`} />
                   </View>
@@ -314,11 +315,28 @@ function OtherFormLineItems({ reloadVfData,Sub_Category_Keys, item, readOnly, ha
                     }} style={{ fontSize: 16 }} value={`${item.U_M ?? ''}`} />
                   </View>
                   <View style={{ flex: 1, marginHorizontal: 2 }}>
+                    {
+                      Sub_Category_Keys.includes(item?.Sub_Category)
+                        ?
+                        <>
+                          <FormLabel style={{ fontSize: 12 }}>Rate</FormLabel>
+                          <FormInput onChangeText={(text) => {
+                            onOtherFormValueChange(text, "Rate", item.UniqueKey)
+                          }} style={{ fontSize: 16 }} keyboardType="number-pad" value={`${item.Rate ?? 0}`} />
+                        </>
+                        :
+                        <>
+                          <FormLabel style={{ fontSize: 12 }}>Rate</FormLabel>
+                          <FormValue style={{ color: "black", padding: 8, fontSize: 16 }}>{`${item.Rate ?? 0}`} </FormValue>
+                        </>
+                    }
+                  </View>
+                  {/* <View style={{ flex: 1, marginHorizontal: 2 }}>
                     <FormLabel style={{ fontSize: 12 }}>Rate</FormLabel>
                     <FormInput onChangeText={(text) => {
                       onOtherFormValueChange(text, "Rate", item.UniqueKey)
                     }} style={{ fontSize: 16 }} keyboardType="number-pad" value={`${item.Rate ?? 0}`} />
-                  </View>
+                  </View> */}
                   <View style={{ flex: 1, marginHorizontal: 2 }}>
                     <FormLabel style={{ fontSize: 12 }}>Total</FormLabel>
                     <FormValue style={{ color: "black", padding: 8, fontSize: 16 }}>{`${item.Total ?? 0}`} </FormValue>
@@ -417,10 +435,10 @@ function SubmittedFormLineItem({ status, title, rate, quantity, total, notes, ad
   )
 }
 
-function RoomMeasurementLineItem({ item, handleOnSave, onRoomMeasurementValueChange, setOverlayVisible, overlayVisible, readOnly, swipeableRef, isSubmittedByReviewer }) {
+function RoomMeasurementLineItem({ reloadVfData, item, handleOnSave, onRoomMeasurementValueChange, setOverlayVisible, overlayVisible, readOnly, swipeableRef, isSubmittedByReviewer }) {
 
   let length, width, misc, total;
-  const Sub_Category_List = ["Garage", "Foyed", "Family Room", "Breakfast Nook", "Kitchen", "Laundry Room", "Formal Living Room", "Hallway 1", "Hallway 2", "Half Bathroom", "Master Bathroom", "Bathroom 2", "Bathroom 3", "Master Bedroom", "Bedroom 2", "Bedroom 3", "Bedroom 4", "Gameroom", "Office/Study", "Basement", "master closet", "Dining Room",]
+  const Sub_Category_List = ["Master Closet", "Garage", "Foyer", "Family Room", "Breakfast Nook", "Kitchen", "Laundry Room", "Formal Living Room", "Hallway 1", "Hallway 2", "Half Bathroom", "Master Bathroom", "Bathroom 2", "Bathroom 3", "Master Bedroom", "Bedroom 2", "Bedroom 3", "Bedroom 4", "Gameroom", "Office/Study", "Basement", "master closet", "Dining Room",]
 
 
   function getFormatedRowValues(value) {
@@ -518,7 +536,7 @@ function RoomMeasurementLineItem({ item, handleOnSave, onRoomMeasurementValueCha
         return;
       }
       console.log("INSIDE CANCEL");
-      // refreshCOData()// * Reset Old Data
+      reloadVfData()// * Reset Old Data
       setOverlayVisible(false);
       showMessage({
         message: "Discarding changes...",
@@ -611,10 +629,10 @@ function RoomMeasurementLineItem({ item, handleOnSave, onRoomMeasurementValueCha
               show &&
               <Animated.View style={{ position: 'absolute', bottom: 120, width: "100%", paddingHorizontal: 12 }}>
                 <Animated.View style={{ marginLeft: "auto", justifyContent: 'center', alignItems: 'center', marginBottom: 16 }}>
-                  <Text style={{ backgroundColor: "#8477EB", padding: 8, color: "white", fontFamily: "URBAN_BOLD", fontSize: 16 }}>Swipe Up to save</Text>
+                  <Text style={{ backgroundColor: "#8477EB", padding: 8, color: "white", fontFamily: "URBAN_BOLD", fontSize: 16 }}>Swipe right to save</Text>
                 </Animated.View>
                 <Animated.View style={{ marginRight: "auto", justifyContent: 'center', alignItems: 'center' }}>
-                  <Text style={{ backgroundColor: "#8477EB", padding: 8, color: "white", fontFamily: "URBAN_BOLD", fontSize: 16 }}>Swipe Down to Cancel</Text>
+                  <Text style={{ backgroundColor: "#8477EB", padding: 8, color: "white", fontFamily: "URBAN_BOLD", fontSize: 16 }}>Swipe left to Cancel</Text>
                 </Animated.View>
               </Animated.View>
             }
@@ -989,10 +1007,10 @@ function ContractorViewLineItem({ swipeableRef, insets, inspId, isSubmittedByRev
               show &&
               <Animated.View style={{ position: 'absolute', bottom: 120, width: "100%", paddingHorizontal: 12 }}>
                 <Animated.View style={{ marginLeft: "auto", justifyContent: 'center', alignItems: 'center', marginBottom: 16 }}>
-                  <Text style={{ backgroundColor: "#8477EB", padding: 8, color: "white", fontFamily: "URBAN_BOLD", fontSize: 16 }}>Swipe Up to save</Text>
+                  <Text style={{ backgroundColor: "#8477EB", padding: 8, color: "white", fontFamily: "URBAN_BOLD", fontSize: 16 }}>Swipe right to save</Text>
                 </Animated.View>
                 <Animated.View style={{ marginRight: "auto", justifyContent: 'center', alignItems: 'center' }}>
-                  <Text style={{ backgroundColor: "#8477EB", padding: 8, color: "white", fontFamily: "URBAN_BOLD", fontSize: 16 }}>Swipe Down to Cancel</Text>
+                  <Text style={{ backgroundColor: "#8477EB", padding: 8, color: "white", fontFamily: "URBAN_BOLD", fontSize: 16 }}>Swipe left to Cancel</Text>
                 </Animated.View>
               </Animated.View>
             }
@@ -1219,7 +1237,7 @@ function CustomFormInput({ readOnly = false, onChangeText = () => { }, value, la
 
 const LineItemWrapper = styled.TouchableOpacity`
 background-color: #F1F4F8;
-padding: 16px 32px 8px;
+padding: 8px;
 flex-direction: row;
 `;
 

@@ -39,7 +39,7 @@ export default function App() {
           </AuthenticationContextProvider>
         </Provider>
       </ThemeProvider>
-      <FlashMessage position={"bottom"} />
+      <FlashMessage position={"bottom"} duration={1000} />
       <ExpoStatusBar style={"inverted"} backgroundColor="#2B243E" />
     </>
   );

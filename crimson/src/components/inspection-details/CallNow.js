@@ -1,11 +1,11 @@
 import { View, Text, Platform } from 'react-native'
 import React from 'react'
 import styled from "styled-components/native"
-import  Ionicons  from "react-native-vector-icons/Ionicons"
+import Ionicons from "react-native-vector-icons/Ionicons"
 import * as Linking from "expo-linking";
 
 
-const CallNow = ({isForReviewerView,data}) => {
+const CallNow = ({ isForReviewerView, data }) => {
     const {
         HHM_Field_PM__r,
         HHM_Field_PM_Email__c,
@@ -14,17 +14,17 @@ const CallNow = ({isForReviewerView,data}) => {
         HHM_Field_PM_Phone__c,
     } = data;
 
-const handleCall = (phNumber)=>{
-  console.log("call",phNumber);
-  return Platform.select({
-    ios: () => {
-        Linking.openURL(`telprompt:${phNumber}`);
-    },
-    android: () => {
-        Linking.openURL(`tel:${phNumber}`);
+    const handleCall = (phNumber) => {
+        console.log("call", phNumber);
+        return Platform.select({
+            ios: () => {
+                Linking.openURL(`telprompt:${phNumber}`);
+            },
+            android: () => {
+                Linking.openURL(`tel:${phNumber}`);
+            }
+        })();
     }
-})();
-}
 
     return (
         <Container>
@@ -32,25 +32,43 @@ const handleCall = (phNumber)=>{
             <TextWrapper>
                 {/* Name */}
                 <Title>
-                {!isForReviewerView ? HHM_Field_PM__r?.Name : `${General_Contractor__r?.Name} GC Contractor`}
+                    {!isForReviewerView ? HHM_Field_PM__r?.Name : `${General_Contractor__r?.Name}`}
                 </Title>
+                {/* Role */}
+                {
+                    !isForReviewerView
+                        ?
+                        <SubTitle>
+                            GC Contractor
+                        </SubTitle>
+                        :
+                        <SubTitle>
+                            HHM Field PM
+                        </SubTitle>
+                }
                 {/* Mobile No */}
-                <SubTitle>
-                    +12345678 
-                    {/* // ! need field for mobile */}
-                </SubTitle>
-                {/* Mobile No */}
+                {
+                    HHM_Field_PM_Phone__c &&
+                    <SubTitle>
+                        {HHM_Field_PM_Phone__c}
+                    </SubTitle>
+                }
+                {/* Email */}
                 <SubTitle>
                     {!isForReviewerView ? HHM_Field_PM_Email__c : GC_Email__c}
                 </SubTitle>
             </TextWrapper>
             {/*  Button */}
-            <CallButtonWrapper onPress={() => handleCall(HHM_Field_PM_Phone__c)}>
-                <Ionicons name="call" color="white" size={18} />
-                <CallButtonText >
-                    Call Now
-                </CallButtonText>
-            </CallButtonWrapper>
+            {
+                HHM_Field_PM_Phone__c &&
+                <CallButtonWrapper onPress={() => handleCall(HHM_Field_PM_Phone__c)}>
+                    <Ionicons name="call" color="white" size={18} />
+                    <CallButtonText >
+                        Call Now
+                    </CallButtonText>
+                </CallButtonWrapper>
+            }
+
         </Container>
     )
 }
@@ -67,17 +85,20 @@ align-items: center;
 z-index: 9999;
 `;
 
-const TextWrapper = styled.View``;
+const TextWrapper = styled.View`
+flex: .9;
+
+`;
 
 const Title = styled.Text`
 color: white;
-font-size: 20px;
+font-size: 14px;
 margin-bottom: 4px;
 font-family: 'URBAN_BOLD';
 `;
 
 const SubTitle = styled.Text`
-font-size: 14px;
+font-size: 12px;
 font-family: 'URBAN_BOLD';
 color: #7A8791;
 `;
